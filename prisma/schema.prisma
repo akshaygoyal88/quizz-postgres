@@ -61,7 +61,7 @@ model Show {
   showType             String
   showMode             ShowMode
   showStartDateAndTime DateTime
-  showEndDateAndTime   DateTime
+  showEndDateAndTime   DateTime?
   noOfTickets          Int
   createdBy            User        @relation(fields: [createdById], references: [id])
   createdById          String

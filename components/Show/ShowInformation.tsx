@@ -35,9 +35,27 @@ const ShowInformation = () => {
     }));
   };
 
+  const userId = "clq6mt3dk00083nqt2smexsyr";
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+
+    const response = await fetch("/api/insertShowDetails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        showName: formData.showName,
+        showType: formData.showType,
+        showStartDateAndTime: formData.showStartDateAndTime,
+        showEndDateAndTime: formData.showEndDateAndTime,
+        noOfTickets: formData.noOfTickets,
+        showMode: showMode,
+      }),
+    });
   };
 
   const getMinDateTime = () => {
@@ -56,7 +74,9 @@ const ShowInformation = () => {
 
   console.log(showMode, "showMode");
 
-  const handleShowModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleShowModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShowMode(e.target.value);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

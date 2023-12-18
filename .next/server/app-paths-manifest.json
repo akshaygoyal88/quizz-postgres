@@ -1,3 +1,6 @@
 {
-  "/show/page": "app/show/page.js"
+  "/not-found": "app/not-found.js",
+  "/show/page": "app/show/page.js",
+  "/show/ticketclassification/page": "app/show/ticketclassification/page.js",
+  "/api/getShowDetails/route": "app/api/getShowDetails/route.js"
 }

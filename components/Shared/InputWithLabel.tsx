@@ -16,7 +16,7 @@ export default function InputWithLabel({
   name: string;
   label?: string;
   id?: string;
-  value?: string;
+  value?: string | number;
   placeholder?: string;
   defaultValue?: string;
   className?: string;
