@@ -3,6 +3,7 @@
 import React, { FormEvent, useState } from "react";
 import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function generateUniqueAlphanumericToken(length: number): string {
   const characters =
@@ -160,6 +161,12 @@ export default function RegisterForm() {
                 </button>
               </div>
             </form>
+            <p className="mt-4 flex align-middle justify-center">
+              Already have an account?
+              <Link href="signin" className="text-blue-700">
+                Sign In
+              </Link>
+            </p>
           </div>
         </div>
       </div>

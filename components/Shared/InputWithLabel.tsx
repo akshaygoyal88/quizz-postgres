@@ -71,7 +71,7 @@ export default function InputWithLabel({
       <div className="pt-1">
         {errors &&
           errors.split("/").map((err, i) => (
-            <li key={i} className="w-4/5 text-xs text-red-600">
+            <li key={i} className="w-full text-xs text-red-600">
               {err}
             </li>
           ))}

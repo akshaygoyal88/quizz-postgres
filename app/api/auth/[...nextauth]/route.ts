@@ -1,10 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import { PrismaClient } from '@prisma/client/edge'
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
-
-const prisma = new PrismaClient()
+import { db } from "@/app/db";
 
 export const authOptions: NextAuthOptions = {  
   // adapter: PrismaAdapter(prisma),
@@ -26,7 +24,7 @@ export const authOptions: NextAuthOptions = {
         console.log(credentials);
         const email = credentials?.email;
         const isVerified = true;
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
           where: { email, isVerified },
         });
 
@@ -36,8 +34,6 @@ export const authOptions: NextAuthOptions = {
             user.password,
           );
 
-          console.log("Password correct:", passwordCorrect);
-
           if (passwordCorrect) {
             return {
               id: user.id,
@@ -45,13 +41,12 @@ export const authOptions: NextAuthOptions = {
               isVerified: user.isVerified,
             };
           } else {
-            // Incorrect password
             throw new Error("Invalid password");
           }
         } else {
           // User not found
           throw new Error(
-            "User not found. Please check credentials or verify email before sign in.",
+            "User not found./Please check credentials or verify email before sign in.",
           );
         }
       },
