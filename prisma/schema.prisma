@@ -35,7 +35,8 @@ model User {
   profile_pic       String?
   isProfileComplete Boolean   @default(false)
   otps              UserOtp[]
-
+  createdShows      Show[] 
+  
   @@map(name: "users")
 }
 
@@ -46,3 +47,38 @@ model UserOtp {
   otp       String?
   createdAt DateTime @default(now()) @map(name: "created_at")
 }
+
+
+enum ShowMode {
+  ONLINE
+  OFFLINE
+  BOTH
+}
+
+model Show {
+  id                   String      @id @default(cuid())
+  showName             String
+  showType             String
+  showMode             ShowMode
+  showStartDateAndTime DateTime
+  showEndDateAndTime   DateTime
+  noOfTickets          Int
+  createdBy            User        @relation(fields: [createdById], references: [id])
+  createdById          String
+  createdAt            DateTime    @default(now()) @map(name: "created_at")
+  TicketGroup          TicketGroup[]
+
+  @@map(name: "showDetails")
+}
+
+model TicketGroup {
+  id              String     @id @default(cuid())
+  ticketGroup     String
+  showId          String
+  show            Show @relation(fields: [showId], references: [id])
+  SeatZoneNumber  Int?
+
+  @@map(name: "showTickets")
+}
+
+
