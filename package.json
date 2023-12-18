@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@prisma/client": "^5.7.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18"
@@ -22,6 +23,10 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
+<<<<<<< HEAD
+=======
+    "prisma": "^5.7.0",
+>>>>>>> main
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

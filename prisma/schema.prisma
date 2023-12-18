@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                String    @id @default(cuid())
+  first_name        String?
+  last_name         String?
+  email             String?   @unique
+  password          String
+  role              Role?     @default(USER)
+  isVerified        Boolean   @default(false)
+  isActive          Boolean   @default(false)
+  createdAt         DateTime  @default(now()) @map(name: "created_at")
+  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
+  mobile_number     String?
+  address           String?
+  country           String?
+  state             String?
+  city              String?
+  pincode           String?
+  profile_pic       String?
+  isProfileComplete Boolean   @default(false)
+  otps              UserOtp[]
+
+  @@map(name: "users")
+}
+
+model UserOtp {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  otp       String?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+}
