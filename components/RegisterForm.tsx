@@ -71,7 +71,7 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (!data.error) {
-        // router.push("/verify");
+        router.push(`/verify/${email}`);
         setError(data.error);
       } else if (data.error.userEmail) {
         setError({ ...error, password: data.error.userEmail });

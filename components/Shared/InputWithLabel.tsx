@@ -26,6 +26,7 @@ export default function InputWithLabel({
   value,
   onChange,
   errors,
+  maxLength,
 }: {
   type: string;
   name: string;
@@ -37,6 +38,7 @@ export default function InputWithLabel({
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   errors?: string;
+  maxLength?: number;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -65,6 +67,7 @@ export default function InputWithLabel({
           aria-describedby="email-error"
           value={value}
           onChange={onChange}
+          maxLength={maxLength}
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>
