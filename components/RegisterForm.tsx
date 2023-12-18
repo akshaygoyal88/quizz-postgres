@@ -34,6 +34,7 @@ export default function RegisterForm() {
     password?: string;
     userExist?: string;
     conPass?: string;
+    final?: string;
   } | null>(null);
 
   const router = useRouter();
@@ -85,6 +86,7 @@ export default function RegisterForm() {
         setTimeout(() => setError(null), 10000);
         return;
       } else {
+        setError({ ...error, final: data.error.final });
       }
     } else {
       setError({ conPass: "Password does not match." });
