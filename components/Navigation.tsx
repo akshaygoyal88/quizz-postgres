@@ -6,14 +6,14 @@ const navigation = [
   { name: "Dashboard", href: "#", current: true },
   { name: "Team", href: "#", current: false },
   { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false }
+  { name: "Calendar", href: "#", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function Navigation() {
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (

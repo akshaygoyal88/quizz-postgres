@@ -13,36 +13,69 @@
   ```
 */
 
-export default function Example() {
+import { useState, ChangeEvent } from "react";
+
+export default function InputWithLabel({
+  type,
+  name,
+  label,
+  id,
+  placeholder,
+  defaultValue,
+  className,
+  value,
+  onChange,
+  errors,
+}: {
+  type: string;
+  name: string;
+  label: string;
+  id: string;
+  placeholder?: string;
+  defaultValue?: string;
+  className: string;
+  value: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  errors?: string;
+}) {
+  const [inputValue, setInputValue] = useState<string>("");
+
   return (
     <div>
       <label
-        htmlFor="email"
+        htmlFor={type}
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Email
+        {label}
       </label>
       <div className="relative mt-2 rounded-md shadow-sm">
         <input
-          type="email"
-          name="email"
-          id="email"
-          className="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6"
-          placeholder="you@example.com"
-          defaultValue="adamwathan"
+          type={type}
+          name={name}
+          id={id}
+          // className="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6"
+          className={`${className} ${
+            errors
+              ? "text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500"
+              : ""
+          }`}
+          placeholder={placeholder}
+          defaultValue={defaultValue}
           aria-invalid="true"
           aria-describedby="email-error"
+          value={value}
+          onChange={onChange}
         />
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          {/* <ExclamationCircleIcon
-            className="h-5 w-5 text-red-500"
-            aria-hidden="true"
-          /> */}
-        </div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>
-      <p className="mt-2 text-sm text-red-600" id="email-error">
-        Not a valid email address.
-      </p>
+      <div className="pt-1">
+        {errors &&
+          errors.split("/").map((err, i) => (
+            <li key={i} className="w-4/5 text-xs text-red-600">
+              {err}
+            </li>
+          ))}
+      </div>
     </div>
   );
 }
