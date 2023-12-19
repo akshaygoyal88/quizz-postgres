@@ -9,6 +9,7 @@ interface VerifyFormProps {
 
 export default function VerifyForm({ email }: VerifyFormProps) {
   const [verificationCode, setVerificationCode] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
   const handleVerificationCodeChange = (
@@ -31,10 +32,10 @@ export default function VerifyForm({ email }: VerifyFormProps) {
         // alert("Verification done successfully");
         router.push("/signin");
       } else if (res.status === 404) {
-        throw new Error("User not found or verification code is incorrect");
+        setError("User not found or verification code is incorrect");
       }
     } catch (error) {
-      alert(error);
+      console.log(error);
     }
   };
 
@@ -75,6 +76,7 @@ export default function VerifyForm({ email }: VerifyFormProps) {
                 value={verificationCode}
                 onChange={handleVerificationCodeChange}
                 maxLength={4}
+                errors={error}
               />
 
               <div>
