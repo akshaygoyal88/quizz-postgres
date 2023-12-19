@@ -4,41 +4,12 @@ import React, { useEffect, useState } from "react";
 
 import TagInput from "../Shared/TagInputs";
 import TableComponent from "./TableComponent";
+import { PrismaClient } from "@prisma/client";
 
-const TicketClassification = () => {
+const TicketClassification = ({ fetchedShowData }) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
-  const [fetchedShowData, setFetchedShowData] = useState<[]>();
+  // const [fetchedShowData, setFetchedShowData] = useState<[]>();
   const [tags, setTags] = useState<string[]>([]);
-
-  console.log(tags, "tags");
-
-  console.log(fetchedShowData, "fetchedShowData");
-
-  const userId = "clq6mt3dk00083nqt2smexsyr";
-  const fetchShowInformation = async () => {
-    try {
-      const response = await fetch(`/api/getShowDetails?userId=${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(response);
-
-      if (response.ok) {
-        const data = await response.json();
-        setFetchedShowData(data.showInformation);
-        console.log("Show information:", data);
-      } else {
-        console.error("Failed to fetch show information");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-    }
-  };
-  useEffect(() => {
-    fetchShowInformation();
-  }, []);
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedShowId = e.target.value;
@@ -46,6 +17,12 @@ const TicketClassification = () => {
   };
 
   const handleSubmit = () => {};
+
+  const handleSave = () => {console.log("save button clicked");};
+  const handleEdit = () => {console.log("Edit button clicked");};
+  const handleRemove = () => {console.log("Remove button clicked");};
+
+
 
   return (
     <div className="mx-auto mt-8 max-w-md rounded bg-white p-6 shadow-lg">
@@ -74,6 +51,9 @@ const TicketClassification = () => {
           <TagInput tags={tags} setTags={setTags} />
         </div>
       </div>
+      <div>
+        <TableComponent selectedShowId={selectedOption} onSave={handleSave} onRemove={handleRemove} onEdit={handleEdit} tags={tags} />
+      </div>
       <div className="mt-4">
         <button
           type="button"
@@ -86,5 +66,48 @@ const TicketClassification = () => {
     </div>
   );
 };
+
+
+// // export async function getStaticProps() {
+// //   const userId="clq511pdy0000op42iuzmwsej"
+
+// //   const prisma = new PrismaClient()
+// //   const fetchedShowData = await prisma.show.findMany(
+// //       {
+// //         where: {
+// //           createdBy: {
+// //             id: userId,
+// //           },
+// //         },
+// //       }
+// //   )
+
+// //   console.log(fetchedShowData,"fetchedShowData")
+// //   return {
+// //     props : { fetchedShowData }
+// //   }
+// // }
+
+
+// export const getServerSideProps = async ({ req }) => {
+//   const userId = "clq511pdy0000op42iuzmwsej";
+
+//   const prisma = new PrismaClient();
+//   try {
+//     const fetchedShowData = await prisma.show.findMany({
+//       where: {
+//         createdBy: {
+//           id: userId,
+//         },
+//       },
+//     });
+
+//     console.log(fetchedShowData, "fetchedShowData");
+//     return { props: { fetchedShowData } };
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// };
+
 
 export default TicketClassification;

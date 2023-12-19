@@ -14,11 +14,11 @@ export default function Checkboxes({
   name?: string;
   checked: boolean;
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Changed the return type to void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }) {
   return (
-    <>
+    <label className="cursor-pointer">
       <div className="relative flex items-start">
         <div className="flex h-6 items-center">
           <input
@@ -37,11 +37,9 @@ export default function Checkboxes({
           />
         </div>
         <div className="ml-3 text-sm leading-6">
-          <label htmlFor={id} className="font-medium text-gray-900">
-            {label}
-          </label>
+          <span className="font-medium text-gray-900">{label}</span>
         </div>
       </div>
-    </>
+    </label>
   );
 }

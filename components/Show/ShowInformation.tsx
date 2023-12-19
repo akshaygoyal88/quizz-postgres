@@ -35,13 +35,13 @@ const ShowInformation = () => {
     }));
   };
 
-  const userId = "clq6mt3dk00083nqt2smexsyr";
+  const userId = "clq511pdy0000op42iuzmwsej";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
 
-    const response = await fetch("/api/insertShowDetails", {
+    const response = await fetch("/api/showDetailsApi/insertShowDetails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

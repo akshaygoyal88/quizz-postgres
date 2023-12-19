@@ -36,6 +36,7 @@ model User {
   isProfileComplete Boolean   @default(false)
   otps              UserOtp[]
   createdShows      Show[] 
+  ticket            Tickets[]
   
   @@map(name: "users")
 }
@@ -67,6 +68,7 @@ model Show {
   createdById          String
   createdAt            DateTime    @default(now()) @map(name: "created_at")
   TicketGroup          TicketGroup[]
+  Tickets              Tickets[]
 
   @@map(name: "showDetails")
 }
@@ -82,3 +84,16 @@ model TicketGroup {
 }
 
 
+model Tickets {
+  id              String   @id @default(cuid())
+  showId          String?
+  show            Show ? @relation(fields: [showId], references: [id])
+  ticketGroup     String?
+  quantity        Int
+  price           Int
+  description     String?    @db.LongText
+  createdBy       User      @relation(fields: [createdById], references: [id])
+  createdById     String       
+
+  @@map(name: "Tickets")
+}

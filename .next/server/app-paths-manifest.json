@@ -1,6 +1,5 @@
 {
-  "/not-found": "app/not-found.js",
-  "/show/page": "app/show/page.js",
   "/show/ticketclassification/page": "app/show/ticketclassification/page.js",
-  "/api/getShowDetails/route": "app/api/getShowDetails/route.js"
+  "/api/showDetailsApi/getShowDetails/route": "app/api/showDetailsApi/getShowDetails/route.js",
+  "/api/ticketDetailsApi/insertTicketDetails/route": "app/api/ticketDetailsApi/insertTicketDetails/route.js"
 }
