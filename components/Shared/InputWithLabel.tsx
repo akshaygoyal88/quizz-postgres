@@ -1,62 +1,87 @@
+/*
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
+  }
+  ```
+*/
+
+import { useState, ChangeEvent } from "react";
+
 export default function InputWithLabel({
   type,
   name,
   label,
   id,
-  value,
   placeholder,
   defaultValue,
   className,
-  inputMode,
-  min,
-  checked,
+  value,
   onChange,
-  readOnly
+  errors,
+  maxLength,
+  otherText,
 }: {
   type: string;
   name: string;
-  label?: string;
-  id?: string;
-  value?: string | number;
+  label: string;
+  id: string;
   placeholder?: string;
   defaultValue?: string;
-  className?: string;
-  inputMode?: string;
-  min?: string;
-  checked?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  readOnly?: boolean;
+  className: string;
+  value: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  errors?: string;
+  maxLength?: number;
+  otherText?: string;
 }) {
+  const [inputValue, setInputValue] = useState<string>("");
+
   return (
     <div>
       <label
-        htmlFor={id}
-        className="block text-sm leading-6 text-gray-900  py-2 -sm font-semibold"
+        htmlFor={type}
+        className="block text-sm font-medium leading-6 text-gray-900"
       >
         {label}
+        <p className="text-gray-600 text-xs">{otherText}</p>
       </label>
       <div className="relative rounded-md shadow-sm">
         <input
           type={type}
           name={name}
           id={id}
-          className={className}
+          // className="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6"
+          className={`${className} ${
+            errors
+              ? "text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500"
+              : ""
+          }`}
           placeholder={placeholder}
           defaultValue={defaultValue}
-          value={value}
-          inputMode={inputMode}
-          onChange={onChange}
           aria-invalid="true"
-          aria-describedby={`${name}-error`}
-          min={min}
-          checked={checked}
-          readOnly={readOnly}
+          aria-describedby="email-error"
+          value={value}
+          onChange={onChange}
+          maxLength={maxLength}
         />
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          {/* Add any additional icons or elements here */}
-        </div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>
-      {/* Add an error message section here if needed */}
+      <div className="pt-1">
+        {errors &&
+          errors.split("/").map((err, i) => (
+            <li key={i} className="w-full text-xs text-red-600">
+              {err}
+            </li>
+          ))}
+      </div>
     </div>
   );
 }

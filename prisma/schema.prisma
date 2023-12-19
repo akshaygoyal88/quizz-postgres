@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum UserRole {
   USER
   ADMIN
 }
@@ -21,7 +21,7 @@ model User {
   last_name         String?
   email             String?   @unique
   password          String
-  role              Role?     @default(USER)
+  role              UserRole? @default(USER)
   isVerified        Boolean   @default(false)
   isActive          Boolean   @default(false)
   createdAt         DateTime  @default(now()) @map(name: "created_at")
