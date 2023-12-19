@@ -6,20 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 export default function LoginForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -33,9 +19,8 @@ export default function LoginForm() {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false,
+      redirect: false
     });
-    console.log(result);
 
     if (result && !result.ok) {
       setError("Invalid credentials. Please try again.");
@@ -48,7 +33,7 @@ export default function LoginForm() {
       setError(`${result.error}`);
     }
   };
-  console.log(error);
+
   if (error) {
     setTimeout(() => setError(""), 10000);
   }
@@ -62,14 +47,6 @@ export default function LoginForm() {
   };
   return (
     <>
-      {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-gray-50">
-          <body class="h-full">
-          ```
-        */}
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
