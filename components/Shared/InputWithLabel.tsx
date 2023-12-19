@@ -53,7 +53,7 @@ export default function InputWithLabel({
         {label}
         <p className="text-gray-600 text-xs">{otherText}</p>
       </label>
-      <div className="relative mt-2 rounded-md shadow-sm">
+      <div className="relative rounded-md shadow-sm">
         <input
           type={type}
           name={name}
