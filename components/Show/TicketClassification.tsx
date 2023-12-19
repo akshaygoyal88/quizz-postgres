@@ -25,15 +25,15 @@ const TicketClassification = ({ fetchedShowData }) => {
 
 
   return (
-    <div className="mx-auto mt-8 max-w-md rounded bg-white p-6 shadow-lg">
+    <div className="w-full mx-auto mt-8 max-w-xl rounded bg-white p-6 shadow-lg">
       <div className="m-2">
         {/* Dropdown */}
-        <h1 className="my-2">Select Show</h1>
+        <h1 className="my-2 ml-28">Select Show</h1>
         <div className="mb-4 flex items-center">
           <select
             value={selectedOption}
             onChange={handleDropdownChange}
-            className="w-full rounded border bg-slate-200 px-4 py-1 text-lg transition duration-300 focus:border-blue-500 focus:outline-none"
+            className="w-1/2 ml-28 rounded border bg-slate-200 px-4 py-1 text-lg transition duration-300 focus:border-blue-500 focus:outline-none"
           >
             <option value="">Select a show</option>
             {fetchedShowData &&
@@ -46,19 +46,19 @@ const TicketClassification = ({ fetchedShowData }) => {
         </div>
 
         {/* Add Ticket Groups Tag component */}
-        <div className="">
-          <h1 className="my-2">Add Ticket Groups</h1>
-          <TagInput tags={tags} setTags={setTags} />
+        <div className=" ml-28">
+          <h1 className="my-3 ">Add Ticket Groups</h1>
+          <TagInput tags={tags} setTags={setTags} c />
         </div>
       </div>
-      <div>
+      <div >
         <TableComponent selectedShowId={selectedOption} onSave={handleSave} onRemove={handleRemove} onEdit={handleEdit} tags={tags} />
       </div>
       <div className="mt-4">
         <button
           type="button"
           onClick={handleSubmit}
-          className="ml-36 rounded bg-blue-500 px-10 py-2 text-white hover:bg-blue-700"
+          className="ml-48 rounded bg-blue-500 px-10 py-2 text-white hover:bg-blue-700"
         >
           Submit
         </button>

@@ -11,6 +11,7 @@ export default function InputWithLabel({
   min,
   checked,
   onChange,
+  readOnly
 }: {
   type: string;
   name: string;
@@ -24,6 +25,7 @@ export default function InputWithLabel({
   min?: string;
   checked?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readOnly?: boolean;
 }) {
   return (
     <div>
@@ -48,6 +50,7 @@ export default function InputWithLabel({
           aria-describedby={`${name}-error`}
           min={min}
           checked={checked}
+          readOnly={readOnly}
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
           {/* Add any additional icons or elements here */}
