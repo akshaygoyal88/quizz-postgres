@@ -27,6 +27,7 @@ export default function InputWithLabel({
   onChange,
   errors,
   maxLength,
+  otherText,
 }: {
   type: string;
   name: string;
@@ -39,6 +40,7 @@ export default function InputWithLabel({
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   errors?: string;
   maxLength?: number;
+  otherText?: string;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -49,6 +51,7 @@ export default function InputWithLabel({
         className="block text-sm font-medium leading-6 text-gray-900"
       >
         {label}
+        <p className="text-gray-600 text-xs">{otherText}</p>
       </label>
       <div className="relative mt-2 rounded-md shadow-sm">
         <input

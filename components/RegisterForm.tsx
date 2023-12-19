@@ -74,7 +74,7 @@ export default function RegisterForm() {
         router.push(`/verify/${email}`);
         setError(data.error);
       } else if (data.error.userEmail) {
-        setError({ ...error, password: data.error.userEmail });
+        setError({ ...error, userEmail: data.error.userEmail });
         setTimeout(() => setError(null), 10000);
         return;
       } else if (data.error.password) {
@@ -139,6 +139,10 @@ export default function RegisterForm() {
                 value={password}
                 onChange={passwordChangeHandler}
                 errors={error?.password}
+                otherText="(Password must be at least 8 characters.
+                Include at least one lowercase letter.
+                One uppercase letter, one number.
+                One special character)."
               />
               <InputWithLabel
                 type="password"

@@ -51,7 +51,7 @@ export async function POST(request: {
       }
     } else {
       return NextResponse.json(
-        { error: "User not found or verification code is incorrect" },
+        { error: "Verification code is incorrect" },
         { status: 404 },
       );
     }

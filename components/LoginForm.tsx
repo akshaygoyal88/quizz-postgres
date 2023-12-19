@@ -42,8 +42,8 @@ export default function LoginForm() {
     }
 
     if (result && !result.error) {
-      // router.push("/");
-      // router.refresh();
+      router.push("/");
+      router.refresh();
     } else if (result) {
       setError(`${result.error}`);
     }
@@ -81,7 +81,6 @@ export default function LoginForm() {
             Sign in to your account
           </h2>
         </div>
-
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form
@@ -117,7 +116,7 @@ export default function LoginForm() {
               />
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <input
                     id="remember-me"
                     name="remember-me"
@@ -139,7 +138,7 @@ export default function LoginForm() {
                   >
                     Forgot password?
                   </a>
-                </div>
+                </div> */}
               </div>
 
               <div>
