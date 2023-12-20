@@ -19,7 +19,7 @@ export default function LoginForm() {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false
+      redirect: false,
     });
 
     if (result && !result.ok) {
@@ -34,15 +34,13 @@ export default function LoginForm() {
     }
   };
 
-  if (error) {
-    setTimeout(() => setError(""), 10000);
-  }
-
   const emailChangeHandler = (e: FormEvent) => {
+    if (error.includes("email")) setError("");
     setEmail((e.target as HTMLInputElement).value);
   };
 
   const passwordChangeHandler = (e: FormEvent) => {
+    if (error.includes("password")) setError("");
     setPassword((e.target as HTMLInputElement).value);
   };
   return (

@@ -17,6 +17,7 @@ export default function InputWithLabel({
   readOnly,
   disabled,
   min,
+  impAsterisk,
 }: {
   type: string;
   name: string;
@@ -34,6 +35,7 @@ export default function InputWithLabel({
   readOnly?: boolean;
   disabled?: boolean;
   min?: string | number;
+  impAsterisk?: string;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -43,6 +45,7 @@ export default function InputWithLabel({
         htmlFor={type}
         className="block text-sm font-medium leading-6 text-gray-900"
       >
+        {impAsterisk && <span className="text-red-500">{impAsterisk}</span>}
         {label}
         <p className="text-gray-600 text-xs">{otherText}</p>
       </label>
@@ -68,6 +71,7 @@ export default function InputWithLabel({
           readOnly={readOnly}
           disabled={disabled}
           min={min}
+          max={maxLength}
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>

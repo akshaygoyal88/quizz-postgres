@@ -62,3 +62,17 @@ export async function POST(request: {
     );
   }
 }
+
+export async function GET() {
+  const session = await getServerSession();
+  if (session && session.user) {
+    const email = session.user.email;
+    if (email) {
+      const userData = await db.user.findUnique({
+        where: { email },
+      });
+
+      return NextResponse.json(userData);
+    }
+  }
+}
