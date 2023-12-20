@@ -82,7 +82,6 @@ export default function RegisterForm() {
         setTimeout(() => setError(null), 30000);
         return;
       } else if (data.error.userExist) {
-        console.log(data.error.userExist);
         setError({ ...error, userExist: data.error.userExist });
         setTimeout(() => setError(null), 10000);
         return;
@@ -94,7 +93,6 @@ export default function RegisterForm() {
       setTimeout(() => setError(null), 10000);
     }
   };
-  console.log(error);
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">

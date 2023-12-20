@@ -59,7 +59,6 @@ export async function POST(request: Request) {
       }
     }
   } catch (err) {
-    console.error(err);
     error = { final: "An error occurred." };
   }
 

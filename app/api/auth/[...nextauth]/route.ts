@@ -21,7 +21,6 @@ export const authOptions: NextAuthOptions = {
         password: {},
       },
       async authorize(credentials, req) {
-        console.log(credentials);
         const email = credentials?.email;
         const isVerified = true;
         const user = await db.user.findUnique({

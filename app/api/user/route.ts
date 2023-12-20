@@ -27,7 +27,6 @@ export async function POST(request: {
         },
       },
     });
-    console.log(user);
 
     if (user) {
       const res = await db.user.update({

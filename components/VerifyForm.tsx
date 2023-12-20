@@ -26,7 +26,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
       const res = await fetch("/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, verificationCode })
+        body: JSON.stringify({ email, verificationCode }),
       });
       const data = await res.json();
       if (res.ok) {
