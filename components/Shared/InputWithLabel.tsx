@@ -1,18 +1,3 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
-
 import { useState, ChangeEvent } from "react";
 
 export default function InputWithLabel({
@@ -28,19 +13,27 @@ export default function InputWithLabel({
   errors,
   maxLength,
   otherText,
+  inputMode,
+  readOnly,
+  disabled,
+  min,
 }: {
   type: string;
   name: string;
-  label: string;
+  label?: string;
   id: string;
   placeholder?: string;
   defaultValue?: string;
-  className: string;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  value: string | number | undefined;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   errors?: string;
   maxLength?: number;
   otherText?: string;
+  inputMode?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  min?: string | number;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -71,6 +64,10 @@ export default function InputWithLabel({
           value={value}
           onChange={onChange}
           maxLength={maxLength}
+          inputMode={inputMode}
+          readOnly={readOnly}
+          disabled={disabled}
+          min={min}
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>
