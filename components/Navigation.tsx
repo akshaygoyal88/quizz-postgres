@@ -15,7 +15,10 @@ export default function Navigation({ session }: { session: Session | null }) {
           Home
         </Link>
         <Link href="/tickets" className="text-white">
-          Ticket
+          Tickets
+        </Link>
+        <Link href="/show" className="text-white">
+          Shows
         </Link>
         {session && (
           <Link href="/dashboard" className="text-white">
