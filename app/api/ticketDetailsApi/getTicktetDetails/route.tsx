@@ -6,7 +6,7 @@ export async function GET(request: Request) {
       const url = new URL(request.url);
       const userId = url.searchParams.get("userId");
       const page = parseInt(url.searchParams.get("page") || "1", 10);
-      const pageSize = 12;
+      const pageSize = parseInt(url.searchParams.get("pageSize") || "1", 10);
 
       if (!userId) {
         return new Response(
