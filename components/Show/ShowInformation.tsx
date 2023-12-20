@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
 import Checkboxes from "../Shared/Checkboxes";
+import { useRouter } from "next/navigation";
 
 export type ShowDetails = {
   showName: string;
@@ -21,11 +22,13 @@ const ShowInformation = () => {
   });
 
   const [showMode, setShowMode] = useState<string>("");
+  const [createTicket, setCreateTicket] = useState<boolean>(false);
+
+  console.log(createTicket, "create ticket");
 
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
-  console.log(formErrors, "formErrors");
-
+  const route = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -36,6 +39,10 @@ const ShowInformation = () => {
       ...prevData,
       [name]: sanitizedValue,
     }));
+  };
+
+  const handleCreateTicket = () => {
+    setCreateTicket(true);
   };
 
   const userId = "clq511pdy0000op42iuzmwsej";
@@ -70,6 +77,11 @@ const ShowInformation = () => {
 
         if (response.ok) {
           console.log("Show details saved successfully!");
+          if (createTicket) {
+            route.push(`/user/${userId}/tickets`);
+          } else {
+            route.push("/success");
+          }
         } else {
           if (responseData.errors) {
             const errors: { [key: string]: string } = {};
@@ -237,12 +249,23 @@ const ShowInformation = () => {
           )}
         </div>
         <div className="mb-4 flex justify-center">
-          <button
-            type="submit"
-            className="rounded-xl bg-blue-500 px-9 py-2 text-sm text-white hover:bg-blue-700 hover:shadow-lg"
-          >
-            Save & Next
-          </button>
+          <div className="mr-3">
+            <button
+              type="submit"
+              onClick={handleCreateTicket}
+              className="rounded bg-blue-500 px-2 py-2 text-sm text-white hover:bg-blue-700 hover:shadow-lg"
+            >
+              Create ticket for Show
+            </button>
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="rounded bg-blue-500 px-2 py-2 text-sm text-white hover:bg-blue-700 hover:shadow-lg"
+            >
+              Skip & Save
+            </button>
+          </div>
         </div>{" "}
       </form>
     </div>

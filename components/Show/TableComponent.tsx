@@ -1,8 +1,7 @@
-// frontend/components/TableComponent.tsx
-
 import React, { useState, ChangeEvent } from "react";
 import { RxCross2 } from "react-icons/rx";
 import InputWithLabel from "@/components/Shared/InputWithLabel";
+import { useRouter } from "next/navigation";
 
 interface Table {
   ticketGroup: string;
@@ -28,6 +27,8 @@ const TableComponent: React.FC<TableComponentProps> = ({
     []
   );
 
+  const router = useRouter();
+
   console.log(fieldErrors, "fieldErrors");
   const userId = "clq511pdy0000op42iuzmwsej";
 
@@ -39,8 +40,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
     });
 
     setFieldErrors((prevErrors) => {
-      const newErrors = [...prevErrors];
-      newErrors.splice(tableIndex, 1);
+      const newErrors = prevErrors.filter(
+        (error) => error.index !== tableIndex
+      );
       return newErrors;
     });
   };
@@ -63,11 +65,13 @@ const TableComponent: React.FC<TableComponentProps> = ({
       };
       return newData;
     });
-
-    // Clear field-specific error on change
     setFieldErrors((prevErrors) => {
-      const newErrors = [...prevErrors];
-      newErrors[tableIndex] = { field: name, message: "" };
+      const newErrors = prevErrors
+        .filter(
+          (error) => !(error.index === tableIndex && error.field === name)
+        )
+        .concat({ index: tableIndex, field: name, message: "" });
+
       return newErrors;
     });
   };
@@ -94,6 +98,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
 
       if (response.ok) {
         console.log("Tickets submitted successfully!");
+        router.push("/success");
       } else {
         const responseData = await response.json();
 
