@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const ShowCard = ({ show }) => {
+const ShowCard = ({ show }: { show: any }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
       <img
