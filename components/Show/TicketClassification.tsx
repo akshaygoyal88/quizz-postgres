@@ -1,28 +1,34 @@
-"use client";
+"use strict";
 
-import React, { useEffect, useState } from "react";
-
+import React, { useState, ChangeEvent } from "react";
 import TagInput from "../Shared/TagInputs";
 import TableComponent from "./TableComponent";
-import { PrismaClient } from "@prisma/client";
 
-const TicketClassification = ({ fetchedShowData }) => {
+interface ShowData {
+  showName: string;
+  showType: string;
+  showMode: string;
+  showStartDateAndTime: string;
+  showEndDateAndTime: string;
+  noOfTickets: number;
+  createdById: string;
+  createdAt: string;
+}
+
+interface TicketClassificationProps {
+  fetchedShowData: ShowData[];
+}
+
+const TicketClassification: React.FC<TicketClassificationProps> = ({
+  fetchedShowData,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
-  // const [fetchedShowData, setFetchedShowData] = useState<[]>();
   const [tags, setTags] = useState<string[]>([]);
 
-  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedShowId = e.target.value;
+  const handleDropdownChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedShowId: string = e.target.value;
     setSelectedOption(selectedShowId);
   };
-
-  const handleSubmit = () => {};
-
-  const handleSave = () => {console.log("save button clicked");};
-  const handleEdit = () => {console.log("Edit button clicked");};
-  const handleRemove = () => {console.log("Remove button clicked");};
-
-
 
   return (
     <div className="w-full mx-auto mt-8 max-w-xl rounded bg-white p-6 shadow-lg">
@@ -46,68 +52,16 @@ const TicketClassification = ({ fetchedShowData }) => {
         </div>
 
         {/* Add Ticket Groups Tag component */}
-        <div className=" ml-28">
-          <h1 className="my-3 ">Add Ticket Groups</h1>
-          <TagInput tags={tags} setTags={setTags} c />
+        <div className="ml-28">
+          <h1 className="my-3">Add Ticket Groups</h1>
+          <TagInput tags={tags} setTags={setTags} />
         </div>
       </div>
-      <div >
-        <TableComponent selectedShowId={selectedOption} onSave={handleSave} onRemove={handleRemove} onEdit={handleEdit} tags={tags} />
-      </div>
-      <div className="mt-4">
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="ml-48 rounded bg-blue-500 px-10 py-2 text-white hover:bg-blue-700"
-        >
-          Submit
-        </button>
+      <div>
+        <TableComponent selectedShowId={selectedOption} tags={tags} />
       </div>
     </div>
   );
 };
-
-
-// // export async function getStaticProps() {
-// //   const userId="clq511pdy0000op42iuzmwsej"
-
-// //   const prisma = new PrismaClient()
-// //   const fetchedShowData = await prisma.show.findMany(
-// //       {
-// //         where: {
-// //           createdBy: {
-// //             id: userId,
-// //           },
-// //         },
-// //       }
-// //   )
-
-// //   console.log(fetchedShowData,"fetchedShowData")
-// //   return {
-// //     props : { fetchedShowData }
-// //   }
-// // }
-
-
-// export const getServerSideProps = async ({ req }) => {
-//   const userId = "clq511pdy0000op42iuzmwsej";
-
-//   const prisma = new PrismaClient();
-//   try {
-//     const fetchedShowData = await prisma.show.findMany({
-//       where: {
-//         createdBy: {
-//           id: userId,
-//         },
-//       },
-//     });
-
-//     console.log(fetchedShowData, "fetchedShowData");
-//     return { props: { fetchedShowData } };
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// };
-
 
 export default TicketClassification;

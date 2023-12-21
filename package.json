@@ -9,13 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@prisma/client": "^5.7.0",
     "@types/react-select": "^5.0.1",
     "@types/validator": "^13.11.7",
     "bcrypt": "^5.1.1",
+    "install": "^0.13.0",
     "next": "14.0.4",
     "next-auth": "^4.24.5",
+    "npm": "^10.2.5",
     "react": "^18",
     "react-country-region-selector": "^3.6.1",
     "react-dom": "^18",

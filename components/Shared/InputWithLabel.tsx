@@ -1,3 +1,18 @@
+/*
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
+  }
+  ```
+*/
+
 import { useState, ChangeEvent } from "react";
 
 export default function InputWithLabel({
@@ -15,8 +30,8 @@ export default function InputWithLabel({
   otherText,
   inputMode,
   readOnly,
-  disabled,
   min,
+  disabled,
   impAsterisk,
 }: {
   type: string;
