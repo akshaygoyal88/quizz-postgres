@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
 import Checkboxes from "../Shared/Checkboxes";
 import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 export type ShowDetails = {
   showName: string;
@@ -12,7 +13,7 @@ export type ShowDetails = {
   noOfTickets: string | undefined;
 };
 
-const ShowInformation = () => {
+const ShowInformation = ({ session }: { session: Session | null }) => {
   const [formData, setFormData] = useState<ShowDetails>({
     showName: "",
     showType: "",
@@ -27,6 +28,26 @@ const ShowInformation = () => {
   console.log(createTicket, "create ticket");
 
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+
+  const [userDetails, setUserDetails] = useState();
+
+  const getUserData = async () => {
+    try {
+      const res = await fetch("/api/user/", {
+        method: "GET",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserDetails({ ...data });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   const route = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +66,10 @@ const ShowInformation = () => {
     setCreateTicket(true);
   };
 
-  const userId = "clq511pdy0000op42iuzmwsej";
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const userId = userDetails.id;
+    console.log(userId);
 
     setFormErrors({});
 

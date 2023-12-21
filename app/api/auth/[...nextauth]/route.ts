@@ -3,9 +3,10 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { db } from "@/app/db";
+// import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {  
-  // adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
   },

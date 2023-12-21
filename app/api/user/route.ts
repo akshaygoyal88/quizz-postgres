@@ -65,6 +65,7 @@ export async function POST(request: {
 
 export async function GET() {
   const session = await getServerSession();
+  console.log(session);
   if (session && session.user) {
     const email = session.user.email;
     if (email) {

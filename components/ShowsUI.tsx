@@ -1,59 +1,98 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShowCard from "./Shared/ShowCard";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import Pagination from "./Shared/Pagination";
+
+interface UserDetails {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
+  password: string;
+  role: string;
+  isVerified: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  mobile_number: string | null;
+  address: string | null;
+  country: string | null;
+  state: string | null;
+  city: string | null;
+  pincode: string | null;
+  profile_pic: string | null;
+  isProfileComplete: boolean;
+}
 
 export default function ShowsUI() {
-  const [shows, setShows] = useState([
-    {
-      id: "1",
-      showName: "Breaking Bad",
-      showType: "Drama",
-      showMode: "Weekly",
-      showStartDateAndTime: "2023-01-01T18:00:00Z",
-      showEndDateAndTime: "2023-01-01T20:00:00Z",
-      noOfTickets: 100,
-      createdById: "user1",
-    },
-    {
-      id: "2",
-      showName: "Stranger Things",
-      showType: "Science Fiction",
-      showMode: "Daily",
-      showStartDateAndTime: "2023-02-01T20:00:00Z",
-      showEndDateAndTime: "2023-02-01T22:00:00Z",
-      noOfTickets: 150,
-      createdById: "user2",
-    },
-    {
-      id: "1",
-      showName: "Breaking Bad",
-      showType: "Drama",
-      showMode: "Weekly",
-      showStartDateAndTime: "2023-01-01T18:00:00Z",
-      showEndDateAndTime: "2023-01-01T20:00:00Z",
-      noOfTickets: 100,
-      createdById: "user1",
-    },
-    {
-      id: "2",
-      showName: "Stranger Things",
-      showType: "Science Fiction",
-      showMode: "Daily",
-      showStartDateAndTime: "2023-02-01T20:00:00Z",
-      showEndDateAndTime: "2023-02-01T22:00:00Z",
-      noOfTickets: 150,
-      createdById: "user2",
-    },
-  ]);
+  const [showsList, setShowsList] = useState([]);
+
+  const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
+  const [page, setPage] = useState(1);
+  const [totalpage, setTotalPage] = useState(0);
+
+  const paginate = (pageNumber: React.SetStateAction<number>) => {
+    if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
+      setPage(pageNumber);
+    }
+  };
+
+  const getUserData = async () => {
+    try {
+      const res = await fetch("/api/user/", {
+        method: "GET",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserDetails({ ...data });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+  console.log("userdata=>>>>>>>>", userDetails);
+
+  const getShowsList = async () => {
+    try {
+      if (userDetails) {
+        const userId = userDetails.id;
+        const res = await fetch(
+          `/api/showDetailsApi/getShowDetails?userId=${userId}&page=${page}&pageSize=9`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          console.log("showdata=>>>>>", data);
+
+          setShowsList(data.showInformation || []);
+          setTotalPage(data.totalPages);
+        } else {
+          console.error("Failed to fetch shows. Status:", res.status);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching shows:", error);
+    }
+  };
+
+  useEffect(() => {
+    getShowsList();
+  }, [userDetails, page]);
 
   return (
-    <div className="max-w-6xl mx-auto p-5">
-      <h1 className="text-3xl font-bold mb-4">TV Shows</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {shows.map((show) => (
+    <div className="flex flex-col items-center p-4">
+      <h1 className="text-2xl font-bold">Shows</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+        {showsList.map((show) => (
           <ShowCard key={show.id} show={show} />
         ))}
       </div>
+      <Pagination page={page} totalpage={totalpage} paginate={paginate} />
     </div>
   );
 }
