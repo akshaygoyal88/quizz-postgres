@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { RxCross2 } from "react-icons/rx";
 import InputWithLabel from "@/components/Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
@@ -14,11 +14,13 @@ interface Table {
 interface TableComponentProps {
   selectedShowId: string;
   tags: string[];
+  userId: string;
 }
 
 const TableComponent: React.FC<TableComponentProps> = ({
   selectedShowId,
   tags,
+  userId,
 }) => {
   const [tablesData, setTablesData] = useState<Table[]>([
     { ticketGroup: "", quantity: "", price: "", showId: "", createdById: "" },
@@ -27,10 +29,19 @@ const TableComponent: React.FC<TableComponentProps> = ({
     []
   );
 
+  const [userDetails, setUserDetails] = useState();
   const router = useRouter();
 
-  console.log(fieldErrors, "fieldErrors");
-  const userId = "clq511pdy0000op42iuzmwsej";
+  const profileCompleted = async () => {
+    const res = await fetch("/api/getProfileCompleted/");
+    const isProfileCompleted = await res.json();
+    if (!isProfileCompleted) {
+      router.push("/profile");
+    }
+  };
+  useEffect(() => {
+    profileCompleted();
+  }, []);
 
   const handleRemove = (tableIndex: number) => {
     setTablesData((prevData) => {

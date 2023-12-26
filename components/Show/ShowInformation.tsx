@@ -30,6 +30,7 @@ const ShowInformation = ({ session }: { session: Session | null }) => {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
   const [userDetails, setUserDetails] = useState();
+  const route = useRouter();
 
   const getUserData = async () => {
     try {
@@ -44,12 +45,18 @@ const ShowInformation = ({ session }: { session: Session | null }) => {
       console.log(error);
     }
   };
-
+  const profileCompleted = async () => {
+    const res = await fetch("/api/getProfileCompleted/");
+    const isProfileCompleted = await res.json();
+    if (!isProfileCompleted) {
+      route.push("/profile");
+    }
+  };
   useEffect(() => {
+    profileCompleted();
     getUserData();
   }, []);
 
-  const route = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 

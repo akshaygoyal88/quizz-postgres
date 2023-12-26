@@ -7,5 +7,6 @@ import authorization from "../authorization";
 export default async function Register() {
   const session = await getServerSession();
   if (session) redirect("/");
+
   return <RegisterForm />;
 }

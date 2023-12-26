@@ -3,11 +3,36 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+interface UserData {
+  id: string;
+}
 
 export default function Navigation({ session }: { session: Session | null }) {
   const router = useRouter();
 
-  const userId = "clq511pdy0000op42iuzmwsej";
+  const [userDetails, setUserDetails] = useState<UserData>();
+
+  const getUserData = async () => {
+    try {
+      const res = await fetch("/api/user/", {
+        method: "GET",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserDetails({ ...data });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getUserData();
+  }, []);
+  console.log(userDetails);
+
+  const userId = userDetails?.id;
 
   return (
     <div className="bg-gray-800 p-4 flex items-center justify-between">

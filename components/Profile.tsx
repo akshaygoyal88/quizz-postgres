@@ -23,6 +23,15 @@ interface UserData {
   address?: string;
 }
 
+interface FormErrors {
+  mobile_number?: string;
+  pincode?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  // Add other error fields as needed
+}
+
 export default function Profile({ email }: UserEmail) {
   const [userData, setUserData] = useState<UserData>({});
   const [firstName, setFirstName] = useState<string>("");
@@ -33,22 +42,24 @@ export default function Profile({ email }: UserEmail) {
   const [city, setCity] = useState<string>("");
   const [pincode, setPincode] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<FormErrors>({});
   const router = useRouter();
+  const [success, setSuccess] = useState(false);
 
   const addressChange = (e: FormEvent) => {
     setAddress((e.target as HTMLInputElement).value);
   };
   const cityChange = (e: FormEvent) => {
+    delete error.city;
     setCity((e.target as HTMLInputElement).value);
   };
   const pincodeChange = (e: FormEvent) => {
-    if (error) setError("");
+    if (error) setError({});
     if (!Number((e.target as HTMLInputElement).value)) {
       setPincode("");
-      setError("Zipcode should be number.");
+      setError({ pincode: "Zipcode should be number." });
       setTimeout(() => {
-        setError("");
+        setError({});
       }, 15000);
     } else {
       setPincode((e.target as HTMLInputElement).value);
@@ -62,12 +73,13 @@ export default function Profile({ email }: UserEmail) {
   };
 
   const handlePhoneChange = (value: string) => {
+    delete error.mobile_number;
     if (value) {
       const parsedPhoneNumber = parsePhoneNumber(value);
-      if (parsedPhoneNumber && parsedPhoneNumber.nationalNumber.length > 10) {
-        setError("Phone number should not more than 10 digits");
-        setTimeout(() => setError(""), 10000);
-        return;
+      if (parsedPhoneNumber && parsedPhoneNumber.nationalNumber.length >= 11) {
+        setError({
+          mobile_number: "Phone number should not more than 10 digits",
+        });
       }
     }
     setPhoneNumber(value);
@@ -105,13 +117,12 @@ export default function Profile({ email }: UserEmail) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const parsedPhoneNumber = phoneNumber && parsePhoneNumber(phoneNumber);
-    if (parsedPhoneNumber && parsedPhoneNumber.nationalNumber.length !== 10) {
-      console.log(parsedPhoneNumber.nationalNumber);
-      setError("Phone number should not less than 10 digits");
-      setTimeout(() => setError(""), 10000);
-      return;
-    }
+    // const parsedPhoneNumber = phoneNumber && parsePhoneNumber(phoneNumber);
+    // if (!parsedPhoneNumber || parsedPhoneNumber.nationalNumber.length < 10) {
+    //   setError("Phone number should not be less than 10 digits");
+    //   setTimeout(() => setError(""), 10000);
+    //   return;
+    // }
 
     const setValues = async () => {
       let updatedUserNewData = {};
@@ -146,21 +157,25 @@ export default function Profile({ email }: UserEmail) {
       return updatedUserNewData;
     };
 
-    const data = await setValues();
+    const updatedData = await setValues();
     try {
       const res = await fetch("/api/updateProfile", {
         method: "PUT",
-        body: JSON.stringify({ ...data }),
+        body: JSON.stringify({ ...updatedData }),
       });
 
       if (res.ok) {
         const resData = await res.json();
         if (resData.error) {
           setError(resData.error);
-          setTimeout(() => setError(""), 10000);
+          // setTimeout(() => setError({}), 10000);
           return;
         }
         router.refresh();
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+        }, 10000);
       }
     } catch (error) {
       console.error(error);
@@ -174,6 +189,7 @@ export default function Profile({ email }: UserEmail) {
     >
       <div className="space-y-12">
         <h1 className="font-bold text-2xl">Profile</h1>
+        {success && <p className="text-green-500">Succesfully saved.</p>}
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-2">
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
@@ -236,12 +252,11 @@ export default function Profile({ email }: UserEmail) {
                   limitMaxLength
                 />
               </div>
-              {error?.includes("10") &&
-                error.split("/").map((err, i) => (
-                  <li key={i} className="w-full text-xs text-red-600">
-                    {err}
-                  </li>
-                ))}
+              {error.mobile_number && (
+                <li className="w-full text-xs text-red-600">
+                  {error.mobile_number}
+                </li>
+              )}
             </div>
 
             <div className="sm:col-span-3">
@@ -258,6 +273,9 @@ export default function Profile({ email }: UserEmail) {
                 onChange={(val) => setCountry(val)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
+              {error.country && (
+                <li className="w-full text-xs text-red-600">{error.country}</li>
+              )}
             </div>
 
             <div className="sm:col-span-3">
@@ -273,20 +291,9 @@ export default function Profile({ email }: UserEmail) {
                 onChange={(val) => setState(val)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
-            </div>
-
-            <div className="col-span-full">
-              <InputWithLabel
-                label="Street address"
-                type="text"
-                name="street-address"
-                id="street-address"
-                value={address}
-                onChange={addressChange}
-                // autoComplete="street-address"
-                defaultValue={undefined}
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              {error.state && (
+                <li className="w-full text-xs text-red-600">{error.state}</li>
+              )}
             </div>
 
             <div className="sm:col-span-3 sm:col-start-1">
@@ -299,6 +306,7 @@ export default function Profile({ email }: UserEmail) {
                 // autoComplete="address-level2"
                 onChange={cityChange}
                 defaultValue={undefined}
+                errors={error.city}
                 impAsterisk="*"
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -314,12 +322,26 @@ export default function Profile({ email }: UserEmail) {
                 onChange={pincodeChange}
                 defaultValue={undefined}
                 errors={
-                  error?.includes("6") || error?.includes("Zipcode")
-                    ? error
-                    : undefined
+                  // (typeof error === "string" && error?.includes("6")) ||
+                  // (typeof error === "string" && error?.includes("Zipcode"))
+                  //   ? error
+                  //   : undefined
+                  error.pincode
                 }
-                maxLength={6}
                 impAsterisk="*"
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div className="col-span-full">
+              <InputWithLabel
+                label="Street address"
+                type="text"
+                name="street-address"
+                id="street-address"
+                value={address}
+                onChange={addressChange}
+                // autoComplete="street-address"
+                defaultValue={undefined}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>

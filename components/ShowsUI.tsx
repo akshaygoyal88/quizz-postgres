@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ShowCard from "./Shared/ShowCard";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Pagination from "./Shared/Pagination";
+import { useRouter } from "next/navigation";
 
 interface UserDetails {
   id: string;
@@ -31,6 +32,15 @@ export default function ShowsUI() {
   const [userDetails, setUserDetails] = useState<UserDetails | undefined>();
   const [page, setPage] = useState(1);
   const [totalpage, setTotalPage] = useState(0);
+  const router = useRouter();
+
+  const profileCompleted = async () => {
+    const res = await fetch("/api/getProfileCompleted/");
+    const isProfileCompleted = await res.json();
+    if (!isProfileCompleted) {
+      router.push("/profile");
+    }
+  };
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
@@ -55,7 +65,6 @@ export default function ShowsUI() {
   useEffect(() => {
     getUserData();
   }, []);
-  console.log("userdata=>>>>>>>>", userDetails);
 
   const getShowsList = async () => {
     try {
@@ -81,6 +90,7 @@ export default function ShowsUI() {
   };
 
   useEffect(() => {
+    profileCompleted();
     getShowsList();
   }, [userDetails, page]);
 
