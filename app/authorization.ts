@@ -7,5 +7,5 @@ export default async function authorization({
   redirectTo: string;
 }) {
   const session = await getServerSession();
-  if (session) redirect(redirectTo);
+  if (session) redirect(redirectTo); 
 }

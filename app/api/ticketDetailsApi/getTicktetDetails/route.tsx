@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         );
       }
 
-      const totalRows = await db.show.count({
+      const totalRows = await db.tickets.count({
         where: {
           createdBy: {
             id: userId,
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 
       const skip = (page - 1) * pageSize;
 
-      const showInformation = await db.show.findMany({
+      const showInformation = await db.tickets.findMany({
         where: {
           createdBy: {
             id: userId,

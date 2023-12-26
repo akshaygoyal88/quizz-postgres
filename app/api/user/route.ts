@@ -27,7 +27,6 @@ export async function POST(request: {
         },
       },
     });
-    console.log(user);
 
     if (user) {
       const res = await db.user.update({
@@ -61,5 +60,20 @@ export async function POST(request: {
       { error: "Internal Server Error" },
       { status: 500 },
     );
+  }
+}
+
+export async function GET() {
+  const session = await getServerSession();
+  console.log(session);
+  if (session && session.user) {
+    const email = session.user.email;
+    if (email) {
+      const userData = await db.user.findUnique({
+        where: { email },
+      });
+
+      return NextResponse.json(userData);
+    }
   }
 }

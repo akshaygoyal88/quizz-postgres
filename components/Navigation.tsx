@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 export default function Navigation({ session }: { session: Session | null }) {
   const router = useRouter();
 
+  const userId = "clq511pdy0000op42iuzmwsej";
+
   return (
     <div className="bg-gray-800 p-4 flex items-center justify-between">
       <h1 className="text-white text-xl font-bold">App</h1>
@@ -15,8 +17,18 @@ export default function Navigation({ session }: { session: Session | null }) {
           Home
         </Link>
         <Link href="/tickets" className="text-white">
-          Ticket
+          Tickets
         </Link>
+        <Link href="/shows" className="text-white">
+          Shows
+        </Link>
+        <Link href={`/user/${userId}/show`} className="text-white">
+          Add-Show
+        </Link>
+        <Link href={`/user/${userId}/tickets`} className="text-white">
+          Add-Ticket
+        </Link>
+
         {session && (
           <Link href="/dashboard" className="text-white">
             Dashboard

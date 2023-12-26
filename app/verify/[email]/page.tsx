@@ -20,7 +20,6 @@ const getUserExists = async (newEmail: string) => {
 
 export default async function Verify({ params }: VerifyProps) {
   const session = await getServerSession(authOptions);
-  console.log("user========>", session);
   if (session) {
     redirect("/profile");
   }

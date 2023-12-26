@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import validator from "validator";
 import { db } from "@/app/db";
+import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 
 interface CreateUserRequestBody {
   email: string;
   password: string;
   token: string;
+  roleOfUser: any;
 }
 
 interface ErrorResponse {
@@ -21,7 +23,7 @@ export async function POST(request: Request) {
   let data;
 
   try {
-    const { email, password, token }: CreateUserRequestBody = await request.json();
+    const { email, password, roleOfUser }: CreateUserRequestBody = await request.json();
 
     const userExist = await db.user.findUnique({
       where: { email },
@@ -33,16 +35,16 @@ export async function POST(request: Request) {
       if (validator.isEmail(email)) {
         if (validator.isStrongPassword(password)) {
           const hashedPassword = await hash(password, 10);
-          const roleUser = "USER";
 
+          const newOtp = generateUniqueAlphanumericOTP(4);
           const result = await db.user.create({
             data: {
               email,
               password: hashedPassword,
-              role: roleUser,
+              role: roleOfUser,
               otps: {
                 create: {
-                  otp: token,
+                  otp: newOtp,
                 },
               },
             },
@@ -59,7 +61,6 @@ export async function POST(request: Request) {
       }
     }
   } catch (err) {
-    console.error(err);
     error = { final: "An error occurred." };
   }
 

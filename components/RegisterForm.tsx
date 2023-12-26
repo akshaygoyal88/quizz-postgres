@@ -5,27 +5,6 @@ import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-function generateUniqueAlphanumericToken(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const tokenLength = length || 4;
-  const tokens: Set<string> = new Set();
-
-  while (true) {
-    let newToken = "";
-
-    for (let i = 0; i < tokenLength; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      newToken += characters.charAt(randomIndex);
-    }
-
-    if (!tokens.has(newToken)) {
-      tokens.add(newToken);
-      return newToken;
-    }
-  }
-}
-
 export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -41,21 +20,24 @@ export default function RegisterForm() {
   const router = useRouter();
 
   const emailChangeHandler = (e: FormEvent) => {
+    if (error?.userEmail) delete error.userEmail;
+    else if (error?.userExist) delete error.userExist;
     setEmail((e.target as HTMLInputElement).value);
   };
 
   const passwordChangeHandler = (e: FormEvent) => {
+    if (error?.password) delete error.password;
     setPassword((e.target as HTMLInputElement).value);
   };
 
   const conPasswordChangeHandler = (e: FormEvent) => {
+    if (error?.conPass) delete error.conPass;
     setConPassword((e.target as HTMLInputElement).value);
   };
 
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (password === conPassword) {
-      const token = generateUniqueAlphanumericToken(4);
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -64,7 +46,7 @@ export default function RegisterForm() {
         body: JSON.stringify({
           email: email,
           password: password,
-          token: token,
+          roleOfUser: "USER",
         }),
       });
       console.log(response);
@@ -75,26 +57,20 @@ export default function RegisterForm() {
         setError(data.error);
       } else if (data.error.userEmail) {
         setError({ ...error, userEmail: data.error.userEmail });
-        setTimeout(() => setError(null), 10000);
         return;
       } else if (data.error.password) {
         setError({ ...error, password: data.error.password });
-        setTimeout(() => setError(null), 30000);
         return;
       } else if (data.error.userExist) {
-        console.log(data.error.userExist);
         setError({ ...error, userExist: data.error.userExist });
-        setTimeout(() => setError(null), 10000);
         return;
       } else {
         setError({ ...error, final: data.error.final });
       }
     } else {
-      setError({ conPass: "Password does not match." });
-      setTimeout(() => setError(null), 10000);
+      setError({ ...error, conPass: "Password does not match." });
     }
   };
-  console.log(error);
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">

@@ -1,63 +1,116 @@
-// "use client";
-import InputWithLabel from "@/components/Shared/InputWithLabel";
-import React, { useState } from "react";
-import { IoMdDoneAll } from "react-icons/io";
+import React, { useState, ChangeEvent } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { FaPencil } from "react-icons/fa6";
+import InputWithLabel from "@/components/Shared/InputWithLabel";
+import { useRouter } from "next/navigation";
 
-const TableComponent = ({ selectedShowId, onSave, onRemove, onEdit, tags }) => {
-  const [tableData, setTableData] = useState({
-    quantity: "",
-    price: "",
-  });
-  const [selectedTag, setSelectedTag] = useState("");
-  const [dataSaved, setDataSaved] = useState(false);
-  const [numTables, setNumTables] = useState(1);
+interface Table {
+  ticketGroup: string;
+  quantity: string;
+  price: string;
+  showId: string;
+  createdById: string;
+}
 
-  const handleSave = async () => {
-    const userId = "clq511pdy0000op42iuzmwsej";
-    const response = await fetch("/api/ticketDetailsApi/insertTicketDetails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ticketGroup: selectedTag,
-        quantity: tableData.quantity,
-        price: tableData.price,
-        createdById: userId,
-        showId: selectedShowId,
-      }),
+interface TableComponentProps {
+  selectedShowId: string;
+  tags: string[];
+}
+
+const TableComponent: React.FC<TableComponentProps> = ({
+  selectedShowId,
+  tags,
+}) => {
+  const [tablesData, setTablesData] = useState<Table[]>([
+    { ticketGroup: "", quantity: "", price: "", showId: "", createdById: "" },
+  ]);
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }[]>(
+    []
+  );
+
+  const router = useRouter();
+
+  console.log(fieldErrors, "fieldErrors");
+  const userId = "clq511pdy0000op42iuzmwsej";
+
+  const handleRemove = (tableIndex: number) => {
+    setTablesData((prevData) => {
+      const newData = [...prevData];
+      newData.splice(tableIndex, 1);
+      return newData;
     });
 
-    if (response.ok) {
-      alert("data inserted successfully");
-      setDataSaved(true);
-    } else {
-      alert("data not inserted");
-    }
-  };
-
-  const handleRemove = async () => {
-    setTableData({
-      quantity: "",
-      price: "",
+    setFieldErrors((prevErrors) => {
+      const newErrors = prevErrors.filter(
+        (error) => error.index !== tableIndex
+      );
+      return newErrors;
     });
   };
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    tableIndex: number
+  ) => {
     const { name, value } = e.target;
 
-    const sanitizedValue = value.replace(/[^0-9]/g, "");
+    const sanitizedValue =
+      name === "ticketGroup" ? value : value.replace(/[^0-9]/g, "");
+    setTablesData((prevData) => {
+      const newData = [...prevData];
+      newData[tableIndex] = {
+        ...newData[tableIndex],
+        [name]: sanitizedValue,
+        showId: selectedShowId,
+        createdById: userId,
+      };
+      return newData;
+    });
+    setFieldErrors((prevErrors) => {
+      const newErrors = prevErrors
+        .filter(
+          (error) => !(error.index === tableIndex && error.field === name)
+        )
+        .concat({ index: tableIndex, field: name, message: "" });
 
-    setTableData((prevData) => ({
-      ...prevData,
-      [name]: sanitizedValue,
-    }));
+      return newErrors;
+    });
   };
 
   const handleAddTable = () => {
-    setNumTables((prevNum) => prevNum + 1);
+    setTablesData((prevData) => [
+      ...prevData,
+      { ticketGroup: "", quantity: "", price: "", showId: "", createdById: "" },
+    ]);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(
+        "/api/ticketDetailsApi/insertTicketDetails",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tablesData),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Tickets submitted successfully!");
+        router.push("/success");
+      } else {
+        const responseData = await response.json();
+
+        if (responseData.errors) {
+          setFieldErrors(responseData.errors);
+        } else {
+          console.error("Backend error:", responseData.error);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting tickets:", error);
+    }
   };
 
   return (
@@ -70,26 +123,25 @@ const TableComponent = ({ selectedShowId, onSave, onRemove, onEdit, tags }) => {
         Add +
       </button>
 
-      {/* Loop to render multiple tables */}
-      {Array.from({ length: numTables }).map((_, index) => (
-        <table key={index} className="w-full table-fixed">
-          <thead>
-            <tr>
-              <th className="w-1/4 px-2 py-2">Group</th>
-              <th className="w-1/4 px-2 py-2">Quantity</th>
-              <th className="w-1/4 px-2 py-2">Price</th>
-              <th className="w-1/4 px-2 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border px-2 py-2">
-                <div className="border px-2 py-2 mb-4 mt-2">
+      <table className="w-full table-fixed">
+        <thead>
+          <tr>
+            <th className="w-1/4 px-2 py-2">Group</th>
+            <th className="w-1/4 px-2 py-2">Quantity</th>
+            <th className="w-1/4 px-2 py-2">Price</th>
+            <th className="w-1/4 px-2 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tablesData.map((table, index) => (
+            <tr key={index}>
+              <td className="border py-2">
+                <div className=" px-1 py-2 mb-4 mt-2">
                   <select
-                    value={selectedTag}
-                    onChange={(e) => setSelectedTag(e.target.value)}
+                    name="ticketGroup"
+                    value={table.ticketGroup}
+                    onChange={(e) => handleChange(e, index)}
                     className="w-full rounded border px-1 py-1 text-sm transition duration-300 focus:border-blue-500 focus:outline-none"
-                    disabled={dataSaved}
                   >
                     <option value="">Select Ticket Group</option>
                     {tags &&
@@ -101,52 +153,70 @@ const TableComponent = ({ selectedShowId, onSave, onRemove, onEdit, tags }) => {
                   </select>
                 </div>
               </td>
-              <td className="border px-2 py-2">
+              <td className="border py-2">
                 <InputWithLabel
+                  id="quantity"
                   name="quantity"
                   type="text"
-                  value={tableData.quantity}
-                  onChange={handleChange}
+                  value={table.quantity}
+                  onChange={(e) => handleChange(e, index)}
                   inputMode="numeric"
                   className="w-full rounded border px-1 py-1 text-lg transition duration-300 focus:border-blue-500 focus:outline-none"
-                  readOnly={dataSaved}
                 />
+                {fieldErrors.map(
+                  (error, errorIndex) =>
+                    error.index === index &&
+                    error.field === "quantity" && (
+                      <p key={errorIndex} className="text-red-500 text-sm">
+                        {error.message}
+                      </p>
+                    )
+                )}
               </td>
-              <td className="border px-2 py-2 items-center">
+
+              <td className="border py-2 items-center">
                 <InputWithLabel
+                  id="price"
                   type="text"
                   name="price"
-                  value={tableData.price}
-                  onChange={handleChange}
+                  value={table.price}
+                  onChange={(e) => handleChange(e, index)}
                   className="h-10 w-full rounded-lg border px-2 text-gray-700"
                   inputMode="numeric"
-                  readOnly={dataSaved}
                 />
+                {fieldErrors.map(
+                  (error, errorIndex) =>
+                    error.index === index &&
+                    error.field === "price" && (
+                      <p key={errorIndex} className="text-red-500 text-sm">
+                        {error.message}
+                      </p>
+                    )
+                )}
               </td>
-              <td className="flex-col border px-2 py-2">
+
+              <td className="border px-2 py-2">
                 <button
-                  onClick={handleSave}
-                  className="w-10 my-1 ml-3 rounded bg-green-500 px-3 py-1 text-white hover:bg-green-700 flex items-center"
-                >
-                  <IoMdDoneAll className="mr-1" />
-                </button>
-                <button
-                  onClick={handleRemove}
-                  className=" rounded ml-3 bg-red-500 px-3 py-1 text-white hover:bg-red-700"
+                  onClick={() => handleRemove(index)}
+                  className="rounded ml-3 bg-red-500 px-3 m-1 text-white hover:bg-red-700"
                 >
                   <RxCross2 className="color-red" />
                 </button>
-                <button
-                  onClick={onEdit}
-                  className="rounded ml-3 bg-blue-500 px-3 py-1 text-white hover:bg-blue-700"
-                >
-                  <FaPencil />
-                </button>
               </td>
             </tr>
-          </tbody>
-        </table>
-      ))}
+          ))}
+        </tbody>
+      </table>
+
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="ml-48 rounded bg-blue-500 px-10 py-2 text-white hover:bg-blue-700"
+        >
+          Submit
+        </button>
+      </div>
     </div>
   );
 };
