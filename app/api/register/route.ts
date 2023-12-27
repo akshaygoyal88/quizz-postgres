@@ -3,6 +3,7 @@ import { hash } from "bcrypt";
 import validator from "validator";
 import { db } from "@/app/db";
 import { generateUniqueAlphanumericOTP } from "@/app/utils.";
+import { UserOtpType } from "@prisma/client";
 
 interface CreateUserRequestBody {
   email: string;
@@ -23,7 +24,8 @@ export async function POST(request: Request) {
   let data;
 
   try {
-    const { email, password, roleOfUser }: CreateUserRequestBody = await request.json();
+    const { email, password, roleOfUser }: CreateUserRequestBody =
+      await request.json();
 
     const userExist = await db.user.findUnique({
       where: { email },
@@ -45,6 +47,7 @@ export async function POST(request: Request) {
               otps: {
                 create: {
                   otp: newOtp,
+                  type: UserOtpType.REGISTRATION_OTP,
                 },
               },
             },
@@ -53,7 +56,7 @@ export async function POST(request: Request) {
         } else {
           error = {
             password:
-            "Password must be at least 8 characters./Include at least one lowercase letter./One uppercase letter, one number./One special character.",
+              "Password must be at least 8 characters./Include at least one lowercase letter./One uppercase letter, one number./One special character.",
           };
         }
       } else {
