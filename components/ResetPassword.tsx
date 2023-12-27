@@ -58,6 +58,31 @@ const ResetPassword = () => {
       const resetLink = `/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`;
       console.log("Reset link:", resetLink);
     }
+
+    try {
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: email,
+          subject: "Password Reset Link",
+          text: `Click the following link to reset your password: http://localhost:3000/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Password reset email sent successfully.");
+      } else {
+        console.error(
+          "Error sending password reset email:",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (

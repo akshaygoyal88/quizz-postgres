@@ -12,6 +12,7 @@
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@prisma/client": "^5.7.0",
+    "@sendgrid/mail": "^8.1.0",
     "@types/react-select": "^5.0.1",
     "@types/validator": "^13.11.7",
     "bcrypt": "^5.1.1",
