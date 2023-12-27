@@ -1,10 +1,13 @@
 import { db } from "@/app/db";
-import { request } from "http";
+import cron from "node-cron";
 
 export async function POST(req, res) {
   if (req.method === "POST") {
     try {
       const { userId, otp, type } = await req.json();
+
+      const expirationTime = new Date();
+      expirationTime.setMinutes(expirationTime.getMinutes() + 10);
 
       const existingUserOtp = await db.userOtp.findUnique({
         where: { userId },
@@ -13,7 +16,7 @@ export async function POST(req, res) {
       if (existingUserOtp) {
         const updatedUserOtp = await db.userOtp.update({
           where: { userId },
-          data: { otp, type },
+          data: { otp, type, expirationTime },
         });
 
         return new Response(JSON.stringify({ updatedUserOtp }), {
@@ -24,7 +27,7 @@ export async function POST(req, res) {
         });
       } else {
         const newUserOtp = await db.userOtp.create({
-          data: { userId, otp, type },
+          data: { userId, otp, type, expirationTime },
         });
 
         return new Response(JSON.stringify({ newUserOtp }), {
@@ -57,3 +60,19 @@ export async function POST(req, res) {
     });
   }
 }
+
+cron.schedule("* * * * *", async () => {
+  try {
+    const currentDateTime = new Date();
+    await db.userOtp.deleteMany({
+      where: {
+        expirationTime: {
+          lt: currentDateTime,
+        },
+      },
+    });
+    console.log("Expired tokens cleaned up successfully.");
+  } catch (error) {
+    console.error("Error cleaning up expired tokens:", error);
+  }
+});

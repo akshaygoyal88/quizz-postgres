@@ -42,12 +42,13 @@ model User {
 }
 
 model UserOtp {
-  id        String      @id @default(cuid())
-  user      User        @relation(fields: [userId], references: [id])
-  userId    String      @unique
-  otp       String?
-  type      UserOtpType
-  createdAt DateTime    @default(now()) @map(name: "created_at")
+  id             String      @id @default(cuid())
+  user           User        @relation(fields: [userId], references: [id])
+  userId         String      @unique
+  otp            String?
+  type           UserOtpType
+  createdAt      DateTime    @default(now()) @map(name: "created_at")
+  expirationTime DateTime?
 }
 
 enum UserOtpType {

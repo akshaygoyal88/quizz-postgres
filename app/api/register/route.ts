@@ -4,6 +4,7 @@ import validator from "validator";
 import { db } from "@/app/db";
 import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 import { UserOtpType } from "@prisma/client";
+import cron from "node-cron";
 
 interface CreateUserRequestBody {
   email: string;
@@ -27,6 +28,9 @@ export async function POST(request: Request) {
     const { email, password, roleOfUser }: CreateUserRequestBody =
       await request.json();
 
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+
     const userExist = await db.user.findUnique({
       where: { email },
     });
@@ -48,6 +52,7 @@ export async function POST(request: Request) {
                 create: {
                   otp: newOtp,
                   type: UserOtpType.REGISTRATION_OTP,
+                  expirationTime: expirationTime,
                 },
               },
             },
@@ -69,3 +74,19 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ error, data });
 }
+
+cron.schedule("* * * * *", async () => {
+  try {
+    const currentDateTime = new Date();
+    await db.userOtp.deleteMany({
+      where: {
+        expirationTime: {
+          lt: currentDateTime,
+        },
+      },
+    });
+    console.log("Expired tokens cleaned up successfully.");
+  } catch (error) {
+    console.error("Error cleaning up expired tokens:", error);
+  }
+});
