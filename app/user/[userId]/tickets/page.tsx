@@ -3,9 +3,9 @@
 import TicketClassification from "@/components/Show/TicketClassification";
 import React, { useEffect, useState } from "react";
 
-const Page = () => {
+const Page = ({ params }: { params: any }) => {
   const [fetchedShowData, setFetchedShowData] = useState<[]>();
-  const userId = "clq511pdy0000op42iuzmwsej";
+  const userId = params.userId;
   const fetchShowInformation = async () => {
     try {
       const response = await fetch(
@@ -36,7 +36,7 @@ const Page = () => {
 
   return (
     <div>
-      <TicketClassification fetchedShowData={fetchedShowData} />
+      <TicketClassification userId={userId} fetchedShowData={fetchedShowData} />
     </div>
   );
 };

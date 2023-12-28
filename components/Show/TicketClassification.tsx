@@ -1,8 +1,9 @@
 "use strict";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import TagInput from "../Shared/TagInputs";
 import TableComponent from "./TableComponent";
+import { useRouter } from "next/navigation";
 
 interface ShowData {
   showName: string;
@@ -24,6 +25,18 @@ const TicketClassification: React.FC<TicketClassificationProps> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const router = useRouter();
+
+  const profileCompleted = async () => {
+    const res = await fetch("/api/getProfileCompleted/");
+    const isProfileCompleted = await res.json();
+    if (!isProfileCompleted) {
+      router.push("/profile");
+    }
+  };
+  useEffect(() => {
+    profileCompleted();
+  }, []);
 
   const handleDropdownChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedShowId: string = e.target.value;
