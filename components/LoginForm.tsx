@@ -131,6 +131,15 @@ export default function LoginForm() {
                 Register
               </Link>
             </p>
+
+            <div className="flex justify-center">
+              <Link
+                href="/reset-password"
+                className="text-blue-500 font-semibold underline"
+              >
+                Forget password
+              </Link>
+            </div>
           </div>
         </div>
       </div>

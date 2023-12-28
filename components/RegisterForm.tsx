@@ -4,6 +4,7 @@ import React, { FormEvent, useState } from "react";
 import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { UserRole } from "@prisma/client";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");
@@ -16,6 +17,7 @@ export default function RegisterForm() {
     conPass?: string;
     final?: string;
   } | null>(null);
+  const [roleOfUser, setRoleOfUser] = useState<string>(UserRole.USER);
 
   const router = useRouter();
 
@@ -46,7 +48,7 @@ export default function RegisterForm() {
         body: JSON.stringify({
           email: email,
           password: password,
-          roleOfUser: "USER",
+          roleOfUser: roleOfUser,
         }),
       });
       console.log(response);
@@ -132,13 +134,25 @@ export default function RegisterForm() {
                 onChange={conPasswordChangeHandler}
                 errors={error?.conPass}
               />
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Register
-                </button>
+              <div className="flex">
+                <div className="flex-1 mx-2">
+                  <button
+                    type="submit"
+                    onClick={() => setRoleOfUser(UserRole.USER)}
+                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Register as user
+                  </button>
+                </div>
+                <div className="flex-1 mx-2">
+                  <button
+                    type="submit"
+                    onClick={() => setRoleOfUser(UserRole.ADMIN)}
+                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Register as admin
+                  </button>
+                </div>
               </div>
             </form>
             <p className="mt-4 flex align-middle justify-center">
