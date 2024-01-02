@@ -96,8 +96,8 @@ model Tickets {
 }
 
 model QuestionSet {
-  id          Int        @id @default(autoincrement())
-  set_name    String
+  id          String     @id @default(cuid())
+  name        String
   description String?
   questions   Question[] @relation("QuestionInSet")
 }
@@ -109,7 +109,7 @@ enum QuestionType {
 
 model Question {
   id                     Int                     @id @default(autoincrement())
-  text                   String
+  question_text          String
   type                   QuestionType // "objective" or "subjective"
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
   subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
