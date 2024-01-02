@@ -105,7 +105,7 @@ model Tickets {
 
 model QuestionSet {
   id          Int        @id @default(autoincrement())
-  name        String
+  set_name    String
   description String?
   questions   Question[] @relation("QuestionInSet")
 }

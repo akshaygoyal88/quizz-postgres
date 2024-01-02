@@ -36,7 +36,7 @@ const AddSubjectiveQues = () => {
         type: type,
       };
 
-      const response = await fetch("/api/saveSubjective", {
+      const response = await fetch("/api/quiz/save-subjective", {
         method: "POST",
         body: JSON.stringify(requestData),
         headers: {

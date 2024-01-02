@@ -46,7 +46,7 @@ function AddObjective() {
 
     try {
       //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch("/api/saveObjective", {
+      const response = await fetch("/api/quiz/save-objective", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
