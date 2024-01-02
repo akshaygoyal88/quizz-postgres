@@ -1,200 +1,262 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+"use client";
+import { useRouter } from "next/navigation";
+// import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import InputWithLabel from "./Shared/InputWithLabel";
+import { FormEvent, useEffect, useState } from "react";
+import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
+import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
-export default function Example() {
+interface UserEmail {
+  email?: string;
+}
+
+interface UserData {
+  pincode: string;
+  state: string;
+  city: string;
+  country: string;
+  email?: string;
+  mobile_number?: string;
+  first_name?: string;
+  last_name?: string;
+  address?: string;
+}
+
+interface FormErrors {
+  mobile_number?: string;
+  pincode?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  // Add other error fields as needed
+}
+
+export default function Profile({ email }: UserEmail) {
+  const [userData, setUserData] = useState<UserData>({});
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
+  const [state, setState] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [pincode, setPincode] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [error, setError] = useState<FormErrors>({});
+  const router = useRouter();
+  const [success, setSuccess] = useState(false);
+
+  const addressChange = (e: FormEvent) => {
+    setAddress((e.target as HTMLInputElement).value);
+  };
+  const cityChange = (e: FormEvent) => {
+    delete error.city;
+    setCity((e.target as HTMLInputElement).value);
+  };
+  const pincodeChange = (e: FormEvent) => {
+    if (error) setError({});
+    if (!Number((e.target as HTMLInputElement).value)) {
+      setPincode("");
+      setError({ pincode: "Zipcode should be number." });
+      setTimeout(() => {
+        setError({});
+      }, 15000);
+    } else {
+      setPincode((e.target as HTMLInputElement).value);
+    }
+  };
+  const firstNameChange = (e: FormEvent) => {
+    setFirstName((e.target as HTMLInputElement).value);
+  };
+  const lastNameChange = (e: FormEvent) => {
+    setLastName((e.target as HTMLInputElement).value);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    delete error.mobile_number;
+    if (value) {
+      const parsedPhoneNumber = parsePhoneNumber(value);
+      if (parsedPhoneNumber && parsedPhoneNumber.nationalNumber.length >= 11) {
+        setError({
+          mobile_number: "Phone number should not more than 10 digits",
+        });
+      }
+    }
+    setPhoneNumber(value);
+  };
+
+  const getUserData = async () => {
+    try {
+      const res = await fetch("/api/user/", {
+        method: "GET",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUserData({ ...data });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    setPhoneNumber(userData.mobile_number || "");
+    setFirstName(userData.first_name || "");
+    setLastName(userData.last_name || "");
+    setAddress(userData.address || "");
+    setCountry(userData.country || "");
+    setCity(userData.city || "");
+    setState(userData.state || "");
+    setPincode(userData.pincode || "");
+  }, [userData]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    // const parsedPhoneNumber = phoneNumber && parsePhoneNumber(phoneNumber);
+    // if (!parsedPhoneNumber || parsedPhoneNumber.nationalNumber.length < 10) {
+    //   setError("Phone number should not be less than 10 digits");
+    //   setTimeout(() => setError(""), 10000);
+    //   return;
+    // }
+
+    const setValues = async () => {
+      let updatedUserNewData = {};
+
+      if (phoneNumber) {
+        updatedUserNewData = {
+          ...updatedUserNewData,
+          mobile_number: phoneNumber,
+        };
+      }
+      if (firstName) {
+        updatedUserNewData = { ...updatedUserNewData, first_name: firstName };
+      }
+      if (lastName) {
+        updatedUserNewData = { ...updatedUserNewData, last_name: lastName };
+      }
+      if (address) {
+        updatedUserNewData = { ...updatedUserNewData, address };
+      }
+      if (country) {
+        updatedUserNewData = { ...updatedUserNewData, country: country };
+      }
+      if (state) {
+        updatedUserNewData = { ...updatedUserNewData, state };
+      }
+      if (city) {
+        updatedUserNewData = { ...updatedUserNewData, city };
+      }
+      if (pincode) {
+        updatedUserNewData = { ...updatedUserNewData, pincode };
+      }
+      return updatedUserNewData;
+    };
+
+    const updatedData = await setValues();
+    try {
+      const res = await fetch("/api/updateProfile", {
+        method: "PUT",
+        body: JSON.stringify({ ...updatedData }),
+      });
+
+      if (res.ok) {
+        const resData = await res.json();
+        if (resData.error) {
+          setError(resData.error);
+          // setTimeout(() => setError({}), 10000);
+          return;
+        }
+        router.refresh();
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+        }, 10000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <form>
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 flex flex-col items-center justify-center"
+    >
       <div className="space-y-12">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
-          <div>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Profile
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              This information will be displayed publicly so be careful what you
-              share.
-            </p>
-          </div>
+        <h1 className="font-bold text-2xl">Profile</h1>
+        {success && <p className="text-green-500">Succesfully saved.</p>}
 
-          <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="website"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Website
-              </label>
-              <div className="mt-2">
-                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                  <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-                    http://
-                  </span>
-                  <input
-                    type="text"
-                    name="website"
-                    id="website"
-                    className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="www.example.com"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="about"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                About
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="about"
-                  name="about"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={""}
-                />
-              </div>
-              <p className="mt-3 text-sm leading-6 text-gray-600">
-                Write a few sentences about yourself.
-              </p>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="photo"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Photo
-              </label>
-              <div className="mt-2 flex items-center gap-x-3">
-                <UserCircleIcon
-                  className="h-12 w-12 text-gray-300"
-                  aria-hidden="true"
-                />
-                <button
-                  type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  Change
-                </button>
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="cover-photo"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Cover photo
-              </label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
-                  <PhotoIcon
-                    className="mx-auto h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Upload a file</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        className="sr-only"
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
-          <div>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Personal Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
-            </p>
-          </div>
-
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-2">
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
             <div className="sm:col-span-3">
-              <label
-                htmlFor="first-name"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                First name
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="first-name"
-                  id="first-name"
-                  autoComplete="given-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <InputWithLabel
+                label="First name"
+                type="text"
+                name="first-name"
+                id="first-name"
+                // autoComplete="given-name"
+                value={firstName}
+                defaultValue={undefined}
+                onChange={firstNameChange}
+                className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div className="sm:col-span-3">
+              <InputWithLabel
+                label="Last name"
+                type="text"
+                name="last-name"
+                id="last-name"
+                // autoComplete="family-name"
+                value={lastName}
+                defaultValue={undefined}
+                onChange={lastNameChange}
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <InputWithLabel
+                label="Email"
+                id="email"
+                name="email"
+                type="email"
+                // autoComplete="email"
+                disabled={true}
+                value={email}
+                defaultValue={undefined}
+                impAsterisk="*"
+                className="block p-3 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
             </div>
 
             <div className="sm:col-span-3">
               <label
-                htmlFor="last-name"
+                htmlFor="phone"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Last name
+                <span className="text-red-500">*</span>Phone Number
               </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="last-name"
-                  id="last-name"
-                  autoComplete="family-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              <div className="block pl-3 w-full rounded-md border-0 pr-0.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <PhoneInput
+                  international
+                  defaultCountry="IN"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  className="input-field w-full py-1.5 h-full flex-1"
+                  limitMaxLength
                 />
               </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              {error.mobile_number && (
+                <li className="w-full text-xs text-red-600">
+                  {error.mobile_number}
+                </li>
+              )}
             </div>
 
             <div className="sm:col-span-3">
@@ -202,235 +264,92 @@ export default function Example() {
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Country
+                <span className="text-red-500">*</span>Country
               </label>
-              <div className="mt-2">
-                <select
-                  id="country"
-                  name="country"
-                  autoComplete="country-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>Mexico</option>
-                </select>
-              </div>
+              <CountryDropdown
+                id="country"
+                name="country"
+                value={country}
+                onChange={(val) => setCountry(val)}
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+              />
+              {error.country && (
+                <li className="w-full text-xs text-red-600">{error.country}</li>
+              )}
             </div>
 
-            <div className="col-span-full">
-              <label
-                htmlFor="street-address"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Street address
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="street-address"
-                  id="street-address"
-                  autoComplete="street-address"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2 sm:col-start-1">
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                City
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  autoComplete="address-level2"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="region"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                State / Province
+                <span className="text-red-500">*</span>State / Province
               </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="region"
-                  id="region"
-                  autoComplete="address-level1"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+              <RegionDropdown
+                country={country}
+                value={state}
+                onChange={(val) => setState(val)}
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+              />
+              {error.state && (
+                <li className="w-full text-xs text-red-600">{error.state}</li>
+              )}
             </div>
 
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal-code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Postal code
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="postal-code"
-                  id="postal-code"
-                  autoComplete="postal-code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
+            <div className="sm:col-span-3 sm:col-start-1">
+              <InputWithLabel
+                label="City"
+                type="text"
+                name="city"
+                id="city"
+                value={city}
+                // autoComplete="address-level2"
+                onChange={cityChange}
+                defaultValue={undefined}
+                errors={error.city}
+                impAsterisk="*"
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
             </div>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
-          <div>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Notifications
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              We'll always let you know about important changes, but you pick
-              what else you want to hear about.
-            </p>
-          </div>
-
-          <div className="max-w-2xl space-y-10 md:col-span-2">
-            <fieldset>
-              <legend className="text-sm font-semibold leading-6 text-gray-900">
-                By Email
-              </legend>
-              <div className="mt-6 space-y-6">
-                <div className="relative flex gap-x-3">
-                  <div className="flex h-6 items-center">
-                    <input
-                      id="comments"
-                      name="comments"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                  </div>
-                  <div className="text-sm leading-6">
-                    <label
-                      htmlFor="comments"
-                      className="font-medium text-gray-900"
-                    >
-                      Comments
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when someones posts a comment on a posting.
-                    </p>
-                  </div>
-                </div>
-                <div className="relative flex gap-x-3">
-                  <div className="flex h-6 items-center">
-                    <input
-                      id="candidates"
-                      name="candidates"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                  </div>
-                  <div className="text-sm leading-6">
-                    <label
-                      htmlFor="candidates"
-                      className="font-medium text-gray-900"
-                    >
-                      Candidates
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when a candidate applies for a job.
-                    </p>
-                  </div>
-                </div>
-                <div className="relative flex gap-x-3">
-                  <div className="flex h-6 items-center">
-                    <input
-                      id="offers"
-                      name="offers"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                  </div>
-                  <div className="text-sm leading-6">
-                    <label
-                      htmlFor="offers"
-                      className="font-medium text-gray-900"
-                    >
-                      Offers
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when a candidate accepts or rejects an offer.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend className="text-sm font-semibold leading-6 text-gray-900">
-                Push Notifications
-              </legend>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                These are delivered via SMS to your mobile phone.
-              </p>
-              <div className="mt-6 space-y-6">
-                <div className="flex items-center gap-x-3">
-                  <input
-                    id="push-everything"
-                    name="push-notifications"
-                    type="radio"
-                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  />
-                  <label
-                    htmlFor="push-everything"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Everything
-                  </label>
-                </div>
-                <div className="flex items-center gap-x-3">
-                  <input
-                    id="push-email"
-                    name="push-notifications"
-                    type="radio"
-                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  />
-                  <label
-                    htmlFor="push-email"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Same as email
-                  </label>
-                </div>
-                <div className="flex items-center gap-x-3">
-                  <input
-                    id="push-nothing"
-                    name="push-notifications"
-                    type="radio"
-                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  />
-                  <label
-                    htmlFor="push-nothing"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    No push notifications
-                  </label>
-                </div>
-              </div>
-            </fieldset>
+            <div className="sm:col-span-3">
+              <InputWithLabel
+                label="ZIP / Postal code"
+                type="number"
+                name="postal-code"
+                id="postal-code"
+                value={pincode}
+                onChange={pincodeChange}
+                defaultValue={undefined}
+                errors={
+                  // (typeof error === "string" && error?.includes("6")) ||
+                  // (typeof error === "string" && error?.includes("Zipcode"))
+                  //   ? error
+                  //   : undefined
+                  error.pincode
+                }
+                impAsterisk="*"
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div className="col-span-full">
+              <InputWithLabel
+                label="Street address"
+                type="text"
+                name="street-address"
+                id="street-address"
+                value={address}
+                onChange={addressChange}
+                // autoComplete="street-address"
+                defaultValue={undefined}
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-end gap-x-6">
+      <div className="mt-6 flex items-center justify-center gap-x-6 ">
         <button
           type="button"
           className="text-sm font-semibold leading-6 text-gray-900"

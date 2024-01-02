@@ -1,5 +1,0 @@
-{
-  "/show/ticketclassification/page": "app/show/ticketclassification/page.js",
-  "/api/showDetailsApi/getShowDetails/route": "app/api/showDetailsApi/getShowDetails/route.js",
-  "/api/ticketDetailsApi/insertTicketDetails/route": "app/api/ticketDetailsApi/insertTicketDetails/route.js"
-}

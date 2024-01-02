@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum UserRole {
   USER
   ADMIN
 }
@@ -21,7 +21,7 @@ model User {
   last_name         String?
   email             String?   @unique
   password          String
-  role              Role?     @default(USER)
+  role              UserRole? @default(USER)
   isVerified        Boolean   @default(false)
   isActive          Boolean   @default(false)
   createdAt         DateTime  @default(now()) @map(name: "created_at")
@@ -35,20 +35,24 @@ model User {
   profile_pic       String?
   isProfileComplete Boolean   @default(false)
   otps              UserOtp[]
-  createdShows      Show[] 
+  createdShows      Show[]
   ticket            Tickets[]
-  
-  @@map(name: "users")
 }
 
 model UserOtp {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
-  otp       String?
-  createdAt DateTime @default(now()) @map(name: "created_at")
+  id             String      @id @default(cuid())
+  user           User        @relation(fields: [userId], references: [id])
+  userId         String      @unique
+  otp            String?
+  type           UserOtpType
+  createdAt      DateTime    @default(now()) @map(name: "created_at")
+  expirationTime DateTime?
 }
 
+enum UserOtpType {
+  REGISTRATION_OTP
+  RESET_TOKEN
+}
 
 enum ShowMode {
   ONLINE
@@ -57,43 +61,36 @@ enum ShowMode {
 }
 
 model Show {
-  id                   String      @id @default(cuid())
+  id                   String        @id @default(cuid())
   showName             String
   showType             String
   showMode             ShowMode
   showStartDateAndTime DateTime
   showEndDateAndTime   DateTime?
   noOfTickets          Int
-  createdBy            User        @relation(fields: [createdById], references: [id])
+  createdBy            User          @relation(fields: [createdById], references: [id])
   createdById          String
-  createdAt            DateTime    @default(now()) @map(name: "created_at")
+  createdAt            DateTime      @default(now()) @map(name: "created_at")
   TicketGroup          TicketGroup[]
   Tickets              Tickets[]
-
-  @@map(name: "showDetails")
 }
 
 model TicketGroup {
-  id              String     @id @default(cuid())
-  ticketGroup     String
-  showId          String
-  show            Show @relation(fields: [showId], references: [id])
-  SeatZoneNumber  Int?
-
-  @@map(name: "showTickets")
+  id             String @id @default(cuid())
+  ticketGroup    String
+  showId         String
+  show           Show   @relation(fields: [showId], references: [id])
+  SeatZoneNumber Int?
 }
 
-
 model Tickets {
-  id              String   @id @default(cuid())
-  showId          String?
-  show            Show ? @relation(fields: [showId], references: [id])
-  ticketGroup     String?
-  quantity        Int
-  price           Int
-  description     String?    @db.LongText
-  createdBy       User      @relation(fields: [createdById], references: [id])
-  createdById     String       
-
-  @@map(name: "Tickets")
+  id          String  @id @default(cuid())
+  showId      String?
+  show        Show?   @relation(fields: [showId], references: [id])
+  ticketGroup String?
+  quantity    Int
+  price       Int
+  description String? @db.LongText
+  createdBy   User    @relation(fields: [createdById], references: [id])
+  createdById String
 }
