@@ -42,10 +42,10 @@ export async function POST(req, res) {
       });
 
     //   res.status(201).json(savedQuestion);
-    return  new NextResponse({ savedQuestion })
+    return  NextResponse.json( savedQuestion )
     } catch (error) {
       console.error('Error:', error);
-      return  new NextResponse({ error })
+      return NextResponse.json( error )
 
     //   res.status(500).json({ error: 'Internal Server Error' });
     } 

@@ -7,7 +7,7 @@ const AddSubjectiveQues = () => {
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
-  const type = "subjective";
+  const type = "SUBJECTIVE";
 
   const handleQuestionChange = (e: any) => {
     setQuestion(e.target.value);

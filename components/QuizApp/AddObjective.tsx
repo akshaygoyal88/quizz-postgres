@@ -8,7 +8,7 @@ function AddObjective() {
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [validationError, setValidationError] = useState("");
-  const type = "objective";
+  const type = "OBJECTIVE";
 
   const handleOptionChange = (index: any) => {
     setCorrectAnswer(index);
