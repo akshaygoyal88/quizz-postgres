@@ -76,4 +76,5 @@ export async function GET() {
       return NextResponse.json(userData);
     }
   }
+  return NextResponse.json({});
 }

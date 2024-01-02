@@ -108,15 +108,15 @@ enum QuestionType {
 }
 
 model Question {
-  id                Int                @id @default(autoincrement())
-  text              String
-  type              QuestionType // "objective" or "subjective"
-  objectiveAnswers  ObjectiveAnswer[]  @relation("QuestionToAnswer")
-  subjectiveAnswers SubjectiveAnswer[] @relation("SubjectiveQuestionToAnswer")
-  questionSets      QuestionSet[]      @relation("QuestionInSet")
+  id                     Int                     @id @default(autoincrement())
+  text                   String
+  type                   QuestionType // "objective" or "subjective"
+  objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
+  subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
+  questionSets           QuestionSet[]           @relation("QuestionInSet")
 }
 
-model ObjectiveAnswer {
+model ObjectiveOptions {
   id         Int      @id @default(autoincrement())
   text       String
   isCorrect  Boolean
@@ -124,7 +124,7 @@ model ObjectiveAnswer {
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
-model SubjectiveAnswer {
+model SubjectiveDescription {
   id          Int      @id @default(autoincrement())
   problem     String   @db.LongText
   description String   @db.LongText

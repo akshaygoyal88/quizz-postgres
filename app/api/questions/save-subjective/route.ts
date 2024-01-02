@@ -4,7 +4,7 @@ import { db } from "@/app/db";
 import { NextResponse } from "next/server";
 
 
-export async function POST(req, res) {
+export async function POST(req: { json: () => PromiseLike<{ question: any; description: any; type: any; }> | { question: any; description: any; type: any; }; }, res: any) {
 
 
 

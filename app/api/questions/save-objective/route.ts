@@ -35,9 +35,6 @@ export async function POST(req: any, res: any) {
           },
         },
       });
-  
-      console.log("Created Question:", createdQuestion);
-  
       // Disconnect from the database after operations
       await db.$disconnect();
   
