@@ -93,7 +93,6 @@ model Tickets {
   description String? @db.LongText
   createdBy   User    @relation(fields: [createdById], references: [id])
   createdById String
-<<<<<<< HEAD
 }
 
 model QuestionSet {
@@ -131,6 +130,4 @@ model SubjectiveDescription {
   description String   @db.LongText
   questionId  Int
   question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
-=======
->>>>>>> dev
 }
