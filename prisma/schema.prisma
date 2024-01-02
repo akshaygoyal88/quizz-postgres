@@ -37,8 +37,6 @@ model User {
   otps              UserOtp[]
   createdShows      Show[]
   ticket            Tickets[]
-
-  @@map(name: "users")
 }
 
 model UserOtp {
@@ -75,8 +73,6 @@ model Show {
   createdAt            DateTime      @default(now()) @map(name: "created_at")
   TicketGroup          TicketGroup[]
   Tickets              Tickets[]
-
-  @@map(name: "showDetails")
 }
 
 model TicketGroup {
@@ -85,8 +81,6 @@ model TicketGroup {
   showId         String
   show           Show   @relation(fields: [showId], references: [id])
   SeatZoneNumber Int?
-
-  @@map(name: "showTickets")
 }
 
 model Tickets {
@@ -99,6 +93,4 @@ model Tickets {
   description String? @db.LongText
   createdBy   User    @relation(fields: [createdById], references: [id])
   createdById String
-
-  @@map(name: "Tickets")
 }
