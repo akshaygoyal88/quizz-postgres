@@ -29,6 +29,8 @@ const TableComponent: React.FC<TableComponentProps> = ({
     []
   );
 
+  console.log(tablesData, "selected");
+
   const [userDetails, setUserDetails] = useState();
   const router = useRouter();
 
@@ -96,16 +98,13 @@ const TableComponent: React.FC<TableComponentProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(
-        "/api/ticketDetailsApi/insertTicketDetails",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(tablesData),
-        }
-      );
+      const response = await fetch("/api/ticket", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tablesData),
+      });
 
       if (response.ok) {
         console.log("Tickets submitted successfully!");

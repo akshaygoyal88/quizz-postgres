@@ -71,7 +71,7 @@ export default function TicketsUI() {
       if (userDetails) {
         const userId = userDetails.id;
         const res = await fetch(
-          `/api/ticketDetailsApi/getTicktetDetails?userId=${userId}&page=${page}&pageSize=9`
+          `/api/ticket?userId=${userId}&page=${page}&pageSize=9`
         );
 
         if (res.ok) {

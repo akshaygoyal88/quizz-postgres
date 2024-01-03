@@ -18,10 +18,12 @@ interface ShowData {
 
 interface TicketClassificationProps {
   fetchedShowData: ShowData[];
+  userId: string;
 }
 
 const TicketClassification: React.FC<TicketClassificationProps> = ({
   fetchedShowData,
+  userId,
 }) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
@@ -71,7 +73,11 @@ const TicketClassification: React.FC<TicketClassificationProps> = ({
         </div>
       </div>
       <div>
-        <TableComponent selectedShowId={selectedOption} tags={tags} />
+        <TableComponent
+          selectedShowId={selectedOption}
+          tags={tags}
+          userId={userId}
+        />
       </div>
     </div>
   );

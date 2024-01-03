@@ -37,6 +37,7 @@ model User {
   otps              UserOtp[]
   createdShows      Show[]
   ticket            Tickets[]
+  token             String?
 }
 
 model UserOtp {
@@ -61,18 +62,18 @@ enum ShowMode {
 }
 
 model Show {
-  id                   String        @id @default(cuid())
-  showName             String
-  showType             String
-  showMode             ShowMode
-  showStartDateAndTime DateTime
-  showEndDateAndTime   DateTime?
-  noOfTickets          Int
-  createdBy            User          @relation(fields: [createdById], references: [id])
-  createdById          String
-  createdAt            DateTime      @default(now()) @map(name: "created_at")
-  TicketGroup          TicketGroup[]
-  Tickets              Tickets[]
+  id               String        @id @default(cuid())
+  Name             String
+  Type             String
+  Mode             ShowMode
+  StartDateAndTime DateTime
+  EndDateAndTime   DateTime?
+  noOfTickets      Int
+  createdBy        User          @relation(fields: [createdById], references: [id])
+  createdById      String
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  TicketGroup      TicketGroup[]
+  Tickets          Tickets[]
 }
 
 model TicketGroup {
