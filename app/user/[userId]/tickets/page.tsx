@@ -8,15 +8,12 @@ const Page = ({ params }: { params: any }) => {
   const userId = params.userId;
   const fetchShowInformation = async () => {
     try {
-      const response = await fetch(
-        `/api/showDetailsApi/getShowDetails?userId=${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`/api/show?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       console.log(response);
 
       if (response.ok) {

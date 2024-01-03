@@ -18,7 +18,7 @@ const ResetPassword = () => {
     let userId;
 
     try {
-      const response = await fetch(`/api/getUserByEmail?email=${email}`);
+      const response = await fetch(`/api/useremail?email=${email}`);
 
       if (response.ok) {
         const result = await response.json();

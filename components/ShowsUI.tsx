@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ShowCard from "./Shared/ShowCard";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Pagination from "./Shared/Pagination";
 import { useRouter } from "next/navigation";
 
@@ -71,7 +70,7 @@ export default function ShowsUI() {
       if (userDetails) {
         const userId = userDetails.id;
         const res = await fetch(
-          `/api/showDetailsApi/getShowDetails?userId=${userId}&page=${page}&pageSize=9`
+          `/api/show?userId=${userId}&page=${page}&pageSize=9`
         );
 
         if (res.ok) {
