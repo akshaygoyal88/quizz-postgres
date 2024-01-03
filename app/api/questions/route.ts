@@ -20,7 +20,7 @@ export async function POST(req: any, res: any) {
       correctAnswer,
       description,
     } = await req.json();
-    console.log(question_text, type, questionSet, options, correctAnswer);
+    // console.log(question_text, type, questionSet, options, correctAnswer);
 
     if (!questionSet) {
       return NextResponse.json({ error: "Please provide question set." });
@@ -29,6 +29,8 @@ export async function POST(req: any, res: any) {
     const setsAvailable = await db.questionSet.findMany();
 
     const setDetail = setsAvailable.filter((set) => set.name == questionSet);
+
+    console.log(setDetail)
 
     if (setDetail.length == 0) {
       return NextResponse.json({
