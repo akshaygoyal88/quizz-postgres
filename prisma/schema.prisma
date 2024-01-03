@@ -95,3 +95,40 @@ model Tickets {
   createdBy   User    @relation(fields: [createdById], references: [id])
   createdById String
 }
+
+model QuestionSet {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  questions   Question[] @relation("QuestionInSet")
+}
+
+enum QuestionType {
+  OBJECTIVE
+  SUBJECTIVE
+}
+
+model Question {
+  id                     Int                     @id @default(autoincrement())
+  question_text          String
+  type                   QuestionType // "objective" or "subjective"
+  objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
+  subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
+  questionSets           QuestionSet[]           @relation("QuestionInSet")
+}
+
+model ObjectiveOptions {
+  id         Int      @id @default(autoincrement())
+  text       String
+  isCorrect  Boolean
+  questionId Int
+  question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
+}
+
+model SubjectiveDescription {
+  id          Int      @id @default(autoincrement())
+  problem     String   @db.LongText
+  description String   @db.LongText
+  questionId  Int
+  question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
+}
