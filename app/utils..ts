@@ -45,14 +45,19 @@ export function generateUniqueAlphanumericOTP(length: number): string {
 //   }
 // };
 
-export async function getUserByEmail(email) {
-  console.log(email, "email in utils");
-  try {
-    const response = await fetch(`/api/getUserByEmail?email=${email}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching user by email:", error);
-    throw new Error("Failed to fetch user details");
-  }
+interface ResponseData {
+  [key: string]: any;
+}
+
+export function returnResponse(
+  data: ResponseData,
+  statusCode: number,
+  contentType: string
+): Response {
+  return new Response(JSON.stringify(data), {
+    status: statusCode,
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
 }
