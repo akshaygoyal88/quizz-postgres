@@ -1,34 +1,15 @@
 "use client";
-import { Session } from "next-auth";
-import { signOut } from "next-auth/react";
+
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-interface UserData {
-  id: string;
-}
-
-export default function Navigation({ session }: { session: Session | null }) {
+export default function Navigation() {
   const router = useRouter();
 
-  const [userDetails, setUserDetails] = useState<UserData>();
+  const ses = useSession();
 
-  const getUserData = async () => {
-    try {
-      const userData = await app.service.user.getUserData();
-      setUserDetails({ ...userData });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getUserData();
-  }, []);
-  console.log(userDetails);
-
-  const userId = userDetails?.id;
+  const userId = ses?.data?.id;
 
   return (
     <div className="bg-gray-800 p-4 flex items-center justify-between">
@@ -43,29 +24,29 @@ export default function Navigation({ session }: { session: Session | null }) {
         <Link href="/shows" className="text-white">
           Shows
         </Link>
-        {session && (
-          <Link href={`/user/${userId}/show`} className="text-white">
+        {ses.data && (
+          <Link href={`/admin/${userId}/show`} className="text-white">
             Add Show
           </Link>
         )}
-        {session && (
-          <Link href={`/user/${userId}/tickets`} className="text-white">
+        {ses.data && (
+          <Link href={`/admin/${userId}/tickets`} className="text-white">
             Add Ticket
           </Link>
         )}
 
-        {session && (
+        {ses.data && (
           <Link href="/dashboard" className="text-white">
             Dashboard
           </Link>
         )}
-        {session && (
+        {ses.data && (
           <Link href="/profile" className="text-white">
             Profile
           </Link>
         )}
       </div>
-      {session ? (
+      {ses.data ? (
         <button
           onClick={() => signOut()}
           className="bg-red-500 text-white px-4 py-2 rounded"
