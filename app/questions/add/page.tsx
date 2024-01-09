@@ -1,6 +1,6 @@
-import AddObjective from "@/components/QuizApp/AddObjective";
+import AddQuestionUI from "@/components/QuizApp/AddQuestionUI";
 import React from "react";
 
 export default function QuestionsAdd() {
-  return <AddObjective />;
+  return <AddQuestionUI />;
 }
