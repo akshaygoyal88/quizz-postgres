@@ -1,5 +1,18 @@
 import { db } from "@/app/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+
+export async function GET(req:any, {params}) {
+
+  const id = params.id
+
+  const setData = await db.questionSet.findUnique({
+    where: {id}
+  })
+
+  console.log("setdata>>>>>>",setData)
+  return NextResponse.json( setData );
+}
 
 export async function DELETE(req: any, res: any) {
     let err;
@@ -57,4 +70,6 @@ export async function DELETE(req: any, res: any) {
       return NextResponse.json(error);
     }
   }
+
+
   

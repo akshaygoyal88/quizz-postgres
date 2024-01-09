@@ -53,7 +53,7 @@ export default function Navigation({ session }: { session: Session | null }) {
         <Link href={`/user/${userId}/tickets`} className="text-white">
           Add-Ticket
         </Link>
-        <Link href={"/quiz/user"} className="text-white">
+        <Link href={"/quiz"} className="text-white">
           Quiz App
         </Link>
 
