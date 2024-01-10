@@ -13,6 +13,8 @@ function AddQuestionUI() {
   const [availableSets, setAvailableSets] = useState([]);
   const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
+  const [successMessage, setSuccessMessage] = useState(null);
+
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
@@ -94,6 +96,12 @@ function AddQuestionUI() {
         setOptions(["", "", "", ""]);
         setCorrectAnswer(null);
         setValidationError("");
+        setTimer("0");
+        setQuestionSet("");
+        setSuccessMessage("Successfully added Question.");
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 10000);
       } else {
         setValidationError(data.error);
       }
@@ -126,6 +134,7 @@ function AddQuestionUI() {
         <select
           className="w-full border rounded-md p-2"
           onChange={(e) => setQuestionSet(e.target.value)}
+          value={questionSet}
         >
           <option>Select question set</option>
           {availableSets.map((set) => (
@@ -234,7 +243,9 @@ function AddQuestionUI() {
           />
         </div>
       )}
-
+      {successMessage && (
+        <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
+      )}
       {/* Save Question Button */}
       <div className="flex justify-center">
         <button

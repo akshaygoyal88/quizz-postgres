@@ -50,7 +50,6 @@ export async function PUT(request: Request) {
       },
     });
     result = res;
-    set
   }
 
   if (
