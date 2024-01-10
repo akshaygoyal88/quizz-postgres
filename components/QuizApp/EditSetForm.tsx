@@ -19,6 +19,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
     name: "",
     description: "",
   });
+  const [successMessage, setSuccessMessage] = useState(null);
   console.log(setId);
   const router = useRouter();
 
@@ -56,7 +57,10 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
         headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
-        router.push("/quiz");
+        setSuccessMessage("SuccessFully updated");
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 10000);
       }
     } catch (error) {
       console.log(error);
@@ -86,6 +90,11 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
           onChange={handleInputChange}
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
         />
+        {successMessage && (
+          <p className="bg-green-600 px-4 py-2 text-white m-3">
+            {successMessage}
+          </p>
+        )}
         <button
           className="bg-gray-500 text-white font-semibold px-4 py-2"
           type="submit"

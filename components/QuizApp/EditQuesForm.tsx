@@ -3,15 +3,49 @@
 import React, { useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 
-function AddQuestionUI() {
+function EditQuesForm({ quesId }) {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [validationError, setValidationError] = useState("");
-  const [questionType, setQuestionType] = useState("objective");
+  const [questionType, setQuestionType] = useState("");
   const [description, setDescription] = useState("");
   const [availableSets, setAvailableSets] = useState([]);
   const [questionSet, setQuestionSet] = useState("");
+  const [success, setSuccess] = useState(false);
+  console.log("quesiiiiiiiIId", quesId);
+
+  const getQuesData = async () => {
+    try {
+      const res = await fetch(`/api/questions/${quesId}`);
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        setQuestion(data.question_text);
+        setQuestionSet(data.questionSets[0].name);
+        setQuestionType(data.type.toLowerCase());
+        const initialOptions = data.objective_options.map((opt) => {
+          return opt.text;
+        });
+        setOptions(initialOptions);
+        const correctAnswerIndex = data.objective_options.findIndex(
+          (opt) => opt.isCorrect
+        );
+        setCorrectAnswer(correctAnswerIndex);
+        const des = data.subjective_description.map((ds) => {
+          return ds.description;
+        });
+        setDescription(des);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getQuesData();
+  }, []);
 
   const handleRadioChange = (event) => {
     setQuestionType(event.target.value);
@@ -73,8 +107,8 @@ function AddQuestionUI() {
 
     try {
       //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch("/api/questions", {
-        method: "POST",
+      const response = await fetch(`/api/questions/${quesId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           //   Authorization: `Bearer ${adminToken}`,
@@ -90,6 +124,11 @@ function AddQuestionUI() {
         setOptions(["", "", "", ""]);
         setCorrectAnswer(null);
         setValidationError("");
+        setDescription("");
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+        }, 10000);
       } else {
         alert("Failed to save the question.");
       }
@@ -116,12 +155,13 @@ function AddQuestionUI() {
 
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
-      <h1 className="text-lg font-semibold mb-4">Add Questions</h1>
+      <h1 className="text-lg font-semibold mb-4">Edit Question</h1>
       {/* Select Question Set */}
       <div className="mb-4">
         <select
           className="w-full border rounded-md p-2"
           onChange={(e) => setQuestionSet(e.target.value)}
+          value={questionSet}
         >
           <option>Select question set</option>
           {availableSets.map((set) => (
@@ -221,6 +261,11 @@ function AddQuestionUI() {
         </div>
       )}
 
+      {success && (
+        <p className="bg-green-600 px-4 py-2 text-white m-3">
+          Successfully Updated!
+        </p>
+      )}
       {/* Save Question Button */}
       <div className="flex justify-center">
         <button
@@ -234,4 +279,4 @@ function AddQuestionUI() {
   );
 }
 
-export default AddQuestionUI;
+export default EditQuesForm;

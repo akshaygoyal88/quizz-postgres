@@ -67,7 +67,7 @@ export default function QuizCreation() {
           Add Question
         </Link>
       </div>
-      <QuizTable queSets={queSets} />
+      <QuizTable queSets={queSets} getSetsAndQuestions={getSetsAndQuestions} />
       <Pagination page={page} totalpage={totalpage} paginate={paginate} />
     </div>
   );

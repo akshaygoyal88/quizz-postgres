@@ -1,16 +1,26 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
 
-const people = [
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
-  },
-  // More people...
-];
+export default function QuizTable({ queSets, getSetsAndQuestions }) {
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+  const deleteHandler = async (id) => {
+    try {
+      const deleteRes = await fetch(`api/questionset/${id}`, {
+        method: "DELETE",
+      });
 
-export default function QuizTable({ queSets }) {
+      if (deleteRes.ok) {
+        setDeleteSuccess("Deleted successfully");
+        setTimeout(() => {
+          setDeleteSuccess(null);
+        }, 10000);
+        getSetsAndQuestions();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       {/* <div className="sm:flex sm:items-center">
@@ -35,6 +45,11 @@ export default function QuizTable({ queSets }) {
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            {deleteSuccess && (
+              <p className="bg-red-600 px-4 py-2 text-white m-3">
+                {deleteSuccess}
+              </p>
+            )}
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
@@ -43,13 +58,7 @@ export default function QuizTable({ queSets }) {
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     <a href="#" className="group inline-flex">
-                      Set
-                      <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
-                        <ChevronDownIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </span>
+                      Question Set
                     </a>
                   </th>
                   <th
@@ -84,6 +93,9 @@ export default function QuizTable({ queSets }) {
                   <th scope="col" className="relative py-3.5 pl-3 pr-0">
                     <span className="sr-only">Edit</span>
                   </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                    <span className="sr-only">Delete</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -105,6 +117,14 @@ export default function QuizTable({ queSets }) {
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         Edit<span className="sr-only">, {set.name}</span>
+                      </a>
+                    </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                      <a
+                        onClick={() => deleteHandler(set.id)}
+                        className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
+                      >
+                        Delete<span className="sr-only">, {set.name}</span>
                       </a>
                     </td>
                   </tr>

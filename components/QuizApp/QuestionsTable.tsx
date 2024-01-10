@@ -1,6 +1,25 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
 
-export default function QuestionsTable({ ques }) {
+export default function QuestionsTable({ ques, getAvailableQuestions }) {
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+  const deleteHandler = async (id) => {
+    try {
+      const deleteRes = await fetch(`api/questions/${id}`, {
+        method: "DELETE",
+      });
+
+      if (deleteRes.ok) {
+        setDeleteSuccess("Deleted successfully");
+        setTimeout(() => {
+          setDeleteSuccess(null);
+        }, 10000);
+        getAvailableQuestions();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       {/* <div className="sm:flex sm:items-center">
@@ -23,6 +42,9 @@ export default function QuestionsTable({ ques }) {
         </div>
       </div> */}
       <h1>Available Questions</h1>
+      {deleteSuccess && (
+        <p className="bg-red-600 px-4 py-2 text-white m-3">{deleteSuccess}</p>
+      )}
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -75,6 +97,9 @@ export default function QuestionsTable({ ques }) {
                   <th scope="col" className="relative py-3.5 pl-3 pr-0">
                     <span className="sr-only">Edit</span>
                   </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                    <span className="sr-only">Delete</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -92,10 +117,18 @@ export default function QuestionsTable({ ques }) {
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
-                        href={`/quiz/${que.id}/edit`}
+                        href={`/questions/${que.id}/edit`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         Edit<span className="sr-only">, {que.name}</span>
+                      </a>
+                    </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                      <a
+                        onClick={() => deleteHandler(que.id)}
+                        className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
+                      >
+                        Delete<span className="sr-only">, {que.name}</span>
                       </a>
                     </td>
                   </tr>

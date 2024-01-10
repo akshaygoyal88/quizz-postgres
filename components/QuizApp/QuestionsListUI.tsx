@@ -60,7 +60,10 @@ export default function QuestionsListUI() {
           Add Question
         </Link>
       </div>
-      <QuestionsTable ques={ques} />
+      <QuestionsTable
+        ques={ques}
+        getAvailableQuestions={getAvailableQuestions}
+      />
       <Pagination page={page} totalpage={totalpage} paginate={paginate} />
     </div>
   );
