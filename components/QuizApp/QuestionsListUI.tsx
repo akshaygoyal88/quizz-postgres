@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import QuizTable from "./QuizTable";
+import QuestionsTable from "./QuestionsTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
 
-export default function QuizCreation() {
-  const [queSets, setQueSets] = useState([]);
+export default function QuestionsListUI() {
+  const [ques, setQues] = useState([]);
   const [page, setPage] = useState(1);
   const [totalpage, setTotalPage] = useState(0);
 
-  const getSetsAndQuestions = async () => {
+  const getAvailableQuestions = async () => {
     try {
-      const res = await fetch(`/api/questionset?page=${page}&pageSize=9`, {
+      const res = await fetch(`/api/questions?page=${page}&pageSize=9`, {
         method: "GET",
       });
 
@@ -20,13 +20,13 @@ export default function QuizCreation() {
 
       const data = await res.json();
 
-      console.log(data);
+      console.log("listques", data);
 
-      const queSets = data.questionSets;
+      const availableQues = data.questions;
 
       setTotalPage(data.totalPages);
 
-      setQueSets([...queSets]);
+      setQues([...availableQues]);
     } catch (error) {
       console.error(error);
     }
@@ -36,7 +36,7 @@ export default function QuizCreation() {
   //   getSetsAndQuestions();
   // }, []);
   useEffect(() => {
-    getSetsAndQuestions();
+    getAvailableQuestions();
   }, [page]);
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
@@ -44,7 +44,6 @@ export default function QuizCreation() {
       setPage(pageNumber);
     }
   };
-
   return (
     <div className="p-4">
       <div className="flex justify-evenly">
@@ -55,19 +54,13 @@ export default function QuizCreation() {
           Create Set
         </Link>
         <Link
-          href="/questions"
-          className="px-4 py-2 font-semibold rounded-sm bg-blue-400 text-white"
-        >
-          Questions
-        </Link>
-        <Link
           href="/questions/add"
           className="px-4 py-2 font-semibold rounded-sm bg-blue-700 text-white"
         >
           Add Question
         </Link>
       </div>
-      <QuizTable queSets={queSets} />
+      <QuestionsTable ques={ques} />
       <Pagination page={page} totalpage={totalpage} paginate={paginate} />
     </div>
   );
