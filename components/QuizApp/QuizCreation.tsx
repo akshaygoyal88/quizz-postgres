@@ -58,7 +58,7 @@ export default function QuizCreation() {
           href="/questions"
           className="px-4 py-2 font-semibold rounded-sm bg-blue-400 text-white"
         >
-          Questions
+          Questions List
         </Link>
         <Link
           href="/questions/add"
