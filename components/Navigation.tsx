@@ -16,17 +16,13 @@ export default function Navigation({ session }: { session: Session | null }) {
 
   const getUserData = async () => {
     try {
-      const res = await fetch("/api/user/", {
-        method: "GET",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUserDetails({ ...data });
-      }
+      const userData = await app.service.user.getUserData();
+      setUserDetails({ ...userData });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
+
   useEffect(() => {
     getUserData();
   }, []);
@@ -47,6 +43,7 @@ export default function Navigation({ session }: { session: Session | null }) {
         <Link href="/shows" className="text-white">
           Shows
         </Link>
+<<<<<<< HEAD
         <Link href={`/user/${userId}/show`} className="text-white">
           Add-Show
         </Link>
@@ -56,6 +53,18 @@ export default function Navigation({ session }: { session: Session | null }) {
         <Link href={"/quiz"} className="text-white">
           Quiz App
         </Link>
+=======
+        {session && (
+          <Link href={`/user/${userId}/show`} className="text-white">
+            Add Show
+          </Link>
+        )}
+        {session && (
+          <Link href={`/user/${userId}/tickets`} className="text-white">
+            Add Ticket
+          </Link>
+        )}
+>>>>>>> dev
 
         {session && (
           <Link href="/dashboard" className="text-white">

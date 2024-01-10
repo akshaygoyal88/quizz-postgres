@@ -5,7 +5,7 @@ import { compare } from "bcrypt";
 import { db } from "@/app/db";
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-export const authOptions: NextAuthOptions = {  
+export const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         if (user) {
           const passwordCorrect = await compare(
             credentials?.password || "",
-            user.password,
+            user.password
           );
 
           if (passwordCorrect) {
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
         } else {
           // User not found
           throw new Error(
-            "User not found./Please check credentials or verify email before sign in.",
+            "User not found./Please check credentials or verify email before sign in."
           );
         }
       },

@@ -6,14 +6,14 @@ import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 import { UserOtpType } from "@prisma/client";
 import cron from "node-cron";
 
-interface CreateUserRequestBody {
+export interface CreateUserRequestBody {
   email: string;
   password: string;
   token: string;
   roleOfUser: any;
 }
 
-interface ErrorResponse {
+export interface ErrorResponse {
   userExist?: string;
   password?: string;
   userEmail?: string;

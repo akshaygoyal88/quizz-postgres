@@ -81,19 +81,19 @@ const ShowInformation = ({ session }: { session: Session | null }) => {
     setFormErrors({});
 
     try {
-      const response = await fetch("/api/showDetailsApi/insertShowDetails", {
+      const response = await fetch("/api/show", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId: userId,
-          showName: formData.showName,
-          showType: formData.showType,
-          showStartDateAndTime: formData.showStartDateAndTime,
-          showEndDateAndTime: formData.showEndDateAndTime,
+          Name: formData.showName,
+          Type: formData.showType,
+          StartDateAndTime: formData.showStartDateAndTime,
+          EndDateAndTime: formData.showEndDateAndTime,
           noOfTickets: formData.noOfTickets,
-          showMode: showMode,
+          Mode: showMode,
         }),
       });
 
