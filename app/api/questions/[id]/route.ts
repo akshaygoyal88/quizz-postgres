@@ -6,7 +6,7 @@ export async function GET(req: any, res: any) {
   try {
     const url = new URL(req.url);
     //   const id = `${url.pathname.split('/').pop()}`;
-    const id = parseInt(url.pathname.split("/").pop());
+    const id = url.pathname.split("/").pop();
 
     const isAvailable = await db.question.findUnique({
       where: { id },
@@ -33,7 +33,7 @@ export async function DELETE(req: any, res: any) {
   try {
     const url = new URL(req.url);
     //   const id = `${url.pathname.split('/').pop()}`;
-    const id = parseInt(url.pathname.split("/").pop());
+    const id = url.pathname.split("/").pop();
 
     const isAvailable = await db.question.findUnique({
       where: { id },
@@ -72,7 +72,7 @@ export async function PUT(req: any, res: any) {
   try {
     const url = new URL(req.url);
     // const id = `${url.pathname.split("/").pop()}`;
-    const id = parseInt(url.pathname.split("/").pop());
+    const id = url.pathname.split("/").pop();
 
     const {
       question_text,

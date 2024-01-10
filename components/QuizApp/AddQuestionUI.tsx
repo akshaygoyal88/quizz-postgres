@@ -3,6 +3,10 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 
+interface availableSetTypes {
+  name: string;
+}
+
 function AddQuestionUI() {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
@@ -10,10 +14,10 @@ function AddQuestionUI() {
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("objective");
   const [description, setDescription] = useState("");
-  const [availableSets, setAvailableSets] = useState([]);
+  const [availableSets, setAvailableSets] = useState<availableSetTypes[]>([]);
   const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -100,7 +104,7 @@ function AddQuestionUI() {
         setQuestionSet("");
         setSuccessMessage("Successfully added Question.");
         setTimeout(() => {
-          setSuccessMessage(null);
+          setSuccessMessage("");
         }, 10000);
       } else {
         setValidationError(data.error);
@@ -115,7 +119,7 @@ function AddQuestionUI() {
       const res = await fetch("/api/questionset", {
         method: "GET",
       });
-      const data = await res.json();
+      const data: [] = await res.json();
       setAvailableSets([...data]);
     } catch (error) {
       console.error(error);
@@ -191,7 +195,7 @@ function AddQuestionUI() {
           type="number"
           className="border rounded-md p-2"
           value={timer}
-          onChange={(e: FormEvent) => setTimer(e.target.value)}
+          onChange={(e) => setTimer(e.target.value)}
         />
       </div>
 
@@ -236,7 +240,6 @@ function AddQuestionUI() {
             className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
             id="description"
             name="description"
-            row="10"
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."

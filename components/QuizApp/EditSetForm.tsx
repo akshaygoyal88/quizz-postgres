@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
+  setId: string;
 }
 
 interface FormData {
@@ -19,7 +20,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
     name: "",
     description: "",
   });
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
   console.log(setId);
   const router = useRouter();
 
@@ -59,7 +60,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
       if (res.ok) {
         setSuccessMessage("SuccessFully updated");
         setTimeout(() => {
-          setSuccessMessage(null);
+          setSuccessMessage("");
         }, 10000);
       }
     } catch (error) {

@@ -111,7 +111,7 @@ enum QuestionType {
 }
 
 model Question {
-  id                     Int                     @id @default(autoincrement())
+  id                     String                  @id @default(cuid())
   question_text          String
   type                   QuestionType // "objective" or "subjective"
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
@@ -123,17 +123,17 @@ model Question {
 }
 
 model ObjectiveOptions {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   text       String
   isCorrect  Boolean
-  questionId Int
+  questionId String
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
 model SubjectiveDescription {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   problem     String   @db.LongText
   description String   @db.LongText
-  questionId  Int
+  questionId  String
   question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
 }

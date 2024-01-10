@@ -1,20 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 
-function EditQuesForm({ quesId }) {
+interface availableSetTypes {
+  name: string;
+}
+
+function EditQuesForm({ quesId }: { quesId: string }) {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [description, setDescription] = useState("");
-  const [availableSets, setAvailableSets] = useState([]);
+  const [availableSets, setAvailableSets] = useState<availableSetTypes[]>([]);
   const [questionSet, setQuestionSet] = useState("");
   const [success, setSuccess] = useState(false);
   const [timer, setTimer] = useState(0);
-  console.log("quesiiiiiiiIId", quesId);
 
   const getQuesData = async () => {
     try {
@@ -26,17 +29,21 @@ function EditQuesForm({ quesId }) {
         setQuestion(data.question_text);
         setQuestionSet(data.questionSets[0].name);
         setQuestionType(data.type.toLowerCase());
-        const initialOptions = data.objective_options.map((opt) => {
-          return opt.text;
-        });
+        const initialOptions = data.objective_options.map(
+          (opt: { text: any }) => {
+            return opt.text;
+          }
+        );
         setOptions(initialOptions);
         const correctAnswerIndex = data.objective_options.findIndex(
-          (opt) => opt.isCorrect
+          (opt: { isCorrect: any }) => opt.isCorrect
         );
         setCorrectAnswer(correctAnswerIndex);
-        const des = data.subjective_description.map((ds) => {
-          return ds.description;
-        });
+        const des = data.subjective_description.map(
+          (ds: { description: any }) => {
+            return ds.description;
+          }
+        );
         setDescription(des);
         setTimer(data.timer);
       }
@@ -49,7 +56,9 @@ function EditQuesForm({ quesId }) {
     getQuesData();
   }, []);
 
-  const handleRadioChange = (event) => {
+  const handleRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setQuestionType(event.target.value);
   };
 
@@ -124,11 +133,6 @@ function EditQuesForm({ quesId }) {
       console.log(data);
 
       if (response.ok) {
-        setQuestion("");
-        setOptions(["", "", "", ""]);
-        setCorrectAnswer(null);
-        setValidationError("");
-        setDescription("");
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
@@ -146,11 +150,15 @@ function EditQuesForm({ quesId }) {
       const res = await fetch("/api/questionset", {
         method: "GET",
       });
-      const data = await res.json();
+      const data: [] = await res.json();
       setAvailableSets([...data]);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleTimerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTimer(Number(e.target.value));
   };
 
   useEffect(() => {
@@ -221,7 +229,7 @@ function EditQuesForm({ quesId }) {
           type="number"
           className="border rounded-md p-2"
           value={timer}
-          onChange={(e: FormEvent) => setTimer(e.target.value)}
+          onChange={handleTimerChange}
         />
       </div>
 
@@ -266,7 +274,7 @@ function EditQuesForm({ quesId }) {
             className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
             id="description"
             name="description"
-            rows="10"
+            // rows="10"
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."
