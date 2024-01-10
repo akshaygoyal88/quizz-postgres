@@ -43,17 +43,6 @@ export default function Navigation({ session }: { session: Session | null }) {
         <Link href="/shows" className="text-white">
           Shows
         </Link>
-<<<<<<< HEAD
-        <Link href={`/user/${userId}/show`} className="text-white">
-          Add-Show
-        </Link>
-        <Link href={`/user/${userId}/tickets`} className="text-white">
-          Add-Ticket
-        </Link>
-        <Link href={"/quiz"} className="text-white">
-          Quiz App
-        </Link>
-=======
         {session && (
           <Link href={`/user/${userId}/show`} className="text-white">
             Add Show
@@ -64,11 +53,15 @@ export default function Navigation({ session }: { session: Session | null }) {
             Add Ticket
           </Link>
         )}
->>>>>>> dev
 
         {session && (
           <Link href="/dashboard" className="text-white">
             Dashboard
+          </Link>
+        )}
+        {session && (
+          <Link href="/quiz" className="text-white">
+            Quiz-app
           </Link>
         )}
         {session && (
