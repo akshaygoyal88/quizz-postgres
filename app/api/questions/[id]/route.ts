@@ -81,9 +81,8 @@ export async function PUT(req: any, res: any) {
       options,
       correctAnswer,
       description,
+      timer
     } = await req.json();
-
-    console.log('quws', type)
 
     const isAvailable = await db.question.findUnique({
       where: { id },
@@ -97,6 +96,10 @@ export async function PUT(req: any, res: any) {
       const deleteOptions = await db.objectiveOptions.deleteMany({
         where: { questionId: id },
       });
+
+      const deleteSubDes = await db.subjectiveDescription.deleteMany({
+        where: { questionId: id },
+      });
       
 
       console.log("deleteOptions", deleteOptions);
@@ -107,6 +110,7 @@ export async function PUT(req: any, res: any) {
           data: {
             question_text,
             type,
+            timer: parseInt(timer, 10),
             questionSets: {
               connect: { id: setDetail[0].id },
             },
@@ -128,6 +132,7 @@ export async function PUT(req: any, res: any) {
           data: {
             question_text,
             type,
+            timer: parseInt(timer, 10),
             questionSets: {
               connect: { id: setDetail[0].id },
             },

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 
 function AddQuestionUI() {
@@ -12,8 +12,10 @@ function AddQuestionUI() {
   const [description, setDescription] = useState("");
   const [availableSets, setAvailableSets] = useState([]);
   const [questionSet, setQuestionSet] = useState("");
-
-  const handleRadioChange = (event) => {
+  const [timer, setTimer] = useState("0");
+  const handleRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setQuestionType(event.target.value);
   };
 
@@ -59,6 +61,7 @@ function AddQuestionUI() {
         type: "OBJECTIVE",
         correctAnswer: correctAnswer,
         questionSet: questionSet,
+        timer: timer,
       };
     } else if (questionType === "subjective") {
       requestData = {
@@ -66,6 +69,7 @@ function AddQuestionUI() {
         type: "SUBJECTIVE",
         description: description,
         questionSet: questionSet,
+        timer: timer,
       };
     }
 
@@ -85,13 +89,13 @@ function AddQuestionUI() {
       const data = await response.json();
       console.log(data);
 
-      if (response.ok) {
+      if (!data.error) {
         setQuestion("");
         setOptions(["", "", "", ""]);
         setCorrectAnswer(null);
         setValidationError("");
       } else {
-        alert("Failed to save the question.");
+        setValidationError(data.error);
       }
     } catch (error) {
       console.error("Error saving question:", error);
@@ -170,6 +174,16 @@ function AddQuestionUI() {
             Objective
           </label>
         </div>
+      </div>
+
+      <div className="mb-4 flex justify-between items-center">
+        <label className="font-semibold">Timer(in secs):</label>
+        <input
+          type="number"
+          className="border rounded-md p-2"
+          value={timer}
+          onChange={(e: FormEvent) => setTimer(e.target.value)}
+        />
       </div>
 
       {/* Options for Objective Questions */}

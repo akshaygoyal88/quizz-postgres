@@ -101,6 +101,8 @@ model QuestionSet {
   name        String
   description String?
   questions   Question[] @relation("QuestionInSet")
+  createdAt   DateTime   @default(now()) @map(name: "created_at")
+  updatedAt   DateTime   @updatedAt @map(name: "updated_at")
 }
 
 enum QuestionType {
@@ -115,6 +117,9 @@ model Question {
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
   subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
   questionSets           QuestionSet[]           @relation("QuestionInSet")
+  timer                  Int                     @default(0)
+  createdAt              DateTime                @default(now()) @map(name: "created_at")
+  updatedAt              DateTime                @updatedAt @map(name: "updated_at")
 }
 
 model ObjectiveOptions {

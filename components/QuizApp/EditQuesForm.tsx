@@ -13,6 +13,7 @@ function EditQuesForm({ quesId }) {
   const [availableSets, setAvailableSets] = useState([]);
   const [questionSet, setQuestionSet] = useState("");
   const [success, setSuccess] = useState(false);
+  const [timer, setTimer] = useState(0);
   console.log("quesiiiiiiiIId", quesId);
 
   const getQuesData = async () => {
@@ -37,6 +38,7 @@ function EditQuesForm({ quesId }) {
           return ds.description;
         });
         setDescription(des);
+        setTimer(data.timer);
       }
     } catch (error) {
       console.error(error);
@@ -93,6 +95,7 @@ function EditQuesForm({ quesId }) {
         type: "OBJECTIVE",
         correctAnswer: correctAnswer,
         questionSet: questionSet,
+        timer: timer,
       };
     } else if (questionType === "subjective") {
       requestData = {
@@ -100,6 +103,7 @@ function EditQuesForm({ quesId }) {
         type: "SUBJECTIVE",
         description: description,
         questionSet: questionSet,
+        timer: timer,
       };
     }
 
@@ -211,6 +215,15 @@ function EditQuesForm({ quesId }) {
           </label>
         </div>
       </div>
+      <div className="mb-4 flex justify-between items-center">
+        <label className="font-semibold">Timer(in secs):</label>
+        <input
+          type="number"
+          className="border rounded-md p-2"
+          value={timer}
+          onChange={(e: FormEvent) => setTimer(e.target.value)}
+        />
+      </div>
 
       {/* Options for Objective Questions */}
       {questionType === "objective" && (
@@ -253,7 +266,7 @@ function EditQuesForm({ quesId }) {
             className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
             id="description"
             name="description"
-            row="10"
+            rows="10"
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."

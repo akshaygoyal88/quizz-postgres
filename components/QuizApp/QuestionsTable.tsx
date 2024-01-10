@@ -57,12 +57,6 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
                   >
                     <a href="#" className="group inline-flex">
                       Question
-                      <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
-                        <ChevronDownIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </span>
                     </a>
                   </th>
                   <th
@@ -71,12 +65,6 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
                   >
                     <a href="#" className="group inline-flex">
                       Set
-                      <span className="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible">
-                        <ChevronDownIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </span>
                     </a>
                   </th>
 
@@ -86,12 +74,22 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
                   >
                     <a href="#" className="group inline-flex">
                       Type
-                      <span className="invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible">
-                        <ChevronDownIcon
-                          className="invisible ml-2 h-5 w-5 flex-none rounded text-gray-400 group-hover:visible group-focus:visible"
-                          aria-hidden="true"
-                        />
-                      </span>
+                    </a>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <a href="#" className="group inline-flex">
+                      Created on
+                    </a>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <a href="#" className="group inline-flex">
+                      Last Modified on
                     </a>
                   </th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-0">
@@ -114,6 +112,12 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
 
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {que.type}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {new Date(que.createdAt).toLocaleString()}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {new Date(que.updatedAt).toLocaleString()}
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a

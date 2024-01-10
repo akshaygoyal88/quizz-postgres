@@ -51,8 +51,8 @@ export async function POST(req: any, res: any) {
       options,
       correctAnswer,
       description,
+      timer
     } = await req.json();
-    // console.log(question_text, type, questionSet, options, correctAnswer);
 
     if (!questionSet) {
       return NextResponse.json({ error: "Please provide question set." });
@@ -60,11 +60,9 @@ export async function POST(req: any, res: any) {
 
     const setsAvailable = await db.questionSet.findMany();
 
-    const setDetail = setsAvailable.filter((set) => set.name == questionSet);
+    const setDetail = setsAvailable.find((set) => set.name === questionSet);
 
-    console.log(setDetail)
-
-    if (setDetail.length == 0) {
+    if (!setDetail) {
       return NextResponse.json({
         error: "Please provide a valid question set.",
       });
@@ -74,8 +72,9 @@ export async function POST(req: any, res: any) {
         data: {
           question_text,
           type,
+          timer: parseInt(timer, 10),
           questionSets: {
-            connect: { id: setDetail[0].id },
+            connect: { id: setDetail.id },
           },
           objective_options: {
             createMany: {
@@ -94,8 +93,9 @@ export async function POST(req: any, res: any) {
         data: {
           question_text,
           type,
+          timer: parseInt(timer, 10),
           questionSets: {
-            connect: { id: setDetail[0].id },
+            connect: { id: setDetail.id },
           },
           subjective_description: {
             create: {
@@ -111,3 +111,4 @@ export async function POST(req: any, res: any) {
     return NextResponse.json({ error });
   }
 }
+
