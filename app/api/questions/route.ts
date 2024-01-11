@@ -92,6 +92,9 @@ export async function POST(req: any, res: any) {
               })),
             },
           },
+          createdBy: {
+            connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
+          },
         },
       });
       return NextResponse.json(createQuestion);
@@ -110,6 +113,9 @@ export async function POST(req: any, res: any) {
               problem,
               description,
             },
+          },
+          createdBy: {
+            connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
           },
         },
       });

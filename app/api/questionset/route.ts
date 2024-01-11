@@ -48,6 +48,9 @@ export async function POST(req: any, res: any) {
     const createSet = await db.questionSet.create({
       data: {
         ...reqData,
+        createdBy: {
+          connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
+        },
       },
     });
     return NextResponse.json(createSet);
