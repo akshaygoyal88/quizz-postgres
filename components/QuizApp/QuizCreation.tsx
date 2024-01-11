@@ -49,19 +49,19 @@ export default function QuizCreation() {
     <div className="p-4">
       <div className="flex justify-evenly">
         <Link
-          href="/quiz/add"
+          href="/admin/quiz/add"
           className="px-4 py-2 font-semibold rounded-sm bg-green-700 text-white"
         >
           Create Set
         </Link>
         <Link
-          href="/questions"
+          href="/admin/questions"
           className="px-4 py-2 font-semibold rounded-sm bg-blue-400 text-white"
         >
           Questions List
         </Link>
         <Link
-          href="/questions/add"
+          href="/admin/questions/add"
           className="px-4 py-2 font-semibold rounded-sm bg-blue-700 text-white"
         >
           Add Question

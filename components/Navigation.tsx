@@ -60,7 +60,7 @@ export default function Navigation({ session }: { session: Session | null }) {
           </Link>
         )}
         {session && (
-          <Link href="/quiz" className="text-white">
+          <Link href="/admin/quiz" className="text-white">
             Quiz-app
           </Link>
         )}
