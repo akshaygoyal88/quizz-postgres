@@ -2,12 +2,15 @@
 
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
+import pathName from "@/constants";
+import { useFetch } from "@/hooks/useFetch";
 
 interface availableSetTypes {
   name: string;
 }
 
 function EditQuesForm({ quesId }: { quesId: string }) {
+  const { data, error, isLoading } = useFetch();
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
@@ -18,43 +21,44 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const [questionSet, setQuestionSet] = useState("");
   const [success, setSuccess] = useState(false);
   const [timer, setTimer] = useState(0);
+  const {
+    data: questionData,
+    error: questionError,
+    isLoading: questionIsLoading,
+  } = useFetch(`${pathName.questionsApiPath.path}/${quesId}`);
 
-  const getQuesData = async () => {
-    try {
-      const res = await fetch(`/api/questions/${quesId}`);
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log(data);
-        setQuestion(data.question_text);
-        setQuestionSet(data.questionSets[0].name);
-        setQuestionType(data.type.toLowerCase());
-        const initialOptions = data.objective_options.map(
-          (opt: { text: any }) => {
-            return opt.text;
-          }
-        );
-        setOptions(initialOptions);
-        const correctAnswerIndex = data.objective_options.findIndex(
-          (opt: { isCorrect: any }) => opt.isCorrect
-        );
-        setCorrectAnswer(correctAnswerIndex);
-        const des = data.subjective_description.map(
-          (ds: { description: any }) => {
-            return ds.description;
-          }
-        );
-        setDescription(des);
-        setTimer(data.timer);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const {
+    data: questionSetsData,
+    error: questionSetsError,
+    isLoading: questionSetsIsLoading,
+  } = useFetch(`${pathName.questionSetApi.path}`);
 
   useEffect(() => {
-    getQuesData();
-  }, []);
+    if (questionData) {
+      setQuestion(questionData?.question_text);
+      setQuestionSet(questionData?.questionSets[0].name);
+      setQuestionType(questionData?.type.toLowerCase());
+      const initialOptions = questionData?.objective_options.map(
+        (opt: { text: any }) => opt.text
+      );
+      setOptions(initialOptions);
+      const correctAnswerIndex = questionData?.objective_options.findIndex(
+        (opt: { isCorrect: any }) => opt.isCorrect
+      );
+      setCorrectAnswer(correctAnswerIndex);
+      const des = questionData?.subjective_description.map(
+        (ds: { description: any }) => ds.description
+      );
+      setDescription(des);
+      setTimer(questionData?.timer);
+    }
+  }, [questionData]);
+
+  useEffect(() => {
+    if (questionSetsData) {
+      setAvailableSets([...questionSetsData]);
+    }
+  }, [questionSetsData]);
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -120,14 +124,17 @@ function EditQuesForm({ quesId }: { quesId: string }) {
 
     try {
       //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch(`/api/questions/${quesId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          //   Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        `${pathName.questionsApiPath.path}/${quesId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            //   Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
       console.log(response);
       const data = await response.json();
       console.log(data);
@@ -145,25 +152,9 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     }
   };
 
-  const getAvailableQuesSets = async () => {
-    try {
-      const res = await fetch("/api/questionset", {
-        method: "GET",
-      });
-      const data: [] = await res.json();
-      setAvailableSets([...data]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleTimerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTimer(Number(e.target.value));
   };
-
-  useEffect(() => {
-    getAvailableQuesSets();
-  }, []);
 
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">

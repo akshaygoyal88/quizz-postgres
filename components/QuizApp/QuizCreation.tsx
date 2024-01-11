@@ -1,74 +1,64 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import QuizTable from "./QuizTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
+import { useFetch } from "@/hooks/useFetch";
+import pathName from "@/constants";
 
 export default function QuizCreation() {
-  const [queSets, setQueSets] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalpage, setTotalPage] = useState(0);
-
-  const getSetsAndQuestions = async () => {
-    try {
-      const res = await fetch(`/api/questionset?page=${page}&pageSize=9`, {
-        method: "GET",
-      });
-
-      console.log(res);
-
-      const data = await res.json();
-
-      console.log(data);
-
-      const queSets = data.questionSets;
-
-      setTotalPage(data.totalPages);
-
-      setQueSets([...queSets]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // useEffect(() => {
-  //   getSetsAndQuestions();
-  // }, []);
-  useEffect(() => {
-    getSetsAndQuestions();
-  }, [page]);
-
+  const [time, setTime] = useState<Number>(Date.now());
+  const { data, error, isLoading } = useFetch(
+    `${pathName.questionSetApi.path}?page=${page}&pageSize=9`,
+    time
+  );
   const paginate = (pageNumber: React.SetStateAction<number>) => {
-    if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
+    console.log(pageNumber);
+    if (Number(pageNumber) > 0 && Number(pageNumber) <= data?.totalPages) {
       setPage(pageNumber);
     }
+  };
+  const onDelete = () => {
+    console.log("deleted");
+    setTime(Date.now());
   };
 
   return (
     <div className="p-4">
       <div className="flex justify-evenly">
         <Link
-          href="/admin/quiz/add"
+          href={`${pathName.quizAdd.path}`}
           className="px-4 py-2 font-semibold rounded-sm bg-green-700 text-white"
         >
           Create Set
         </Link>
         <Link
-          href="/admin/questions"
+          href={`${pathName.questions.path}`}
           className="px-4 py-2 font-semibold rounded-sm bg-blue-400 text-white"
         >
           Questions List
         </Link>
         <Link
-          href="/admin/questions/add"
+          href={`${pathName.questionsAdd.path}`}
           className="px-4 py-2 font-semibold rounded-sm bg-blue-700 text-white"
         >
           Add Question
         </Link>
       </div>
-      <QuizTable queSets={queSets} getSetsAndQuestions={getSetsAndQuestions} />
-      <Pagination page={page} totalpage={totalpage} paginate={paginate} />
+      <QuizTable
+        key={time}
+        queSets={data?.questionSets || []}
+        // getSetsAndQuestions={() => {}}
+        onDelete={onDelete}
+      />
+      <Pagination
+        page={page}
+        totalpage={data?.totalPages || 0}
+        paginate={paginate}
+        totalRows={data?.totalRows || 0}
+      />
     </div>
   );
 }

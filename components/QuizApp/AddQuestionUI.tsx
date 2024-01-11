@@ -2,6 +2,8 @@
 
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
+import { useFetch } from "@/hooks/useFetch";
+import pathName from "@/constants";
 
 interface availableSetTypes {
   name: string;
@@ -14,10 +16,12 @@ function AddQuestionUI() {
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("objective");
   const [description, setDescription] = useState("");
-  const [availableSets, setAvailableSets] = useState<availableSetTypes[]>([]);
   const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const { data, error, isLoading } = useFetch(
+    `${pathName.questionSetApi.path}`
+  );
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -83,7 +87,7 @@ function AddQuestionUI() {
 
     try {
       //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch("/api/questions", {
+      const response = await fetch(`${pathName.questionsApiPath.path}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,22 +118,6 @@ function AddQuestionUI() {
     }
   };
 
-  const getAvailableQuesSets = async () => {
-    try {
-      const res = await fetch("/api/questionset", {
-        method: "GET",
-      });
-      const data: [] = await res.json();
-      setAvailableSets([...data]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getAvailableQuesSets();
-  }, []);
-
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
       <h1 className="text-lg font-semibold mb-4">Add Questions</h1>
@@ -141,9 +129,7 @@ function AddQuestionUI() {
           value={questionSet}
         >
           <option>Select question set</option>
-          {availableSets.map((set) => (
-            <option>{set.name}</option>
-          ))}
+          {data && data.map((set) => <option>{set.name}</option>)}
         </select>
       </div>
       {/* Question Input */}

@@ -4,6 +4,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
 import Textarea from "../Shared/Textarea";
 import { useRouter } from "next/navigation";
+import pathName from "@/constants";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -33,13 +34,13 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/questionset`, {
+      const res = await fetch(`${pathName.questionSetApi.path}`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" },
       });
       if (res.ok) {
-        router.push("/quiz");
+        router.push(`${pathName.quiz.path}`);
       }
     } catch (error) {
       console.log(error);

@@ -1,11 +1,12 @@
+import pathName from "@/constants";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 
-export default function QuestionsTable({ ques, getAvailableQuestions }) {
+export default function QuestionsTable({ ques, onDelete }) {
   const [deleteSuccess, setDeleteSuccess] = useState(null);
   const deleteHandler = async (id) => {
     try {
-      const deleteRes = await fetch(`api/questions/${id}`, {
+      const deleteRes = await fetch(`${pathName.questionsApiPath.path}/${id}`, {
         method: "DELETE",
       });
 
@@ -14,7 +15,7 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
         setTimeout(() => {
           setDeleteSuccess(null);
         }, 10000);
-        getAvailableQuestions();
+        onDelete();
       }
     } catch (error) {
       console.error(error);
@@ -113,7 +114,7 @@ export default function QuestionsTable({ ques, getAvailableQuestions }) {
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
-                        href={`/questions/${que.id}/edit`}
+                        href={`/admin/questions/${que.id}/edit`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         Edit<span className="sr-only">, {que.name}</span>

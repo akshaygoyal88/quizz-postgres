@@ -1,11 +1,19 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useState,
+} from "react";
 
-export default function QuizTable({ queSets, getSetsAndQuestions }) {
+export default function QuizTable({ queSets, getSetsAndQuestions, onDelete }) {
   const [deleteSuccess, setDeleteSuccess] = useState(null);
   const deleteHandler = async (id) => {
     try {
-      const deleteRes = await fetch(`api/questionset/${id}`, {
+      const deleteRes = await fetch(`/api/questionset/${id}`, {
         method: "DELETE",
       });
 
@@ -14,7 +22,8 @@ export default function QuizTable({ queSets, getSetsAndQuestions }) {
         setTimeout(() => {
           setDeleteSuccess(null);
         }, 10000);
-        getSetsAndQuestions();
+        // getSetsAndQuestions();
+        onDelete();
       }
     } catch (error) {
       console.error(error);
@@ -84,42 +93,68 @@ export default function QuizTable({ queSets, getSetsAndQuestions }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {queSets.map((set) => (
-                  <tr key={set.id}>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {set.name}
-                    </td>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                      {set.questions.length}
-                    </td>
+                {queSets.map(
+                  (set: {
+                    id: Key | null | undefined;
+                    name:
+                      | string
+                      | number
+                      | boolean
+                      | ReactElement<any, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | PromiseLikeOfReactNode
+                      | null
+                      | undefined;
+                    questions: string | any[];
+                    description:
+                      | string
+                      | number
+                      | boolean
+                      | ReactElement<any, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | ReactPortal
+                      | PromiseLikeOfReactNode
+                      | null
+                      | undefined;
+                    createdAt: string | number | Date;
+                    updatedAt: string | number | Date;
+                  }) => (
+                    <tr key={set.id}>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {set.name}
+                      </td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                        {set.questions.length}
+                      </td>
 
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {set.description}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {new Date(set.createdAt).toLocaleString()}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {new Date(set.updatedAt).toLocaleString()}
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                      <a
-                        href={`/quiz/${set.id}/edit`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Edit<span className="sr-only">, {set.name}</span>
-                      </a>
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                      <a
-                        onClick={() => deleteHandler(set.id)}
-                        className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
-                      >
-                        Delete<span className="sr-only">, {set.name}</span>
-                      </a>
-                    </td>
-                  </tr>
-                ))}
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {set.description}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {new Date(set.createdAt).toLocaleString()}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {new Date(set.updatedAt).toLocaleString()}
+                      </td>
+                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                        <a
+                          href={`/admin/quiz/${set.id}/edit`}
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          Edit<span className="sr-only">, {set.name}</span>
+                        </a>
+                      </td>
+                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                        <a
+                          onClick={() => deleteHandler(set.id)}
+                          className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
+                        >
+                          Delete<span className="sr-only">, {set.name}</span>
+                        </a>
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>

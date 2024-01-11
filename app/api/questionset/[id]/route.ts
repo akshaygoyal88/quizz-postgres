@@ -10,7 +10,6 @@ export async function GET(req:any, {params}) {
     where: {id}
   })
 
-  console.log("setdata>>>>>>",setData)
   return NextResponse.json( setData );
 }
 
@@ -18,7 +17,10 @@ export async function DELETE(req: any, res: any) {
     let err;
     try {
       const url = new URL(req.url);
+      console.log("ssss", url)
       const id = `${url.pathname.split('/').pop()}`;
+
+      console.log("idddd", id);
   
       const isAvailable = await db.questionSet.findUnique({
         where: { id },
