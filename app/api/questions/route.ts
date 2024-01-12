@@ -8,17 +8,29 @@ export async function GET(req: Request) {
 
   try {
     if (page>0 && pageSize>0) {
-      const totalRows = await db.question.count();
+      const totalRows = await db.question.count({
+        where: {
+          isDeleted: false,
+          questionSets: {
+            every: {
+              isDeleted: false,
+            },
+          },
+        },
+      });
 
       const totalPages = Math.ceil(totalRows / pageSize);
 
       const skip = (page - 1) * pageSize;
 
       const questions = await db.question.findMany({
+        where: {
+          isDeleted: false
+        },
         include: {
           questionSets: true,
           objective_options: true,
-          subjective_description: true
+          subjective_description: true,
         },
         skip,
         take: pageSize,
@@ -93,7 +105,7 @@ export async function POST(req: any, res: any) {
             },
           },
           createdBy: {
-            connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
+            connect: { id: 'clra6qmbq002p9yp85h428scm' },
           },
         },
       });
@@ -115,7 +127,7 @@ export async function POST(req: any, res: any) {
             },
           },
           createdBy: {
-            connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
+            connect: { id: 'clra6qmbq002p9yp85h428scm' },
           },
         },
       });

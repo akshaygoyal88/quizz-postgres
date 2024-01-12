@@ -5,7 +5,7 @@ import InputWithLabel from "../Shared/InputWithLabel";
 import Textarea from "../Shared/Textarea";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -22,14 +22,17 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
     data: setInfo,
     error: setError,
     isLoading: isLoadingSet,
-  } = useFetch(`${pathName.questionSetApi.path}/${setId}`);
+  } = useFetch({
+    url: `${pathName.questionSetApi.path}/${setId}`,
+    method: FetchMethodE.GET,
+  });
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
   });
   const [successMessage, setSuccessMessage] = useState<string>("");
-  console.log(setId);
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -45,23 +48,30 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const {
+    data: editSetRes,
+    error: editSetError,
+    isLoading: editSetIsLoading,
+    fetchData,
+  } = useFetch({
+    url: `${pathName.questionSetApi.path}/${setId}`,
+    method: FetchMethodE.PUT,
+  });
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch(`${pathName.questionSetApi.path}/${setId}`, {
-        method: "PUT",
-        body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (res.ok) {
-        setSuccessMessage("Successfully updated");
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 10000);
-      }
-    } catch (error) {
-      console.log(error);
+    await fetchData(formData);
+
+    if (!editSetError && !editSetRes.error) {
+      setSuccessMessage("Successfully updated");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 10000);
+    } else if (editSetRes.error) {
+      setError(editSetRes.error);
+    } else {
+      setError(editSetError);
     }
   };
 
@@ -94,6 +104,9 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
               {successMessage}
             </p>
           )}
+
+          <div className="text-red-500 mb-2">{error}</div>
+
           <button
             className="bg-gray-500 text-white font-semibold px-4 py-2"
             type="submit"

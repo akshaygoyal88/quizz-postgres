@@ -5,6 +5,8 @@ import InputWithLabel from "../Shared/InputWithLabel";
 import Textarea from "../Shared/Textarea";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
+import { error } from "console";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -30,20 +32,22 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const {
+    data: saveQueSetRes,
+    error: saveQueSetError,
+    isLoading: saveQueSetIsLoading,
+    fetchData,
+  } = useFetch({
+    url: `${pathName.questionSetApi.path}`,
+    method: FetchMethodE.POST,
+  });
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch(`${pathName.questionSetApi.path}`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (res.ok) {
-        router.push(`${pathName.quiz.path}`);
-      }
-    } catch (error) {
-      console.log(error);
+    await fetchData(formData);
+    if (!saveQueSetError && !saveQueSetRes.error) {
+      router.push(`${pathName.quiz.path}`);
     }
   };
 
@@ -70,6 +74,7 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
           onChange={handleInputChange}
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
         />
+        <div className="text-red-500 mb-2">{saveQueSetError}</div>
         <button
           className="bg-gray-500 text-white font-semibold px-4 py-2"
           type="submit"

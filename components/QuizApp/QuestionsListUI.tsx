@@ -5,7 +5,7 @@ import QuestionsTable from "./QuestionsTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
 import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 
 export default function QuestionsListUI() {
   const [ques, setQues] = useState([]);
@@ -17,24 +17,32 @@ export default function QuestionsListUI() {
     data: quesData,
     error: quesError,
     isLoading: isLoadingQues,
-  } = useFetch(
-    `${pathName.questionsApiPath.path}?page=${page}&pageSize=9`,
-    time
-  );
+  } = useFetch({
+    url: `${pathName.questionsApiPath.path}?page=${page}&pageSize=9&time=${time}`,
+    method: FetchMethodE.GET,
+  });
 
-  useEffect(() => {
-    if (quesData) {
-      const availableQues = quesData.questions;
-      setTotalPage(quesData.totalPages);
-      setQues([...availableQues]);
-    }
-  }, [quesData]);
+  // console.log(quesData, quesError, isLoadingQues, "DDDDDDD");
+
+  // if (quesData && quesData.questions.length > 0) {
+  //   setTotalPage(quesData.totalPages);
+  //   setQues([...quesData.questions]);
+  // }
+
+  // useEffect(() => {
+  //   if (quesData) {
+  //     const availableQues = quesData.questions;
+  //     setTotalPage(quesData.totalPages);
+  //     setQues([...availableQues]);
+  //   }
+  // }, [quesData]);
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
       setPage(pageNumber);
     }
   };
+
   const onDelete = () => {
     setTime(Date.now());
   };
@@ -55,7 +63,9 @@ export default function QuestionsListUI() {
         </Link>
       </div>
       <QuestionsTable
-        ques={ques}
+        ques={
+          quesData && quesData.questions.length > 0 ? quesData.questions : []
+        }
         // getAvailableQuestions={getAvailableQuestions}
         onDelete={onDelete}
       />

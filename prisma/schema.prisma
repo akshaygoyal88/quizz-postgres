@@ -107,6 +107,7 @@ model QuestionSet {
   updatedAt   DateTime   @updatedAt @map(name: "updated_at")
   createdBy   User       @relation(fields: [createdById], references: [id])
   createdById String
+  isDeleted   Boolean    @default(false)
 }
 
 enum QuestionType {
@@ -126,6 +127,7 @@ model Question {
   updatedAt              DateTime                @updatedAt @map(name: "updated_at")
   createdBy              User                    @relation(fields: [createdById], references: [id])
   createdById            String
+  isDeleted              Boolean                 @default(false)
 }
 
 model ObjectiveOptions {

@@ -1,46 +1,51 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-export const useFetch = (url: string, time?: number) => {
+export enum FetchMethodE {
+  POST="POST",
+  PUT="PUT",
+  GET="GET",
+  DELETE="DELETE"
+}
+
+export const useFetch = ({url, method}:{url: string, method:FetchMethodE }) => {  
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // const accessToken = cookies.get('next-auth.session-token');
-
-        // if (!accessToken) {
-        //   throw new Error('Access token not found in cookies');
-        // }
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.log(error, "jijjjj");
-        setError(error);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchData = useCallback(async (body?: Object) => {
+    const requestOptions: RequestInit = {
+      method: FetchMethodE[method],
+      headers: {
+        'Content-Type': 'application/json',
+      },
     };
 
-    fetchData();
-  }, [url, time]);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+    // console.log(url, body, "Getting data...");
+    const response = await fetch(url, requestOptions);
 
-  return { data, error, isLoading };
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    setData(result);
+  }, [url])
+   
+  useEffect(() => {    
+    if (method === FetchMethodE.GET) {
+      // console.log("get", fetchData)
+      fetchData();
+    }
+  }, [url, method]);
+
+  console.log(url, method)
+
+  return { data, error, isLoading, fetchData };
 };
 
 // // Example usage in a component

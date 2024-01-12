@@ -1,26 +1,67 @@
 import pathName from "@/constants";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import { Question } from "@prisma/client";
+import {
+  JSXElementConstructor,
+  Key,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useState,
+} from "react";
 
-export default function QuestionsTable({ ques, onDelete }) {
+export default function QuestionsTable({
+  ques,
+  onDelete,
+}: {
+  ques: Question[];
+  onDelete: () => void;
+}) {
   const [deleteSuccess, setDeleteSuccess] = useState(null);
-  const deleteHandler = async (id) => {
-    try {
-      const deleteRes = await fetch(`${pathName.questionsApiPath.path}/${id}`, {
-        method: "DELETE",
-      });
+  const [clickedQuestionId, setClickedQuestionId] = useState(null);
 
-      if (deleteRes.ok) {
-        setDeleteSuccess("Deleted successfully");
-        setTimeout(() => {
-          setDeleteSuccess(null);
-        }, 10000);
-        onDelete();
-      }
-    } catch (error) {
-      console.error(error);
+  const {
+    data: editSetRes,
+    error: editSetError,
+    isLoading: editSetIsLoading,
+    fetchData,
+  } = useFetch({
+    url: `${pathName.questionsApiPath.path}/${clickedQuestionId}`,
+    method: FetchMethodE.PUT,
+  });
+
+  const deleteHandler = async (id) => {
+    // new Promise((resove, reject) => {
+    setClickedQuestionId(id);
+    //   resove(clickedQuestionId);
+    // }).then((id) => console.log(id, "fak"));
+    // await fetchData({ isDeleted: true });
+    if (clickedQuestionId) {
+      // await fetchData();
+      //   if (!editSetError) {
+      //     setDeleteSuccess("Deleted successfully");
+      //     setTimeout(() => {
+      //       setDeleteSuccess(null);
+      //     }, 10000);
+      //     setClickedQuestionId(null);
+      //     onDelete();
+      //   }
     }
+
+    // try {
+    //   const deleteRes = await fetch(`${pathName.questionsApiPath.path}/${id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ isDeleted: true }),
+    //   });
+
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
+  // console.log("render");
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <h1>Available Questions</h1>
@@ -137,4 +178,7 @@ export default function QuestionsTable({ ques, onDelete }) {
       </div>
     </div>
   );
+}
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error("Function not implemented.");
 }

@@ -3,14 +3,13 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 
 interface availableSetTypes {
   name: string;
 }
 
 function EditQuesForm({ quesId }: { quesId: string }) {
-  const { data, error, isLoading } = useFetch();
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
@@ -25,13 +24,19 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     data: questionData,
     error: questionError,
     isLoading: questionIsLoading,
-  } = useFetch(`${pathName.questionsApiPath.path}/${quesId}`);
+  } = useFetch({
+    url: `${pathName.questionsApiPath.path}/${quesId}`,
+    method: FetchMethodE.GET,
+  });
 
   const {
     data: questionSetsData,
     error: questionSetsError,
     isLoading: questionSetsIsLoading,
-  } = useFetch(`${pathName.questionSetApi.path}`);
+  } = useFetch({
+    url: `${pathName.questionSetApi.path}`,
+    method: FetchMethodE.GET,
+  });
 
   useEffect(() => {
     if (questionData) {
@@ -70,8 +75,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setDescription(e.target.value);
   };
 
-  console.log(description);
-
   const handleOptionChange = (index: any) => {
     setCorrectAnswer(index);
     setValidationError("");
@@ -83,8 +86,17 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setOptions(newOptions);
   };
 
+  const {
+    data: editQuesRes,
+    error: editQuesError,
+    isLoading: editQuesIsLoading,
+    fetchData,
+  } = useFetch({
+    url: `${pathName.questionsApiPath.path}/${quesId}`,
+    method: FetchMethodE.PUT,
+  });
+
   const handleSaveQuestion = async () => {
-    console.log("saving");
     let requestData;
 
     if (questionType === "objective") {
@@ -120,35 +132,17 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       };
     }
 
-    console.log("subjective", requestData);
+    await fetchData(requestData);
 
-    try {
-      //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch(
-        `${pathName.questionsApiPath.path}/${quesId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            //   Authorization: `Bearer ${adminToken}`,
-          },
-          body: JSON.stringify(requestData),
-        }
-      );
-      console.log(response);
-      const data = await response.json();
-      console.log(data);
-
-      if (response.ok) {
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-        }, 10000);
-      } else {
-        alert("Failed to save the question.");
-      }
-    } catch (error) {
-      console.error("Error saving question:", error);
+    if (!editQuesError && !editQuesRes?.error) {
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 10000);
+    } else if (editQuesRes?.error) {
+      setValidationError(editQuesRes?.error);
+    } else {
+      setValidationError(editQuesError);
     }
   };
 
@@ -270,6 +264,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."
           />
+          <div className="text-red-500 mb-2">{validationError}</div>
         </div>
       )}
 

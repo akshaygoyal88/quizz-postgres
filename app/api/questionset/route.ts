@@ -8,7 +8,11 @@ export async function GET(req: Request) {
 
   try {
     if (page>0 && pageSize>0) {
-      const totalRows = await db.questionSet.count();
+      const totalRows = await db.questionSet.count(
+        {where: {
+          isDeleted: false,
+        }}
+      );
 
       const totalPages = Math.ceil(totalRows / pageSize);
 
@@ -49,7 +53,7 @@ export async function POST(req: any, res: any) {
       data: {
         ...reqData,
         createdBy: {
-          connect: { id: 'clr8pw6x40000r5n4vnlwlzlk' },
+          connect: { id: 'clra6qmbq002p9yp85h428scm' },
         },
       },
     });

@@ -4,16 +4,16 @@ import React, { useState } from "react";
 import QuizTable from "./QuizTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
-import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 
 export default function QuizCreation() {
   const [page, setPage] = useState(1);
   const [time, setTime] = useState<Number>(Date.now());
-  const { data, error, isLoading } = useFetch(
-    `${pathName.questionSetApi.path}?page=${page}&pageSize=9`,
-    time
-  );
+  const { data, error, isLoading } = useFetch({
+    url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&time=${time}`,
+    method: FetchMethodE.GET,
+  });
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     console.log(pageNumber);
     if (Number(pageNumber) > 0 && Number(pageNumber) <= data?.totalPages) {

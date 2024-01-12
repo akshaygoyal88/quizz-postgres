@@ -1,4 +1,5 @@
 import { db } from "@/app/db";
+import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: any, res: any) {
@@ -81,7 +82,8 @@ export async function PUT(req: any, res: any) {
       options,
       correctAnswer,
       description,
-      timer
+      timer,
+      isDeleted
     } = await req.json();
 
     const isAvailable = await db.question.findUnique({
@@ -100,53 +102,64 @@ export async function PUT(req: any, res: any) {
       const deleteSubDes = await db.subjectiveDescription.deleteMany({
         where: { questionId: id },
       });
-      
 
-      console.log("deleteOptions", deleteOptions);
-
-      if (type === "OBJECTIVE") {
-        const updateQue = await db.question.update({
+      if(isDeleted) {
+        const deleteQue = await db.question.update({
           where: { id },
           data: {
-            question_text,
-            type,
-            timer: parseInt(timer, 10),
-            questionSets: {
-              connect: { id: setDetail[0].id },
-            },
-            objective_options: {
-              createMany: {
-                data: options.map((optionText: any, index: any) => ({
-                  text: optionText,
-                  isCorrect: index === correctAnswer,
-                })),
-              },
-            },
+            isDeleted
           },
         });
-        return NextResponse.json(updateQue);
+        return NextResponse.json(deleteQue);
       } else {
-        const problem = question_text;
-        const updateQue = await db.question.update({
-          where: { id },
-          data: {
-            question_text,
-            type,
-            timer: parseInt(timer, 10),
-            questionSets: {
-              connect: { id: setDetail[0].id },
-            },
-            subjective_description: {
-              create: {
-                problem,
-                description,
+        
+        if (type === QuestionType.OBJECTIVE) {
+          const updateQue = await db.question.update({
+            where: { id },
+            data: {
+              question_text,
+              type,
+              timer: parseInt(timer, 10),
+              questionSets: {
+                connect: { id: setDetail[0].id },
+              },
+              objective_options: {
+                createMany: {
+                  data: options.map((optionText: any, index: any) => ({
+                    text: optionText,
+                    isCorrect: index === correctAnswer,
+                  })),
+                },
               },
             },
-          },
-        });
-
-        return NextResponse.json(updateQue);
+          });
+          return NextResponse.json(updateQue);
+        } else {
+          const problem = question_text;
+          const updateQue = await db.question.update({
+            where: { id },
+            data: {
+              question_text,
+              type,
+              timer: parseInt(timer, 10),
+              questionSets: {
+                connect: { id: setDetail[0].id },
+              },
+              subjective_description: {
+                create: {
+                  problem,
+                  description,
+                },
+              },
+            },
+          });
+  
+          return NextResponse.json(updateQue);
+        }
       }
+
+
+     
     } else {
       err = "Invalid Question";
       return NextResponse.json({ error: err });

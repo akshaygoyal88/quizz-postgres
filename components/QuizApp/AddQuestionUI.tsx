@@ -2,7 +2,7 @@
 
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
-import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 
 interface availableSetTypes {
@@ -10,7 +10,7 @@ interface availableSetTypes {
 }
 
 function AddQuestionUI() {
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [validationError, setValidationError] = useState("");
@@ -19,9 +19,10 @@ function AddQuestionUI() {
   const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
-  const { data, error, isLoading } = useFetch(
-    `${pathName.questionSetApi.path}`
-  );
+  const { data, error, isLoading } = useFetch({
+    url: `${pathName.questionSetApi.path}`,
+    method: FetchMethodE.GET,
+  });
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -32,8 +33,6 @@ function AddQuestionUI() {
   const handleDescriptionChange = (e: any) => {
     setDescription(e.target.value);
   };
-
-  console.log(description);
 
   const handleOptionChange = (index: any) => {
     setCorrectAnswer(index);
@@ -46,8 +45,17 @@ function AddQuestionUI() {
     setOptions(newOptions);
   };
 
+  const {
+    data: saveQuesRes,
+    error: saveQuesError,
+    isLoading: saveQuesIsLoading,
+    fetchData,
+  } = useFetch({
+    url: `${pathName.questionsApiPath.path}`,
+    method: FetchMethodE.POST,
+  });
+
   const handleSaveQuestion = async () => {
-    console.log("saving");
     let requestData;
 
     if (questionType === "objective") {
@@ -83,38 +91,25 @@ function AddQuestionUI() {
       };
     }
 
-    console.log("subjective", requestData);
+    await fetchData(requestData);
 
-    try {
-      //   const adminToken = localStorage.getItem("codeCaiffieneToken");
-      const response = await fetch(`${pathName.questionsApiPath.path}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          //   Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify(requestData),
-      });
-      console.log(response);
-      const data = await response.json();
-      console.log(data);
-
-      if (!data.error) {
-        setQuestion("");
-        setOptions(["", "", "", ""]);
-        setCorrectAnswer(null);
-        setValidationError("");
-        setTimer("0");
-        setQuestionSet("");
-        setSuccessMessage("Successfully added Question.");
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 10000);
-      } else {
-        setValidationError(data.error);
-      }
-    } catch (error) {
-      console.error("Error saving question:", error);
+    console.log(saveQuesRes);
+    if (!saveQuesError && !saveQuesRes?.error) {
+      setQuestion("");
+      setOptions(["", "", "", ""]);
+      setCorrectAnswer(null);
+      setValidationError("");
+      setTimer("0");
+      setQuestionSet("");
+      setSuccessMessage("Successfully added Question.");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 10000);
+    } else if (saveQuesRes?.error) {
+      console.log(saveQuesRes?.error);
+      setValidationError(saveQuesRes?.error);
+    } else {
+      setValidationError(error);
     }
   };
 
@@ -129,7 +124,8 @@ function AddQuestionUI() {
           value={questionSet}
         >
           <option>Select question set</option>
-          {data && data.map((set) => <option>{set.name}</option>)}
+          {data &&
+            data.map((set) => !set.isDeleted && <option>{set.name}</option>)}
         </select>
       </div>
       {/* Question Input */}
@@ -230,11 +226,13 @@ function AddQuestionUI() {
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."
           />
+          <div className="text-red-500 mb-2">{validationError}</div>
         </div>
       )}
       {successMessage && (
         <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
       )}
+
       {/* Save Question Button */}
       <div className="flex justify-center">
         <button
