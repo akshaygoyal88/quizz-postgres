@@ -50,7 +50,10 @@ export async function GET(req: Request) {
 export async function POST(req: any, res: any) {
   try {
     const reqData = await req.json();
-    console.log(reqData);
+
+    if(!reqData.name) {
+      return NextResponse.json({error: 'Please fill fields.'})
+    }
 
     const createSet = await db.questionSet.create({
       data: {

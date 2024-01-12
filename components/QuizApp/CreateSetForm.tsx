@@ -28,6 +28,7 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    setError("");
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -38,13 +39,14 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
       data: saveQueSetRes,
       error: saveQueSetError,
       isLoading: saveQueSetIsLoading,
-    } = fetchData({
+    } = await fetchData({
       url: `${pathName.questionSetApi.path}`,
       method: FetchMethodE.POST,
       body: formData,
     });
     if (!saveQueSetError && !saveQueSetRes?.error) {
-      router.push(`${pathName.quiz.path}`);
+      // router.push(`${pathName.quiz.path}`);
+      router.push(`${pathName.quiz.path}/${saveQueSetRes?.id}/edit`);
     } else if (saveQueSetRes.error) {
       setError(saveQueSetRes.error);
     }

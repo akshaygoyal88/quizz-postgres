@@ -54,7 +54,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
       data: editSetRes,
       error: editSetError,
       isLoading: editSetIsLoading,
-    } = fetchData({
+    } = await fetchData({
       url: `${pathName.questionSetApi.path}/${setId}`,
       method: FetchMethodE.PUT,
       body: formData,
@@ -106,7 +106,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
           className="bg-gray-500 text-white font-semibold px-4 py-2"
           type="submit"
         >
-          Submit
+          Edit
         </button>
       </form>
     </div>
