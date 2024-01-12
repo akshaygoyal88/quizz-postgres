@@ -3,7 +3,8 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
 import pathName from "@/constants";
-import { FetchMethodE, useFetch } from "@/hooks/useFetch";
+import { useFetch } from "@/hooks/useFetch";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
 
 interface availableSetTypes {
   name: string;
@@ -26,7 +27,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     isLoading: questionIsLoading,
   } = useFetch({
     url: `${pathName.questionsApiPath.path}/${quesId}`,
-    method: FetchMethodE.GET,
   });
 
   const {
@@ -35,7 +35,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     isLoading: questionSetsIsLoading,
   } = useFetch({
     url: `${pathName.questionSetApi.path}`,
-    method: FetchMethodE.GET,
   });
 
   useEffect(() => {
@@ -86,18 +85,15 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setOptions(newOptions);
   };
 
-  const {
-    data: editQuesRes,
-    error: editQuesError,
-    isLoading: editQuesIsLoading,
-    fetchData,
-  } = useFetch({
-    url: `${pathName.questionsApiPath.path}/${quesId}`,
-    method: FetchMethodE.PUT,
-  });
+  console.log(questionSet);
 
   const handleSaveQuestion = async () => {
     let requestData;
+
+    // if (questionSet === "Select question set") {
+    //   setValidationError("Please select valid question set");
+    //   return;
+    // }
 
     if (questionType === "objective") {
       if (
@@ -132,7 +128,15 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       };
     }
 
-    await fetchData(requestData);
+    const {
+      data: editQuesRes,
+      error: editQuesError,
+      isLoading: editQuesIsLoading,
+    } = await fetchData({
+      url: `${pathName.questionsApiPath.path}/${quesId}`,
+      method: FetchMethodE.PUT,
+      body: requestData,
+    });
 
     if (!editQuesError && !editQuesRes?.error) {
       setSuccess(true);

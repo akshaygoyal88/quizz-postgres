@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import QuizTable from "./QuizTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
-import { FetchMethodE, useFetch } from "@/hooks/useFetch";
+import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 
 export default function QuizCreation() {
@@ -12,7 +12,6 @@ export default function QuizCreation() {
   const [time, setTime] = useState<Number>(Date.now());
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&time=${time}`,
-    method: FetchMethodE.GET,
   });
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     console.log(pageNumber);
@@ -48,7 +47,6 @@ export default function QuizCreation() {
         </Link>
       </div>
       <QuizTable
-        key={time}
         queSets={data?.questionSets || []}
         // getSetsAndQuestions={() => {}}
         onDelete={onDelete}

@@ -19,6 +19,9 @@ export async function GET(req: Request) {
       const skip = (page - 1) * pageSize;
 
       const questionSets = await db.questionSet.findMany({
+        where: {
+          isDeleted: false,
+        },
         include: {
           questions: true,
         },

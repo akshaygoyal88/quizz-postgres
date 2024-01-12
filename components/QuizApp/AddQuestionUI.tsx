@@ -2,8 +2,10 @@
 
 import React, { FormEvent, useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
-import { FetchMethodE, useFetch } from "@/hooks/useFetch";
+import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { QuestionSet } from "@prisma/client";
 
 interface availableSetTypes {
   name: string;
@@ -21,7 +23,6 @@ function AddQuestionUI() {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}`,
-    method: FetchMethodE.GET,
   });
 
   const handleRadioChange = (event: {
@@ -44,16 +45,6 @@ function AddQuestionUI() {
     newOptions[index] = option;
     setOptions(newOptions);
   };
-
-  const {
-    data: saveQuesRes,
-    error: saveQuesError,
-    isLoading: saveQuesIsLoading,
-    fetchData,
-  } = useFetch({
-    url: `${pathName.questionsApiPath.path}`,
-    method: FetchMethodE.POST,
-  });
 
   const handleSaveQuestion = async () => {
     let requestData;
@@ -91,10 +82,16 @@ function AddQuestionUI() {
       };
     }
 
-    await fetchData(requestData);
-
-    console.log(saveQuesRes);
-    if (!saveQuesError && !saveQuesRes?.error) {
+    const {
+      data: saveQuesRes,
+      error: saveQuesError,
+      isLoading: saveQuesIsLoading,
+    } = await fetchData({
+      url: `${pathName.questionsApiPath.path}`,
+      method: FetchMethodE.POST,
+      body: requestData,
+    });
+    if (saveQuesRes && !saveQuesRes?.error) {
       setQuestion("");
       setOptions(["", "", "", ""]);
       setCorrectAnswer(null);
@@ -106,7 +103,6 @@ function AddQuestionUI() {
         setSuccessMessage("");
       }, 10000);
     } else if (saveQuesRes?.error) {
-      console.log(saveQuesRes?.error);
       setValidationError(saveQuesRes?.error);
     } else {
       setValidationError(error);
@@ -125,7 +121,10 @@ function AddQuestionUI() {
         >
           <option>Select question set</option>
           {data &&
-            data.map((set) => !set.isDeleted && <option>{set.name}</option>)}
+            data.map(
+              (set: QuestionSet) =>
+                !set.isDeleted && <option>{set.name}</option>
+            )}
         </select>
       </div>
       {/* Question Input */}

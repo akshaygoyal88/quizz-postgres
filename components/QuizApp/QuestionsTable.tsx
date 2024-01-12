@@ -1,6 +1,5 @@
 import pathName from "@/constants";
-import { FetchMethodE, useFetch } from "@/hooks/useFetch";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
 import {
   JSXElementConstructor,
@@ -19,54 +18,33 @@ export default function QuestionsTable({
   ques: Question[];
   onDelete: () => void;
 }) {
-  const [deleteSuccess, setDeleteSuccess] = useState(null);
-  const [clickedQuestionId, setClickedQuestionId] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState("");
+  const [error, setError] = useState("");
 
-  const {
-    data: editSetRes,
-    error: editSetError,
-    isLoading: editSetIsLoading,
-    fetchData,
-  } = useFetch({
-    url: `${pathName.questionsApiPath.path}/${clickedQuestionId}`,
-    method: FetchMethodE.PUT,
-  });
-
-  const deleteHandler = async (id) => {
-    // new Promise((resove, reject) => {
-    setClickedQuestionId(id);
-    //   resove(clickedQuestionId);
-    // }).then((id) => console.log(id, "fak"));
-    // await fetchData({ isDeleted: true });
-    if (clickedQuestionId) {
-      // await fetchData();
-      //   if (!editSetError) {
-      //     setDeleteSuccess("Deleted successfully");
-      //     setTimeout(() => {
-      //       setDeleteSuccess(null);
-      //     }, 10000);
-      //     setClickedQuestionId(null);
-      //     onDelete();
-      //   }
+  const deleteHandler = async (id: string) => {
+    const { data, error, isLoading } = await fetchData({
+      url: `${pathName.questionsApiPath.path}/${id}`,
+      method: FetchMethodE.PUT,
+      body: { isDeleted: true },
+    });
+    if (data && !data.error) {
+      setDeleteSuccess("Deleted successfully");
+      setTimeout(() => {
+        setDeleteSuccess("");
+      }, 10000);
+      onDelete();
+    } else if (data.error) {
+      setError(data.error);
     }
-
-    // try {
-    //   const deleteRes = await fetch(`${pathName.questionsApiPath.path}/${id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ isDeleted: true }),
-    //   });
-
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
-  // console.log("render");
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <h1>Available Questions</h1>
-      {deleteSuccess && (
-        <p className="bg-red-600 px-4 py-2 text-white m-3">{deleteSuccess}</p>
+      {(deleteSuccess || error) && (
+        <p className="bg-red-600 px-4 py-2 text-white m-3">
+          {deleteSuccess || error}
+        </p>
       )}
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

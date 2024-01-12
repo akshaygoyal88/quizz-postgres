@@ -5,12 +5,10 @@ import QuestionsTable from "./QuestionsTable";
 import Link from "next/link";
 import Pagination from "../Shared/Pagination";
 import pathName from "@/constants";
-import { FetchMethodE, useFetch } from "@/hooks/useFetch";
+import { useFetch } from "@/hooks/useFetch";
 
 export default function QuestionsListUI() {
-  const [ques, setQues] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalpage, setTotalPage] = useState(0);
   const [time, setTime] = useState<Number>(Date.now());
 
   const {
@@ -19,26 +17,10 @@ export default function QuestionsListUI() {
     isLoading: isLoadingQues,
   } = useFetch({
     url: `${pathName.questionsApiPath.path}?page=${page}&pageSize=9&time=${time}`,
-    method: FetchMethodE.GET,
   });
 
-  // console.log(quesData, quesError, isLoadingQues, "DDDDDDD");
-
-  // if (quesData && quesData.questions.length > 0) {
-  //   setTotalPage(quesData.totalPages);
-  //   setQues([...quesData.questions]);
-  // }
-
-  // useEffect(() => {
-  //   if (quesData) {
-  //     const availableQues = quesData.questions;
-  //     setTotalPage(quesData.totalPages);
-  //     setQues([...availableQues]);
-  //   }
-  // }, [quesData]);
-
   const paginate = (pageNumber: React.SetStateAction<number>) => {
-    if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
+    if (Number(pageNumber) > 0 && Number(pageNumber) <= quesData?.totalpage) {
       setPage(pageNumber);
     }
   };

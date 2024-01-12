@@ -1,5 +1,6 @@
 import pathName from "@/constants";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { QuestionSet } from "@prisma/client";
 import {
   JSXElementConstructor,
   Key,
@@ -10,25 +11,32 @@ import {
   useState,
 } from "react";
 
-export default function QuizTable({ queSets, getSetsAndQuestions, onDelete }) {
-  const [deleteSuccess, setDeleteSuccess] = useState(null);
-  const deleteHandler = async (id) => {
-    try {
-      const deleteRes = await fetch(`${pathName.questionSetApi.path}/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({ isDeleted: true }),
-      });
+export default function QuizTable({
+  queSets,
+  onDelete,
+}: {
+  queSets: QuestionSet;
+  onDelete: () => void;
+}) {
+  const [deleteSuccess, setDeleteSuccess] = useState<string>("");
+  const deleteHandler = async (id: string) => {
+    const { data, error, isLoading } = await fetchData({
+      url: `${pathName.questionSetApi.path}/${id}`,
+      method: FetchMethodE.PUT,
+      body: { isDeleted: true },
+    });
 
-      if (deleteRes.ok) {
-        setDeleteSuccess("Deleted successfully");
-        setTimeout(() => {
-          setDeleteSuccess(null);
-        }, 10000);
-        // getSetsAndQuestions();
-        onDelete();
-      }
-    } catch (error) {
-      console.error(error);
+    if (data && !data.error) {
+      setDeleteSuccess("Deleted successfully");
+      setTimeout(() => {
+        setDeleteSuccess("");
+      }, 10000);
+      onDelete();
+    } else if (data.error) {
+      setDeleteSuccess(data.error);
+      setTimeout(() => {
+        setDeleteSuccess("");
+      }, 10000);
     }
   };
 
@@ -95,7 +103,7 @@ export default function QuizTable({ queSets, getSetsAndQuestions, onDelete }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {queSets.map((set) => (
+                {queSets.map((set: QuestionSet) => (
                   <tr key={set.id}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {set.name}

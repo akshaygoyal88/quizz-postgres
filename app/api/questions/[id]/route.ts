@@ -93,6 +93,10 @@ export async function PUT(req: any, res: any) {
     const setsAvailable = await db.questionSet.findMany();
     const setDetail = setsAvailable.filter((set) => set.name === questionSet);
 
+    if(!isDeleted && setDetail.length == 0 ) {
+      return NextResponse.json({ error: "Please provide question set." });
+    }
+
     if (isAvailable) {
 
       const deleteOptions = await db.objectiveOptions.deleteMany({
