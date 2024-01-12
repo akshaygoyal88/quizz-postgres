@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import Nav from "@/components/Nav";
-import SideBar from "@/components/QuizApp/SideBar";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +17,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const cookieStore = cookies();
   return (
     <html lang="en">
       <body className={inter.className}>

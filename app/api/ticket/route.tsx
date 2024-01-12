@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { returnResponse } from "@/app/utils.";
 
 interface TicketData {

@@ -15,12 +15,12 @@ export default function Navigation({ session }: { session: Session | null }) {
   const [userDetails, setUserDetails] = useState<UserData>();
 
   const getUserData = async () => {
-    try {
-      const userData = await app.service.user.getUserData();
-      setUserDetails({ ...userData });
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   const userData = await app.service.user.getUserData();
+    //   setUserDetails({ ...userData });
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   useEffect(() => {
@@ -57,6 +57,11 @@ export default function Navigation({ session }: { session: Session | null }) {
         {session && (
           <Link href="/dashboard" className="text-white">
             Dashboard
+          </Link>
+        )}
+        {session && (
+          <Link href="/admin/quiz" className="text-white">
+            Quiz-app
           </Link>
         )}
         {session && (

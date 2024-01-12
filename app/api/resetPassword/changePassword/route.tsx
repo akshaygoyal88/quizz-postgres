@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { hash } from "bcrypt";
 import validator from "validator";
 

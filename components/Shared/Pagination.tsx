@@ -4,12 +4,14 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 interface PaginationProps {
   page: number;
   totalpage: number;
+  totalRows: number;
   paginate: (pageNumber: React.SetStateAction<number>) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
   page,
   totalpage,
+  totalRows,
   paginate,
 }) => {
   return (
@@ -37,9 +39,9 @@ const Pagination: React.FC<PaginationProps> = ({
             </span>{" "}
             to{" "}
             <span className="font-medium">
-              {totalpage ? page * 9 : totalpage}
+              {page * 9 < totalRows ? page * 9 : totalRows}
             </span>{" "}
-            of <span className="font-medium">{totalpage * 9}</span> results
+            of <span className="font-medium">{totalRows}</span> results
           </p>
         </div>
         <div>

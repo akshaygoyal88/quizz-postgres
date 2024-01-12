@@ -1,29 +1,21 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 export default function Textarea({
+  label,
   rows,
   name,
   id,
   className,
   defaultValue,
+  value,
+  onChange,
 }: {
   rows?: number;
-  name: string;
+  name?: string;
   id: string;
   className?: string;
   defaultValue?: string;
+  label: string;
+  value?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div>
@@ -31,7 +23,7 @@ export default function Textarea({
         htmlFor="comment"
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Add your comment
+        {label}
       </label>
       <div className="mt-2">
         <textarea
@@ -40,6 +32,8 @@ export default function Textarea({
           id={id}
           className={className}
           defaultValue={defaultValue}
+          value={value}
+          onChange={onChange}
         />
       </div>
     </div>

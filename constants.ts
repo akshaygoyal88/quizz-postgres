@@ -43,6 +43,36 @@ const pathName: IPathName = {
     path: "/admin",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
+  },
+  quiz: {
+    path: "/admin/quiz",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  questions: {
+    path: "/admin/questions",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  quizAdd: {
+    path: "/admin/quiz/add",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  questionsAdd: {
+    path: "/admin/questions/add",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  questionSetApi: {
+    path: "/api/questionset",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  questionsApiPath:{
+    path: "/api/questions",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
   }
 };
 

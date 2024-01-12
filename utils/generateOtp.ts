@@ -1,5 +1,3 @@
-// utils.ts
-
 export function generateUniqueAlphanumericOTP(length: number): string {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -20,30 +18,6 @@ export function generateUniqueAlphanumericOTP(length: number): string {
     }
   }
 }
-
-// export async function getUserData() {
-//   const res = await fetch("/api/user/", {
-//     method: "GET",
-//   });
-//   if (res.ok) {
-//     const data = await res.json();
-//     return data;
-//   }
-// }
-
-// export async function getUserData(){
-//   let userData;
-//   try {
-//     const res = await fetch("/api/user/", {
-//       method: "GET",
-//     });
-//     if (res.ok) {
-//       userData = await res.json();
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 interface ResponseData {
   [key: string]: any;
