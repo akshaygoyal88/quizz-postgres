@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { returnResponse } from "@/app/utils.";
+import { returnResponse } from "@/utils/generateOtp";
 
 export async function GET(request: Request) {
   if (request.method === "GET") {

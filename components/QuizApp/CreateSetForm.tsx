@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { useSession } from "next-auth/react";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -32,6 +33,9 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  const session = useSession();
+
+  const reqData = { ...formData, createdById: session?.data?.id };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

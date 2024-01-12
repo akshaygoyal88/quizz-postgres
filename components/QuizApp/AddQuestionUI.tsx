@@ -5,6 +5,7 @@ import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
+import { useSession } from "next-auth/react";
 
 function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
@@ -19,7 +20,7 @@ function AddQuestionUI() {
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}`,
   });
-
+  const ses = useSession();
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
@@ -69,6 +70,7 @@ function AddQuestionUI() {
         correctAnswer: correctAnswer,
         questionSet: questionSet,
         timer: timer,
+        createdById: ses?.data?.id,
       };
     } else if (questionType === "subjective") {
       requestData = {
@@ -77,6 +79,7 @@ function AddQuestionUI() {
         description: description,
         questionSet: questionSet,
         timer: timer,
+        createdById: ses?.data?.id,
       };
     }
 

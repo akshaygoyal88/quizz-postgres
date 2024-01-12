@@ -6,6 +6,10 @@ import { FormEvent, useEffect, useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import pathName from "@/constants";
+import { useSession } from "next-auth/react";
+import { useFetch } from "@/hooks/useFetch";
 
 interface UserEmail {
   email?: string;
@@ -46,6 +50,8 @@ export default function Profile({ email }: UserEmail) {
   const router = useRouter();
   const [success, setSuccess] = useState(false);
 
+  const session = useSession();
+
   const addressChange = (e: FormEvent) => {
     setAddress((e.target as HTMLInputElement).value);
   };
@@ -85,23 +91,31 @@ export default function Profile({ email }: UserEmail) {
     setPhoneNumber(value);
   };
 
-  const getUserData = async () => {
-    try {
-      const res = await fetch("/api/user/", {
-        method: "GET",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUserData({ ...data });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserData = async () => {
+  //   try {
+  //     const res = await fetch("/api/user/", {
+  //       method: "GET",
+  //     });
+  //     if (res.ok) {
+  //       const data = await res.json();
+  //       setUserData({ ...data });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const {
+    data: proData,
+    error: proDataErr,
+    isLoading: proDataIsloading,
+  } = useFetch({
+    url: `${pathName.userApi.path}/${session?.data?.id}`,
+  });
 
   useEffect(() => {
-    getUserData();
-  }, []);
+    setUserData({ ...proData });
+  }, [proData]);
 
   useEffect(() => {
     setPhoneNumber(userData.mobile_number || "");
@@ -158,27 +172,29 @@ export default function Profile({ email }: UserEmail) {
     };
 
     const updatedData = await setValues();
-    try {
-      const res = await fetch("/api/updateProfile", {
-        method: "PUT",
-        body: JSON.stringify({ ...updatedData }),
-      });
 
-      if (res.ok) {
-        const resData = await res.json();
-        if (resData.error) {
-          setError(resData.error);
-          // setTimeout(() => setError({}), 10000);
-          return;
-        }
-        router.refresh();
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-        }, 10000);
+    const {
+      data: updateProRes,
+      error: updateProError,
+      isLoading: updateProIsLoading,
+    } = await fetchData({
+      url: `${pathName.updateProfileApi.path}/${session?.data?.id}`,
+      method: FetchMethodE.PUT,
+      body: { ...updatedData },
+    });
+
+    if (!updateProError) {
+      if (updateProRes.error) {
+        setError(updateProRes.error);
+        return;
       }
-    } catch (error) {
-      console.error(error);
+      router.refresh();
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 10000);
+    } else {
+      setError(updateProError);
     }
   };
 
@@ -228,7 +244,7 @@ export default function Profile({ email }: UserEmail) {
                 type="email"
                 // autoComplete="email"
                 disabled={true}
-                value={email}
+                value={proData?.email}
                 defaultValue={undefined}
                 impAsterisk="*"
                 className="block p-3 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

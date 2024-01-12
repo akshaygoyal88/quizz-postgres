@@ -2,9 +2,9 @@ import { db } from "@/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function PUT(request: Request) {
-  const session = await getServerSession();
-  const email = session?.user?.email || "";
+export async function PUT(request: Request, {params}) {
+  const id = params.id;
+  console.log(id, "ddddddddddddddddddddddddd")
 
   const newData = await request.json();
   let result;
@@ -44,7 +44,7 @@ export async function PUT(request: Request) {
     result = { error: {mobile_number: "Phone number should not be more than 10."} };
   }else {
     const res = await db.user.update({
-      where: { email },
+      where: { id },
       data: {
         ...newData,
       },
@@ -61,7 +61,7 @@ export async function PUT(request: Request) {
     result.pincode
   ) {
     const res = await db.user.update({
-      where: { email },
+      where: { id },
       data: {
         isProfileComplete: true,
       },

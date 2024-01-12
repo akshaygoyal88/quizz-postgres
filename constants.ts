@@ -44,6 +44,11 @@ const pathName: IPathName = {
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   },
+  userApi: {
+    path: "/api/user",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
   quiz: {
     path: "/admin/quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
@@ -71,6 +76,11 @@ const pathName: IPathName = {
   },
   questionsApiPath:{
     path: "/api/questions",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
+  },
+  updateProfileApi: {
+    path: "/api/updateProfile",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   }

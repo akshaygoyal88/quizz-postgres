@@ -81,7 +81,7 @@ export async function PUT(req: any, res: any) {
       correctAnswer,
       description,
       timer,
-      isDeleted
+      isDeleted,
     } = await req.json();
 
     const isAvailable = await db.question.findUnique({

@@ -10,5 +10,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   // const isProfileCompleted = await profileCompleted();
   // if (!isProfileCompleted) redirect("/profile");
+  const session = await getServerSession();
+  console.log("user session", session);
   return <h1>Home</h1>;
 }

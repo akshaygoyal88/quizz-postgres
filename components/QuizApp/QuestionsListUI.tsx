@@ -19,7 +19,10 @@ export default function QuestionsListUI() {
     url: `${pathName.questionsApiPath.path}?page=${page}&pageSize=9&time=${time}`,
   });
 
+  console.log(quesData);
+
   const paginate = (pageNumber: React.SetStateAction<number>) => {
+    console.log(pageNumber);
     if (Number(pageNumber) > 0 && Number(pageNumber) <= quesData?.totalpage) {
       setPage(pageNumber);
     }
