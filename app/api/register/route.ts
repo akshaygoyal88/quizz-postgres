@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import validator from "validator";
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 import { UserOtpType } from "@prisma/client";
 import cron from "node-cron";

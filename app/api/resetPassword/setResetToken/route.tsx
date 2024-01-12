@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import cron from "node-cron";
 
 export async function POST(req, res) {

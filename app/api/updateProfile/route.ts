@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -50,7 +50,6 @@ export async function PUT(request: Request) {
       },
     });
     result = res;
-    set
   }
 
   if (

@@ -16,16 +16,16 @@ enum UserRole {
 }
 
 model User {
-  id                String    @id @default(cuid())
+  id                String        @id @default(cuid())
   first_name        String?
   last_name         String?
-  email             String?   @unique
+  email             String?       @unique
   password          String
-  role              UserRole? @default(USER)
-  isVerified        Boolean   @default(false)
-  isActive          Boolean   @default(false)
-  createdAt         DateTime  @default(now()) @map(name: "created_at")
-  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
+  role              UserRole?     @default(USER)
+  isVerified        Boolean       @default(false)
+  isActive          Boolean       @default(false)
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   mobile_number     String?
   address           String?
   country           String?
@@ -33,11 +33,13 @@ model User {
   city              String?
   pincode           String?
   profile_pic       String?
-  isProfileComplete Boolean   @default(false)
+  isProfileComplete Boolean       @default(false)
   otps              UserOtp[]
   createdShows      Show[]
   ticket            Tickets[]
   token             String?
+  QuestionSet       QuestionSet[]
+  Question          Question[]
 }
 
 model UserOtp {
@@ -97,10 +99,14 @@ model Tickets {
 }
 
 model QuestionSet {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  questions   Question[] @relation("QuestionInSet")
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  isDeleted   Boolean  @default(false)
 }
 
 enum QuestionType {
@@ -109,26 +115,31 @@ enum QuestionType {
 }
 
 model Question {
-  id                     Int                     @id @default(autoincrement())
+  id                     String                  @id @default(cuid())
   question_text          String
   type                   QuestionType // "objective" or "subjective"
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
   subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
-  questionSets           QuestionSet[]           @relation("QuestionInSet")
+  timer                  Int                     @default(0)
+  createdAt              DateTime                @default(now()) @map(name: "created_at")
+  updatedAt              DateTime                @updatedAt @map(name: "updated_at")
+  createdBy              User                    @relation(fields: [createdById], references: [id])
+  createdById            String
+  isDeleted              Boolean                 @default(false)
 }
 
 model ObjectiveOptions {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   text       String
   isCorrect  Boolean
-  questionId Int
+  questionId String
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
 model SubjectiveDescription {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   problem     String   @db.LongText
   description String   @db.LongText
-  questionId  Int
+  questionId  String
   question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
 }

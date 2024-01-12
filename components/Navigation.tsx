@@ -10,6 +10,21 @@ export default function Navigation() {
   const ses = useSession();
 
   const userId = ses?.data?.id;
+  // const getUserData = async () => {
+  //   // try {
+  //   //   const userData = await app.service.user.getUserData();
+  //   //   setUserDetails({ ...userData });
+  //   // } catch (error) {
+  //   //   console.error(error);
+  //   // }
+  // };
+
+  // useEffect(() => {
+  //   getUserData();
+  // }, []);
+  // console.log(userDetails);
+
+  // const userId = userDetails?.id;
 
   return (
     <div className="bg-gray-800 p-4 flex items-center justify-between">
@@ -38,6 +53,12 @@ export default function Navigation() {
         {ses.data && (
           <Link href="/dashboard" className="text-white">
             Dashboard
+          </Link>
+        )}
+        {/* {ses.data && ( */}
+        {ses.data && (
+          <Link href="/admin/quiz" className="text-white">
+            Quiz-app
           </Link>
         )}
         {ses.data && (
