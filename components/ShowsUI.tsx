@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ShowCard from "./Shared/ShowCard";
 import Pagination from "./Shared/Pagination";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface UserDetails {
   id: string;
@@ -33,14 +34,12 @@ export default function ShowsUI() {
   const [totalpage, setTotalPage] = useState(0);
   const router = useRouter();
 
-  const profileCompleted = async () => {
-    const res = await fetch("/api/getProfileCompleted/");
-    const isProfileCompleted = await res.json();
-    if (!isProfileCompleted) {
-      router.push("/profile");
-    }
-  };
+  const session = useSession();
+  console.log(session, "ssssssssssssssssssssssss");
 
+  if (session.status !== "loading" && !session?.data?.isProfileComplete) {
+    router.push("/profile");
+  }
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     if (Number(pageNumber) > 0 && Number(pageNumber) <= totalpage) {
       setPage(pageNumber);
@@ -89,7 +88,6 @@ export default function ShowsUI() {
   };
 
   useEffect(() => {
-    profileCompleted();
     getShowsList();
   }, [userDetails, page]);
 

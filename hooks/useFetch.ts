@@ -8,6 +8,7 @@ export const useFetch = ({url}:{url: string }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  console.log(url,"lllllllllllllllllll")
 
   const getData = async () => {
     const { data, error, isLoading } = await fetchData({
