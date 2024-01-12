@@ -8,24 +8,7 @@ export default function Navigation() {
   const router = useRouter();
 
   const ses = useSession();
-  console.log(ses);
   const userId = ses?.data?.id;
-  console.log(userId, "navigation");
-  // const getUserData = async () => {
-  //   // try {
-  //   //   const userData = await app.service.user.getUserData();
-  //   //   setUserDetails({ ...userData });
-  //   // } catch (error) {
-  //   //   console.error(error);
-  //   // }
-  // };
-
-  // useEffect(() => {
-  //   getUserData();
-  // }, []);
-  // console.log(userDetails);
-
-  // const userId = userDetails?.id;
 
   return (
     <div className="bg-gray-800 p-4 flex items-center justify-between">

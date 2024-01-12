@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getServerSession();
+  console.log( "profile complete",session,)
   let isProfileComplete;
 
   if (session && session.user) {
