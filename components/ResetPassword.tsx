@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 import { UserOtpType } from "@prisma/client";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");

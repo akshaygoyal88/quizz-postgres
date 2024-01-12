@@ -1,15 +1,7 @@
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { QuestionSet } from "@prisma/client";
-import {
-  JSXElementConstructor,
-  Key,
-  PromiseLikeOfReactNode,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useState,
-} from "react";
+import { useState } from "react";
 
 export default function QuizTable({
   queSets,
@@ -83,9 +75,18 @@ export default function QuizTable({
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     <a href="#" className="group inline-flex">
+                      Created By
+                    </a>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <a href="#" className="group inline-flex">
                       Created on
                     </a>
                   </th>
+
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -114,6 +115,9 @@ export default function QuizTable({
 
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {set.description}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {set.createdById}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(set.createdAt).toLocaleString()}

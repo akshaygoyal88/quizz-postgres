@@ -7,12 +7,12 @@ export async function GET(req: Request) {
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
 
   try {
-    if (page>0 && pageSize>0) {
-      const totalRows = await db.questionSet.count(
-        {where: {
+    if (page > 0 && pageSize > 0) {
+      const totalRows = await db.questionSet.count({
+        where: {
           isDeleted: false,
-        }}
-      );
+        },
+      });
 
       const totalPages = Math.ceil(totalRows / pageSize);
 
@@ -25,7 +25,6 @@ export async function GET(req: Request) {
         skip,
         take: pageSize,
       });
-      
 
       return new Response(
         JSON.stringify({ questionSets, totalPages, totalRows }),
@@ -48,16 +47,22 @@ export async function GET(req: Request) {
 export async function POST(req: any, res: any) {
   try {
     const reqData = await req.json();
+    const createdBy = reqData.createdById;
+    if (createdBy) {
+      delete reqData.createdById;
+    } else {
+      return NextResponse.json({ error: "In valid user please log in." });
+    }
 
-    if(!reqData.name) {
-      return NextResponse.json({error: 'Please fill fields.'})
+    if (!reqData.name) {
+      return NextResponse.json({ error: "Please fill fields." });
     }
 
     const createSet = await db.questionSet.create({
       data: {
         ...reqData,
         createdBy: {
-          connect: { id: 'clra6qmbq002p9yp85h428scm' },
+          connect: { id: createdBy },
         },
       },
     });

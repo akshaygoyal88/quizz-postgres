@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
         email: {},
         password: {},
       },
-      async authorize(credentials, req) {
+      async authorize(credentials: { email: string; password: string; }, req: Request) {
         const email = credentials?.email;
         const isVerified = true;
         const user = await db.user.findUnique({
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
           if (passwordCorrect) {
             return {
               id: user.id,
-              // email: user.email,
+              email: user.email,
               isVerified: user.isVerified,
               first_name: user.first_name,
               role: user.role,
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user, session }) {
+    async jwt({ token, user, session }:{token: Object, user: any,session: Object}) {
       // console.log("jwtcallback", { token, user, session });
       if (user) {
         return {
@@ -81,7 +81,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ token, user, session }) {
+    async session({ token, user, session }:{token: any, user: Object | undefined, session: Object}) {
       // console.log("sessioncallback", { token, user, session });
       return {
         ...token,
@@ -104,4 +104,3 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-

@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import validator from "validator";
 import { db } from "@/db";
-import { generateUniqueAlphanumericOTP } from "@/app/utils.";
 import { UserOtpType } from "@prisma/client";
 import cron from "node-cron";
+import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 
 export interface CreateUserRequestBody {
   email: string;

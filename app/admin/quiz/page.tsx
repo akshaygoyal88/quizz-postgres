@@ -1,6 +1,7 @@
+import authorization from "@/app/authorization";
 import QuizCreation from "@/components/QuizApp/QuizCreation";
 import React from "react";
 
-export default function User() {
+export default async function User() {
   return <QuizCreation />;
 }
