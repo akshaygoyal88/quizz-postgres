@@ -14,13 +14,11 @@ export default function QuizCreation() {
     url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&time=${time}`,
   });
   const paginate = (pageNumber: React.SetStateAction<number>) => {
-    console.log(pageNumber);
     if (Number(pageNumber) > 0 && Number(pageNumber) <= data?.totalPages) {
       setPage(pageNumber);
     }
   };
   const onDelete = () => {
-    console.log("deleted");
     setTime(Date.now());
   };
 

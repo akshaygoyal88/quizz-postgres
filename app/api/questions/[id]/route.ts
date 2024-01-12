@@ -57,7 +57,6 @@ export async function DELETE(req: any, res: any) {
       const deleteQue = await db.question.delete({
         where: { id },
       });
-      console.log("deleteQue", deleteQue);
       return NextResponse.json(deleteQue);
     } else {
       err = "Invalid question";

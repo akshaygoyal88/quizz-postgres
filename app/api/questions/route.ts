@@ -66,14 +66,6 @@ export async function POST(req: any, res: any) {
       timer
     } = await req.json();
 
-    console.log(question_text,
-      type,
-      questionSet,
-      options,
-      correctAnswer,
-      description,
-      timer)
-
     if (!questionSet) {
       return NextResponse.json({ error: "Please provide question set." });
     }

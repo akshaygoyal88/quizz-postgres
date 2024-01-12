@@ -16,14 +16,12 @@ export enum FetchMethodE {
     if (body) {
       requestOptions.body = JSON.stringify(body);
     }
-    console.log(requestOptions, url);
     try {
       const response = await fetch(url, requestOptions);
       if (!response.ok) {
         return { data: null, error: 'Network response was not ok', isLoading:false };    
       }
       const result = await response.json();
-      console.log(result, "utils result")
       return {data:result, error: false, isLoading: false};
     } catch (error) {  
       return { data: null, error, isLoading:false };
