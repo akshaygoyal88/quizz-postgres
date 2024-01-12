@@ -8,8 +8,9 @@ export default function Navigation() {
   const router = useRouter();
 
   const ses = useSession();
-
+  console.log(ses);
   const userId = ses?.data?.id;
+  console.log(userId, "navigation");
   // const getUserData = async () => {
   //   // try {
   //   //   const userData = await app.service.user.getUserData();

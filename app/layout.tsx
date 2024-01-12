@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
 import Nav from "@/components/Nav";
+import Provider from "@/context/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default async function RootLayout({
   // const cookieStore = cookies();
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Nav />
-        <main>{children}</main>
-      </body>
+      <Provider>
+        <body className={inter.className}>
+          <Nav />
+          <main>{children}</main>
+        </body>
+      </Provider>
     </html>
   );
 }

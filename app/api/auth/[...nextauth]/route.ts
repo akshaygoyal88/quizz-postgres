@@ -3,8 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { db } from "@/db";
-import { PrismaClient, Prisma } from "@prisma/client";
-import { DefaultArgs } from "@prisma/client/runtime/library";
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
@@ -86,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     async session({ token, user, session }) {
       console.log("sessioncallback", { token, user, session });
       return {
-        ...session,
+        ...token,
         id: token.id,
         email: token.email,
         isVerified: token.isVerified,
