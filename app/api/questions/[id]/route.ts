@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -14,7 +14,6 @@ export async function GET(req: any, res: any) {
       include: {
         objective_options: true,
         subjective_description: true,
-        questionSets: true,
       },
     });
 
@@ -122,10 +121,7 @@ export async function PUT(req: any, res: any) {
             data: {
               question_text,
               type,
-              timer: parseInt(timer, 10),
-              questionSets: {
-                connect: { id: setDetail[0].id },
-              },
+              timer: parseInt(timer, 10),              
               objective_options: {
                 createMany: {
                   data: options.map((optionText: any, index: any) => ({
@@ -144,10 +140,7 @@ export async function PUT(req: any, res: any) {
             data: {
               question_text,
               type,
-              timer: parseInt(timer, 10),
-              questionSets: {
-                connect: { id: setDetail[0].id },
-              },
+              timer: parseInt(timer, 10),              
               subjective_description: {
                 create: {
                   problem,

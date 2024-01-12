@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 

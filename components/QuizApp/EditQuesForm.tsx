@@ -41,7 +41,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   useEffect(() => {
     if (questionData) {
       setQuestion(questionData?.question_text);
-      setQuestionSet(questionData?.questionSets[0].name);
+      // setQuestionSet(questionData?.questionSets[0].name);
       setQuestionType(questionData?.type.toLowerCase());
       const initialOptions = questionData?.objective_options.map(
         (opt: { text: any }) => opt.text

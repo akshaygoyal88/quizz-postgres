@@ -1,4 +1,4 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -22,12 +22,10 @@ export async function GET(req: Request) {
         where: {
           isDeleted: false,
         },
-        include: {
-          questions: true,
-        },
         skip,
         take: pageSize,
       });
+      
 
       return new Response(
         JSON.stringify({ questionSets, totalPages, totalRows }),

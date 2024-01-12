@@ -1,4 +1,5 @@
-import { db } from "@/app/db";
+import { db } from "@/db";
+import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -10,12 +11,7 @@ export async function GET(req: Request) {
     if (page>0 && pageSize>0) {
       const totalRows = await db.question.count({
         where: {
-          isDeleted: false,
-          questionSets: {
-            every: {
-              isDeleted: false,
-            },
-          },
+          isDeleted: false          
         },
       });
 
@@ -28,7 +24,6 @@ export async function GET(req: Request) {
           isDeleted: false
         },
         include: {
-          questionSets: true,
           objective_options: true,
           subjective_description: true,
         },
@@ -79,52 +74,74 @@ export async function POST(req: any, res: any) {
         error: "Please provide a valid question set.",
       });
     }
-    if (type === "OBJECTIVE") {
-      const createQuestion = await db.question.create({
-        data: {
-          question_text,
-          type,
-          timer: parseInt(timer, 10),
-          questionSets: {
-            connect: { id: setDetail.id },
+
+    const createQuestion = await db.question.create({
+      data: {
+        question_text,
+        type,
+        timer: parseInt(timer, 10),          
+        objective_options: type === QuestionType.OBJECTIVE ? {
+          createMany: {
+            data: options.map((optionText: any, index: any) => ({
+              text: optionText,
+              isCorrect: index === correctAnswer,
+            })),
           },
-          objective_options: {
-            createMany: {
-              data: options.map((optionText: any, index: any) => ({
-                text: optionText,
-                isCorrect: index === correctAnswer,
-              })),
-            },
+        } : undefined,
+        subjective_description: type === QuestionType.SUBJECTIVE ? {
+          create: {
+            problem: question_text,
+            description,
           },
-          createdBy: {
-            connect: { id: 'clra6qmbq002p9yp85h428scm' },
-          },
+        } : undefined,
+        createdBy: {
+          connect: { id: 'clra6qmbq002p9yp85h428scm' },
         },
-      });
-      return NextResponse.json(createQuestion);
-    } else {
-      const problem = question_text;
-      const createQuestion = await db.question.create({
-        data: {
-          question_text,
-          type,
-          timer: parseInt(timer, 10),
-          questionSets: {
-            connect: { id: setDetail.id },
-          },
-          subjective_description: {
-            create: {
-              problem,
-              description,
-            },
-          },
-          createdBy: {
-            connect: { id: 'clra6qmbq002p9yp85h428scm' },
-          },
-        },
-      });
-      return NextResponse.json(createQuestion);
-    }
+      },
+    });
+
+    return NextResponse.json(createQuestion);
+
+    // if (type === "OBJECTIVE") {
+    //   const createQuestion = await db.question.create({
+    //     data: {
+    //       question_text,
+    //       type,
+    //       timer: parseInt(timer, 10),          
+    //       objective_options: {
+    //         createMany: {
+    //           data: options.map((optionText: any, index: any) => ({
+    //             text: optionText,
+    //             isCorrect: index === correctAnswer,
+    //           })),
+    //         },
+    //       },
+    //       createdBy: {
+    //         connect: { id: 'clra6qmbq002p9yp85h428scm' },
+    //       },
+    //     },
+    //   });
+    //   return NextResponse.json(createQuestion);
+    // } else {
+    //   const problem = question_text;
+    //   const createQuestion = await db.question.create({
+    //     data: {
+    //       question_text,
+    //       type,
+    //       timer: parseInt(timer, 10),          
+    //       subjective_description: {
+    //         create: {
+    //           problem,
+    //           description,
+    //         },
+    //       },
+    //       createdBy: {
+    //         connect: { id: 'clra6qmbq002p9yp85h428scm' },
+    //       },
+    //     },
+    //   });
+    //   return NextResponse.json(createQuestion);
+    // }
   } catch (error) {
     return NextResponse.json({ error });
   }

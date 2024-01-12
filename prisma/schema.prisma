@@ -99,15 +99,14 @@ model Tickets {
 }
 
 model QuestionSet {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  questions   Question[] @relation("QuestionInSet")
-  createdAt   DateTime   @default(now()) @map(name: "created_at")
-  updatedAt   DateTime   @updatedAt @map(name: "updated_at")
-  createdBy   User       @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+  createdBy   User     @relation(fields: [createdById], references: [id])
   createdById String
-  isDeleted   Boolean    @default(false)
+  isDeleted   Boolean  @default(false)
 }
 
 enum QuestionType {
@@ -121,7 +120,6 @@ model Question {
   type                   QuestionType // "objective" or "subjective"
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
   subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
-  questionSets           QuestionSet[]           @relation("QuestionInSet")
   timer                  Int                     @default(0)
   createdAt              DateTime                @default(now()) @map(name: "created_at")
   updatedAt              DateTime                @updatedAt @map(name: "updated_at")
