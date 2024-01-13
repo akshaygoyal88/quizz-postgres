@@ -2,13 +2,10 @@ import { db } from "@/db";
 import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function GET(req: any, res: any) {
+export async function GET(req: Request, {params}: {params:string}) {
   let err;
   try {
-    const url = new URL(req.url);
-    //   const id = `${url.pathname.split('/').pop()}`;
-    const id = url.pathname.split("/").pop();
-
+    const id = params.id
     const isAvailable = await db.question.findUnique({
       where: { id },
       include: {
@@ -66,12 +63,10 @@ export async function DELETE(req: any, res: any) {
   }
 }
 
-export async function PUT(req: any, res: any) {
+export async function PUT(req: Request, {params}: {params:string}) {
   let err;
   try {
-    const url = new URL(req.url);
-    // const id = `${url.pathname.split("/").pop()}`;
-    const id = url.pathname.split("/").pop();
+    const id = params.id
 
     const {
       question_text,

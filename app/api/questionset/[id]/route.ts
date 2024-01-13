@@ -1,23 +1,18 @@
 import { db } from "@/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: any, { params }) {
+export async function GET(req: Request, {params}: {params:string}) {
   const id = params.id;
-
   const setData = await db.questionSet.findUnique({
     where: { id },
   });
-
   return NextResponse.json(setData);
 }
 
-export async function DELETE(req: any, res: any) {
+export async function DELETE(req: Request, {params}: {params:string}) {
   let err;
   try {
-    const url = new URL(req.url);
-
-    const id = `${url.pathname.split("/").pop()}`;
-
+    const id = params.id
     const isAvailable = await db.questionSet.findUnique({
       where: { id },
     });
@@ -39,14 +34,11 @@ export async function DELETE(req: any, res: any) {
   }
 }
 
-export async function PUT(req: any, res: any) {
+export async function PUT(req: Request, {params}: {params:string}) {
   let err;
   try {
-    const url = new URL(req.url);
-    const id = `${url.pathname.split("/").pop()}`;
-
+    const id = params.id
     const reqData = await req.json();
-
     const isAvailable = await db.questionSet.findUnique({
       where: { id },
     });

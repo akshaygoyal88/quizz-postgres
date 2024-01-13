@@ -39,7 +39,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   });
 
   useEffect(() => {
-    if (questionData) {
+    if (questionData && !questionData.error) {
       setQuestion(questionData?.question_text);
       // setQuestionSet(questionData?.questionSets[0].name);
       setQuestionType(questionData?.type.toLowerCase());
@@ -56,6 +56,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       );
       setDescription(des);
       setTimer(questionData?.timer);
+    }else if(questionData?.error) {
+      setValidationError(questionData?.error)
     }
   }, [questionData]);
 

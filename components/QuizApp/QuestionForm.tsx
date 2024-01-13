@@ -138,7 +138,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             </div>
           ))}
           {/* Validation Error Message */}
-          <div className="text-red-500 mb-2">{validationError}</div>
+         
         </div>
       )}
 
@@ -159,9 +159,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             onChange={handleDescriptionChange}
             placeholder="Write Description for Problem statement here...."
           />
-          <div className="text-red-500 mb-2">{validationError}</div>
         </div>
       )}
+       <div className="text-red-500 mb-2">{validationError}</div>
       {successMessage && (
         <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
       )}

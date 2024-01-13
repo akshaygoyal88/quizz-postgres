@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { createQuestionSet, getAllQuestionsSet } from "@/Services/questionSet";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -13,18 +14,17 @@ export async function GET(req: Request) {
           isDeleted: false,
         },
       });
-
       const totalPages = Math.ceil(totalRows / pageSize);
-
       const skip = (page - 1) * pageSize;
 
-      const questionSets = await db.questionSet.findMany({
-        where: {
-          isDeleted: false,
-        },
-        skip,
-        take: pageSize,
-      });
+      // const questionSets = await db.questionSet.findMany({
+      //   where: {
+      //     isDeleted: false,
+      //   },
+      //   skip,
+      //   take: pageSize,
+      // });
+      const questionSets = await getAllQuestionsSet({skip, pageSize})
 
       return new Response(
         JSON.stringify({ questionSets, totalPages, totalRows }),
@@ -53,19 +53,18 @@ export async function POST(req: any, res: any) {
     } else {
       return NextResponse.json({ error: "In valid user please log in." });
     }
-
     if (!reqData.name) {
       return NextResponse.json({ error: "Please fill fields." });
     }
-
-    const createSet = await db.questionSet.create({
-      data: {
-        ...reqData,
-        createdBy: {
-          connect: { id: createdBy },
-        },
-      },
-    });
+    // const createSet = await db.questionSet.create({
+    //   data: {
+    //     ...reqData,
+    //     createdBy: {
+    //       connect: { id: createdBy },
+    //     },
+    //   },
+    // });
+    const createSet = await createQuestionSet({reqData, createdBy});
     return NextResponse.json(createSet);
   } catch (error) {
     return NextResponse.json(error);

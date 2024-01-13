@@ -1,10 +1,8 @@
 import { db } from "@/db";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request, {params}) {
   const id = params.id;
-  console.log(id, "ddddddddddddddddddddddddd")
 
   const newData = await request.json();
   let result;

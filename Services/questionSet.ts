@@ -9,3 +9,14 @@ export async function getAllQuestionsSet({skip, pageSize}:{skip:number, pageSize
         take: pageSize,
       });
 }
+
+export async function createQuestionSet({reqData, createdBy}:{reqData: object, createdBy:string})  {
+    return await db.questionSet.create({
+      data: {
+        ...reqData,
+        createdBy: {
+          connect: { id: createdBy },
+        },
+      },
+  })
+}
