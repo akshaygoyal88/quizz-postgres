@@ -7,6 +7,5 @@ export default async function authorization({
   redirectTo: string;
 }) {
   const session = await getServerSession();
-  console.log(session, "authorize")
   if (session) redirect(redirectTo); 
 }
