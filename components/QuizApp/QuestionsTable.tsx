@@ -1,15 +1,7 @@
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
-import {
-  JSXElementConstructor,
-  Key,
-  PromiseLikeOfReactNode,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useState,
-} from "react";
+import { useState } from "react";
 
 export default function QuestionsTable({
   ques,
@@ -82,6 +74,14 @@ export default function QuestionsTable({
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     <a href="#" className="group inline-flex">
+                      Created By
+                    </a>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <a href="#" className="group inline-flex">
                       Created on
                     </a>
                   </th>
@@ -121,6 +121,9 @@ export default function QuestionsTable({
 
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {que.type}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {que.createdById}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(que.createdAt).toLocaleString()}

@@ -58,7 +58,8 @@ export async function POST(req: any, res: any) {
       options,
       correctAnswer,
       description,
-      timer
+      timer,
+      createdById
     } = await req.json();
 
     if (!questionSet) {
@@ -95,7 +96,7 @@ export async function POST(req: any, res: any) {
           },
         } : undefined,
         createdBy: {
-          connect: { id: 'clra6qmbq002p9yp85h428scm' },
+          connect: { id: createdById },
         },
       },
     });
