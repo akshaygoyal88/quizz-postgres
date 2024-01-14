@@ -11,7 +11,7 @@ export default function QuizCreation() {
   const [page, setPage] = useState(1);
   const [time, setTime] = useState<Number>(Date.now());
   const { data, error, isLoading } = useFetch({
-    url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&time=${time}`,
+    url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&time=${time}`
   });
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     if (Number(pageNumber) > 0 && Number(pageNumber) <= data?.totalPages) {
@@ -24,26 +24,6 @@ export default function QuizCreation() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-evenly">
-        <Link
-          href={`${pathName.quizAdd.path}`}
-          className="px-4 py-2 font-semibold rounded-sm bg-green-700 text-white"
-        >
-          Create Set
-        </Link>
-        <Link
-          href={`${pathName.questions.path}`}
-          className="px-4 py-2 font-semibold rounded-sm bg-blue-400 text-white"
-        >
-          Questions List
-        </Link>
-        <Link
-          href={`${pathName.questionsAdd.path}`}
-          className="px-4 py-2 font-semibold rounded-sm bg-blue-700 text-white"
-        >
-          Add Question
-        </Link>
-      </div>
       <QuizTable
         queSets={data?.questionSets || []}
         // getSetsAndQuestions={() => {}}

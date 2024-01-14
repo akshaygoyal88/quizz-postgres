@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-export default function LoginForm() {
+export default function LoginForm({ className }: { className?: string }) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -19,7 +19,8 @@ export default function LoginForm() {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false,
+      redirect: true,
+      callbackUrl: "http://localhost:3000/signin"
     });
 
     if (result && !result.ok) {
