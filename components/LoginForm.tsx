@@ -19,18 +19,21 @@ export default function LoginForm({ className }: { className?: string }) {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: true,
-      callbackUrl: "http://localhost:3000/signin"
+      redirect: false
+      // callbackUrl: "http://localhost:3000/signin"
     });
 
     if (result && !result.ok) {
+      console.log(result, "111111");
       setError("Invalid credentials. Please try again.");
     }
 
     if (result && !result.error) {
+      console.log(result, "22222");
       router.push("/");
       router.refresh();
     } else if (result) {
+      console.log(result, "3333");
       setError(`${result.error}`);
     }
   };
@@ -75,7 +78,6 @@ export default function LoginForm({ className }: { className?: string }) {
                 defaultValue={undefined}
                 value={email}
                 onChange={emailChangeHandler}
-                errors={error.includes("User") ? error : ""}
               />
 
               <InputWithLabel
@@ -88,7 +90,6 @@ export default function LoginForm({ className }: { className?: string }) {
                 defaultValue={undefined}
                 value={password}
                 onChange={passwordChangeHandler}
-                errors={error.includes("password") ? error : ""}
               />
 
               <div className="flex items-center justify-between">
@@ -116,7 +117,7 @@ export default function LoginForm({ className }: { className?: string }) {
                   </a>
                 </div> */}
               </div>
-
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <div>
                 <button
                   type="submit"

@@ -37,7 +37,6 @@ export const authOptions: NextAuthOptions = {
           if (passwordCorrect) {
             return {
               id: user.id,
-              // email: user.email,
               isVerified: user.isVerified,
               first_name: user.first_name,
               role: user.role,
@@ -48,13 +47,15 @@ export const authOptions: NextAuthOptions = {
               isProfileComplete: user.isProfileComplete
             };
           } else {
+            throw new Error("Invalid password.");
             console.log("ERROR =======> Invalid password");
             return null;
           }
         } else {
           console.log(
-            "ERROR =======> User not found./Please check credentials or verify email before sign in."
+            "ERROR =======> User not found please check credentials or verify email before sign in."
           );
+          throw new Error("User not found or verify email before sign in.");
           return null;
         }
       }
