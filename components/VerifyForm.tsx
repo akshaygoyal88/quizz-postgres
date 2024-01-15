@@ -3,6 +3,8 @@ import React, { FormEvent, useState } from "react";
 import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+
 interface VerifyFormProps {
   email: string;
   user: boolean;
@@ -22,20 +24,35 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("/api/user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, verificationCode }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        router.push("/signin?success=1");
-      } else if (res.status === 404) {
-        setError(data.error);
-      }
-    } catch (error) {
-      console.log(error);
+    // try {
+    //   const res = await fetch("/api/user", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ email, verificationCode }),
+    //   });
+    //   const data = await res.json();
+    //   if (res.ok) {
+    //     router.push("/signin?success=1");
+    //   } else if (res.status === 404) {
+    //     setError(data.error);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    const {
+      data: verifyRes,
+      error: verifyError,
+      isLoading: verifyIsLoading,
+    } = await fetchData({
+      url: `/api/user`,
+      method: FetchMethodE.POST,
+      body: { email, verificationCode },
+    });
+    if (!verifyRes.error) {
+      router.push("/signin?success=1");
+    } else if (verifyRes.error) {
+      setError(verifyRes.error);
     }
   };
 

@@ -5,6 +5,7 @@ import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserRole } from "@prisma/client";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");
@@ -40,34 +41,47 @@ export default function RegisterForm() {
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (password === conPassword) {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      // const response = await fetch("/api/register", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     email: email,
+      //     password: password,
+      //     roleOfUser: roleOfUser,
+      //   }),
+      // });
+      // console.log(response);
+      // const data = await response.json();
+      const {
+        data: regRes,
+        error: regError,
+        isLoading: regIsLoading,
+      } = await fetchData({
+        url: `/api/register`,
+        method: FetchMethodE.POST,
+        body: {
           email: email,
           password: password,
           roleOfUser: roleOfUser,
-        }),
+        },
       });
-      console.log(response);
-      const data = await response.json();
 
-      if (!data.error) {
+      if (!regRes.error) {
         router.push(`/verify/${email}`);
-        setError(data.error);
-      } else if (data.error.userEmail) {
-        setError({ ...error, userEmail: data.error.userEmail });
+        setError(regRes.error);
+      } else if (regRes.error.userEmail) {
+        setError({ ...error, userEmail: regRes.error.userEmail });
         return;
-      } else if (data.error.password) {
-        setError({ ...error, password: data.error.password });
+      } else if (regRes.error.password) {
+        setError({ ...error, password: regRes.error.password });
         return;
-      } else if (data.error.userExist) {
-        setError({ ...error, userExist: data.error.userExist });
+      } else if (regRes.error.userExist) {
+        setError({ ...error, userExist: regRes.error.userExist });
         return;
       } else {
-        setError({ ...error, final: data.error.final });
+        setError({ ...error, final: regRes.error.final });
       }
     } else {
       setError({ ...error, conPass: "Password does not match." });
