@@ -3,31 +3,30 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { db } from "@/db";
+import { UserSerivce } from "@/Services";
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(db),
-  session: {
-    strategy: "jwt",
-  },
+  // session: {
+  //   strategy: "jwt"
+  // },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID as string,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    // }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
         email: {},
-        password: {},
+        password: {}
       },
-      async authorize(credentials: { email: string; password: string; }, req: Request) {
+      async authorize(credentials) {
+        if (!credentials) return null;
         const email = credentials?.email;
-        const isVerified = true;
-        const user = await db.user.findUnique({
-          where: { email, isVerified },
-        });
+        const user = await UserSerivce.getVerifiedUserByEmail({ email });
 
         if (user) {
           const passwordCorrect = await compare(
@@ -46,16 +45,19 @@ export const authOptions: NextAuthOptions = {
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,
               profile_pic: user.profile_pic,
-              isProfileComplete: user.isProfileComplete,
+              isProfileComplete: user.isProfileComplete
             };
           } else {
-            throw new Error("Invalid password");
+            throw new Error("Invalid password.");
+            console.log("ERROR =======> Invalid password");
+            return null;
           }
         } else {
-          // User not found
-          throw new Error(
-            "User not found./Please check credentials or verify email before sign in."
+          console.log(
+            "ERROR =======> User not found please check credentials or verify email before sign in."
           );
+          throw new Error("User not found or verify email before sign in.");
+          return null;
         }
       },
     }),

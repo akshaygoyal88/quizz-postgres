@@ -11,30 +11,20 @@ export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [conPassword, setConPassword] = useState<string>("");
-  const [error, setError] = useState<{
-    userEmail?: string;
-    password?: string;
-    userExist?: string;
-    conPass?: string;
-    final?: string;
-  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [roleOfUser, setRoleOfUser] = useState<string>(UserRole.USER);
 
   const router = useRouter();
 
   const emailChangeHandler = (e: FormEvent) => {
-    if (error?.userEmail) delete error.userEmail;
-    else if (error?.userExist) delete error.userExist;
     setEmail((e.target as HTMLInputElement).value);
   };
 
   const passwordChangeHandler = (e: FormEvent) => {
-    if (error?.password) delete error.password;
     setPassword((e.target as HTMLInputElement).value);
   };
 
   const conPasswordChangeHandler = (e: FormEvent) => {
-    if (error?.conPass) delete error.conPass;
     setConPassword((e.target as HTMLInputElement).value);
   };
 
@@ -71,20 +61,11 @@ export default function RegisterForm() {
       if (!regRes.error) {
         router.push(`/verify/${email}`);
         setError(regRes.error);
-      } else if (regRes.error.userEmail) {
-        setError({ ...error, userEmail: regRes.error.userEmail });
-        return;
-      } else if (regRes.error.password) {
-        setError({ ...error, password: regRes.error.password });
-        return;
-      } else if (regRes.error.userExist) {
-        setError({ ...error, userExist: regRes.error.userExist });
-        return;
       } else {
-        setError({ ...error, final: regRes.error.final });
+        setError(regRes.error);
       }
     } else {
-      setError({ ...error, conPass: "Password does not match." });
+      setError("Password does not match.");
     }
   };
   return (
@@ -118,7 +99,6 @@ export default function RegisterForm() {
                 defaultValue={undefined}
                 value={email}
                 onChange={emailChangeHandler}
-                errors={error?.userExist || error?.userEmail}
               />
               <InputWithLabel
                 type="password"
@@ -130,7 +110,6 @@ export default function RegisterForm() {
                 defaultValue={undefined}
                 value={password}
                 onChange={passwordChangeHandler}
-                errors={error?.password}
                 otherText="(Password must be at least 8 characters.
                 Include at least one lowercase letter.
                 One uppercase letter, one number.
@@ -146,8 +125,8 @@ export default function RegisterForm() {
                 defaultValue={undefined}
                 value={conPassword}
                 onChange={conPasswordChangeHandler}
-                errors={error?.conPass}
               />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <div className="flex">
                 <div className="flex-1 mx-2">
                   <button

@@ -1,19 +1,8 @@
-import { db } from "@/db";
-import { getServerSession } from "next-auth";
+import { UserSerivce } from "@/Services";
 import { NextResponse } from "next/server";
 
-
-export async function GET({params}) {
-const id = params.id
-console.log("idddddddddddd",id)
-let isProfileComplete;
-    if (id) {
-      const userData = await db.user.findUnique({
-        where: { id },
-      });
-      isProfileComplete = userData?.isProfileComplete;
-      console.log(userData)
-    }
-  
-  return NextResponse.json(isProfileComplete);
+export async function GET({ params }) {
+  const id = params.id;
+  const userData = await UserSerivce.getUserById(id);
+  return NextResponse.json(userData?.isVerified);
 }

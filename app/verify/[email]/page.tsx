@@ -1,9 +1,9 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { db } from "@/db";
 import VerifyForm from "@/components/VerifyForm";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
+import { UserSerivce } from "@/Services";
 
 interface VerifyProps {
   params: {
@@ -12,10 +12,7 @@ interface VerifyProps {
 }
 
 const getUserExists = async (newEmail: string) => {
-  const user = await db.user.findUnique({
-    where: { email: newEmail },
-  });
-  return user;
+  return await UserSerivce.getUserByEmail(newEmail);
 };
 
 export default async function Verify({ params }: VerifyProps) {

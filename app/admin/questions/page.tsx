@@ -1,3 +1,4 @@
+import LeftSideBar from "@/components/Layout/LeftSidebar";
 import QuestionsListUI from "@/components/QuizApp/QuestionsListUI";
 import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";
@@ -5,5 +6,9 @@ import React from "react";
 export default async function Questions() {
   await isUnauthorised("/signin");
 
-  return <QuestionsListUI />;
+  return (
+    <LeftSideBar>
+      <QuestionsListUI />
+    </LeftSideBar>
+  );
 }
