@@ -46,11 +46,10 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
     } = await fetchData({
       url: `${pathName.questionSetApi.path}`,
       method: FetchMethodE.POST,
-      body: formData,
+      body: reqData,
     });
     if (!saveQueSetError && !saveQueSetRes?.error) {
-      // router.push(`${pathName.quiz.path}`);
-      router.push(`${pathName.quiz.path}/${saveQueSetRes?.id}/edit`);
+      saveQueSetRes?.id ? router.push(`${pathName.quiz.path}/${saveQueSetRes?.id}/edit`) : setError(saveQueSetRes.error);
     } else if (saveQueSetRes.error) {
       setError(saveQueSetRes.error);
     }

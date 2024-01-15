@@ -10,7 +10,7 @@ import {
   FolderIcon,
   HomeIcon,
   UsersIcon,
-  XMarkIcon
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import pathName from "@/constants";
@@ -20,7 +20,7 @@ const navigation = [
     name: "Dashboard",
     href: pathName.dashboard.path,
     icon: HomeIcon,
-    current: true
+    current: true,
   },
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
@@ -28,15 +28,15 @@ const navigation = [
     name: "Question Set/Subject",
     href: pathName.quizAdd.path,
     icon: FolderIcon,
-    current: false
+    current: false,
   },
   {
     name: "All Questions",
     href: pathName.questions.path,
     icon: DocumentDuplicateIcon,
-    current: false
+    current: false,
   },
-  { name: "Publish test", href: "#", icon: CalendarIcon, current: false }
+  { name: "Publish test", href: "#", icon: CalendarIcon, current: false },
 ];
 // const teams = [
 //   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
@@ -49,7 +49,7 @@ function classNames(...classes) {
 }
 
 export default function LeftSideBar({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
@@ -304,8 +304,8 @@ export default function LeftSideBar({
           </a>
         </div>
 
-        <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        <main className="lg:pl-72">
+          <div className="">{children}</div>
         </main>
       </div>
     </>

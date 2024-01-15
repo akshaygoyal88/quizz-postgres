@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 
 import validator from "validator";
-import { db } from "@/db";
-
-import cron from "node-cron";
 import { UserSerivce } from "@/Services";
 
 export interface CreateUserRequestBody {

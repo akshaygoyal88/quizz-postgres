@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { returnResponse } from "@/app/utils.";
+import { returnResponse } from "@/utils/generateOtp";
+
 
 interface TicketData {
   ticketGroup?: string;

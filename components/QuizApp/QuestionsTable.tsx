@@ -1,15 +1,7 @@
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
-import {
-  JSXElementConstructor,
-  Key,
-  PromiseLikeOfReactNode,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useState,
-} from "react";
+import { useState } from "react";
 
 export default function QuestionsTable({
   ques,
@@ -39,15 +31,15 @@ export default function QuestionsTable({
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="sm:px-6">
       <h1>Available Questions</h1>
       {(deleteSuccess || error) && (
         <p className="bg-red-600 px-4 py-2 text-white m-3">
           {deleteSuccess || error}
         </p>
       )}
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="flow-root">
+        <div className="overflow-x-auto sm:-mx-6">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
@@ -75,6 +67,14 @@ export default function QuestionsTable({
                   >
                     <a href="#" className="group inline-flex">
                       Type
+                    </a>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <a href="#" className="group inline-flex">
+                      Created By
                     </a>
                   </th>
                   <th
@@ -121,6 +121,9 @@ export default function QuestionsTable({
 
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {que.type}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {que.createdById}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(que.createdAt).toLocaleString()}

@@ -5,6 +5,7 @@ import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserRole } from "@prisma/client";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");
@@ -30,25 +31,38 @@ export default function RegisterForm() {
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (password === conPassword) {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+      // const response = await fetch("/api/register", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     email: email,
+      //     password: password,
+      //     roleOfUser: roleOfUser,
+      //   }),
+      // });
+      // console.log(response);
+      // const data = await response.json();
+      const {
+        data: regRes,
+        error: regError,
+        isLoading: regIsLoading,
+      } = await fetchData({
+        url: `/api/register`,
+        method: FetchMethodE.POST,
+        body: {
           email: email,
           password: password,
-          roleOfUser: roleOfUser
-        })
+          roleOfUser: roleOfUser,
+        },
       });
-      const data = await response.json();
-      console.log(response, data);
 
-      if (!data.error) {
+      if (!regRes.error) {
         router.push(`/verify/${email}`);
-        setError(data.error);
+        setError(regRes.error);
       } else {
-        setError(data.error);
+        setError(regRes.error);
       }
     } else {
       setError("Password does not match.");

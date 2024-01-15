@@ -17,10 +17,13 @@ function AddQuestionUI() {
   const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
-  const { data, error, isLoading } = useFetch({
-    url: `${pathName.questionSetApi.path}`,
-  });
   const ses = useSession();
+  const { data, error, isLoading } = useFetch({
+    url: `${pathName.questionSetApi.path}?createdById=${
+      ses.status !== "loading" && ses?.data?.id
+    }`,
+  });
+
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {

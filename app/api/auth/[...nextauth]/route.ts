@@ -37,6 +37,7 @@ export const authOptions: NextAuthOptions = {
           if (passwordCorrect) {
             return {
               id: user.id,
+              email: user.email,
               isVerified: user.isVerified,
               first_name: user.first_name,
               role: user.role,
@@ -58,48 +59,48 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found or verify email before sign in.");
           return null;
         }
-      }
-    })
-  ]
+      },
+    }),
+  ],
 
-  // callbacks: {
-  //   async jwt({ token, user, session }) {
-  //     // console.log("jwtcallback", { token, user, session });
-  //     if (user) {
-  //       return {
-  //         ...token,
-  //         id: user.id,
-  //         email: user.email,
-  //         isVerified: user.isVerified,
-  //         first_name: user.first_name,
-  //         role: user.role,
-  //         isActive: user.isActive,
-  //         createdAt: user.createdAt,
-  //         updatedAt: user.updatedAt,
-  //         profile_pic: user.profile_pic,
-  //         isProfileComplete: user.isProfileComplete,
-  //       };
-  //     }
-  //     return token;
-  //   },
-  //   async session({ token, user, session }) {
-  //     // console.log("sessioncallback", { token, user, session });
-  //     return {
-  //       ...token,
-  //       id: token.id,
-  //       email: token.email,
-  //       isVerified: token.isVerified,
-  //       first_name: token.first_name,
-  //       role: token.role,
-  //       isActive: token.isActive,
-  //       createdAt: token.createdAt,
-  //       updatedAt: token.updatedAt,
-  //       profile_pic: token.profile_pic,
-  //       isProfileComplete: token.isProfileComplete,
-  //     };
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, user, session }:{token: Object, user: any,session: Object}) {
+      // console.log("jwtcallback", { token, user, session });
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          isVerified: user.isVerified,
+          first_name: user.first_name,
+          role: user.role,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          profile_pic: user.profile_pic,
+          isProfileComplete: user.isProfileComplete,
+        };
+      }
+      return token;
+    },
+    async session({ token, user, session }:{token: any, user: Object | undefined, session: Object}) {
+      // console.log("sessioncallback", { token, user, session });
+      return {
+        ...token,
+        id: token.id,
+        email: token.email,
+        isVerified: token.isVerified,
+        first_name: token.first_name,
+        role: token.role,
+        isActive: token.isActive,
+        createdAt: token.createdAt,
+        updatedAt: token.updatedAt,
+        profile_pic: token.profile_pic,
+        isProfileComplete: token.isProfileComplete,
+      };
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
