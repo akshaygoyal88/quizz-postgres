@@ -42,22 +42,7 @@ export default function QuestionsListUI() {
   return (
     <div className="">
       <div className="p-1 flex justify-evenly">
-        {/* <Link
-          href={`${pathName.quizAdd.path}`}
-          className="px-4 py-2 font-semibold rounded-sm bg-green-700 text-white"
-        >
-          Create Set
-        </Link> */}
-        <Button
-          href={`${pathName.questionsAdd.path}`}
-          // onClick={() => router.push(`${pathName.questionsAdd.path}`)}
-        />
-        <Link
-          href={`${pathName.questionsAdd.path}`}
-          className="px-4 py-2 font-semibold rounded-sm bg-blue-700 text-white"
-        >
-          Add Question
-        </Link>
+        <Button href={`${pathName.questionsAdd.path}`} />
       </div>
       <QuestionsTable
         ques={
