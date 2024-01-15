@@ -143,3 +143,11 @@ model SubjectiveDescription {
   questionId  String
   question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
 }
+
+model Quiz {
+  id          String   @id @default(cuid())
+  setId       String
+  questionId  String
+  lastUpdated DateTime
+  createdBy   String
+}

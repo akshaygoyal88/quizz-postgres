@@ -13,11 +13,15 @@ export async function getAllQuestionsSet({skip, pageSize, createdById}:{skip:num
         take: pageSize,
       });
 }
-export async function getQuestionSets (createdById: string) {
+export async function getQuestionSets (createdById?: string) {
   return await db.questionSet.findMany(
     {
       where: {
-        createdById
+        createdById,
+        isDeleted: false
+      },
+      include:{
+        createdBy: true,
       }
     })
 }
@@ -30,4 +34,12 @@ export async function createQuestionSet({name, description, createdById}:{name: 
         createdById
       },
   })
+}
+
+export async function getQuiz({setId}: {setId: string}){
+  return await db.quiz.findMany({
+    where: {
+      setId,
+    }
+})
 }

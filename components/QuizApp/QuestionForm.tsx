@@ -138,7 +138,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             </div>
           ))}
           {/* Validation Error Message */}
-         
         </div>
       )}
 
@@ -161,7 +160,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           />
         </div>
       )}
-       <div className="text-red-500 mb-2">{validationError}</div>
+      <div className="text-red-500 mb-2">{validationError}</div>
       {successMessage && (
         <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
       )}
