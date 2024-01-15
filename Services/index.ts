@@ -1,2 +1,2 @@
-export * as User from "./user";
-export * as QuestionSet from "./questionSet";
+export * as UserSerivce from "./user";
+export * as QuestionSetService from "./questionSet";
