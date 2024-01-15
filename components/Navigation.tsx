@@ -17,13 +17,13 @@ export default function Navigation() {
         <Link href="/" className="text-white">
           Home
         </Link>
-        <Link href="/tickets" className="text-white">
+        {/* <Link href="/tickets" className="text-white">
           Tickets
-        </Link>
-        <Link href="/shows" className="text-white">
+        </Link> */}
+        {/* <Link href="/shows" className="text-white">
           Shows
-        </Link>
-        {ses.data && (
+        </Link> */}
+        {/* {ses.data && (
           <Link href={`/admin/${userId}/show`} className="text-white">
             Add Show
           </Link>
@@ -32,7 +32,7 @@ export default function Navigation() {
           <Link href={`/admin/${userId}/tickets`} className="text-white">
             Add Ticket
           </Link>
-        )}
+        )} */}
 
         {ses.data && (
           <Link href="/dashboard" className="text-white">

@@ -1,27 +1,26 @@
-'use client';
+"use client";
 
-import pathName from '@/constants';
-import { FetchMethodE, fetchData } from '@/utils/fetch';
-import { useState, useEffect, useCallback } from 'react';
+import pathName from "@/constants";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { useState, useEffect, useCallback } from "react";
 
-export const useFetch = ({url}:{url: string }) => {  
+export const useFetch = ({ url }: { url: string }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(url,"lllllllllllllllllll")
 
   const getData = async () => {
     const { data, error, isLoading } = await fetchData({
       url,
-      method: FetchMethodE.GET,
+      method: FetchMethodE.GET
     });
     setData(data);
     setError(error);
     setIsLoading(isLoading);
   };
-   
-  useEffect(() => {    
-      getData();
+
+  useEffect(() => {
+    getData();
   }, [url]);
 
   return { data, error, isLoading };
