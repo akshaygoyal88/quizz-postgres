@@ -1,30 +1,25 @@
 import { db } from "@/db";
-import { createQuestionSet, getAllQuestionsSet } from "@/Services/questionSet";
+import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/Services/questionSet";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
+  const createdById = url.searchParams.get("createdById")
+  
 
   try {
     if (page > 0 && pageSize > 0) {
       const totalRows = await db.questionSet.count({
         where: {
           isDeleted: false,
+          createdById
         },
       });
       const totalPages = Math.ceil(totalRows / pageSize);
       const skip = (page - 1) * pageSize;
-
-      // const questionSets = await db.questionSet.findMany({
-      //   where: {
-      //     isDeleted: false,
-      //   },
-      //   skip,
-      //   take: pageSize,
-      // });
-      const questionSets = await getAllQuestionsSet({skip, pageSize})
+      const questionSets = await getAllQuestionsSet({skip, pageSize, createdById})
 
       return new Response(
         JSON.stringify({ questionSets, totalPages, totalRows }),
@@ -36,7 +31,7 @@ export async function GET(req: Request) {
         }
       );
     } else {
-      const allQuestionSets = await db.questionSet.findMany();
+      const allQuestionSets = await getQuestionSets(createdById)
       return NextResponse.json(allQuestionSets);
     }
   } catch (error) {
@@ -46,25 +41,14 @@ export async function GET(req: Request) {
 
 export async function POST(req: any, res: any) {
   try {
-    const reqData = await req.json();
-    const createdBy = reqData.createdById;
-    if (createdBy) {
-      delete reqData.createdById;
-    } else {
+    const {createdById, name, description} = await req.json();
+    if (!createdById) {
       return NextResponse.json({ error: "In valid user please log in." });
     }
-    if (!reqData.name) {
+    if (!name) {
       return NextResponse.json({ error: "Please fill fields." });
     }
-    // const createSet = await db.questionSet.create({
-    //   data: {
-    //     ...reqData,
-    //     createdBy: {
-    //       connect: { id: createdBy },
-    //     },
-    //   },
-    // });
-    const createSet = await createQuestionSet({reqData, createdBy});
+    const createSet = await createQuestionSet({createdById, name, description});
     return NextResponse.json(createSet);
   } catch (error) {
     return NextResponse.json(error);

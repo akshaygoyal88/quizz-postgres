@@ -3,14 +3,16 @@ import { QuestionType } from "@prisma/client";
 import {Question} from "@prisma/client";
 
 
-export async function getAllQuestions({skip, pageSize}:{skip:Number, pageSize:Number}){
+export async function getAllQuestions({skip, pageSize, createdById}:{skip:Number, pageSize:Number, createdById:string}){
     return await db.question.findMany({
         where: {
-          isDeleted: false
+          isDeleted: false,
+          createdById
         },
         include: {
           objective_options: true,
           subjective_description: true,
+          createdBy: true,
         },
         skip,
         take: pageSize,
@@ -46,9 +48,7 @@ export async function createQuestion(
               description,
             },
           } : undefined,
-          createdBy: {
-            connect: { id: createdById },
-          },
+          createdById
         },
       });
 }

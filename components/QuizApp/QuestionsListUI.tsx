@@ -8,21 +8,25 @@ import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
 import Button from "../Shared/Button";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function QuestionsListUI() {
   const [page, setPage] = useState(1);
   const [time, setTime] = useState<Number>(Date.now());
   const router = useRouter();
+  const ses = useSession();
 
   const {
     data: quesData,
     error: quesError,
     isLoading: isLoadingQues,
   } = useFetch({
-    url: `${pathName.questionsApiPath.path}?page=${page}&pageSize=9&time=${time}`,
+    url: `${
+      pathName.questionsApiPath.path
+    }?page=${page}&pageSize=9&createdById=${
+      ses.status !== "loading" && ses?.data?.id
+    }&time=${time}`,
   });
-
-  console.log(quesData);
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
     console.log(quesData);
