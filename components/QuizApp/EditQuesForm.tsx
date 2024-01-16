@@ -19,9 +19,12 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const [questionType, setQuestionType] = useState("");
   const [description, setDescription] = useState("");
   const [availableSets, setAvailableSets] = useState<availableSetTypes[]>([]);
-  const [questionSet, setQuestionSet] = useState("");
+  const [defaultQuestionSet, setDefaultQuestionSet] = useState<object | null>(
+    null
+  );
   const [successMessage, setSuccessMessage] = useState("");
   const [timer, setTimer] = useState("0");
+  const [setId, setSetId] = useState<string | null>(null);
   const {
     data: questionData,
     error: questionError,
@@ -41,8 +44,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   useEffect(() => {
     if (questionData && !questionData.error) {
       setQuestion(questionData?.question_text);
-      // setQuestionSet(questionData?.questionSets[0].name);
-      setQuestionType(questionData?.type.toLowerCase());
+      // setDefaultQuestionSet(questionData?.questionSets[0].name);
+      setQuestionType(questionData?.type);
       const initialOptions = questionData?.objective_options.map(
         (opt: { text: any }) => opt.text
       );
@@ -56,8 +59,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       );
       setDescription(des);
       setTimer(questionData?.timer);
-    }else if(questionData?.error) {
-      setValidationError(questionData?.error)
+    } else if (questionData?.error) {
+      setValidationError(questionData?.error);
     }
   }, [questionData]);
 
@@ -91,7 +94,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const handleSaveQuestion = async () => {
     let requestData;
 
-    if (questionType === "objective") {
+    if (questionType === "OBJECTIVE") {
       if (
         question.trim() === "" ||
         options.some((option) => option.trim() === "")
@@ -111,16 +114,18 @@ function EditQuesForm({ quesId }: { quesId: string }) {
         options: [...options],
         type: "OBJECTIVE",
         correctAnswer: correctAnswer,
-        questionSet: questionSet,
+        // questionSet: questionSet,
         timer: timer,
+        setId,
       };
-    } else if (questionType === "subjective") {
+    } else if (questionType === "SUBJECTIVE") {
       requestData = {
         question_text: question,
         type: "SUBJECTIVE",
         description: description,
-        questionSet: questionSet,
+        // questionSet: questionSet,
         timer: timer,
+        setId,
       };
     }
 
@@ -150,9 +155,11 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   //   setTimer(Number(e.target.value));
   // };
 
-  const handletQuesSetChange = (set: string) => {
+  const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    setQuestionSet(set);
+    console.log(quesSetId);
+    // setQuestionSet(set);
+    setSetId(quesSetId);
   };
   const handletQueChange = (que: string) => {
     setValidationError("");
@@ -171,7 +178,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       validationError={validationError}
       questionType={questionType}
       description={description}
-      questionSet={questionSet}
+      defaultQuestionSet={defaultQuestionSet}
       timer={timer}
       successMessage={successMessage}
       data={availableSets}

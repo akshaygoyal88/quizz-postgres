@@ -1,5 +1,7 @@
 import { db } from "@/db";
 import { createQuestion, getAllQuestions } from "@/Services/questions";
+import { getQuesSetVailable } from "@/Services/questionSet";
+import { postQuestionInQuiz } from "@/Services/quiz";
 import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -45,23 +47,21 @@ export async function POST(req: any, res: any) {
     const {
       question_text,
       type,
-      questionSet,
       options,
       correctAnswer,
       description,
       timer,
-      createdById
+      createdById,
+      setId
     } = await req.json();
 
-    if (!questionSet) {
+    if (!setId) {
       return NextResponse.json({ error: "Please provide question set." });
     }
 
-    const setsAvailable = await db.questionSet.findMany();
+    const isSetIdAvilable = await getQuesSetVailable({setId});
 
-    const setDetail = setsAvailable.find((set) => set.name === questionSet);
-
-    if (!setDetail) {
+    if (!isSetIdAvilable) {
       return NextResponse.json({
         error: "Please provide a valid question set.",
       });
@@ -70,13 +70,18 @@ export async function POST(req: any, res: any) {
     const addQuestion = await createQuestion(
       {question_text,
       type,
-      questionSet,
       options,
       correctAnswer,
       description,
       timer,
-      createdById}
-    )
+      createdById,
+      setId
+    })
+    const createdBy = createdById
+    const questionId = addQuestion.id;
+
+    const postQuesInQuizRes = await postQuestionInQuiz({setId, questionId, createdBy})
+  
     return NextResponse.json(addQuestion);
   } catch (error) {
     return NextResponse.json({ error });

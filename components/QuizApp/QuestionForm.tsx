@@ -1,15 +1,15 @@
 import React from "react";
 import Textarea from "../Shared/Textarea";
-import { QuestionSet } from "@prisma/client";
+import { QuestionSet, QuestionType } from "@prisma/client";
 
 interface QuestionFormProps {
   question: string;
   options: string[];
-  correctAnswer: number | null;
+  correctAnswerIndex: number | null;
   validationError: string;
-  questionType: string;
+  questionType: QuestionType;
   description: string;
-  questionSet: string;
+  defaultQuestionSet?: QuestionSet | null;
   timer: string;
   successMessage: string;
   data: QuestionSet[] | null;
@@ -26,11 +26,11 @@ interface QuestionFormProps {
 const QuestionForm: React.FC<QuestionFormProps> = ({
   question,
   options,
-  correctAnswer,
+  correctAnswerIndex,
   validationError,
   questionType,
   description,
-  questionSet,
+  defaultQuestionSet,
   timer,
   successMessage,
   data,
@@ -51,13 +51,17 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         <select
           className="w-full border rounded-md p-2"
           onChange={(e) => handletQuesSetChange(e.target.value)}
-          value={questionSet}
+          defaultValue={defaultQuestionSet?.name}
         >
-          <option>Select question set</option>
+          <option value="">Select question set</option>
           {data &&
             data.map(
-              (set: QuestionSet) =>
-                !set.isDeleted && <option key={set.id}>{set.name}</option>
+              (queSet: QuestionSet) =>
+                !queSet.isDeleted && (
+                  <option key={queSet.id} value={queSet.id}>
+                    {queSet.name}
+                  </option>
+                )
             )}
         </select>
       </div>
@@ -81,8 +85,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             type="radio"
             id="subjective"
             name="questionType"
-            value="subjective"
-            checked={questionType === "subjective"}
+            value="SUBJECTIVE"
+            checked={questionType === "SUBJECTIVE"}
             onChange={handleRadioChange}
           />
           <label htmlFor="subjective" className="ml-2">
@@ -94,8 +98,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             type="radio"
             id="objective"
             name="questionType"
-            value="objective"
-            checked={questionType === "objective"}
+            value="OBJECTIVE"
+            checked={questionType === "OBJECTIVE"}
             onChange={handleRadioChange}
           />
           <label htmlFor="objective" className="ml-2">
@@ -115,7 +119,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       </div>
 
       {/* Options for Objective Questions */}
-      {questionType === "objective" && (
+      {questionType === "OBJECTIVE" && (
         <div className="mb-4">
           <label className="block text-lg font-semibold">Options:</label>
           {options.map((option, index) => (
@@ -130,7 +134,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               <label className="flex items-center space-x-2 p-4">
                 <input
                   type="radio"
-                  checked={correctAnswer === index}
+                  checked={correctAnswerIndex === index}
                   onChange={() => handleOptionChange(index)}
                   className="form-radio text-blue-500 transform scale-125 font-bold"
                 />
@@ -142,7 +146,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       )}
 
       {/* Description for Subjective Questions */}
-      {questionType === "subjective" && (
+      {questionType === "SUBJECTIVE" && (
         <div className="mb-4">
           <label
             className="block text-gray-700 font-bold mb-2"

@@ -107,6 +107,7 @@ model QuestionSet {
   createdBy   User     @relation(fields: [createdById], references: [id])
   createdById String
   isDeleted   Boolean  @default(false)
+  Quiz        Quiz[]
 }
 
 enum QuestionType {
@@ -126,6 +127,7 @@ model Question {
   createdBy              User                    @relation(fields: [createdById], references: [id])
   createdById            String
   isDeleted              Boolean                 @default(false)
+  Quiz                   Quiz[]
 }
 
 model ObjectiveOptions {
@@ -145,9 +147,24 @@ model SubjectiveDescription {
 }
 
 model Quiz {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   setId       String
+  set         QuestionSet? @relation(fields: [setId], references: [id])
   questionId  String
-  lastUpdated DateTime
+  question    Question?    @relation(fields: [questionId], references: [id])
+  lastUpdated DateTime     @default(now()) @map(name: "lastUpdated")
   createdBy   String
+}
+
+model UserQuizAnswers {
+  id          String  @id @default(cuid())
+  submittedBy String
+  quizId      String
+  questionId  String
+  isAttempted Boolean @default(false)
+  isAnswered  Boolean @default(false)
+  givenAnswer String
+  timeTaken   Int?
+  timeOver    Boolean @default(false)
+  isCorrect   Boolean @default(false)
 }

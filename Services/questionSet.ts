@@ -36,10 +36,15 @@ export async function createQuestionSet({name, description, createdById}:{name: 
   })
 }
 
-export async function getQuiz({setId}: {setId: string}){
-  return await db.quiz.findMany({
+
+
+
+
+export async function getQuesSetVailable({setId}: {setId: string}){
+  console.log("seeeees", setId);
+  return await db.questionSet.findUnique({
     where: {
-      setId,
+      id: setId,
     }
-})
+  })
 }

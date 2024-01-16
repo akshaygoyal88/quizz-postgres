@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import LeftSectionQues from "./LeftSectionQues";
 import RightSectionQuesList from "./RightSectionQuesList";
+import { useFetch } from "@/hooks/useFetch";
 
 export default function TestLayout({ quizId }: { quizId: string }) {
   const questions = [
@@ -26,6 +27,12 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const [questionStates, setQuestionStates] = useState(
     Array(questions.length).fill("not_attempted")
   );
+
+  // const {
+  //   data: questionsRes,
+  //   error: questionsError,
+  //   isLoading: questionsIsLoading,
+  // } = useFetch();
   const handleNextQuestion = () => {
     setCurrentQuestionIndex((prevIndex) =>
       prevIndex < questions.length - 1 ? prevIndex + 1 : prevIndex
