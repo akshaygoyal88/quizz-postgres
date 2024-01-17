@@ -156,15 +156,23 @@ model Quiz {
   createdBy   String
 }
 
+enum UserQuizAnswerStatus {
+  NOT_ATTEMPTED
+  ATTEMPTED
+  REVIEW
+  SKIPPED
+}
+
 model UserQuizAnswers {
-  id          String  @id @default(cuid())
+  id          String               @id @default(cuid())
   submittedBy String
   quizId      String
   questionId  String
-  isAttempted Boolean @default(false)
-  isAnswered  Boolean @default(false)
+  isAttempted Boolean              @default(false)
+  isAnswered  Boolean              @default(false)
+  status      UserQuizAnswerStatus @default(NOT_ATTEMPTED)
   givenAnswer String
   timeTaken   Int?
-  timeOver    Boolean @default(false)
-  isCorrect   Boolean @default(false)
+  timeOver    Boolean              @default(false)
+  isCorrect   Boolean              @default(false)
 }

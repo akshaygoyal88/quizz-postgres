@@ -84,7 +84,7 @@ const pathName: IPathName = {
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   },
-  testSetApi: {
+  testSetApis: {
     path: "/api/quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true

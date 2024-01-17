@@ -1,4 +1,4 @@
-import React from "react";
+// Import React and other necessary modules
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -9,6 +9,7 @@ export default function RightSectionQuesList({
   ses,
   questionStates,
   handleQuesNoClick,
+  currentQuestionId,
 }) {
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -25,27 +26,30 @@ export default function RightSectionQuesList({
 
             <div className="mt-8">
               <h3 className="text-lg font-semibold">Question List</h3>
-              <ul className="flex space-x-4 mt-2">
-                {questions.map((question, index) => (
-                  <li key={question.id}>
+              <div className="flex flex-wrap mt-2">
+                {questionStates.map((question, index) => (
+                  <div key={question.id} className="w-1/6 mb-4 mx-2">
                     <button
+                      onClick={() => handleQuesNoClick(question.id)}
                       className={classNames(
-                        "text-sm px-2 py-1 rounded-md",
+                        "text-sm px-2 py-1 rounded-md w-full",
                         questionStates[index] === "attempted"
                           ? "bg-green-300"
                           : questionStates[index] === "skipped"
                           ? "bg-red-600"
                           : questionStates[index] === "review"
                           ? "bg-yellow-400"
-                          : "bg-gray-300"
+                          : "bg-gray-300",
+                        currentQuestionId == question.id
+                          ? "border-2 border-blue-500"
+                          : ""
                       )}
-                      onClick={() => handleQuesNoClick(index)}
                     >
-                      Q{question.id}
+                      Q{index + 1}
                     </button>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>

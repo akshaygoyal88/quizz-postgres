@@ -5,6 +5,14 @@ export async function getQuiz({setId}: {setId: string}){
     return await db.quiz.findMany({
       where: {
         setId,
+      },
+      include:{
+        question: {
+          include: {
+            objective_options: true,
+            subjective_description: true
+          }
+        }
       }
   })
   }

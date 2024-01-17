@@ -108,7 +108,6 @@ function AddQuestionUI() {
       setTimeout(() => {
         setSuccessMessage("");
       }, 10000);
-      setSetId(null);
     } else if (saveQuesRes?.error) {
       setValidationError(saveQuesRes?.error);
     } else {
