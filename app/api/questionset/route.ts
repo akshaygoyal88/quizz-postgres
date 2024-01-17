@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/Services/questionSet";
+import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/services/questionSet";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {

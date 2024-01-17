@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import validator from "validator";
-import { UserSerivce } from "@/Services";
+import { UserSerivce } from "@/services";
 
 export interface CreateUserRequestBody {
   email: string;

@@ -3,7 +3,7 @@ import VerifyForm from "@/components/VerifyForm";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
-import { UserSerivce } from "@/Services";
+import { UserSerivce } from "@/services";
 
 interface VerifyProps {
   params: {

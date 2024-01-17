@@ -1,4 +1,4 @@
-import { UserSerivce } from "@/Services";
+import { UserSerivce } from "@/services";
 import { db } from "@/db";
 import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";

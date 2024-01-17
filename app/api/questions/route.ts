@@ -1,7 +1,7 @@
 import { db } from "@/db";
-import { createQuestion, getAllQuestions } from "@/Services/questions";
-import { getQuesSetVailable } from "@/Services/questionSet";
-import { postQuestionInQuiz } from "@/Services/quiz";
+import { createQuestion, getAllQuestions } from "@/services/questions";
+import { getQuesSetVailable } from "@/services/questionSet";
+import { postQuestionInQuiz } from "@/services/quiz";
 import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 

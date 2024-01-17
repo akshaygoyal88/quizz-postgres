@@ -1,4 +1,4 @@
-import { submitAnswers } from '@/Services/answerSubmission';
+import { submitAnswers } from '@/services/answerSubmission';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request, res: Response) {
