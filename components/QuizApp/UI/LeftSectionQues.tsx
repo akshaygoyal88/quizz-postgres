@@ -18,9 +18,17 @@ export default function LeftSectionQues({
     (q) => q.id === currentQuestionId
   );
   const [timer, setTimer] = useState(filtredQues.timer);
-  const [answer, setAnswer] = useState<string | null>(
-    currInitializedQue.ans_optionsId || currInitializedQue.ans_subjective
-  );
+  const [answer, setAnswer] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (currInitializedQue) {
+      setAnswer(
+        filtredQues?.type === QuestionType.OBJECTIVE
+          ? currInitializedQue.ans_optionsId
+          : currInitializedQue.ans_subjective
+      );
+    }
+  }, [currInitializedQue]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,11 +42,11 @@ export default function LeftSectionQues({
     };
   }, []);
 
-  useEffect(() => {
-    if (timer === 0) {
-      handleNextClick();
-    }
-  }, [timer]);
+  // useEffect(() => {
+  //   if (timer === 0) {
+  //     handleNextClick();
+  //   }
+  // }, [timer]);
 
   useEffect(() => {
     setAnswer(null);
@@ -46,6 +54,7 @@ export default function LeftSectionQues({
   }, [currentQuestionId]);
 
   const handleNextClick = () => {
+    console.log(answer);
     filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
     setAnswer(null);
     setTimer(0);
@@ -89,11 +98,7 @@ export default function LeftSectionQues({
                         name="options"
                         value={option.text}
                         onChange={() => handleAnsOptInput(option.id)}
-                        checked={
-                          answer === option.id ||
-                          (!answer &&
-                            currInitializedQue.ans_optionsId === option.id)
-                        }
+                        checked={answer === option.id}
                       />
                       <span className="ml-2">{option.text}</span>
                     </label>

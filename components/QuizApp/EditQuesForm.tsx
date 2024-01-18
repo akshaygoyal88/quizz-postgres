@@ -182,6 +182,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       timer={timer}
       successMessage={successMessage}
       data={availableSets}
+      headingText="Edit Questions"
+      buttonText="Edit"
       handleRadioChange={handleRadioChange}
       handleOptionTextChange={handleOptionTextChange}
       handleDescriptionChange={handleDescriptionChange}

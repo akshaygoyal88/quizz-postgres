@@ -9,40 +9,26 @@ import { QuizContext } from "@/context/QuizProvider";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
 
-// enum questionActionE {
-//   NOT_ATTEMPTED = "not_attempted",
-//   ATTEMPTED = "attempted",
-//   REVIEW = "review",
-//   SKIPPED = "skipped",
-// }
-
 export default function TestLayout({ quizId }: { quizId: string }) {
   const ses = useSession();
   const quizCtx = useContext(QuizContext);
 
-  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
-    null
-  );
+  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
   const [currInitializedQue, setCurrInitializedQue] = useState({});
   const [questionStates, setQuestionStates] = useState<object[]>([]);
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
 
-  const {
-    data: questionsRes,
-    error: questionsError,
-    isLoading: questionsIsLoading,
-  } = useFetch({
+  const { data: questionsRes, error: questionsError } = useFetch({
     url: `${pathName.testSetApis.path}/${quizId}`,
   });
 
   useEffect(() => {
     if (questionsRes && !questionsRes.error && !questionsError) {
-      const quesArr: [] = questionsRes.questions.map(
-        (ques: { id: any; question: any }) => ques.question
-      );
+      const quesArr: any[] = questionsRes.questions.map((ques: any) => ques.question);
 
       quizCtx.handleQuestionSet({ quesArr, quizId });
+
       const questionStates = quesArr.map((ques) => ({
         id: ques.id,
         status: UserQuizAnswerStatus.NOT_ATTEMPTED,
@@ -53,98 +39,86 @@ export default function TestLayout({ quizId }: { quizId: string }) {
       setCurrentQuestionId(firstQuestionId);
     }
   }, [questionsRes, questionsError]);
+
   useEffect(() => {
     if (currentQuestionId) {
-      for (let i = 0; i < questionStates.length; i++) {
-        if (questionStates[i].id === currentQuestionId) {
-          i < questionStates.length - 1 && setNextId(questionStates[i + 1].id);
-          i > 0 && setPrevId(questionStates[i - 1].id);
-        }
-      }
+      const currentIndex = questionStates.findIndex((que) => que.id === currentQuestionId);
 
-      const initializeQue = async () => {
-        const session = await getSession();
-        const currQues = session?.id && {
-          submittedBy: session.id,
-          setId: quizId,
-          questionId: currentQuestionId,
-        };
-        const { data, error, isLoading } = await fetchData({
-          url: `${pathName.quizAnsApi.path}`,
-          method: FetchMethodE.POST,
-          body: currQues,
-        });
-        if (data && !data.error) {
-          setQuestionStates((prevStates) => {
-            const updatedStates = prevStates.map((que) => {
-              if (que.id === currentQuestionId) {
-                return {
-                  ...que,
-                  status: data.ques.status,
-                };
-              }
-              return que;
-            });
-            return updatedStates;
+      if (currentIndex !== -1) {
+        currentIndex < questionStates.length - 1 && setNextId(questionStates[currentIndex + 1].id);
+        currentIndex > 0 && setPrevId(questionStates[currentIndex - 1].id);
+
+        const initializeQue = async () => {
+          const session = await getSession();
+          const currQues = session?.id && {
+            submittedBy: session.id,
+            setId: quizId,
+            questionId: currentQuestionId,
+          };
+
+          const { data, error } = await fetchData({
+            url: `${pathName.quizAnsApi.path}`,
+            method: FetchMethodE.POST,
+            body: currQues,
           });
-          setCurrInitializedQue(data.ques);
-        }
-      };
-      initializeQue();
+
+          if (data && !data.error) {
+            setQuestionStates((prevStates) => {
+              const updatedStates = prevStates.map((que) => (que.id === currentQuestionId
+                ? { ...que, status: data.ques.status }
+                : que));
+
+              return updatedStates;
+            });
+
+            setCurrInitializedQue(data.ques);
+          }
+        };
+
+        initializeQue();
+      }
     }
   }, [currentQuestionId]);
 
-  useEffect(() => {}, []);
   const handleNextQuestion = () => {
     nextId && setCurrentQuestionId(nextId);
   };
+
   const handlePreviousQuestion = () => {
     prevId && setCurrentQuestionId(prevId);
   };
 
-  const handleAnswerQuestion = async ({
-    answer,
-    type,
-  }: {
-    answer: string;
-    type: QuestionType;
-  }) => {
-    console.log(answer);
-    let userQueRes = { type };
+  const handleAnswerQuestion = async ({ answer, type }: { answer: string; type: QuestionType }) => {
+    let userQueRes: { type: QuestionType, [key: string]: any } = { type };
+
     if (answer) {
       if (type === QuestionType.OBJECTIVE) {
-        console.log("sssssssssssssssssssssssssssss");
         userQueRes = { ...userQueRes, ans_optionsId: answer };
       } else if (type === QuestionType.SUBJECTIVE) {
         userQueRes = { ...userQueRes, ans_subjective: answer };
       }
     }
-    const {
-      data: saveQueRes,
-      error: saveQueResError,
-      isLoading: saveQuesLoading,
-    } = await fetchData({
+console.log({userQueRes, id: currInitializedQue.id})
+    const { data: saveQueRes } = await fetchData({
       url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
       method: FetchMethodE.PUT,
       body: userQueRes,
     });
+
     handleNextQuestion();
-    // }
   };
+
   const handleMarkReviewQuestion = () => {
-    // setQuestionStates((prevStates) => {
-    //   const updatedStates = [...prevStates];
-    //   updatedStates[currentQuestionIndex] = questionActionE.REVIEW;
-    //   return updatedStates;
-    // });
-    // handleNextQuestion();
+    // Logic for marking a question as review
   };
 
   const handleQuesNoClick = (id: string) => {
     setCurrentQuestionId(id);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    // Logic for submitting the quiz
+  };
 
   return (
     <>
