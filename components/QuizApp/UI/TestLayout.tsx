@@ -132,6 +132,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   handleMarkReviewQuestion={handleMarkReviewQuestion}
                   handleAnswerQuestion={handleAnswerQuestion}
                   handlePreviousQuestion={handlePreviousQuestion}
+                  handleNextQuestion={handleNextQuestion}
                   currInitializedQue={currInitializedQue}
                 />
               )}

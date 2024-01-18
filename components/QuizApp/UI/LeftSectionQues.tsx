@@ -12,6 +12,7 @@ export default function LeftSectionQues({
   handleAnswerQuestion,
   handlePreviousQuestion,
   currInitializedQue,
+  handleNextQuestion,
 }) {
   const quizCtx = useContext(QuizContext);
   const filtredQues = quizCtx.questionSet.find(
@@ -48,12 +49,13 @@ export default function LeftSectionQues({
   //   }
   // }, [timer]);
 
+
   useEffect(() => {
     setAnswer(null);
     filtredQues && setTimer(filtredQues.timer);
   }, [currentQuestionId]);
 
-  const handleNextClick = () => {
+  const handleSubmitNextClick = () => {
     filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
     setAnswer(null);
     setTimer(0);
@@ -129,13 +131,21 @@ export default function LeftSectionQues({
             >
               Mark For Review
             </button>
-
             <button
-              onClick={handleNextClick}
-              className="mr-4 px-4 py-2 bg-blue-500 text-white rounded-md"
+              onClick={handleSubmitNextClick}
+              // disabled={timer === 0}
+              // className={`mr-4 px-4 py-2 ${timer === 0 ? 'bg-gray-300' : 'bg-blue-500'} text-white rounded-md`}
+              className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
+            >
+              Submit and Next
+            </button>
+
+            {/* <button
+              onClick={handleNextQuestion}
+              className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
             >
               Next
-            </button>
+            </button> */}
           </div>
         </div>
       </section>
