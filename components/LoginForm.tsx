@@ -24,16 +24,13 @@ export default function LoginForm({ className }: { className?: string }) {
     });
 
     if (result && !result.ok) {
-      console.log(result, "111111");
       setError("Invalid credentials. Please try again.");
     }
 
     if (result && !result.error) {
-      console.log(result, "22222");
       router.push("/");
       router.refresh();
     } else if (result) {
-      console.log(result, "3333");
       setError(`${result.error}`);
     }
   };

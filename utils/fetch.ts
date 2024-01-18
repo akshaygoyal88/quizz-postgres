@@ -12,7 +12,6 @@ export enum FetchMethodE {
         'Content-Type': 'application/json',
       },
     };
-    console.log(body);
     if (body) {
       requestOptions.body = JSON.stringify(body);
     }

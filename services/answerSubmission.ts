@@ -21,7 +21,6 @@ export async function getQuesStatus({setId, submittedBy, questionId}:{setId:stri
 }
 
 export async function saveResponseForQues({id, reqData} : {id: string, reqData: UserQuizAnswers}){
-    console.log(id,reqData)
     return await db.userQuizAnswers.update({
         where: { id },
         data: {

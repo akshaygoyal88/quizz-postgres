@@ -98,7 +98,6 @@ export default function TestLayout({ quizId }: { quizId: string }) {
         userQueRes = { ...userQueRes, ans_subjective: answer };
       }
     }
-console.log({userQueRes, id: currInitializedQue.id})
     const { data: saveQueRes } = await fetchData({
       url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
       method: FetchMethodE.PUT,

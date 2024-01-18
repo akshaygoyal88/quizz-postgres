@@ -19,7 +19,6 @@ const QuizProvider = ({ children }) => {
     quesArr: [];
     quizId?: string;
   }) => {
-    console.log(quesArr);
     if (quesArr.length > 0) {
       setQuestionSet(quesArr);
       // if (ses.status === "authenticated") {

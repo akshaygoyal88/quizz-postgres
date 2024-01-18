@@ -49,15 +49,9 @@ export const authOptions: NextAuthOptions = {
             };
           } else {
             throw new Error("Invalid password.");
-            console.log("ERROR =======> Invalid password");
-            return null;
           }
         } else {
-          console.log(
-            "ERROR =======> User not found please check credentials or verify email before sign in."
-          );
           throw new Error("User not found or verify email before sign in.");
-          return null;
         }
       },
     }),

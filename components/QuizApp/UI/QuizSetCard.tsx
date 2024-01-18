@@ -12,7 +12,6 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({
   questionSet,
   // questionCount,
 }) => {
-  console.log(questionSet);
   const formattedDate = new Date(questionSet.createdAt).toLocaleDateString();
 
   return (

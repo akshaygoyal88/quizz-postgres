@@ -117,7 +117,6 @@ function AddQuestionUI() {
 
   const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    console.log(quesSetId);
     // setQuestionSet(set);
     setSetId(quesSetId);
   };

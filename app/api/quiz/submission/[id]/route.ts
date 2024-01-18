@@ -7,7 +7,6 @@ export async function PUT(req: Request, {params}:{params:string}) {
     const id = params?.id;
     try{
         const reqDetail= await req.json();
-        console.log(reqDetail, "dfsdfsdfsdfdsfdsfsdfsddfsdf")
         if(reqDetail.type == QuestionType.OBJECTIVE && !reqDetail.ans_optionsId){
             const sendRes = await saveResponseForQues({id, reqData: {isAnswered: false, status: UserQuizAnswerStatus.SKIPPED}});
             return NextResponse.json(sendRes)

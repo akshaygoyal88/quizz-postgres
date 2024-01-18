@@ -29,9 +29,7 @@ export default function QuestionsListUI() {
   });
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
-    console.log(quesData);
     if (Number(pageNumber) > 0 && Number(pageNumber) <= quesData?.totalPages) {
-      console.log(pageNumber);
       setPage(pageNumber);
     }
   };

@@ -157,7 +157,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
 
   const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    console.log(quesSetId);
     // setQuestionSet(set);
     setSetId(quesSetId);
   };

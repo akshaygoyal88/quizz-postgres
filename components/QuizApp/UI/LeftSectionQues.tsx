@@ -54,7 +54,6 @@ export default function LeftSectionQues({
   }, [currentQuestionId]);
 
   const handleNextClick = () => {
-    console.log(answer);
     filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
     setAnswer(null);
     setTimer(0);

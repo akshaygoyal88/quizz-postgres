@@ -12,8 +12,7 @@ export async function GET(req: Request, { params }: { params: string }) {
 
     return NextResponse.json({ questions: [...getQuizAndQues] });
   } catch (error) {
-    console.log(error);
-  }
+    return NextResponse.json({ error: error });  }
 }
 
 export async function DELETE({ params }: { params: string }) {
