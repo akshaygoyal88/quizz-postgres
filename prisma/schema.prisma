@@ -167,17 +167,18 @@ enum UserQuizAnswerStatus {
 }
 
 model UserQuizAnswers {
-  id              String               @id @default(cuid())
+  id              String                @id @default(cuid())
   submittedBy     String
-  submittedByUser User                 @relation(fields: [submittedBy], references: [id])
+  submittedByUser User                  @relation(fields: [submittedBy], references: [id])
   setId           String
-  questionSet     QuestionSet?         @relation(fields: [setId], references: [id])
+  questionSet     QuestionSet?          @relation(fields: [setId], references: [id])
   questionId      String
-  question        Question?            @relation(fields: [questionId], references: [id])
-  isAnswered      Boolean              @default(false)
-  status          UserQuizAnswerStatus @default(NOT_ATTEMPTED)
-  givenAnswer     String
+  question        Question?             @relation(fields: [questionId], references: [id])
+  isAnswered      Boolean?              @default(false)
+  status          UserQuizAnswerStatus? @default(NOT_ATTEMPTED)
+  ans_optionsId   String?
+  ans_subjective  String?
   timeTaken       Int?
-  timeOver        Boolean              @default(false)
-  isCorrect       Boolean              @default(false)
+  timeOver        Boolean?              @default(false)
+  isCorrect       Boolean?              @default(false)
 }

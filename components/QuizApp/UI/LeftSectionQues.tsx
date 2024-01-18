@@ -11,11 +11,16 @@ export default function LeftSectionQues({
   handleMarkReviewQuestion,
   handleAnswerQuestion,
   handlePreviousQuestion,
+  currInitializedQue,
 }) {
   const quizCtx = useContext(QuizContext);
-  const currQues = quizCtx.questionSet.find((q) => q.id === currentQuestionId);
-  const [timer, setTimer] = useState(currQues.timer);
-  const [answer, setAnswer] = useState<string | null>(null);
+  const filtredQues = quizCtx.questionSet.find(
+    (q) => q.id === currentQuestionId
+  );
+  const [timer, setTimer] = useState(filtredQues.timer);
+  const [answer, setAnswer] = useState<string | null>(
+    currInitializedQue.ans_optionsId || currInitializedQue.ans_subjective
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,22 +29,34 @@ export default function LeftSectionQues({
       );
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
     if (timer === 0) {
-      handleAnswerQuestion(answer);
+      handleNextClick();
     }
   }, [timer]);
+
   useEffect(() => {
     setAnswer(null);
-    setTimer(currQues.timer);
+    filtredQues && setTimer(filtredQues.timer);
   }, [currentQuestionId]);
 
   const handleNextClick = () => {
-    handleAnswerQuestion(answer);
+    filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
     setAnswer(null);
+    setTimer(0);
+  };
+
+  const handlePrevious = () => {
+    handlePreviousQuestion();
+  };
+
+  const handleAnsOptInput = (str) => {
+    setAnswer(str);
   };
 
   return (
@@ -49,7 +66,7 @@ export default function LeftSectionQues({
           <div className="p-6">
             <div className="flex justify-between items-center">
               <h2 className="" id="question-title">
-                Question {quizCtx.questionSet.indexOf(currQues) + 1}
+                Question {quizCtx.questionSet.indexOf(filtredQues) + 1}
               </h2>
               {timer > 0 && (
                 <div className="">
@@ -61,18 +78,22 @@ export default function LeftSectionQues({
                 </div>
               )}
             </div>
-            <p>{currQues.question_text}</p>
-            {currQues.type === QuestionType.OBJECTIVE ? (
+            <p>{filtredQues.question_text}</p>
+            {filtredQues.type === QuestionType.OBJECTIVE ? (
               <div className="mt-4">
-                {currQues.objective_options.map(
+                {filtredQues.objective_options.map(
                   (option: ObjectiveOptions, index: Number) => (
                     <label key={index} className="block p-4">
                       <input
                         type="radio"
                         name="options"
                         value={option.text}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        checked={answer === option.text}
+                        onChange={() => handleAnsOptInput(option.id)}
+                        checked={
+                          answer === option.id ||
+                          (!answer &&
+                            currInitializedQue.ans_optionsId === option.id)
+                        }
                       />
                       <span className="ml-2">{option.text}</span>
                     </label>
@@ -93,7 +114,7 @@ export default function LeftSectionQues({
           </div>
           <div className="m-2 flex justify-between">
             <button
-              onClick={handlePreviousQuestion}
+              onClick={handlePrevious}
               className="mr-4 px-4 py-2 bg-gray-300 rounded-md"
             >
               Previous

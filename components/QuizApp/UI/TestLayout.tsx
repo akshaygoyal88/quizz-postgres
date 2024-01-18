@@ -1,18 +1,20 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { useState, useEffect, useContext } from "react";
 import LeftSectionQues from "./LeftSectionQues";
 import RightSectionQuesList from "./RightSectionQuesList";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { QuizContext } from "@/context/QuizProvider";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
 
-enum questionActionE {
-  NOT_ATTEMPTED = "not_attempted",
-  ATTEMPTED = "attempted",
-  REVIEW = "review",
-  SKIPPED = "skipped",
-}
+// enum questionActionE {
+//   NOT_ATTEMPTED = "not_attempted",
+//   ATTEMPTED = "attempted",
+//   REVIEW = "review",
+//   SKIPPED = "skipped",
+// }
 
 export default function TestLayout({ quizId }: { quizId: string }) {
   const ses = useSession();
@@ -21,6 +23,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
     null
   );
+  const [currInitializedQue, setCurrInitializedQue] = useState({});
   const [questionStates, setQuestionStates] = useState<object[]>([]);
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
@@ -38,18 +41,18 @@ export default function TestLayout({ quizId }: { quizId: string }) {
       const quesArr: [] = questionsRes.questions.map(
         (ques: { id: any; question: any }) => ques.question
       );
-      quizCtx.handleQuestionSet(quesArr);
 
+      quizCtx.handleQuestionSet({ quesArr, quizId });
       const questionStates = quesArr.map((ques) => ({
         id: ques.id,
-        status: questionActionE.NOT_ATTEMPTED,
+        status: UserQuizAnswerStatus.NOT_ATTEMPTED,
       }));
 
       setQuestionStates(questionStates);
       const firstQuestionId = questionStates.length > 0 && questionStates[0].id;
       setCurrentQuestionId(firstQuestionId);
     }
-  }, [questionsRes]);
+  }, [questionsRes, questionsError]);
   useEffect(() => {
     if (currentQuestionId) {
       for (let i = 0; i < questionStates.length; i++) {
@@ -58,9 +61,40 @@ export default function TestLayout({ quizId }: { quizId: string }) {
           i > 0 && setPrevId(questionStates[i - 1].id);
         }
       }
+
+      const initializeQue = async () => {
+        const session = await getSession();
+        const currQues = session?.id && {
+          submittedBy: session.id,
+          setId: quizId,
+          questionId: currentQuestionId,
+        };
+        const { data, error, isLoading } = await fetchData({
+          url: `${pathName.quizAnsApi.path}`,
+          method: FetchMethodE.POST,
+          body: currQues,
+        });
+        if (data && !data.error) {
+          setQuestionStates((prevStates) => {
+            const updatedStates = prevStates.map((que) => {
+              if (que.id === currentQuestionId) {
+                return {
+                  ...que,
+                  status: data.ques.status,
+                };
+              }
+              return que;
+            });
+            return updatedStates;
+          });
+          setCurrInitializedQue(data.ques);
+        }
+      };
+      initializeQue();
     }
   }, [currentQuestionId]);
 
+  useEffect(() => {}, []);
   const handleNextQuestion = () => {
     nextId && setCurrentQuestionId(nextId);
   };
@@ -68,9 +102,32 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     prevId && setCurrentQuestionId(prevId);
   };
 
-  const handleAnswerQuestion = (ans: string) => {
-    if (ans) {
+  const handleAnswerQuestion = async ({
+    answer,
+    type,
+  }: {
+    answer: string;
+    type: QuestionType;
+  }) => {
+    console.log(answer);
+    let userQueRes = { type };
+    if (answer) {
+      if (type === QuestionType.OBJECTIVE) {
+        console.log("sssssssssssssssssssssssssssss");
+        userQueRes = { ...userQueRes, ans_optionsId: answer };
+      } else if (type === QuestionType.SUBJECTIVE) {
+        userQueRes = { ...userQueRes, ans_subjective: answer };
+      }
     }
+    const {
+      data: saveQueRes,
+      error: saveQueResError,
+      isLoading: saveQuesLoading,
+    } = await fetchData({
+      url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
+      method: FetchMethodE.PUT,
+      body: userQueRes,
+    });
     handleNextQuestion();
     // }
   };
@@ -102,6 +159,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   handleMarkReviewQuestion={handleMarkReviewQuestion}
                   handleAnswerQuestion={handleAnswerQuestion}
                   handlePreviousQuestion={handlePreviousQuestion}
+                  currInitializedQue={currInitializedQue}
                 />
               )}
               {quizCtx.questionSet.length > 0 && (
@@ -111,6 +169,9 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   questionStates={questionStates}
                   handleQuesNoClick={handleQuesNoClick}
                   currentQuestionId={currentQuestionId}
+                  setId={quizId}
+                  submittedBy={ses.status === "authenticated" && ses.data.id}
+                  currInitializedQue={currInitializedQue}
                 />
               )}
             </div>

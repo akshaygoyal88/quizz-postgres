@@ -12,5 +12,5 @@ export default async function Home() {
   // const isProfileCompleted = await profileCompleted();
   // if (!isProfileCompleted) redirect("/profile");
   const session = await getServerSession();
-  return <QuizSets />;
+  return <h1>Home</h1>;
 }

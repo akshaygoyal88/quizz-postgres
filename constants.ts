@@ -88,6 +88,11 @@ const pathName: IPathName = {
     path: "/api/quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
+  },
+  quizAnsApi: {
+    path: "/api/quiz/submission",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
   }
 };
 
