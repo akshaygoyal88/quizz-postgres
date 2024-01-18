@@ -46,7 +46,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
       }));
 
       setQuestionStates(questionStates);
-      const firstQuestionId = questionStates[0].id;
+      const firstQuestionId = questionStates.length > 0 && questionStates[0].id;
       setCurrentQuestionId(firstQuestionId);
     }
   }, [questionsRes]);
