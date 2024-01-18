@@ -1,16 +1,16 @@
 import { db } from "@/db";
-import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/Services/questionSet";
+import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/services/questionSet";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
-  const createdById = url.searchParams.get("createdById")
+  const createdById: string | null = url.searchParams.get("createdById")
   
 
   try {
-    if (page > 0 && pageSize > 0) {
+    if (page > 0 && pageSize > 0 && createdById) {
       const totalRows = await db.questionSet.count({
         where: {
           isDeleted: false,
@@ -31,7 +31,8 @@ export async function GET(req: Request) {
         }
       );
     } else {
-      const allQuestionSets = await getQuestionSets(createdById)
+      
+      const allQuestionSets =  createdById ? await getQuestionSets(createdById) : await getQuestionSets()
       return NextResponse.json(allQuestionSets);
     }
   } catch (error) {

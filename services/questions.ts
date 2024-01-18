@@ -22,12 +22,20 @@ export async function getAllQuestions({skip, pageSize, createdById}:{skip:Number
 export async function createQuestion(
     {question_text,
     type,
-    questionSet,
     options,
     correctAnswer,
     description,
     timer,
-    createdById} : Question
+    createdById,
+    } : {
+      question_text: string,
+      type: QuestionType,
+      options: string[],
+      correctAnswer: number,
+      description: string,
+      timer: string,
+      createdById: string,
+      }
   ){
     return await db.question.create({
         data: {
@@ -36,7 +44,7 @@ export async function createQuestion(
           timer: parseInt(timer, 10),          
           objective_options: type === QuestionType.OBJECTIVE ? {
             createMany: {
-              data: options.map((optionText: any, index: any) => ({
+              data: options.map((optionText: string, index: Number) => ({
                 text: optionText,
                 isCorrect: index === correctAnswer,
               })),
@@ -48,7 +56,7 @@ export async function createQuestion(
               description,
             },
           } : undefined,
-          createdById
+          createdById,
         },
       });
 }

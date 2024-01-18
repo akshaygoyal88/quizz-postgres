@@ -13,11 +13,15 @@ export async function getAllQuestionsSet({skip, pageSize, createdById}:{skip:num
         take: pageSize,
       });
 }
-export async function getQuestionSets (createdById: string) {
+export async function getQuestionSets (createdById?: string) {
   return await db.questionSet.findMany(
     {
       where: {
-        createdById
+        createdById,
+        isDeleted: false
+      },
+      include:{
+        createdBy: true,
       }
     })
 }
@@ -29,5 +33,18 @@ export async function createQuestionSet({name, description, createdById}:{name: 
         description,
         createdById
       },
+  })
+}
+
+
+
+
+
+export async function getQuesSetVailable({setId}: {setId: string}){
+  console.log("seeeees", setId);
+  return await db.questionSet.findUnique({
+    where: {
+      id: setId,
+    }
   })
 }

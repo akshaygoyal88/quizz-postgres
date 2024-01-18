@@ -83,6 +83,11 @@ const pathName: IPathName = {
     path: "/api/updateProfile",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
+  },
+  testSetApis: {
+    path: "/api/quiz",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
   }
 };
 

@@ -10,13 +10,13 @@ import { useSession } from "next-auth/react";
 function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState(["", "", "", ""]);
-  const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
   const [validationError, setValidationError] = useState("");
-  const [questionType, setQuestionType] = useState("objective");
+  const [questionType, setQuestionType] = useState("OBJECTIVE");
   const [description, setDescription] = useState("");
-  const [questionSet, setQuestionSet] = useState("");
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [setId, setSetId] = useState<string | null>(null);
   const ses = useSession();
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}?createdById=${
@@ -37,7 +37,7 @@ function AddQuestionUI() {
 
   const handleOptionChange = (index: any) => {
     setValidationError("");
-    setCorrectAnswer(index);
+    setCorrectAnswerIndex(index);
     setValidationError("");
   };
 
@@ -51,7 +51,7 @@ function AddQuestionUI() {
   const handleSaveQuestion = async () => {
     let requestData;
 
-    if (questionType === "objective") {
+    if (questionType === "OBJECTIVE") {
       if (
         question.trim() === "" ||
         options.some((option) => option.trim() === "")
@@ -62,7 +62,7 @@ function AddQuestionUI() {
         return;
       }
 
-      if (correctAnswer === null) {
+      if (correctAnswerIndex === null) {
         setValidationError("Please select the correct answer.");
         return;
       }
@@ -70,19 +70,21 @@ function AddQuestionUI() {
         question_text: question,
         options: [...options],
         type: "OBJECTIVE",
-        correctAnswer: correctAnswer,
-        questionSet: questionSet,
+        correctAnswer: correctAnswerIndex,
+        // questionSet: questionSet,
         timer: timer,
         createdById: ses?.data?.id,
+        setId,
       };
-    } else if (questionType === "subjective") {
+    } else if (questionType === "SUBJECTIVE") {
       requestData = {
         question_text: question,
         type: "SUBJECTIVE",
         description: description,
-        questionSet: questionSet,
+        // questionSet: questionSet,
         timer: timer,
         createdById: ses?.data?.id,
+        setId,
       };
     }
 
@@ -98,10 +100,9 @@ function AddQuestionUI() {
     if (saveQuesRes && !saveQuesRes?.error) {
       setQuestion("");
       setOptions(["", "", "", ""]);
-      setCorrectAnswer(null);
+      setCorrectAnswerIndex(null);
       setValidationError("");
       setTimer("0");
-      setQuestionSet("");
       setSuccessMessage("Successfully added Question.");
       setDescription("");
       setTimeout(() => {
@@ -114,9 +115,11 @@ function AddQuestionUI() {
     }
   };
 
-  const handletQuesSetChange = (set: string) => {
+  const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    setQuestionSet(set);
+    console.log(quesSetId);
+    // setQuestionSet(set);
+    setSetId(quesSetId);
   };
   const handletQueChange = (que: string) => {
     setValidationError("");
@@ -126,16 +129,14 @@ function AddQuestionUI() {
     setValidationError("");
     setTimer(time);
   };
-
   return (
     <QuestionForm
       question={question}
       options={options}
-      correctAnswer={correctAnswer}
+      correctAnswerIndex={correctAnswerIndex}
       validationError={validationError}
       questionType={questionType}
       description={description}
-      questionSet={questionSet}
       timer={timer}
       successMessage={successMessage}
       data={data}
