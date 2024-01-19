@@ -49,7 +49,9 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
       body: reqData,
     });
     if (!saveQueSetError && !saveQueSetRes?.error) {
-      saveQueSetRes?.id ? router.push(`${pathName.quiz.path}/${saveQueSetRes?.id}/edit`) : setError(saveQueSetRes.error);
+      saveQueSetRes?.id
+        ? router.push(`${pathName.quiz.path}/${saveQueSetRes?.id}/edit?msg=1`)
+        : setError(saveQueSetRes.error);
     } else if (saveQueSetRes.error) {
       setError(saveQueSetRes.error);
     }

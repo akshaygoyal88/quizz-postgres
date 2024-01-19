@@ -18,6 +18,7 @@ export default function LeftSectionQues({
   const filtredQues = quizCtx.questionSet.find(
     (q) => q.id === currentQuestionId
   );
+  const isTimerAvailable = filtredQues.timer !== 0;
   const [timer, setTimer] = useState(filtredQues.timer);
   const [answer, setAnswer] = useState<string | null>(null);
 
@@ -43,12 +44,11 @@ export default function LeftSectionQues({
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (timer === 0) {
-  //     handleNextClick();
-  //   }
-  // }, [timer]);
-
+  useEffect(() => {
+    if (isTimerAvailable && timer === 0) {
+      handleSubmitNextClick();
+    }
+  }, [timer]);
 
   useEffect(() => {
     setAnswer(null);
@@ -57,7 +57,7 @@ export default function LeftSectionQues({
 
   const handleSubmitNextClick = () => {
     filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
-    setAnswer(null);
+    answer && setAnswer(null);
     setTimer(0);
   };
 

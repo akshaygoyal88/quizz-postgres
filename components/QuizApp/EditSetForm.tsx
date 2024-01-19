@@ -34,6 +34,19 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
   const router = useRouter();
+  const [addSetSuccessMessage, setAddSetSuccessMessage] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const msgParam = urlSearchParams.get("msg");
+      if (msgParam === "1") {
+        setAddSetSuccessMessage("Set Added successfully.");
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (setsInfo) {
@@ -75,6 +88,9 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
   return (
     <div className="h-screen m-4 flex flex-col items-center gap-5">
       <h1 className="font-bold text-2xl">Edit Set</h1>
+      <p className="bg-green-500 px-10 py-1 text-white m-3">
+        {addSetSuccessMessage}
+      </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <InputWithLabel
           type="text"
