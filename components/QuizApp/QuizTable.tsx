@@ -61,15 +61,6 @@ export default function QuizTable({
                       No. of Questions
                     </a>
                   </th>
-
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    <a href="#" className="group inline-flex">
-                      Description
-                    </a>
-                  </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -112,12 +103,8 @@ export default function QuizTable({
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                       0
                     </td>
-
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {set.description}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {set.createdById}
+                      {set.createdBy.first_name}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(set.createdAt).toLocaleString()}

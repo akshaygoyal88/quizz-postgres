@@ -127,6 +127,20 @@ export default function TestLayout({ quizId }: { quizId: string }) {
         };
       }
     }
+    setQuestionStates((prevStates) => {
+      const updatedStates = prevStates.map((que) =>
+        que.id === currentQuestionId
+          ? {
+              ...que,
+              status: answer
+                ? UserQuizAnswerStatus.ATTEMPTED
+                : UserQuizAnswerStatus.SKIPPED,
+            }
+          : que
+      );
+      return updatedStates;
+    });
+
     const { data: saveQueRes } = await fetchData({
       url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
       method: FetchMethodE.PUT,
@@ -136,8 +150,24 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     handleNextQuestion();
   };
 
-  const handleMarkReviewQuestion = () => {
-    // Logic for marking a question as review
+  const handleMarkReviewQuestion = async () => {
+    const { data: saveQueRes } = await fetchData({
+      url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
+      method: FetchMethodE.PUT,
+      body: { status: UserQuizAnswerStatus.REVIEW },
+    });
+    setQuestionStates((prevStates) => {
+      const updatedStates = prevStates.map((que) =>
+        que.id === currentQuestionId
+          ? {
+              ...que,
+              status: UserQuizAnswerStatus.REVIEW,
+            }
+          : que
+      );
+      return updatedStates;
+    });
+    handleNextQuestion();
   };
 
   const handleQuesNoClick = (id: string) => {

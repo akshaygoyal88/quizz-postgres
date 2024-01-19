@@ -9,6 +9,7 @@ import { useFetch } from "@/hooks/useFetch";
 import Button from "../Shared/Button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import EmptyState from "../Shared/EmptyState";
 
 export default function QuestionsListUI() {
   const [page, setPage] = useState(1);
@@ -39,22 +40,33 @@ export default function QuestionsListUI() {
   };
   return (
     <div className="">
-      <div className="p-1 flex justify-evenly">
-        <Button href={`${pathName.questionsAdd.path}`} />
-      </div>
-      <QuestionsTable
-        ques={
-          quesData && quesData.questions.length > 0 ? quesData.questions : []
-        }
-        // getAvailableQuestions={getAvailableQuestions}
-        onDelete={onDelete}
-      />
-      <Pagination
-        page={page}
-        totalpage={quesData?.totalPages || 0}
-        paginate={paginate}
-        totalRows={quesData?.totalRows || 0}
-      />
+      {quesData && quesData.questions.length > 0 && (
+        <div className="p-1 flex justify-evenly">
+          <Button href={`${pathName.questionsAdd.path}`} />
+        </div>
+      )}
+      {quesData && quesData.questions.length > 0 ? (
+        <QuestionsTable
+          ques={quesData.questions}
+          // getAvailableQuestions={getAvailableQuestions}
+          onDelete={onDelete}
+        />
+      ) : (
+        <EmptyState
+          title="Questions"
+          description="No question available"
+          buttonLink={pathName.questionsAdd.path}
+          buttonText="Add Questions"
+        />
+      )}
+      {quesData && quesData.questions.length > 0 && (
+        <Pagination
+          page={page}
+          totalpage={quesData?.totalPages || 0}
+          paginate={paginate}
+          totalRows={quesData?.totalRows || 0}
+        />
+      )}
     </div>
   );
 }

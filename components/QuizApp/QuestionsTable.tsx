@@ -10,6 +10,7 @@ export default function QuestionsTable({
   ques: Question[];
   onDelete: () => void;
 }) {
+  console.log(ques);
   const [deleteSuccess, setDeleteSuccess] = useState("");
   const [error, setError] = useState("");
 
@@ -123,7 +124,7 @@ export default function QuestionsTable({
                       {que.type}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {que.createdById}
+                      {que.createdBy.first_name}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(que.createdAt).toLocaleString()}

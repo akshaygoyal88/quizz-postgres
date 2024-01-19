@@ -11,6 +11,7 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import pathName from "@/constants";
@@ -25,8 +26,14 @@ const navigation = [
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
-    name: "Question Set/Subject",
+    name: "Create set",
     href: pathName.quizAdd.path,
+    icon: PlusIcon,
+    current: false,
+  },
+  {
+    name: "Question Set/Subject",
+    href: pathName.quiz.path,
     icon: FolderIcon,
     current: false,
   },
