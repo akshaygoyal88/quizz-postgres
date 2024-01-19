@@ -11,7 +11,7 @@ const DeleteModal = ({
 }) => {
   const modalRef = useRef(null);
 
-  const handleBackgroundClick = (e) => {
+  const handleBackgroundClick = (e: { target: any }) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       onClose();
     }

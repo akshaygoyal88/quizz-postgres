@@ -71,6 +71,14 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
           defaultValue={undefined}
         />
+        <div className="flex flex-col justify-between">
+          <label>Action:</label>
+          <select className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white">
+            <option>Publish</option>
+            <option>Draft</option>
+            <option>Archived</option>
+          </select>
+        </div>
 
         <Textarea
           label="Description"
@@ -79,6 +87,17 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
           value={formData.description}
           onChange={handleInputChange}
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
+        />
+        <InputWithLabel
+          type="number"
+          id="price"
+          name="price"
+          // onChange={handleInputChange}
+          label="Price:"
+          className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
+          defaultValue={undefined}
+          step="0.1"
+          value={undefined}
         />
         <p className="text-red-500 mb-2">{error}</p>
         <button
