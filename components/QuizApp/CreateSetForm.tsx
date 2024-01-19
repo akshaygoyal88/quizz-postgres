@@ -72,7 +72,9 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
           defaultValue={undefined}
         />
         <div className="flex flex-col justify-between">
-          <label>Action:</label>
+          <label className="block text-sm font-medium leading-6 text-gray-900">
+            Action:
+          </label>
           <select className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white">
             <option>Publish</option>
             <option>Draft</option>
