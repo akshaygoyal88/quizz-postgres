@@ -13,7 +13,9 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const ses = useSession();
   const quizCtx = useContext(QuizContext);
 
-  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null);
+  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
+    null
+  );
   const [currInitializedQue, setCurrInitializedQue] = useState({});
   const [questionStates, setQuestionStates] = useState<object[]>([]);
   const [prevId, setPrevId] = useState<string | null>(null);
@@ -25,7 +27,9 @@ export default function TestLayout({ quizId }: { quizId: string }) {
 
   useEffect(() => {
     if (questionsRes && !questionsRes.error && !questionsError) {
-      const quesArr: any[] = questionsRes.questions.map((ques: any) => ques.question);
+      const quesArr: any[] = questionsRes.questions.map(
+        (ques: any) => ques.question
+      );
 
       quizCtx.handleQuestionSet({ quesArr, quizId });
 
@@ -42,10 +46,13 @@ export default function TestLayout({ quizId }: { quizId: string }) {
 
   useEffect(() => {
     if (currentQuestionId) {
-      const currentIndex = questionStates.findIndex((que) => que.id === currentQuestionId);
+      const currentIndex = questionStates.findIndex(
+        (que) => que.id === currentQuestionId
+      );
 
       if (currentIndex !== -1) {
-        currentIndex < questionStates.length - 1 && setNextId(questionStates[currentIndex + 1].id);
+        currentIndex < questionStates.length - 1 &&
+          setNextId(questionStates[currentIndex + 1].id);
         currentIndex > 0 && setPrevId(questionStates[currentIndex - 1].id);
 
         const initializeQue = async () => {
@@ -64,9 +71,11 @@ export default function TestLayout({ quizId }: { quizId: string }) {
 
           if (data && !data.error) {
             setQuestionStates((prevStates) => {
-              const updatedStates = prevStates.map((que) => (que.id === currentQuestionId
-                ? { ...que, status: data.ques.status }
-                : que));
+              const updatedStates = prevStates.map((que) =>
+                que.id === currentQuestionId
+                  ? { ...que, status: data.ques.status }
+                  : que
+              );
 
               return updatedStates;
             });
@@ -88,14 +97,34 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     prevId && setCurrentQuestionId(prevId);
   };
 
-  const handleAnswerQuestion = async ({ answer, type }: { answer: string; type: QuestionType }) => {
-    let userQueRes: { type: QuestionType, [key: string]: any } = { type };
-
+  const handleAnswerQuestion = async ({
+    answer,
+    timeTaken,
+    type,
+    timeOver,
+  }: {
+    answer: string;
+    timeTaken: number;
+    type: QuestionType;
+    timeOver: boolean;
+  }) => {
+    console.log(timeTaken, timeOver);
+    let userQueRes: { type: QuestionType; [key: string]: any } = { type };
     if (answer) {
       if (type === QuestionType.OBJECTIVE) {
-        userQueRes = { ...userQueRes, ans_optionsId: answer };
+        userQueRes = {
+          ...userQueRes,
+          ans_optionsId: answer,
+          timeTaken,
+          timeOver,
+        };
       } else if (type === QuestionType.SUBJECTIVE) {
-        userQueRes = { ...userQueRes, ans_subjective: answer };
+        userQueRes = {
+          ...userQueRes,
+          ans_subjective: answer,
+          timeTaken,
+          timeOver,
+        };
       }
     }
     const { data: saveQueRes } = await fetchData({

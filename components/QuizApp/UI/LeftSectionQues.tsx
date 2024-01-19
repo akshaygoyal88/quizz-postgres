@@ -34,15 +34,19 @@ export default function LeftSectionQues({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prevTimer: number) =>
-        prevTimer > 0 ? prevTimer - 1 : prevTimer
-      );
+      if (isTimerAvailable) {
+        setTimer((prevTimer: number) =>
+          prevTimer > 0 ? prevTimer - 1 : prevTimer
+        );
+      } else {
+        setTimer((prevTimer: number) => prevTimer + 1);
+      }
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [isTimerAvailable, timer]);
 
   useEffect(() => {
     if (isTimerAvailable && timer === 0) {
@@ -56,9 +60,16 @@ export default function LeftSectionQues({
   }, [currentQuestionId]);
 
   const handleSubmitNextClick = () => {
-    filtredQues && handleAnswerQuestion({ answer, type: filtredQues.type });
+    const timeTaken = isTimerAvailable ? filtredQues.timer - timer : timer;
+    const timeOver = isTimerAvailable && timeTaken === filtredQues.timer;
+    filtredQues &&
+      handleAnswerQuestion({
+        answer,
+        timeTaken,
+        timeOver,
+        type: filtredQues.type,
+      });
     answer && setAnswer(null);
-    setTimer(0);
   };
 
   const handlePrevious = () => {
@@ -78,7 +89,7 @@ export default function LeftSectionQues({
               <h2 className="" id="question-title">
                 Question {quizCtx.questionSet.indexOf(filtredQues) + 1}
               </h2>
-              {timer > 0 && (
+              {isTimerAvailable && (
                 <div className="">
                   <h3 className="text-lg font-semibold">Time</h3>
 
