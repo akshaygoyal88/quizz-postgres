@@ -2,6 +2,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
 import { useState } from "react";
+import DeleteModal from "../Shared/DeleteModal";
 
 export default function QuestionsTable({
   ques,
@@ -10,16 +11,18 @@ export default function QuestionsTable({
   ques: Question[];
   onDelete: () => void;
 }) {
-  console.log(ques);
   const [deleteSuccess, setDeleteSuccess] = useState("");
   const [error, setError] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedQuestionId, setSelectedQuestionId] = useState("");
 
-  const deleteHandler = async (id: string) => {
+  const deleteHandler = async () => {
     const { data, error, isLoading } = await fetchData({
-      url: `${pathName.questionsApiPath.path}/${id}`,
+      url: `${pathName.questionsApiPath.path}/${selectedQuestionId}`,
       method: FetchMethodE.PUT,
       body: { isDeleted: true },
     });
+
     if (data && !data.error) {
       setDeleteSuccess("Deleted successfully");
       setTimeout(() => {
@@ -29,6 +32,7 @@ export default function QuestionsTable({
     } else if (data.error) {
       setError(data.error);
     }
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -111,7 +115,7 @@ export default function QuestionsTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {ques.map((que) => (
+                {ques.map((que: Question) => (
                   <tr key={que.id}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {que.question_text}
@@ -119,7 +123,6 @@ export default function QuestionsTable({
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                       Question set name??
                     </td>
-
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {que.type}
                     </td>
@@ -140,15 +143,18 @@ export default function QuestionsTable({
                         href={`/admin/questions/${que.id}/edit`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
-                        Edit<span className="sr-only">, {que.name}</span>
+                        Edit
                       </a>
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
-                        onClick={() => deleteHandler(que.id)}
+                        onClick={() => {
+                          setIsDeleteModalOpen(true);
+                          setSelectedQuestionId(que.id);
+                        }}
                         className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
                       >
-                        Delete<span className="sr-only">, {que.name}</span>
+                        Delete
                       </a>
                     </td>
                   </tr>
@@ -158,6 +164,11 @@ export default function QuestionsTable({
           </div>
         </div>
       </div>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDelete={deleteHandler}
+      />
     </div>
   );
 }

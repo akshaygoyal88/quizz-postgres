@@ -2,6 +2,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { QuestionSet } from "@prisma/client";
 import { useState } from "react";
+import DeleteModal from "../Shared/DeleteModal";
 
 export default function QuizTable({
   queSets,
@@ -11,9 +12,12 @@ export default function QuizTable({
   onDelete: () => void;
 }) {
   const [deleteSuccess, setDeleteSuccess] = useState<string>("");
-  const deleteHandler = async (id: string) => {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedQuestionId, setSelectedQuestionId] = useState("");
+
+  const deleteHandler = async () => {
     const { data, error, isLoading } = await fetchData({
-      url: `${pathName.questionSetApi.path}/${id}`,
+      url: `${pathName.questionSetApi.path}/${selectedQuestionId}`,
       method: FetchMethodE.PUT,
       body: { isDeleted: true },
     });
@@ -30,6 +34,7 @@ export default function QuizTable({
         setDeleteSuccess("");
       }, 10000);
     }
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -122,7 +127,10 @@ export default function QuizTable({
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
-                        onClick={() => deleteHandler(set.id)}
+                        onClick={() => {
+                          setIsDeleteModalOpen(true);
+                          setSelectedQuestionId(set.id);
+                        }}
                         className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
                       >
                         Delete<span className="sr-only">, {set.name}</span>
@@ -135,6 +143,11 @@ export default function QuizTable({
           </div>
         </div>
       </div>
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDelete={deleteHandler}
+      />
     </div>
   );
 }
