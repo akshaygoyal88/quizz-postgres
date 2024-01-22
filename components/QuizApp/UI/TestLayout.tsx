@@ -1,18 +1,13 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { useState, useEffect, useContext } from "react";
 import LeftSectionQues from "./LeftSectionQues";
 import RightSectionQuesList from "./RightSectionQuesList";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { QuizContext } from "@/context/QuizProvider";
-
-enum questionActionE {
-  NOT_ATTEMPTED = "not_attempted",
-  ATTEMPTED = "attempted",
-  REVIEW = "review",
-  SKIPPED = "skipped",
-}
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
 
 export default function TestLayout({ quizId }: { quizId: string }) {
   const ses = useSession();
@@ -21,42 +16,75 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
     null
   );
+  const [currInitializedQue, setCurrInitializedQue] = useState({});
   const [questionStates, setQuestionStates] = useState<object[]>([]);
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
 
-  const {
-    data: questionsRes,
-    error: questionsError,
-    isLoading: questionsIsLoading,
-  } = useFetch({
+  const { data: questionsRes, error: questionsError } = useFetch({
     url: `${pathName.testSetApis.path}/${quizId}`,
   });
 
   useEffect(() => {
     if (questionsRes && !questionsRes.error && !questionsError) {
-      const quesArr: [] = questionsRes.questions.map(
-        (ques: { id: any; question: any }) => ques.question
+      const quesArr: any[] = questionsRes.questions.map(
+        (ques: any) => ques.question
       );
-      quizCtx.handleQuestionSet(quesArr);
+
+      quizCtx.handleQuestionSet({ quesArr, quizId });
 
       const questionStates = quesArr.map((ques) => ({
         id: ques.id,
-        status: questionActionE.NOT_ATTEMPTED,
+        status: UserQuizAnswerStatus.NOT_ATTEMPTED,
       }));
 
       setQuestionStates(questionStates);
-      const firstQuestionId = questionStates[0].id;
+      const firstQuestionId = questionStates.length > 0 && questionStates[0].id;
       setCurrentQuestionId(firstQuestionId);
     }
-  }, [questionsRes]);
+  }, [questionsRes, questionsError]);
+
   useEffect(() => {
     if (currentQuestionId) {
-      for (let i = 0; i < questionStates.length; i++) {
-        if (questionStates[i].id === currentQuestionId) {
-          i < questionStates.length - 1 && setNextId(questionStates[i + 1].id);
-          i > 0 && setPrevId(questionStates[i - 1].id);
-        }
+      const currentIndex = questionStates.findIndex(
+        (que) => que.id === currentQuestionId
+      );
+
+      if (currentIndex !== -1) {
+        currentIndex < questionStates.length - 1 &&
+          setNextId(questionStates[currentIndex + 1].id);
+        currentIndex > 0 && setPrevId(questionStates[currentIndex - 1].id);
+
+        const initializeQue = async () => {
+          const session = await getSession();
+          const currQues = session?.id && {
+            submittedBy: session.id,
+            setId: quizId,
+            questionId: currentQuestionId,
+          };
+
+          const { data, error } = await fetchData({
+            url: `${pathName.quizAnsApi.path}`,
+            method: FetchMethodE.POST,
+            body: currQues,
+          });
+
+          if (data && !data.error) {
+            setQuestionStates((prevStates) => {
+              const updatedStates = prevStates.map((que) =>
+                que.id === currentQuestionId
+                  ? { ...que, status: data.ques.status }
+                  : que
+              );
+
+              return updatedStates;
+            });
+
+            setCurrInitializedQue(data.ques);
+          }
+        };
+
+        initializeQue();
       }
     }
   }, [currentQuestionId]);
@@ -64,30 +92,91 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const handleNextQuestion = () => {
     nextId && setCurrentQuestionId(nextId);
   };
+
   const handlePreviousQuestion = () => {
     prevId && setCurrentQuestionId(prevId);
   };
 
-  const handleAnswerQuestion = (ans: string) => {
-    if (ans) {
+  const handleAnswerQuestion = async ({
+    answer,
+    timeTaken,
+    type,
+    timeOver,
+  }: {
+    answer: string;
+    timeTaken: number;
+    type: QuestionType;
+    timeOver: boolean;
+  }) => {
+    console.log(timeTaken, timeOver);
+    let userQueRes: { type: QuestionType; [key: string]: any } = { type };
+    if (answer) {
+      if (type === QuestionType.OBJECTIVE) {
+        userQueRes = {
+          ...userQueRes,
+          ans_optionsId: answer,
+          timeTaken,
+          timeOver,
+        };
+      } else if (type === QuestionType.SUBJECTIVE) {
+        userQueRes = {
+          ...userQueRes,
+          ans_subjective: answer,
+          timeTaken,
+          timeOver,
+        };
+      }
     }
+    setQuestionStates((prevStates) => {
+      const updatedStates = prevStates.map((que) =>
+        que.id === currentQuestionId
+          ? {
+              ...que,
+              status: answer
+                ? UserQuizAnswerStatus.ATTEMPTED
+                : UserQuizAnswerStatus.SKIPPED,
+            }
+          : que
+      );
+      return updatedStates;
+    });
+
+    const { data: saveQueRes } = await fetchData({
+      url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
+      method: FetchMethodE.PUT,
+      body: userQueRes,
+    });
+
     handleNextQuestion();
-    // }
   };
-  const handleMarkReviewQuestion = () => {
-    // setQuestionStates((prevStates) => {
-    //   const updatedStates = [...prevStates];
-    //   updatedStates[currentQuestionIndex] = questionActionE.REVIEW;
-    //   return updatedStates;
-    // });
-    // handleNextQuestion();
+
+  const handleMarkReviewQuestion = async () => {
+    const { data: saveQueRes } = await fetchData({
+      url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
+      method: FetchMethodE.PUT,
+      body: { status: UserQuizAnswerStatus.REVIEW },
+    });
+    setQuestionStates((prevStates) => {
+      const updatedStates = prevStates.map((que) =>
+        que.id === currentQuestionId
+          ? {
+              ...que,
+              status: UserQuizAnswerStatus.REVIEW,
+            }
+          : que
+      );
+      return updatedStates;
+    });
+    handleNextQuestion();
   };
 
   const handleQuesNoClick = (id: string) => {
     setCurrentQuestionId(id);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    // Logic for submitting the quiz
+  };
 
   return (
     <>
@@ -102,6 +191,8 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   handleMarkReviewQuestion={handleMarkReviewQuestion}
                   handleAnswerQuestion={handleAnswerQuestion}
                   handlePreviousQuestion={handlePreviousQuestion}
+                  handleNextQuestion={handleNextQuestion}
+                  currInitializedQue={currInitializedQue}
                 />
               )}
               {quizCtx.questionSet.length > 0 && (
@@ -111,6 +202,9 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   questionStates={questionStates}
                   handleQuesNoClick={handleQuesNoClick}
                   currentQuestionId={currentQuestionId}
+                  setId={quizId}
+                  submittedBy={ses.status === "authenticated" && ses.data.id}
+                  currInitializedQue={currInitializedQue}
                 />
               )}
             </div>

@@ -33,6 +33,7 @@ export default function InputWithLabel({
   min,
   disabled,
   impAsterisk,
+  step,
 }: {
   type: string;
   name: string;
@@ -51,6 +52,7 @@ export default function InputWithLabel({
   disabled?: boolean;
   min?: string | number;
   impAsterisk?: string;
+  step?: string;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -87,6 +89,7 @@ export default function InputWithLabel({
           disabled={disabled}
           min={min}
           max={maxLength}
+          step="0.1"
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"></div>
       </div>

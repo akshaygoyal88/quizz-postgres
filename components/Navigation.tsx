@@ -33,7 +33,9 @@ export default function Navigation() {
             Add Ticket
           </Link>
         )} */}
-
+        <Link href="/quizzes" className="text-white">
+          Quiz Tests
+        </Link>
         {ses.data && (
           <Link href="/dashboard" className="text-white">
             Dashboard

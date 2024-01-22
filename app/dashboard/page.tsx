@@ -1,5 +1,8 @@
+import Dashboard from "@/components/Dashboard";
+import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";
 
-export default function DashboardPage() {
-  return <div>No route available</div>;
+export default async function DashboardPage() {
+  await isUnauthorised("/signin");
+  return <Dashboard />;
 }

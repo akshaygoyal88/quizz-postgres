@@ -16,16 +16,16 @@ enum UserRole {
 }
 
 model User {
-  id                String        @id @default(cuid())
+  id                String            @id @default(cuid())
   first_name        String?
   last_name         String?
-  email             String?       @unique
+  email             String?           @unique
   password          String
-  role              UserRole?     @default(USER)
-  isVerified        Boolean       @default(false)
-  isActive          Boolean       @default(false)
-  createdAt         DateTime      @default(now()) @map(name: "created_at")
-  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  role              UserRole?         @default(USER)
+  isVerified        Boolean           @default(false)
+  isActive          Boolean           @default(false)
+  createdAt         DateTime          @default(now()) @map(name: "created_at")
+  updatedAt         DateTime          @updatedAt @map(name: "updated_at")
   mobile_number     String?
   address           String?
   country           String?
@@ -33,13 +33,14 @@ model User {
   city              String?
   pincode           String?
   profile_pic       String?
-  isProfileComplete Boolean       @default(false)
+  isProfileComplete Boolean           @default(false)
   otps              UserOtp[]
   createdShows      Show[]
   ticket            Tickets[]
   token             String?
   QuestionSet       QuestionSet[]
   Question          Question[]
+  UserQuizAnswers   UserQuizAnswers[]
 }
 
 model UserOtp {
@@ -99,15 +100,16 @@ model Tickets {
 }
 
 model QuestionSet {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @updatedAt @map(name: "updated_at")
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
-  isDeleted   Boolean  @default(false)
-  Quiz        Quiz[]
+  id              String            @id @default(cuid())
+  name            String
+  description     String?
+  createdAt       DateTime          @default(now()) @map(name: "created_at")
+  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdById     String
+  isDeleted       Boolean           @default(false)
+  Quiz            Quiz[]
+  UserQuizAnswers UserQuizAnswers[]
 }
 
 enum QuestionType {
@@ -128,6 +130,7 @@ model Question {
   createdById            String
   isDeleted              Boolean                 @default(false)
   Quiz                   Quiz[]
+  UserQuizAnswers        UserQuizAnswers[]
 }
 
 model ObjectiveOptions {
@@ -164,15 +167,18 @@ enum UserQuizAnswerStatus {
 }
 
 model UserQuizAnswers {
-  id          String               @id @default(cuid())
-  submittedBy String
-  quizId      String
-  questionId  String
-  isAttempted Boolean              @default(false)
-  isAnswered  Boolean              @default(false)
-  status      UserQuizAnswerStatus @default(NOT_ATTEMPTED)
-  givenAnswer String
-  timeTaken   Int?
-  timeOver    Boolean              @default(false)
-  isCorrect   Boolean              @default(false)
+  id              String                @id @default(cuid())
+  submittedBy     String
+  submittedByUser User                  @relation(fields: [submittedBy], references: [id])
+  setId           String
+  questionSet     QuestionSet?          @relation(fields: [setId], references: [id])
+  questionId      String
+  question        Question?             @relation(fields: [questionId], references: [id])
+  isAnswered      Boolean?              @default(false)
+  status          UserQuizAnswerStatus? @default(NOT_ATTEMPTED)
+  ans_optionsId   String?
+  ans_subjective  String?
+  timeTaken       Int?
+  timeOver        Boolean?              @default(false)
+  isCorrect       Boolean?              @default(false)
 }

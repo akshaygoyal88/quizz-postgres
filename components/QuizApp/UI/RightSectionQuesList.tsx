@@ -1,5 +1,7 @@
 // Import React and other necessary modules
 
+import { UserQuizAnswerStatus } from "@prisma/client";
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -10,6 +12,7 @@ export default function RightSectionQuesList({
   questionStates,
   handleQuesNoClick,
   currentQuestionId,
+  currInitializedQue,
 }) {
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -33,11 +36,14 @@ export default function RightSectionQuesList({
                       onClick={() => handleQuesNoClick(question.id)}
                       className={classNames(
                         "text-sm px-2 py-1 rounded-md w-full",
-                        questionStates[index] === "attempted"
+                        questionStates[index].status ===
+                          UserQuizAnswerStatus.ATTEMPTED
                           ? "bg-green-300"
-                          : questionStates[index] === "skipped"
+                          : questionStates[index].status ===
+                            UserQuizAnswerStatus.SKIPPED
                           ? "bg-red-600"
-                          : questionStates[index] === "review"
+                          : questionStates[index].status ===
+                            UserQuizAnswerStatus.REVIEW
                           ? "bg-yellow-400"
                           : "bg-gray-300",
                         currentQuestionId == question.id

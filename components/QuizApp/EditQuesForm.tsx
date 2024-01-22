@@ -157,7 +157,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
 
   const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    console.log(quesSetId);
     // setQuestionSet(set);
     setSetId(quesSetId);
   };
@@ -182,6 +181,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       timer={timer}
       successMessage={successMessage}
       data={availableSets}
+      headingText="Edit Questions"
+      buttonText="Edit"
       handleRadioChange={handleRadioChange}
       handleOptionTextChange={handleOptionTextChange}
       handleDescriptionChange={handleDescriptionChange}

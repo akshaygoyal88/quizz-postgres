@@ -13,6 +13,8 @@ interface QuestionFormProps {
   timer: string;
   successMessage: string;
   data: QuestionSet[] | null;
+  buttonText: string,
+  headingText: string,
   handleRadioChange: (event: { target: { value: string } }) => void;
   handleOptionTextChange: (index: number, option: string) => void;
   handleDescriptionChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -34,6 +36,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   timer,
   successMessage,
   data,
+  buttonText,
+  headingText,
   handleRadioChange,
   handleOptionTextChange,
   handleDescriptionChange,
@@ -45,7 +49,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 }) => {
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
-      <h1 className="text-lg font-semibold mb-4">Add Questions</h1>
+      <h1 className="text-lg font-semibold mb-4">{headingText}</h1>
       {/* Select Question Set */}
       <div className="mb-4">
         <select
@@ -175,7 +179,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           onClick={handleSaveQuestion}
           className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg"
         >
-          Save Question
+          Save Question{buttonText}
         </button>
       </div>
     </div>

@@ -12,16 +12,15 @@ export async function GET(req: Request, { params }: { params: string }) {
 
     return NextResponse.json({ questions: [...getQuizAndQues] });
   } catch (error) {
-    console.log(error);
-  }
+    return NextResponse.json({ error: error });  }
 }
 
-// export async function DELETE({ params }: { params: string }) {
-//   const setId: string = params?.id;
-//   if (!setId) {
-//     return NextResponse.json({ error: "Invalid quiz set." });
-//   }
-//   const deleteQuizs = await deleteQuiz({ setId });
+export async function DELETE({ params }: { params: string }) {
+  const setId: string = params?.id;
+  if (!setId) {
+    return NextResponse.json({ error: "Invalid quiz set." });
+  }
+  const deleteQuizs = await deleteQuiz({ setId });
 
-//   return NextResponse.json(deleteQuizs);
-// }
+  return NextResponse.json(deleteQuizs);
+}

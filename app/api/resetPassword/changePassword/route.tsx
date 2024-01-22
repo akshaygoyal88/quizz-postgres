@@ -40,7 +40,6 @@ export async function POST(req, res) {
       return sendErrorResponse(res, 400, weakPasswordError);
     }
   } catch (error) {
-    console.error("Error handling the request:", error);
     return sendErrorResponse(res, 500, "Internal Server Error");
   }
 }
