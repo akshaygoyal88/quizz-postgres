@@ -4,7 +4,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
 import Textarea from "../Shared/Textarea";
 import { useSession } from "next-auth/react";
-import { submitCreateSet } from "@/action/submitCreateSet";
+import { submitCreateSet } from "@/action/actionSetForm";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;

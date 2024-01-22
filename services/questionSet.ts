@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { QuestionSet } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function getAllQuestionsSet({
@@ -61,6 +62,27 @@ export async function createQuestionSet({
   });
 }
 
+export async function editQuestionSet({
+  id,
+  reqData,
+}: {
+  id:string;
+  reqData: QuestionSet
+}) {
+  const isAvailable = await db.questionSet.findUnique({
+    where: { id },
+  });
+  if(!id || !isAvailable){
+    throw new Error ("Invalid Set")
+  }
+  return await db.questionSet.update({
+    where: {
+      id,
+    },
+    data: { ...reqData },
+  });
+}
+
 export async function getQuesSetVailable({ setId }: { setId: string }) {
   return await db.questionSet.findUnique({
     where: {
@@ -68,3 +90,4 @@ export async function getQuesSetVailable({ setId }: { setId: string }) {
     },
   });
 }
+
