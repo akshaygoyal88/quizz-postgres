@@ -35,6 +35,11 @@ export async function getQuestionSets(createdById?: string) {
   });
 }
 
+export enum QuestionSetSubmitE {
+  CREATE="create",
+  EDIT="edit",
+} 
+
 export async function createQuestionSet({
   name,
   description,
@@ -47,12 +52,10 @@ export async function createQuestionSet({
   if (!createdById) {
     return { error: "In valid user please log in." };
   }
-  if (!createdById) {
-    return { error: "In valid user please log in." };
-  }
   if (!name) {
-    throw new Error( "Please fill fields.") ;
+    return { error: "Please enter name" };
   }
+  
   return await db.questionSet.create({
     data: {
       name,
@@ -73,7 +76,7 @@ export async function editQuestionSet({
     where: { id },
   });
   if(!id || !isAvailable){
-    throw new Error ("Invalid Set")
+    return { error: "Question/set not available" };
   }
   return await db.questionSet.update({
     where: {

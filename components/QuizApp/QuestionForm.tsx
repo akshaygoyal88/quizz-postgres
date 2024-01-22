@@ -1,6 +1,9 @@
 import React from "react";
 import Textarea from "../Shared/Textarea";
 import { QuestionSet, QuestionType } from "@prisma/client";
+import { handleQuestionSubmit } from "@/action/actionsQuesForm";
+import { QuestionSubmitE } from "@/services/questions";
+import { useSession } from "next-auth/react";
 
 interface QuestionFormProps {
   question: string;
@@ -23,6 +26,7 @@ interface QuestionFormProps {
   handletQuesSetChange: (value: string) => void;
   handletQueChange: (value: string) => void;
   handletTimerChange: (value: string) => void;
+  action: QuestionSubmitE;
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -46,16 +50,29 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   handletQuesSetChange,
   handletQueChange,
   handletTimerChange,
+  action,
 }) => {
+  const session = useSession();
+  const formAction = async (formData: FormData) => {
+    // setError("");
+    const res = await handleQuestionSubmit(formData, action);
+
+    if (res?.error) {
+      // setError(res.error);
+    } else {
+      // router.push(`${pathName.quiz.path}/${res?.id}/edit?msg=1`);
+    }
+  };
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
-      <form>
+      <form action={formAction}>
         <h1 className="text-lg font-semibold mb-4">{headingText}</h1>
         {/* Select Question Set */}
+        <input type="hidden" name="createdById" value={session?.data?.id} />
         <div className="mb-4">
           <select
             className="w-full border rounded-md p-2"
-            onChange={(e) => handletQuesSetChange(e.target.value)}
+            // onChange={(e) => handletQuesSetChange(e.target.value)}
             defaultValue={defaultQuestionSet?.name}
           >
             <option value="">Select question set</option>
@@ -72,12 +89,15 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         </div>
         {/* Question Input */}
         <div className="mb-4">
-          <label className="block text-lg font-semibold">Question:</label>
+          <label className="block text-lg font-semibold" htmlFor="ques">
+            Question:
+          </label>
           <Textarea
             className="w-full border rounded-md p-2 mt-2"
-            value={question}
-            onChange={(e) => handletQueChange(e.target.value)}
-            id={"ques"}
+            defaultValue={question}
+            // onChange={(e) => handletQueChange(e.target.value)}
+            id="ques"
+            name="question" // Add name attribute here
             label={""}
           />
         </div>
@@ -90,9 +110,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               type="radio"
               id="subjective"
               name="questionType"
-              value="SUBJECTIVE"
-              checked={questionType === "SUBJECTIVE"}
-              onChange={handleRadioChange}
+              defaultValue={QuestionType.SUBJECTIVE}
+              checked={questionType === QuestionType.SUBJECTIVE}
+              // onChange={handleRadioChange}
             />
             <label htmlFor="subjective" className="ml-2">
               Subjective
@@ -103,9 +123,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               type="radio"
               id="objective"
               name="questionType"
-              value="OBJECTIVE"
-              checked={questionType === "OBJECTIVE"}
-              onChange={handleRadioChange}
+              defaultValue={QuestionType.OBJECTIVE}
+              checked={questionType === QuestionType.OBJECTIVE}
+              // onChange={handleRadioChange}
             />
             <label htmlFor="objective" className="ml-2">
               Objective
@@ -118,13 +138,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           <input
             type="number"
             className="border rounded-md p-2"
-            value={timer}
-            onChange={(e) => handletTimerChange(e.target.value)}
+            defaultValue={timer}
+            // onChange={(e) => handletTimerChange(e.target.value)}
+            name="timer" // Add name attribute here
           />
         </div>
 
         {/* Options for Objective Questions */}
-        {questionType === "OBJECTIVE" && (
+        {questionType === QuestionType.OBJECTIVE && (
           <div className="mb-4">
             <label className="block text-lg font-semibold">Options:</label>
             {options.map((option, index) => (
@@ -132,11 +153,12 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 <input
                   type="text"
                   className="w-full border rounded-md p-2"
-                  value={option}
+                  defaultValue={option}
                   placeholder={`Option ${index + 1}`}
-                  onChange={(e) =>
-                    handleOptionTextChange(index, e.target.value)
-                  }
+                  // onChange={(e) =>
+                  //   handleOptionTextChange(index, e.target.value)
+                  // }
+                  name={`questionOptions_${index}`} // Add name attribute here
                 />
                 <label className="flex items-center space-x-2 p-4">
                   <input
@@ -144,16 +166,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     checked={correctAnswerIndex === index}
                     onChange={() => handleOptionChange(index)}
                     className="form-radio text-blue-500 transform scale-125 font-bold"
+                    // name="correctAnswer" // Add name attribute here
                   />
+                  {correctAnswerIndex !== null && (
+                    <input
+                      type="hidden"
+                      name="correctAnswer"
+                      value={correctAnswerIndex.toString()}
+                    />
+                  )}
                 </label>
               </div>
             ))}
-            {/* Validation Error Message */}
           </div>
         )}
 
         {/* Description for Subjective Questions */}
-        {questionType === "SUBJECTIVE" && (
+        {questionType === QuestionType.SUBJECTIVE && (
           <div className="mb-4">
             <label
               className="block text-gray-700 font-bold mb-2"
@@ -164,13 +193,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             <textarea
               className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
               id="description"
-              name="description"
-              value={description}
-              onChange={handleDescriptionChange}
+              name="description" // Add name attribute here
+              defaultValue={description}
+              // onChange={handleDescriptionChange}
               placeholder="Write Description for Problem statement here...."
             />
           </div>
         )}
+
         <div className="text-red-500 mb-2">{validationError}</div>
         {successMessage && (
           <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
@@ -179,7 +209,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         {/* Save Question Button */}
         <div className="flex justify-center">
           <button
-            onClick={handleSaveQuestion}
+            // onClick={handleSaveQuestion}
             className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg"
           >
             Save Question{buttonText}

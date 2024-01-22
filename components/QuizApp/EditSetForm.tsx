@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { editQuesSet } from "@/action/actionSetForm";
+import { handleQuestionSetSubmit } from "@/action/actionSetForm";
+import { QuestionSetSubmitE } from "@/services/questionSet";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -45,6 +46,9 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
       const msgParam = urlSearchParams.get("msg");
       if (msgParam === "1") {
         setAddSetSuccessMessage("Set Added successfully.");
+        setTimeout(() => {
+          setAddSetSuccessMessage(null);
+        }, 10000);
       }
     }
   }, []);
@@ -109,10 +113,18 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
   // };
 
   const formAction = async (formData: FormData) => {
-    const res = await editQuesSet(setId, formData);
-    console.log(res);
+    setError("");
+    const res = await handleQuestionSetSubmit(
+      formData,
+      QuestionSetSubmitE.EDIT
+    );
     if (res.error) {
       setError(res.error);
+    } else {
+      setSuccessMessage("Successfully updated");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 10000);
     }
   };
 
@@ -129,6 +141,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
         // onSubmit={handleSubmit}
         className="flex flex-col gap-5"
       >
+        <input type="hidden" name="id" value={setId} />
         <InputWithLabel
           type="text"
           id="name"
@@ -143,7 +156,7 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
           label="Description"
           id="description"
           name="description"
-          value={formData.description}
+          defaultValue={formData.description}
           // onChange={handleInputChange}
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
         />

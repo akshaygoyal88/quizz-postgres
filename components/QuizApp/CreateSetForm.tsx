@@ -4,7 +4,10 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
 import Textarea from "../Shared/Textarea";
 import { useSession } from "next-auth/react";
-import { submitCreateSet } from "@/action/actionSetForm";
+import { handleQuestionSetSubmit } from "@/action/actionSetForm";
+import { QuestionSetSubmitE } from "@/services/questionSet";
+import pathName from "@/constants";
+import { useRouter } from "next/navigation";
 
 interface QuestionSetFormProps {
   onSubmit: (formData: FormData) => void;
@@ -24,7 +27,7 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
   //   description: "",
   // });
   const [error, setError] = useState<string>("");
-  // const router = useRouter();
+  const router = useRouter();
 
   // const handleInputChange = (
   //   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -58,9 +61,16 @@ const CreateSetForm: React.FC<QuestionSetFormProps> = () => {
   // };
 
   const formAction = async (formData: FormData) => {
-    const res = await submitCreateSet(formData);
-    if (res.error) {
+    setError("");
+    const res = await handleQuestionSetSubmit(
+      formData,
+      QuestionSetSubmitE.CREATE
+    );
+
+    if (res?.error) {
       setError(res.error);
+    } else {
+      router.push(`${pathName.quiz.path}/${res?.id}/edit?msg=1`);
     }
   };
 
