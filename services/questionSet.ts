@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { NextResponse } from "next/server";
 
 export async function getAllQuestionsSet({
   skip,
@@ -42,6 +43,15 @@ export async function createQuestionSet({
   description?: string;
   createdById: string;
 }) {
+  if (!createdById) {
+    return { error: "In valid user please log in." };
+  }
+  if (!createdById) {
+    return { error: "In valid user please log in." };
+  }
+  if (!name) {
+    throw new Error( "Please fill fields.") ;
+  }
   return await db.questionSet.create({
     data: {
       name,
