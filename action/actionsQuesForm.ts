@@ -1,13 +1,13 @@
 "use server";
 
-import { QuestionSubmitE, createQuestion } from "@/services/questions";
+import { QuestionSubmitE, createQuestion, editQuestions } from "@/services/questions";
 
 export async function handleQuestionSubmit(
   formData: FormData,
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
-  console.log(rawFormData);
+    console.log(rawFormData);
   const optionsArray = [];
   for (let key in rawFormData) {
     if (key.includes("questionOptions_")) {
@@ -16,21 +16,21 @@ export async function handleQuestionSubmit(
   }
 
   const reqData = {
+    setId: rawFormData.setId,
     type: rawFormData.questionType,
-    objective_options: optionsArray,
+    options: optionsArray,
     question_text: rawFormData.question,
     questionType: rawFormData.questionType,
     timer: rawFormData.timer,
     correctAnswer: rawFormData.correctAnswer,
     createdById: rawFormData.createdById
   };
-  console.log(reqData)
   switch (action) {
     case QuestionSubmitE.ADD:
     return await createQuestion(reqData);
 
     case QuestionSubmitE.EDIT:
-    // return await editQuestionSet({id: rawFormData.id, reqData: rawFormData});
+    return await editQuestions({id: rawFormData.id, reqData});
 
     default:
       return { error: "Invalid action" };

@@ -32,17 +32,21 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
-  // const {
-  //   question_text,
-  //   type,
-  //   options,
-  //   correctAnswer,
-  //   description,
-  //   timer,
-  //   createdById,
-  // } = reqData;
-  console.log(reqData)
-  return await db.question.create({
+  const {
+    setId,
+    question_text,
+    type,
+    options,
+    correctAnswer,
+    description,
+    timer,
+    createdById,
+  } = reqData;
+
+  if (!setId) {
+    return { error: "Please provide question set." };
+  }
+  const addQuestion =  await db.question.create({
     data: {
       question_text,
       type,
@@ -70,4 +74,81 @@ export async function createQuestion(reqData: Question) {
       createdById,
     },
   });
+  const createdBy = createdById
+  const questionId = addQuestion.id;
+
+  const quizAdd = await db.quiz.create({
+    data:{
+      setId,
+      questionId,
+      createdBy
+    }
+  })
+  
+  return {addQuestion, quizAdd};
+}
+
+export async function editQuestions({
+  id,
+  reqData,
+}: {
+  id:string;
+  reqData: Question
+}){
+
+  const {
+    question_text,
+    type,
+    questionSet,
+    options,
+    correctAnswer,
+    description,
+    timer,
+    isDeleted,
+  } = reqData;
+  const isAvailable = await db.question.findUnique({
+    where: { id },
+  });
+
+  if (isAvailable) {
+
+    type === QuestionType.OBJECTIVE ? await db.objectiveOptions.deleteMany({
+      where: { questionId: id },
+    }) : await db.subjectiveDescription.deleteMany({
+      where: { questionId: id },
+    });
+    const editQues =  await db.question.update({
+      where: {id},
+      data: {
+        question_text,
+        type,
+        timer: parseInt(timer, 10),              
+        objective_options:
+          type === QuestionType.OBJECTIVE
+            ? {
+                createMany: {
+                  data: options.map((optionText: string, index: Number) => ({
+                    text: optionText,
+                    isCorrect: index === correctAnswer,
+                  })),
+                },
+              }
+            : undefined,
+        subjective_description:
+          type === QuestionType.SUBJECTIVE
+            ? {
+                create: {
+                  problem: question_text,
+                  description,
+                },
+              }
+            : undefined,
+      },
+    });
+    return editQues;
+  } else {
+    return {error: "Invalid question"}
+  }
+  
+  
 }

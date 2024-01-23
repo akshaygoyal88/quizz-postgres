@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Textarea from "../Shared/Textarea";
 import { QuestionSet, QuestionType } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
@@ -27,6 +27,7 @@ interface QuestionFormProps {
   handletQueChange: (value: string) => void;
   handletTimerChange: (value: string) => void;
   action: QuestionSubmitE;
+  quesId: string;
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -38,7 +39,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   description,
   defaultQuestionSet,
   timer,
-  successMessage,
+  // successMessage,
   data,
   buttonText,
   headingText,
@@ -51,16 +52,24 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   handletQueChange,
   handletTimerChange,
   action,
+  quesId,
 }) => {
   const session = useSession();
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const formAction = async (formData: FormData) => {
-    // setError("");
+    setError(null);
     const res = await handleQuestionSubmit(formData, action);
+    console.log(res);
 
     if (res?.error) {
-      // setError(res.error);
+      setError(res.error);
     } else {
-      // router.push(`${pathName.quiz.path}/${res?.id}/edit?msg=1`);
+      setSuccessMessage(
+        action === QuestionSubmitE.ADD
+          ? "Successfully added Question."
+          : "Successfully updated Question."
+      );
     }
   };
   return (
@@ -69,11 +78,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         <h1 className="text-lg font-semibold mb-4">{headingText}</h1>
         {/* Select Question Set */}
         <input type="hidden" name="createdById" value={session?.data?.id} />
+        {action == QuestionSubmitE.EDIT && (
+          <input type="hidden" name="id" value={quesId} />
+        )}
+
         <div className="mb-4">
           <select
             className="w-full border rounded-md p-2"
             // onChange={(e) => handletQuesSetChange(e.target.value)}
             defaultValue={defaultQuestionSet?.name}
+            name="setId"
           >
             <option value="">Select question set</option>
             {data &&
@@ -201,7 +215,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           </div>
         )}
 
-        <div className="text-red-500 mb-2">{validationError}</div>
+        <div className="text-red-500 mb-2">{error}</div>
         {successMessage && (
           <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
         )}
@@ -212,7 +226,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             // onClick={handleSaveQuestion}
             className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg"
           >
-            Save Question{buttonText}
+            {buttonText}
           </button>
         </div>
       </form>
