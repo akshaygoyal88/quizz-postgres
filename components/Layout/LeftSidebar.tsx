@@ -15,6 +15,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import pathName from "@/constants";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "../Button";
 
 const navigation = [
   {
@@ -56,6 +58,8 @@ export default function LeftSideBar({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const ses = useSession();
+  console.log(ses);
 
   return (
     <>
@@ -220,8 +224,18 @@ export default function LeftSideBar({
                       alt=""
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">
+                      {ses?.data?.first_name
+                        ? ses?.data?.first_name
+                        : ses?.data?.email.split("@")[0]}
+                    </span>
                   </a>
+                  <span
+                    className="m-4 border-t-2 border-gray-500 flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 rounded-md hover:cursor-pointer hover:bg-red-300"
+                    onClick={() => signOut()}
+                  >
+                    Logout
+                  </span>
                 </li>
               </ul>
             </nav>
