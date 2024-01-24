@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserRole } from "@prisma/client";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { Button } from "./NavHeader/Button";
+import { Button } from "./Button";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState<string>("");

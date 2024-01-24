@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Container } from "./NavHeader/Container";
+import { Container } from "./Container";
 import { Logo } from "./NavHeader/Logo";
 import { NavLink } from "./NavHeader/NavLink";
 

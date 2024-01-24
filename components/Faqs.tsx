@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import backgroundImage from "@/images/background-faqs.jpg";
-import { Container } from "./NavHeader/Container";
+import { Container } from "./Container";
 
 const faqs = [
   [

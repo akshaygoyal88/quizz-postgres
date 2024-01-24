@@ -5,7 +5,7 @@ import InputWithLabel from "./Shared/InputWithLabel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Button } from "./NavHeader/Button";
+import { Button } from "./Button";
 
 export default function LoginForm({ className }: { className?: string }) {
   const [email, setEmail] = useState<string>("");

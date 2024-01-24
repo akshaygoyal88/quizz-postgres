@@ -1,8 +1,8 @@
 import Image from "next/image";
 
 import backgroundImage from "@/images/background-call-to-action.jpg";
-import { Container } from "./NavHeader/Container";
-import { Button } from "./NavHeader/Button";
+import { Container } from "./Container";
+import { Button } from "./Button";
 
 export function CallToAction() {
   return (

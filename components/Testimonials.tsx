@@ -5,7 +5,7 @@ import avatarImage2 from "@/images/avatars/avatar-2.png";
 import avatarImage3 from "@/images/avatars/avatar-3.png";
 import avatarImage4 from "@/images/avatars/avatar-4.png";
 import avatarImage5 from "@/images/avatars/avatar-5.png";
-import { Container } from "./NavHeader/Container";
+import { Container } from "./Container";
 
 const testimonials = [
   [

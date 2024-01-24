@@ -6,8 +6,8 @@ import logoStatamic from "@/images/logos/statamic.svg";
 import logoStaticKit from "@/images/logos/statickit.svg";
 import logoTransistor from "@/images/logos/transistor.svg";
 import logoTuple from "@/images/logos/tuple.svg";
-import { Container } from "./NavHeader/Container";
-import { Button } from "./NavHeader/Button";
+import { Container } from "./Container";
+import { Button } from "./Button";
 
 export function Hero() {
   return (

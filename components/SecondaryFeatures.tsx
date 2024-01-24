@@ -8,7 +8,7 @@ import clsx from "clsx";
 import screenshotContacts from "@/images/screenshots/contacts.png";
 import screenshotInventory from "@/images/screenshots/inventory.png";
 import screenshotProfitLoss from "@/images/screenshots/profit-loss.png";
-import { Container } from "./NavHeader/Container";
+import { Container } from "./Container";
 
 interface Feature {
   name: React.ReactNode;
