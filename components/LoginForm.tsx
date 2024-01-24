@@ -86,9 +86,9 @@ export default function LoginForm({ className }: { className?: string }) {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <Button type="submit">Sign in</Button>
         </form>
-        <p className="mt-4 flex align-middle justify-center">
+        <p className="mt-4 flex align-middle justify-center text-md text-gray-700">
           Don't have an account?
-          <Link href="/register" className="text-blue-700">
+          <Link href="/register" className="text-blue-700 hover:underline">
             Register
           </Link>
         </p>
@@ -96,7 +96,7 @@ export default function LoginForm({ className }: { className?: string }) {
         <div className="flex justify-center">
           <Link
             href="/reset-password"
-            className="text-blue-500 font-semibold underline"
+            className="text-blue-500 font-semibold hover:underline"
           >
             Forget password
           </Link>

@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { returnResponse } from "@/app/utils.";
+import { returnResponse } from "@/utils/returnResponse";
+
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

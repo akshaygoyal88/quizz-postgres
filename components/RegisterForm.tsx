@@ -136,9 +136,9 @@ export default function RegisterForm() {
           </Button>
         </div>
       </form>
-      <p className="mt-4 flex align-middle justify-center">
+      <p className="mt-4 flex align-middle justify-center text-md text-gray-700">
         Already have an account?
-        <Link href="signin" className="text-blue-700">
+        <Link href="signin" className="text-blue-700 hover:underline">
           Sign In
         </Link>
       </p>
