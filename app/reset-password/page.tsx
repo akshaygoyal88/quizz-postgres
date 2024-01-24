@@ -1,11 +1,12 @@
 import ResetPassword from "@/components/ResetPassword";
+import { SlimLayout } from "@/components/SlimLayout";
 import React from "react";
 
 const page = () => {
   return (
-    <div>
+    <SlimLayout>
       <ResetPassword />
-    </div>
+    </SlimLayout>
   );
 };
 

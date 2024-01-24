@@ -4,6 +4,7 @@ import { useState } from "react";
 import { UserOtpType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
+import { Button } from "./NavHeader/Button";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -86,11 +87,11 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto my-8 ">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 shadow-md rounded-md"
-      >
+    <>
+      <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        Reset Password
+      </h2>
+      <form onSubmit={handleSubmit} className="mt-10 grid grid-cols-1 gap-y-8">
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -119,16 +120,9 @@ const ResetPassword = () => {
           </div>
         )}
 
-        <div className="mt-8">
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-          >
-            Send Reset Link
-          </button>
-        </div>
+        <Button type="submit">Send Reset Link</Button>
       </form>
-    </div>
+    </>
   );
 };
 
