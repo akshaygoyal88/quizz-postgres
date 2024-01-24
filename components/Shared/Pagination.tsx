@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   page: number;
@@ -14,6 +15,17 @@ const Pagination: React.FC<PaginationProps> = ({
   totalRows,
   paginate,
 }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  console.log(pathname, searchParams, currentPage);
+
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    console.log(`${pathname}?${params.toString()}`);
+    return `${pathname}?${params.toString()}`;
+  };
   return (
     <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div className="flex flex-1 justify-between sm:hidden">
@@ -71,7 +83,10 @@ const Pagination: React.FC<PaginationProps> = ({
             ))}
             <button
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              onClick={() => paginate(page + 1)}
+              onClick={() => {
+                paginate(page + 1);
+                createPageURL(page + 1);
+              }}
             >
               <span className="sr-only">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />

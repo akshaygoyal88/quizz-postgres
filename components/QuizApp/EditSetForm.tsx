@@ -147,10 +147,24 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
           id="name"
           name="name"
           defaultValue={formData.name}
-          // onChange={handleInputChange}
+          // onChange={handleInputChange}'
           label="Name:"
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
         />
+        <div className="flex flex-col justify-between">
+          <label className="block text-sm font-medium leading-6 text-gray-900">
+            Action:
+          </label>
+          <select
+            defaultValue=""
+            name="action"
+            className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white"
+          >
+            <option value="Publish">Publish</option>
+            <option value="Draft">Draft</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
 
         <Textarea
           label="Description"
@@ -159,6 +173,17 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
           defaultValue={formData.description}
           // onChange={handleInputChange}
           className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
+        />
+        <InputWithLabel
+          type="number"
+          id="price"
+          name="price"
+          // onChange={handleInputChange}
+          label="Price:"
+          className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
+          defaultValue={undefined}
+          step="0.1"
+          value={undefined}
         />
         {successMessage && (
           <p className="bg-green-600 px-4 py-2 text-white m-3">

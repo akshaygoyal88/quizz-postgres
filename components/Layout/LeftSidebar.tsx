@@ -39,7 +39,7 @@ const navigation = [
   },
   {
     name: "All Questions",
-    href: pathName.questions.path,
+    href: `${pathName.questions.path}?page=1`,
     icon: DocumentDuplicateIcon,
     current: false,
   },

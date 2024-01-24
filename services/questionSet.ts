@@ -43,11 +43,15 @@ export enum QuestionSetSubmitE {
 export async function createQuestionSet({
   name,
   description,
+  action,
+  price,
   createdById,
 }: {
   name: string;
   description?: string;
   createdById: string;
+  action?: string;
+  price?: number;
 }) {
   if (!createdById) {
     return { error: "In valid user please log in." };
@@ -61,6 +65,8 @@ export async function createQuestionSet({
       name,
       description,
       createdById,
+      action,
+      price: parseFloat(price)
     },
   });
 }
