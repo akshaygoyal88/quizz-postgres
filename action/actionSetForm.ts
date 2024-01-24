@@ -15,6 +15,7 @@ import { QuestionSetSubmitE, createQuestionSet, editQuestionSet } from "@/servic
 
 export async function handleQuestionSetSubmit(formData: FormData, action:QuestionSetSubmitE) {
     const rawFormData = Object.fromEntries(formData.entries())
+    console.log(rawFormData)
     switch (action) {
         case QuestionSetSubmitE.CREATE:
             return await createQuestionSet(rawFormData);

@@ -84,11 +84,15 @@ export async function editQuestionSet({
   if(!id || !isAvailable){
     return { error: "Question/set not available" };
   }
+  const {name,description,action,price} = reqData;
   return await db.questionSet.update({
     where: {
       id,
     },
-    data: { ...reqData },
+    data: { name,
+      description,
+      action,
+      price: price ? parseFloat(price) : undefined },
   });
 }
 
