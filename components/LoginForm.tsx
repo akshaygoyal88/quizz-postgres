@@ -19,7 +19,7 @@ export default function LoginForm({ className }: { className?: string }) {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false
+      redirect: false,
       // callbackUrl: "http://localhost:3000/signin"
     });
 
@@ -46,7 +46,7 @@ export default function LoginForm({ className }: { className?: string }) {
   };
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             className="mx-auto h-10 w-auto"

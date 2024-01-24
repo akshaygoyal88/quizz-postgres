@@ -107,26 +107,25 @@ export default function LeftSideBar({
                     <ul>
                       {navigation.map((item) => (
                         <li key={item.name}>
-                          <Link href={item.href}>
-                            <a
+                          <Link
+                            href={item.href}
+                            className={classNames(
+                              item.current
+                                ? "bg-gray-100 text-indigo-600"
+                                : "text-gray-700 hover:text-indigo-600 hover:bg-gray-100",
+                              "group flex items-center gap-3 p-2 text-sm font-semibold rounded-md"
+                            )}
+                          >
+                            <item.icon
                               className={classNames(
                                 item.current
-                                  ? "bg-gray-100 text-indigo-600"
-                                  : "text-gray-700 hover:text-indigo-600 hover:bg-gray-100",
-                                "group flex items-center gap-3 p-2 text-sm font-semibold rounded-md"
+                                  ? "text-indigo-600"
+                                  : "text-gray-400 group-hover:text-indigo-600",
+                                "h-6 w-6 shrink-0"
                               )}
-                            >
-                              <item.icon
-                                className={classNames(
-                                  item.current
-                                    ? "text-indigo-600"
-                                    : "text-gray-400 group-hover:text-indigo-600",
-                                  "h-6 w-6 shrink-0"
-                                )}
-                                aria-hidden="true"
-                              />
-                              {item.name}
-                            </a>
+                              aria-hidden="true"
+                            />
+                            {item.name}
                           </Link>
                         </li>
                       ))}
@@ -154,7 +153,7 @@ export default function LeftSideBar({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
                           className={classNames(
                             item.current
@@ -173,7 +172,7 @@ export default function LeftSideBar({
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -241,14 +240,14 @@ export default function LeftSideBar({
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Dashboard
           </div>
-          <a href="#">
-            <span className="sr-only">Your profile</span>
-            <img
-              className="h-8 w-8 rounded-full bg-gray-50"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
-            />
-          </a>
+          {/* <a href="#"> */}
+          <span className="sr-only">Your profile</span>
+          <img
+            className="h-8 w-8 rounded-full bg-gray-50"
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            alt=""
+          />
+          {/* </a> */}
         </div>
 
         <main className="lg:pl-72">
