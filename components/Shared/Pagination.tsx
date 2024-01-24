@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   page: number;
@@ -14,17 +15,37 @@ const Pagination: React.FC<PaginationProps> = ({
   totalRows,
   paginate,
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  if (currentPage) {
+    paginate(currentPage);
+  }
+
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNumber.toString());
+    router.push(`${pathname}?${params.toString()}`);
+    return `${pathname}?${params.toString()}`;
+  };
   return (
     <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div className="flex flex-1 justify-between sm:hidden">
         <button
-          onClick={() => paginate(page - 1)}
+          onClick={() =>
+            // paginate(page - 1)
+            createPageURL(currentPage - 1)
+          }
           className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Previous
         </button>
         <button
-          onClick={() => paginate(page + 1)}
+          onClick={
+            () => createPageURL(currentPage + 1)
+            // paginate(page + 1)
+          }
           className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Next
@@ -51,7 +72,10 @@ const Pagination: React.FC<PaginationProps> = ({
           >
             <button
               className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              onClick={() => paginate(page - 1)}
+              onClick={
+                () => createPageURL(currentPage - 1)
+                // paginate(page - 1)
+              }
             >
               <span className="sr-only">Previous</span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -64,14 +88,20 @@ const Pagination: React.FC<PaginationProps> = ({
                     ? "bg-indigo-600 text-white focus:outline"
                     : "text-gray-900 hover:bg-gray-50 focus:outline"
                 }`}
-                onClick={() => paginate(index + 1)}
+                onClick={() => {
+                  // paginate(index + 1);
+                  createPageURL(index + 1);
+                }}
               >
                 {index + 1}
               </button>
             ))}
             <button
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              onClick={() => paginate(page + 1)}
+              onClick={() => {
+                createPageURL(currentPage + 1);
+                // paginate(currentPage);
+              }}
             >
               <span className="sr-only">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />

@@ -42,7 +42,7 @@ export default function InputWithLabel({
   placeholder?: string;
   defaultValue?: string;
   className?: string;
-  value: string | number | undefined;
+  value?: string | number | undefined;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   errors?: string;
   maxLength?: number;

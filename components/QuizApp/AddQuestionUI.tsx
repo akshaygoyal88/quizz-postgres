@@ -6,13 +6,15 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
 import { useSession } from "next-auth/react";
+import { QuestionType } from "@prisma/client";
+import { QuestionSubmitE } from "@/services/questions";
 
 function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState(["", "", "", ""]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
   const [validationError, setValidationError] = useState("");
-  const [questionType, setQuestionType] = useState("OBJECTIVE");
+  const [questionType, setQuestionType] = useState(QuestionType.OBJECTIVE);
   const [description, setDescription] = useState("");
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -51,7 +53,7 @@ function AddQuestionUI() {
   const handleSaveQuestion = async () => {
     let requestData;
 
-    if (questionType === "OBJECTIVE") {
+    if (questionType === QuestionType.OBJECTIVE) {
       if (
         question.trim() === "" ||
         options.some((option) => option.trim() === "")
@@ -69,17 +71,17 @@ function AddQuestionUI() {
       requestData = {
         question_text: question,
         options: [...options],
-        type: "OBJECTIVE",
+        type: QuestionType.OBJECTIVE,
         correctAnswer: correctAnswerIndex,
         // questionSet: questionSet,
         timer: timer,
         createdById: ses?.data?.id,
         setId,
       };
-    } else if (questionType === "SUBJECTIVE") {
+    } else if (questionType === QuestionType.SUBJECTIVE) {
       requestData = {
         question_text: question,
-        type: "SUBJECTIVE",
+        type: QuestionType.SUBJECTIVE,
         description: description,
         // questionSet: questionSet,
         timer: timer,
@@ -149,6 +151,7 @@ function AddQuestionUI() {
       handletQuesSetChange={handletQuesSetChange}
       handletQueChange={handletQueChange}
       handletTimerChange={handletTimerChange}
+      action={QuestionSubmitE.ADD}
     />
   );
 }

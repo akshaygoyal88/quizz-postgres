@@ -108,6 +108,8 @@ model QuestionSet {
   createdBy       User              @relation(fields: [createdById], references: [id])
   createdById     String
   isDeleted       Boolean           @default(false)
+  action          String?
+  price           Float?
   Quiz            Quiz[]
   UserQuizAnswers UserQuizAnswers[]
 }

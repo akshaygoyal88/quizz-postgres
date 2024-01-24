@@ -6,6 +6,7 @@ import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
+import { QuestionSubmitE } from "@/services/questions";
 
 interface availableSetTypes {
   name: string;
@@ -173,7 +174,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     <QuestionForm
       question={question}
       options={options}
-      correctAnswer={correctAnswer}
+      correctAnswerIndex={correctAnswer}
       validationError={validationError}
       questionType={questionType}
       description={description}
@@ -191,6 +192,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       handletQuesSetChange={handletQuesSetChange}
       handletQueChange={handletQueChange}
       handletTimerChange={handletTimerChange}
+      action={QuestionSubmitE.EDIT}
+      quesId={quesId}
     />
   );
 }
