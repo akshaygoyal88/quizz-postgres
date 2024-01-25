@@ -4,6 +4,7 @@ import { QuestionSet, QuestionType } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
 import { useSession } from "next-auth/react";
+import TinyMCEEditor from "./UI/TinyMCEEditor";
 
 interface QuestionFormProps {
   question: string;
@@ -72,6 +73,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       );
     }
   };
+
+  const [editorContent, setEditorContent] = useState("");
+
+  const handleEditorChange = (content: string, editor: any) => {
+    setEditorContent(content);
+    console.log("Content was updated:", content, "editor:", editor);
+  };
+
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">
       <form action={formAction}>
@@ -115,6 +124,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             label={""}
           />
         </div>
+        <TinyMCEEditor
+          initialValue={editorContent}
+          handleEditorChange={handleEditorChange}
+        />
 
         {/* Question Type Radio Buttons */}
         <div className="mb-4 flex justify-evenly">
@@ -194,7 +207,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             ))}
           </div>
         )}
-
         {/* Description for Subjective Questions */}
         {questionType === QuestionType.SUBJECTIVE && (
           <div className="mb-4">
