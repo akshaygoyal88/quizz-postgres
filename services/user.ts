@@ -3,6 +3,7 @@ import { db } from "../db";
 import { hash } from "bcrypt";
 import { User, UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
+import sendEmail from "./sendEmail";
 
 // export const userProjection = {
 //   id: true,
@@ -52,7 +53,7 @@ export async function registerUser({
   const otp = generateUniqueAlphanumericOTP(4);
   const expirationTime = new Date();
   expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-  return await db.user.create({
+  const result =  await db.user.create({
     data: {
       email,
       password: hashedPassword,
@@ -66,6 +67,25 @@ export async function registerUser({
       }
     }
   });
+  if(result){
+    const msg = {
+      to: result.email,
+      subject: 'Verify Your Account',
+      templateId: process.env.VERIFICATION_EMAIL_TEMP_ID,
+      dynamicTemplateData: {
+        new_user: 'user',
+        otp
+      }
+    };
+    try {
+      await sendEmail(msg);
+    } catch (error) {
+      if (error.response && error.response.body) {
+        console.log('SendGrid API Response:', error.response.body);
+      }
+    }
+  }    
+  return result;
 }
 
 export async function getUserByEmail(email: string) {
