@@ -5,6 +5,8 @@ interface EmailOptions {
   to: string;
   subject: string;
   text: string;
+  templateId: string, 
+  dynamicTemplateData: object
 }
 
 const sendEmail = async ({ to, subject, templateId, dynamicTemplateData}: EmailOptions) => {
