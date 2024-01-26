@@ -36,8 +36,9 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
 }) => {
   const handleImageUpload = (blobInfo, progress, failure) => {
     const formData = new FormData();
-    console.log(blobInfo.blob(), "blobInfoblobInfo", blobInfo.name());
-    formData.append("file", blobInfo.blob(), blobInfo.name);
+    console.log(blobInfo.blob(), "blobInfoblobInfo", blobInfo.filename());
+    // formData.append("file", blobInfo.blob(), blobInfo.name);
+    formData.append("file", blobInfo.blob(), blobInfo.filename());
 
     fetch("/api/upload-image", {
       method: "POST",
@@ -68,10 +69,10 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
         plugins: "image",
         toolbar:
           "undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image",
-        images_upload_url: "/api/upload-image",
+        // images_upload_url: "/api/upload-image",
         automatic_uploads: true,
         images_reuse_filename: true,
-        // images_upload_handler: handleImageUpload,
+        images_upload_handler: handleImageUpload,
       }}
       // automatic_uploads={ true}
       // images_upload_url={"/api/upload-image"}
