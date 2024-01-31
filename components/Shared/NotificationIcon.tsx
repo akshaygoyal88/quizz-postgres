@@ -14,7 +14,7 @@ const NotificationIcon: React.FC = () => {
     error: notificationErr,
     isLoading: notificationLoading,
   } = useFetch({
-    url: `${pathName.notificationApi.path}/${ses?.data?.id}`,
+    url: `${pathName.notificationApi.path}/${ses?.data?.id}?${Date.now()}`,
   });
 
   // console.log(notificationData)
@@ -72,7 +72,7 @@ const NotificationIcon: React.FC = () => {
       </button>
       {isModalOpen && (
         <div className="absolute right-0 mt-2">
-          <UserNotificationModal notificationData={notificationData} onClose={handleCloseModal} />
+          <UserNotificationModal userId={ses?.data?.id} notificationData={notificationData} onClose={handleCloseModal} />
         </div>
       )}
     </div>

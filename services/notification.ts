@@ -27,3 +27,9 @@ export async function getNotifications(userId: string) {
 
     return res;
 }
+
+export async function deleteAll(userId: string) {
+    return await db.userNotification.deleteMany({
+        where: {userId}
+    })
+}
