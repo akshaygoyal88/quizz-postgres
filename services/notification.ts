@@ -19,3 +19,11 @@ export async function createNotification(reqData: UserNotification) {
     })
     return notificationRes;
 }
+
+export async function getNotifications(userId: string) {
+    const res =  await db.userNotification.findMany({
+        where: {userId, isRead: false}
+    })
+
+    return res;
+}
