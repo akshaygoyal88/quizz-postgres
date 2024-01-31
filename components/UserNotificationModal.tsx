@@ -33,7 +33,7 @@ const UserNotificationModal: React.FC<NotificationModalProps> = ({
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-md shadow-md">
         <h2 className="text-lg font-semibold mb-4">Notification</h2>
-        {notificationData.length > 0 ?<div>
+        {notificationData?.length > 0 ?<div>
           {notificationData.map((notification) => (
             <p
               key={notification.id}
