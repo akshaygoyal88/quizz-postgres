@@ -4,6 +4,7 @@ import { hash } from "bcrypt";
 import { User, UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
+import { mainModule } from "process";
 
 // export const userProjection = {
 //   id: true,
@@ -98,4 +99,69 @@ export async function getUserById(id: string) {
   return await db.user.findUnique({
     where: { id }
   });
+}
+
+export async function verifyUser({email, verificationCode}:{email?:string, verificationCode?: string}) {
+    if(!email){
+      return {error: "Invalid email."}
+    }
+    if(!verificationCode || verificationCode.length<4){
+      return { error: "Please fill correct code." }
+    }
+    const user = await db.user.findUnique({
+      where: {
+        email: email,
+        otps: {
+          some: {
+            otp: verificationCode,
+          },
+        },
+      },
+    });
+    if (user) {
+      const res = await db.user.update({
+        where: { email },
+        data: {
+          isVerified: true,
+          isActive: true,
+        },
+      });
+      if (res) {
+        const deleteRes = await db.userOtp.delete({
+          where: { userId: res.id },
+        });
+        if(deleteRes){
+          const msg = {
+            to: res.email,
+            subject: 'Successfully verified',
+            templateId: process.env.SUCCESSFULLY_VERIFIED_TEMP_ID,
+            dynamicTemplateData: {
+              user_name: res.email,
+              contact_email: "abc@mail.com"
+            }
+          };
+          const msg_2 = {
+            to: res.email,
+            subject: 'Welcome Sign Up',
+            templateId: process.env.SIGNUP_WELCOME_TEMP_ID,
+            dynamicTemplateData: {
+              user_email: res.email,
+            }
+          }
+          try {
+            await sendEmail(msg);
+            await sendEmail(msg_2);
+          } catch (error) {
+            if (error.response && error.response.body) {
+              console.log('SendGrid API Response:', error.response.body);
+            }
+          }
+        }
+        return { message: "Successfully verified." };
+      } else {
+        return { error: "Failed to update user." };
+      }
+    } else {
+      return { error: "Verification code is incorrect." };
+    }
 }
