@@ -55,7 +55,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     } else {
       const minutes = Math.floor(timeDifference / (1000 * 60));
-      return `${minutes} minutes ago`;
+      return  minutes<60 ? `${minutes} minutes ago` : `${Math.floor(minutes/60)}hr ago`;
     }
   };
 
