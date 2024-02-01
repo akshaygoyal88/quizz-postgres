@@ -14,7 +14,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   notificationData,
   userId,
   onClose,
-  actionTaken
+  actionTaken,
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -32,18 +32,13 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   };
 
   const handleClickRead = async (notificationId: string) => {
-    const {
-      data,
-      error,
-      isLoading,
-    } = await fetchData({
+    const { data, error, isLoading } = await fetchData({
       url: `${pathName.notificationApi.path}/${notificationId}`,
       method: FetchMethodE.PUT,
       body: {
         isRead: true,
       },
     });
-    console.log(data);
     actionTaken();
   };
 
@@ -58,8 +53,20 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     } else {
       const minutes = Math.floor(timeDifference / (1000 * 60));
-      return  minutes<60 ? `${minutes} minutes ago` : `${Math.floor(minutes/60)}hr ago`;
+      return minutes < 60
+        ? `${minutes} minutes ago`
+        : `${Math.floor(minutes / 60)}hr ago`;
     }
+  };
+
+  const handleClearNotification = async (notificationId: string) => {
+    const { data, error, isLoading } = await fetchData({
+      url: `${pathName.notificationApi.path}/${userId}?notificationId=${notificationId}`,
+      method: FetchMethodE.DELETE,
+     
+    });
+    console.log(data);
+    actionTaken();
   };
 
   const sortedNotifications = [...notificationData].sort(
@@ -83,13 +90,36 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                   notification.isRead
                     ? "text-gray-600 bg-gray-200 "
                     : "font-bold bg-blue-300"
-                } px-4 py-3 rounded-md hover:cursor-pointer transition duration-300 ease-in-out`}
+                } px-4 py-3 flex items-start rounded-md hover:cursor-pointer transition duration-300 ease-in-out`}
                 onClick={() => handleClickRead(notification.id)}
               >
+                
+                <span>
                 <p className="text-sm">{notification.message}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {formatDate(notification.time)}
                 </p>
+                </span>
+                {notification.isRead && <button
+                  className="rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none"
+                  onClick={() => handleClearNotification(notification.id,)}
+                >
+                  {/* <XIcon className="h-4 w-4" /> */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                </button>}
               </div>
             ))}
             {sortedNotifications.length > 5 && !showAll && (
@@ -111,12 +141,14 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
           >
             Close
           </button>
-          {notificationData?.length>0 && <button
-            className="px-4 py-2 text-red-500 rounded-md focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
-            onClick={handleClearAll}
-          >
-            Clear All
-          </button>}
+          {notificationData?.length > 0 && (
+            <button
+              className="px-4 py-2 text-red-500 rounded-md focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
+              onClick={handleClearAll}
+            >
+              Clear All
+            </button>
+          )}
         </div>
       </div>
     </div>

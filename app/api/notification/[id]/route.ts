@@ -1,5 +1,5 @@
 import { NextResponse } from "@/node_modules/next/server";
-import { deleteAll, getNotifications, updateNotification } from "@/services/notification";
+import { deleteAll, deleteNotification, getNotifications, updateNotification } from "@/services/notification";
 
 export async function GET(req: Request, {params}: {params:string}) {
     const userId = params.id;
@@ -9,8 +9,17 @@ export async function GET(req: Request, {params}: {params:string}) {
 
   export async function DELETE(req: Request, {params}: {params:string}) {
     const userId = params.id;
-    const res = await deleteAll(userId);
-    return NextResponse.json(res);
+    const url = new URL(req.url);
+    const notificationId = url.searchParams.get("notificationId");
+
+    if(notificationId){
+      const res = await deleteNotification(notificationId);
+      return NextResponse.json(res);
+    } else {
+      const res = await deleteAll(userId);
+      return NextResponse.json(res);
+    }
+    
   }
 
   export async function PUT(req: Request, {params}: {params:string}) {
