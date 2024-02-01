@@ -7,12 +7,14 @@ interface NotificationDropdownProps {
   onClose: () => void;
   notificationData: UserNotification[];
   userId: string;
+  actionTaken: () => void;
 }
 
 const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   notificationData,
   userId,
   onClose,
+  actionTaken
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -42,6 +44,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
       },
     });
     console.log(data);
+    actionTaken();
   };
 
   const formatDate = (timestamp: number) => {
@@ -101,15 +104,15 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
         ) : (
           <p className="text-gray-500">No new notifications</p>
         )}
-        <div className="flex justify-end mt-4 space-x-4">
+        <div className="flex justify-between mt-4 space-x-4">
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
+            className="px-4 py-2 text-blue-500 rounded-md focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
             onClick={onClose}
           >
             Close
           </button>
           <button
-            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-red-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
+            className="px-4 py-2 text-red-500 rounded-md focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
             onClick={handleClearAll}
           >
             Clear All

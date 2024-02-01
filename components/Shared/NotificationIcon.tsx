@@ -8,13 +8,14 @@ import UserNotificationDropdown from "../UserNotificationDropdown";
 
 const NotificationIcon: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [actionTakenValue, setActionTakenValue] = useState(0);
   const ses = useSession();
   const {
     data: notificationData,
     error: notificationErr,
     isLoading: notificationLoading,
   } = useFetch({
-    url: `${pathName.notificationApi.path}/${ses?.data?.id}`,
+    url: `${pathName.notificationApi.path}/${ses?.data?.id}?${actionTakenValue}`,
   });
 
   const handleIconClick = () => {
@@ -24,6 +25,10 @@ const NotificationIcon: React.FC = () => {
   const handleCloseDropdown = () => {
     setIsDropdownOpen(false);
   };
+
+  const actionTaken = () => {
+    setActionTakenValue(prev => prev+1);
+  }
 
   return (
     <div className="relative">
@@ -64,6 +69,7 @@ const NotificationIcon: React.FC = () => {
             userId={ses?.data?.id}
             notificationData={notificationData}
             onClose={handleCloseDropdown}
+            actionTaken={actionTaken}
           />
        </div>
       )}
