@@ -17,6 +17,8 @@ const NotificationIcon: React.FC = () => {
   } = useFetch({
     url: `${pathName.notificationApi.path}/${ses?.data?.id}?${actionTakenValue}`,
   });
+  const unReadNotification = notificationData?.find((notification: { isRead: boolean; }) => !notification.isRead);
+
 
   const handleIconClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -27,13 +29,13 @@ const NotificationIcon: React.FC = () => {
   };
 
   const actionTaken = () => {
-    setActionTakenValue(prev => prev+1);
+    setActionTakenValue(Math.random());
   }
 
   return (
     <div className="relative">
       <button className="text-2xl text-gray-600" onClick={handleIconClick}>
-        {!notificationData?.length > 0 ? (
+        {!unReadNotification ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
