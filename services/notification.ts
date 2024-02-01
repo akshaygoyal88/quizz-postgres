@@ -22,7 +22,7 @@ export async function createNotification(reqData: UserNotification) {
 
 export async function getNotifications(userId: string) {
     const res =  await db.userNotification.findMany({
-        where: {userId, isRead: false}
+        where: {userId}
     })
 
     return res;
@@ -33,3 +33,13 @@ export async function deleteAll(userId: string) {
         where: {userId}
     })
 }
+
+export async function updateNotification({reqData,notificationId}: {reqData:UserNotification, notificationId: string}) {
+    return await db.userNotification.update({
+        where: {id: notificationId},
+        data: {
+            ...reqData
+        }
+    })
+}
+

@@ -5,6 +5,7 @@ import { User, UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
 import { mainModule } from "process";
+import { createNotification } from "./notification";
 
 // export const userProjection = {
 //   id: true,
@@ -151,6 +152,9 @@ export async function verifyUser({email, verificationCode}:{email?:string, verif
           try {
             await sendEmail(msg);
             await sendEmail(msg_2);
+            await createNotification({userId: user.id, message: "This is to confirm that your account with [Your Platform Name] has been successfully verified."})
+            await createNotification({userId: user.id, message: "Welcome to [Your Platform Name]."})
+
           } catch (error) {
             if (error.response && error.response.body) {
               console.log('SendGrid API Response:', error.response.body);
