@@ -29,6 +29,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
     });
 
     // onClose();
+    actionTaken();
   };
 
   const handleClickRead = async (notificationId: string) => {
