@@ -65,14 +65,49 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       initialValue={initialValue}
       init={{
         height: 500,
-        menubar: false,
-        plugins: "image",
+        // menubar: false,
+        plugins: "media image imagetools",
+        menubar: "insert",
+        // toolbar: "media",
+        video_template_callback: function (data) {
+          return (
+            '<video width="' +
+            data.width +
+            '" height="' +
+            data.height +
+            '"' +
+            (data.poster ? ' poster="' + data.poster + '"' : "") +
+            ' controls="controls">\n' +
+            '<source src="' +
+            data.source +
+            '"' +
+            (data.sourcemime ? ' type="' + data.sourcemime + '"' : "") +
+            " />\n" +
+            (data.altsource
+              ? '<source src="' +
+                data.altsource +
+                '"' +
+                (data.altsourcemime
+                  ? ' type="' + data.altsourcemime + '"'
+                  : "") +
+                " />\n"
+              : "") +
+            "</video>"
+          );
+        },
         toolbar:
-          "undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image",
+          "undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image | media",
         // images_upload_url: "/api/upload-image",
         automatic_uploads: true,
         images_reuse_filename: true,
         images_upload_handler: handleImageUpload,
+        image_list: [
+          {
+            title: "My image 1",
+            value:
+              "https://codecaffiene.s3.ap-south-1.amazonaws.com/1706268392833-image.jpg",
+          },
+        ],
       }}
       // automatic_uploads={ true}
       // images_upload_url={"/api/upload-image"}

@@ -23,7 +23,8 @@ export async function handleQuestionSubmit(
     questionType: rawFormData.questionType,
     timer: rawFormData.timer,
     correctAnswer: rawFormData.correctAnswer,
-    createdById: rawFormData.createdById
+    createdById: rawFormData.createdById,
+    editorContent: rawFormData.editorContent,
   };
   switch (action) {
     case QuestionSubmitE.ADD:

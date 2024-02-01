@@ -128,6 +128,7 @@ model Question {
   timer                  Int                     @default(0)
   createdAt              DateTime                @default(now()) @map(name: "created_at")
   updatedAt              DateTime                @updatedAt @map(name: "updated_at")
+  editorContent          String?
   createdBy              User                    @relation(fields: [createdById], references: [id])
   createdById            String
   isDeleted              Boolean                 @default(false)

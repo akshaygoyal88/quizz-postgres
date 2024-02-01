@@ -60,6 +60,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [successMessage, setSuccessMessage] = useState<string>("");
   const formAction = async (formData: FormData) => {
     setError(null);
+    formData.append("editorContent", editorContent as string);
     const res = await handleQuestionSubmit(formData, action);
     console.log(res);
 

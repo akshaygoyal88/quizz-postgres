@@ -41,12 +41,13 @@ export async function createQuestion(reqData: Question) {
     description,
     timer,
     createdById,
+    editorContent,
   } = reqData;
 
   if (!setId) {
     return { error: "Please provide question set." };
   }
-  const addQuestion =  await db.question.create({
+  const addQuestion = await db.question.create({
     data: {
       question_text,
       type,
@@ -72,18 +73,19 @@ export async function createQuestion(reqData: Question) {
             }
           : undefined,
       createdById,
+      editorContent,
     },
   });
-  const createdBy = createdById
+  const createdBy = createdById;
   const questionId = addQuestion.id;
 
   const quizAdd = await db.quiz.create({
-    data:{
+    data: {
       setId,
       questionId,
-      createdBy
-    }
-  })
+      createdBy,
+    },
+  });
   
   return {addQuestion, quizAdd};
 }
