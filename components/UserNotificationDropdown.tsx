@@ -128,7 +128,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                 className="text-blue-500 hover:underline focus:outline-none"
                 onClick={() => setShowAll(true)}
               >
-                See All
+                See more
               </button>
             )}
           </div>
