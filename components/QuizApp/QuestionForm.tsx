@@ -140,7 +140,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               name="questionType"
               defaultValue={QuestionType.SUBJECTIVE}
               checked={questionType === QuestionType.SUBJECTIVE}
-              // onChange={handleRadioChange}
+              onChange={handleRadioChange}
             />
             <label htmlFor="subjective" className="ml-2">
               Subjective
@@ -153,7 +153,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               name="questionType"
               defaultValue={QuestionType.OBJECTIVE}
               checked={questionType === QuestionType.OBJECTIVE}
-              // onChange={handleRadioChange}
+              onChange={handleRadioChange}
             />
             <label htmlFor="objective" className="ml-2">
               Objective
