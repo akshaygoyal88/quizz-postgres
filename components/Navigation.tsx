@@ -3,6 +3,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import NotificationIcon from "./Shared/NotificationIcon";
 
 export default function Navigation() {
   const router = useRouter();
@@ -54,12 +55,15 @@ export default function Navigation() {
         )}
       </div>
       {ses.data ? (
-        <button
-          onClick={() => signOut()}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
+        <div className="flex gap-5 items-center">
+          <NotificationIcon />
+          <button
+            onClick={() => signOut()}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Logout
+          </button>{" "}
+        </div>
       ) : (
         <button
           onClick={() => router.push("/signin")}

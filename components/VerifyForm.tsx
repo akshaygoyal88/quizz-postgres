@@ -4,6 +4,7 @@ import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 
 import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { handleSubmitVerifyForm } from "@/action/actionVerifyForm";
 
 interface VerifyFormProps {
   email: string;
@@ -21,8 +22,8 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     setVerificationCode(e.target.value);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: FormEvent) => {
+  //   e.preventDefault();
 
     // try {
     //   const res = await fetch("/api/user", {
@@ -40,21 +41,34 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     //   console.log(error);
     // }
 
-    const {
-      data: verifyRes,
-      error: verifyError,
-      isLoading: verifyIsLoading,
-    } = await fetchData({
-      url: `/api/user`,
-      method: FetchMethodE.POST,
-      body: { email, verificationCode },
-    });
-    if (!verifyRes.error) {
-      router.push("/signin?success=1");
-    } else if (verifyRes.error) {
-      setError(verifyRes.error);
+  //   const {
+  //     data: verifyRes,
+  //     error: verifyError,
+  //     isLoading: verifyIsLoading,
+  //   } = await fetchData({
+  //     url: `/api/user`,
+  //     method: FetchMethodE.POST,
+  //     body: { email, verificationCode },
+  //   });
+  //   if (!verifyRes.error) {
+  //     router.push("/signin?success=1");
+  //   } else if (verifyRes.error) {
+  //     setError(verifyRes.error);
+  //   }
+  // };
+
+  const formAction = async (formData: FormData) => {
+    setError("");
+    const res = await handleSubmitVerifyForm(formData);
+
+    if (res?.error) {
+      setError(res.error);
+    } else {
+      router.push("/signin?success=1");    
     }
   };
+
+
 
   return (
     <>
@@ -74,21 +88,22 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form
               className="space-y-6"
-              action="#"
+              action={formAction}
               method="POST"
-              onSubmit={handleSubmit}
+              // onSubmit={handleSubmit}
             >
               <div className="flex align-middle gap-4">
                 <strong>Email:</strong>
                 <p>{email}</p>
+                <input type="hidden" name="email" value={email} />
               </div>
               {user ? (
                 <div>
                   <InputWithLabel
                     type="text"
-                    name="code"
+                    name="verificationCode"
                     label="Verification Code"
-                    id="code"
+                    id="verificationCode"
                     placeholder="****"
                     className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
                     defaultValue={undefined}
@@ -97,7 +112,6 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
                     maxLength={4}
                     errors={error}
                   />
-
                   <div>
                     <button
                       type="submit"

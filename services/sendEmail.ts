@@ -1,0 +1,27 @@
+import sgMail from "@/utils/sendgrid";
+
+
+interface EmailOptions {
+  to: string;
+  subject: string;
+  text: string;
+  templateId: string, 
+  dynamicTemplateData: object
+}
+
+export default async function sendEmail({ to, subject, templateId, dynamicTemplateData}: EmailOptions) {
+  const msg = {
+    to,
+    from: 'knipoint@gmail.com',
+    templateId,
+    dynamicTemplateData,
+    subject,
+    // text,
+  };
+
+  try {
+    await sgMail.send(msg);
+  } catch (error) {
+    throw error;
+  }
+};

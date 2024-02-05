@@ -93,6 +93,11 @@ const pathName: IPathName = {
     path: "/api/quiz/submission",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
+  },
+  notificationApi: {
+    path: "/api/notification",
+    roles: [UserRole.ADMIN, UserRole.USER],
+    requireToken: true
   }
 };
 

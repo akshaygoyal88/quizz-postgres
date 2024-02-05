@@ -7,7 +7,6 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
-    console.log(rawFormData);
   const optionsArray = [];
   for (let key in rawFormData) {
     if (key.includes("questionOptions_")) {
