@@ -34,7 +34,6 @@ export enum QuestionSubmitE {
 export async function createQuestion(reqData: Question) {
   const {
     setId,
-    question_text,
     type,
     options,
     correctAnswer,
@@ -43,13 +42,14 @@ export async function createQuestion(reqData: Question) {
     createdById,
     editorContent,
   } = reqData;
+  console.log("reqData", reqData)
 
   if (!setId) {
     return { error: "Please provide question set." };
   }
   const addQuestion = await db.question.create({
     data: {
-      question_text,
+      editorContent,
       type,
       timer: parseInt(timer, 10),
       objective_options:
@@ -58,7 +58,7 @@ export async function createQuestion(reqData: Question) {
               createMany: {
                 data: options.map((optionText: string, index: Number) => ({
                   text: optionText,
-                  isCorrect: index === correctAnswer,
+                  isCorrect: index == correctAnswer,
                 })),
               },
             }
@@ -67,13 +67,12 @@ export async function createQuestion(reqData: Question) {
         type === QuestionType.SUBJECTIVE
           ? {
               create: {
-                problem: question_text,
+                problem: editorContent,
                 description,
               },
             }
           : undefined,
       createdById,
-      editorContent,
     },
   });
   const createdBy = createdById;
@@ -97,9 +96,9 @@ export async function editQuestions({
   id:string;
   reqData: Question
 }){
+  console.log("edit-------->", id,reqData)
 
   const {
-    question_text,
     type,
     questionSet,
     options,
@@ -107,6 +106,7 @@ export async function editQuestions({
     description,
     timer,
     isDeleted,
+    editorContent
   } = reqData;
   const isAvailable = await db.question.findUnique({
     where: { id },
@@ -122,7 +122,7 @@ export async function editQuestions({
     const editQues =  await db.question.update({
       where: {id},
       data: {
-        question_text,
+        editorContent,
         type,
         timer: parseInt(timer, 10),              
         objective_options:
@@ -131,7 +131,7 @@ export async function editQuestions({
                 createMany: {
                   data: options.map((optionText: string, index: Number) => ({
                     text: optionText,
-                    isCorrect: index === correctAnswer,
+                    isCorrect: index == correctAnswer,
                   })),
                 },
               }

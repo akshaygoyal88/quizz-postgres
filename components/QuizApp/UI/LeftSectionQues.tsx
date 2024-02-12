@@ -4,6 +4,13 @@ import Textarea from "@/components/Shared/Textarea";
 import { QuizContext } from "@/context/QuizProvider";
 import { ObjectiveOptions, QuestionType } from "@prisma/client";
 import React, { useContext, useEffect, useState } from "react";
+import parse from "html-react-parser";
+import HTMLReactParser from "html-react-parser";
+import ReactHtmlParser, {
+  processNodes,
+  convertNodeToElement,
+  htmlparser2,
+} from "react-html-parser";
 
 export default function LeftSectionQues({
   questions,
@@ -79,6 +86,7 @@ export default function LeftSectionQues({
   const handleAnsOptInput = (str) => {
     setAnswer(str);
   };
+  console.log(filtredQues);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
@@ -99,7 +107,12 @@ export default function LeftSectionQues({
                 </div>
               )}
             </div>
-            <p>{filtredQues.question_text}</p>
+            <p className="py-4">{filtredQues?.question_text}</p>
+            {/* <div
+              dangerouslySetInnerHTML={{ __html: filtredQues?.editorContent }}
+            /> */}
+            <div>{ReactHtmlParser(filtredQues?.editorContent)}</div>
+
             {filtredQues.type === QuestionType.OBJECTIVE ? (
               <div className="mt-4">
                 {filtredQues.objective_options.map(
@@ -112,7 +125,9 @@ export default function LeftSectionQues({
                         onChange={() => handleAnsOptInput(option.id)}
                         checked={answer === option.id}
                       />
-                      <span className="ml-2">{option.text}</span>
+                      <span className="ml-2">
+                        {ReactHtmlParser(option.text)}
+                      </span>
                     </label>
                   )
                 )}
