@@ -50,3 +50,9 @@ export async function deleteNotification(notificationId: string) {
     })
 }
 
+
+export async function createNotiForProfileComplete(userId: string){
+    return await createNotification({userId, message: "Profile not completed. Please complete your profile."})
+}
+
+
