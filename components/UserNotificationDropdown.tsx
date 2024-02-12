@@ -20,6 +20,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
 }) => {
   const [showAll, setShowAll] = useState(false);
   const ses = useSession();
+  console.log(ses);
 
   const handleClearAll = async () => {
     const {
@@ -78,14 +79,11 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   };
 
   const handleClearNotification = async (notificationId: string) => {
-    const { data, error, isLoading } = await fetchData({
-      url: `${pathName.notificationApi.path}/${userId}?notificationId=${notificationId}`,
-      method: FetchMethodE.DELETE,
-    });
-    console.log(data);
     if (ses.status === "authenticated" && !ses?.data?.user?.isCompleted) {
-      const userId = ses?.data?.user?.id;
-      await NotificationService.createNotiForProfileComplete(userId);
+      const { data, error, isLoading } = await fetchData({
+        url: `${pathName.notificationApi.path}/${userId}?notificationId=${notificationId}`,
+        method: FetchMethodE.DELETE,
+      });
     }
     actionTaken();
   };
