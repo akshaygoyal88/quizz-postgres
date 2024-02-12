@@ -6,6 +6,8 @@ import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
+  console.log("getttiiing")
+
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);

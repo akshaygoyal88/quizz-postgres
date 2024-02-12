@@ -14,7 +14,7 @@ interface availableSetTypes {
 
 function EditQuesForm({ quesId }: { quesId: string }) {
   const [question, setQuestion] = useState("");
-  const [options, setOptions] = useState(["", "", "", ""]);
+  const [options, setOptions] = useState([]);
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("");
@@ -33,7 +33,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   } = useFetch({
     url: `${pathName.questionsApiPath.path}/${quesId}`,
   });
-
   const {
     data: questionSetsData,
     error: questionSetsError,
@@ -43,6 +42,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   });
 
   useEffect(() => {
+    console.log(questionData);
     if (questionData && !questionData.error) {
       setQuestion(questionData?.question_text);
       // setDefaultQuestionSet(questionData?.questionSets[0].name);
@@ -80,16 +80,12 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const handleDescriptionChange = (e: any) => {
     setDescription(e.target.value);
   };
-
+  const handleOptionIncrease = () => {
+    setOptions([...options, null]);
+  };
   const handleOptionChange = (index: any) => {
     setCorrectAnswer(index);
     setValidationError("");
-  };
-
-  const handleOptionTextChange = (index: any, option: any) => {
-    const newOptions = [...options];
-    newOptions[index] = option;
-    setOptions(newOptions);
   };
 
   const handleSaveQuestion = async () => {
@@ -170,6 +166,18 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setTimer(time);
   };
 
+  const handleOptionTextChange = (
+    content: string,
+    index: number,
+    editor: any
+  ) => {
+    // error && setValidationError("");
+    const newOptions = [...options];
+    console.log(index);
+    newOptions[index] = content;
+    setOptions(newOptions);
+  };
+
   return (
     <QuestionForm
       question={question}
@@ -194,6 +202,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       handletTimerChange={handletTimerChange}
       action={QuestionSubmitE.EDIT}
       quesId={quesId}
+      editorsContent={questionData?.editorContent}
+      handleOptionIncrease={handleOptionIncrease}
     />
   );
 }

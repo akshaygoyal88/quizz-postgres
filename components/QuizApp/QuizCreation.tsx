@@ -31,7 +31,7 @@ export default function QuizCreation() {
 
   return (
     <div className="p-4">
-      {data?.questionSets.length > 0 ? (
+      {data?.questionSets?.length > 0 ? (
         <QuizTable
           queSets={data?.questionSets || []}
           // getSetsAndQuestions={() => {}}

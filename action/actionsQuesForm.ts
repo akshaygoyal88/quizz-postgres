@@ -7,6 +7,9 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
+    console.log(rawFormData);
+    // const options = rawFormData.options.split(",");
+
   const optionsArray = [];
   for (let key in rawFormData) {
     if (key.includes("questionOptions_")) {
@@ -18,11 +21,12 @@ export async function handleQuestionSubmit(
     setId: rawFormData.setId,
     type: rawFormData.questionType,
     options: optionsArray,
-    question_text: rawFormData.question,
     questionType: rawFormData.questionType,
     timer: rawFormData.timer,
     correctAnswer: rawFormData.correctAnswer,
-    createdById: rawFormData.createdById
+    createdById: rawFormData.createdById,
+    description: rawFormData.description,
+    editorContent: rawFormData.editorContent,
   };
   switch (action) {
     case QuestionSubmitE.ADD:

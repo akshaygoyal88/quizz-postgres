@@ -122,13 +122,14 @@ enum QuestionType {
 
 model Question {
   id                     String                  @id @default(cuid())
-  question_text          String
+  question_text          String?                 @db.Text
   type                   QuestionType // "objective" or "subjective"
   objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
   subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
   timer                  Int                     @default(0)
   createdAt              DateTime                @default(now()) @map(name: "created_at")
   updatedAt              DateTime                @updatedAt @map(name: "updated_at")
+  editorContent          String?                 @db.VarChar(1000)
   createdBy              User                    @relation(fields: [createdById], references: [id])
   createdById            String
   isDeleted              Boolean                 @default(false)
@@ -138,7 +139,7 @@ model Question {
 
 model ObjectiveOptions {
   id         String   @id @default(cuid())
-  text       String
+  text       String   @db.VarChar(1000)
   isCorrect  Boolean
   questionId String
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])

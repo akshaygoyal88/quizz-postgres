@@ -11,7 +11,7 @@ import { QuestionSubmitE } from "@/services/questions";
 
 function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
-  const [options, setOptions] = useState(["", "", "", ""]);
+  const [options, setOptions] = useState([]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState(QuestionType.OBJECTIVE);
@@ -43,13 +43,21 @@ function AddQuestionUI() {
     setValidationError("");
   };
 
-  const handleOptionTextChange = (index: any, option: any) => {
-    setValidationError("");
+  const handleOptionTextChange = (
+    content: string,
+    index: number,
+    editor: any
+  ) => {
+    error && setValidationError("");
     const newOptions = [...options];
-    newOptions[index] = option;
+    console.log(index);
+    newOptions[index] = content;
     setOptions(newOptions);
   };
 
+  const handleOptionIncrease = () => {
+    setOptions([...options, null]);
+  };
   const handleSaveQuestion = async () => {
     let requestData;
 
@@ -68,6 +76,7 @@ function AddQuestionUI() {
         setValidationError("Please select the correct answer.");
         return;
       }
+      console.log(options);
       requestData = {
         question_text: question,
         options: [...options],
@@ -101,7 +110,7 @@ function AddQuestionUI() {
     });
     if (saveQuesRes && !saveQuesRes?.error) {
       setQuestion("");
-      setOptions(["", "", "", ""]);
+      setOptions([null]);
       setCorrectAnswerIndex(null);
       setValidationError("");
       setTimer("0");
@@ -130,6 +139,8 @@ function AddQuestionUI() {
     setValidationError("");
     setTimer(time);
   };
+
+  console.log("options>>>>>>>>>>>>.", options);
   return (
     <QuestionForm
       question={question}
@@ -152,6 +163,7 @@ function AddQuestionUI() {
       handletQueChange={handletQueChange}
       handletTimerChange={handletTimerChange}
       action={QuestionSubmitE.ADD}
+      handleOptionIncrease={handleOptionIncrease}
     />
   );
 }
