@@ -41,6 +41,7 @@ model User {
   QuestionSet       QuestionSet[]
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
+  notifications     UserNotification[]
 }
 
 model UserOtp {
@@ -185,3 +186,12 @@ model UserQuizAnswers {
   timeOver        Boolean?              @default(false)
   isCorrect       Boolean?              @default(false)
 }
+
+model UserNotification {
+    id              String                @id @default(cuid())
+    userId          String
+    user            User                  @relation(fields: [userId], references: [id])
+    message         String?                
+    isRead          Boolean?              @default(false)
+    time            DateTime              @default(now()) @map(name: "time")
+  }

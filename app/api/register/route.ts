@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import validator from "validator";
-import { UserSerivce } from "@/services";
+import { UserSerivce, NotificationService } from "@/services";
 
 export interface CreateUserRequestBody {
   email: string;
@@ -35,6 +35,9 @@ export async function POST(request: Request) {
             password,
             roleOfUser
           });
+          if(userData){
+            const regNotification = await NotificationService.createNotification({userId: userData.id, message: "This is to confirm that your account with [Your Platform Name] has been successfully registered."})
+          }
           return NextResponse.json({
             error: null,
             data: userData
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
       }
     }
   } catch (err) {
+    console.error(err)
     return NextResponse.json({ error: err.message, data: null });
   }
 }
