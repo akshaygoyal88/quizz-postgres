@@ -3,6 +3,7 @@ import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
 import { useState } from "react";
 import DeleteModal from "../Shared/DeleteModal";
+import HTMLReactParser from "html-react-parser";
 
 export default function QuestionsTable({
   ques,
@@ -118,7 +119,9 @@ export default function QuestionsTable({
                 {ques.map((que: Question) => (
                   <tr key={que.id}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {que.question_text}
+                      {HTMLReactParser(
+                        que.editorContent.replace(/<img[^>]*>/g, "").trim()
+                      )}
                     </td>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                       Question set name??
@@ -127,7 +130,7 @@ export default function QuestionsTable({
                       {que.type}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {que.createdBy.first_name}
+                      {que.createdBy.first_name || que.createdBy.email}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(que.createdAt).toLocaleString()}
