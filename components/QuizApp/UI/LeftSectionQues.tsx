@@ -87,6 +87,7 @@ export default function LeftSectionQues({
     setAnswer(str);
   };
   console.log(filtredQues);
+  const optionsIndex = ["a", "b", "c", "d", "e", "f"];
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
@@ -117,7 +118,7 @@ export default function LeftSectionQues({
               <div className="mt-4">
                 {filtredQues.objective_options.map(
                   (option: ObjectiveOptions, index: Number) => (
-                    <label key={index} className="block p-4">
+                    <div key={index} className="p-4 flex items-center">
                       <input
                         type="radio"
                         name="options"
@@ -125,10 +126,11 @@ export default function LeftSectionQues({
                         onChange={() => handleAnsOptInput(option.id)}
                         checked={answer === option.id}
                       />
+                      <text className="p-2">{`(${optionsIndex[index]})`}</text>
                       <span className="ml-2">
                         {ReactHtmlParser(option.text)}
                       </span>
-                    </label>
+                    </div>
                   )
                 )}
               </div>

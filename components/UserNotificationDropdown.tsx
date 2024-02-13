@@ -4,6 +4,7 @@ import { fetchData, FetchMethodE } from "@/utils/fetch";
 import pathName from "@/constants";
 import { useSession } from "next-auth/react";
 import { NotificationService } from "@/services";
+import { useFetch } from "@/hooks/useFetch";
 
 interface NotificationDropdownProps {
   onClose: () => void;
@@ -20,38 +21,38 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
 }) => {
   const [showAll, setShowAll] = useState(false);
   const ses = useSession();
-  console.log(ses);
+  const {
+    data: isProfileComplete,
+    error: proComError,
+    isLoading: proIsLoading,
+  } = useFetch({ url: `/api/getProfileCompleted/${ses?.data?.id}` });
 
   const handleClearAll = async () => {
-    const {
-      data: dltRes,
-      error: dltErr,
-      isLoading: dltLoading,
-    } = await fetchData({
-      url: `${pathName.notificationApi.path}/${userId}`,
-      method: FetchMethodE.DELETE,
-    });
+    if (ses.status === "authenticated" && isProfileComplete) {
+      const {
+        data: dltRes,
+        error: dltErr,
+        isLoading: dltLoading,
+      } = await fetchData({
+        url: `${pathName.notificationApi.path}/${userId}`,
+        method: FetchMethodE.DELETE,
+      });
 
-    // onClose();
-    actionTaken();
+      // onClose();
+      actionTaken();
+    }
   };
 
-  const handleClickRead = async ({
-    notificationId,
-    notificationMsg,
-  }: {
-    notificationId: string;
-    notificationMsg: string;
-  }) => {
+  const handleClickRead = async (notification: UserNotification) => {
     if (
       ses.status === "authenticated" &&
-      !ses?.data?.user?.isCompleted &&
-      notificationMsg.includes("Profile not completed")
+      !isProfileComplete &&
+      notification?.message?.includes("Profile not completed")
     ) {
       return;
     }
     const { data, error, isLoading } = await fetchData({
-      url: `${pathName.notificationApi.path}/${notificationId}`,
+      url: `${pathName.notificationApi.path}/${notification.id}`,
       method: FetchMethodE.PUT,
       body: {
         isRead: true,
@@ -78,13 +79,20 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   };
 
-  const handleClearNotification = async (notificationId: string) => {
-    if (ses.status === "authenticated" && !ses?.data?.user?.isCompleted) {
-      const { data, error, isLoading } = await fetchData({
-        url: `${pathName.notificationApi.path}/${userId}?notificationId=${notificationId}`,
-        method: FetchMethodE.DELETE,
-      });
+  console.log(isProfileComplete);
+
+  const handleClearNotification = async (notification: UserNotification) => {
+    if (
+      ses.status === "authenticated" &&
+      !isProfileComplete &&
+      notification?.message?.includes("Profile not completed")
+    ) {
+      return;
     }
+    const { data, error, isLoading } = await fetchData({
+      url: `${pathName.notificationApi.path}/${userId}?notificationId=${notification.id}`,
+      method: FetchMethodE.DELETE,
+    });
     actionTaken();
   };
 
@@ -110,9 +118,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     ? "text-gray-600 bg-gray-200 "
                     : "font-bold bg-blue-300"
                 } px-4 py-3 flex items-start rounded-md hover:cursor-pointer transition duration-300 ease-in-out`}
-                onClick={() =>
-                  handleClickRead(notification.id, notification.message)
-                }
+                onClick={() => handleClickRead(notification)}
               >
                 <span>
                   <p className="text-sm">{notification.message}</p>
@@ -123,7 +129,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                 {notification.isRead && (
                   <button
                     className="rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none"
-                    onClick={() => handleClearNotification(notification.id)}
+                    onClick={() => handleClearNotification(notification)}
                   >
                     {/* <XIcon className="h-4 w-4" /> */}
                     <svg

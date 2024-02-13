@@ -10,6 +10,7 @@ import { FetchMethodE, fetchData } from "@/utils/fetch";
 import pathName from "@/constants";
 import { useSession } from "next-auth/react";
 import { useFetch } from "@/hooks/useFetch";
+import { handleProfileSubmit } from "@/action/actionProfileForm";
 
 interface UserEmail {
   email?: string;
@@ -198,14 +199,30 @@ export default function Profile({ email }: UserEmail) {
     }
   };
 
+  const formAction = async (formData: FormData) => {
+    const res = await handleProfileSubmit(formData);
+    console.log(res);
+    if (res?.error) {
+      setError(res.error);
+    } else {
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 10000);
+    }
+  };
+
   return (
     <form
-      onSubmit={handleSubmit}
+      // onSubmit={handleSubmit}
       className="p-4 flex flex-col items-center justify-center"
+      action={formAction}
     >
       <div className="space-y-12">
         <h1 className="font-bold text-2xl">Profile</h1>
         {success && <p className="text-green-500">Succesfully saved.</p>}
+
+        <input type="hidden" name="id" value={session?.data?.id} />
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-2">
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
@@ -213,12 +230,12 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="First name"
                 type="text"
-                name="first-name"
+                name="first_name"
                 id="first-name"
                 // autoComplete="given-name"
                 value={firstName}
                 defaultValue={undefined}
-                onChange={firstNameChange}
+                // onChange={firstNameChange}
                 className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -226,12 +243,12 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="Last name"
                 type="text"
-                name="last-name"
+                name="last_name"
                 id="last-name"
                 // autoComplete="family-name"
                 value={lastName}
                 defaultValue={undefined}
-                onChange={lastNameChange}
+                // onChange={lastNameChange}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -262,6 +279,7 @@ export default function Profile({ email }: UserEmail) {
                 <PhoneInput
                   international
                   defaultCountry="IN"
+                  name="mobile_number"
                   value={phoneNumber}
                   onChange={handlePhoneChange}
                   className="input-field w-full py-1.5 h-full flex-1"
@@ -304,6 +322,7 @@ export default function Profile({ email }: UserEmail) {
               <RegionDropdown
                 country={country}
                 value={state}
+                name="state"
                 onChange={(val) => setState(val)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
@@ -332,7 +351,7 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="ZIP / Postal code"
                 type="number"
-                name="postal-code"
+                name="pincode"
                 id="postal-code"
                 value={pincode}
                 onChange={pincodeChange}
@@ -352,10 +371,10 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="Street address"
                 type="text"
-                name="street-address"
+                name="address"
                 id="street-address"
                 value={address}
-                onChange={addressChange}
+                // onChange={addressChange}
                 // autoComplete="street-address"
                 defaultValue={undefined}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
