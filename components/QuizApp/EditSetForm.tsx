@@ -1,20 +1,12 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import InputWithLabel from "../Shared/InputWithLabel";
-import Textarea from "../Shared/Textarea";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { handleQuestionSetSubmit } from "@/action/actionSetForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
-import { QuestionSet } from "@prisma/client";
 import SetForm from "./SetForm";
 import { useSession } from "next-auth/react";
-
 interface QuestionSetFormProps {
-  onSubmit: (formData: FormData) => void;
   setId: string;
 }
 
@@ -51,30 +43,12 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
       setInitialFormData(setsInfo);
     }
   }, [setsInfo]);
-
-  // const formAction = async (formData: FormData) => {
-  //   setError("");
-  //   const res = await handleQuestionSetSubmit(
-  //     formData,
-  //     QuestionSetSubmitE.EDIT
-  //   );
-  //   if (res.error) {
-  //     setError(res.error);
-  //   } else {
-  //     setSuccessMessage("Successfully updated");
-  //     setTimeout(() => {
-  //       setSuccessMessage("");
-  //     }, 10000);
-  //   }
-  // };
-
   return (
     <SetForm
       session={session}
       action={QuestionSetSubmitE.EDIT}
       addSetSuccessMessage={addSetSuccessMessage}
       initialFormData={initialFormData}
-      // successMessage={successMessage}
     />
   );
 };
