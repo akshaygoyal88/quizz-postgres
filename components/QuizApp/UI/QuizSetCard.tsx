@@ -1,6 +1,7 @@
 // QuestionSetCard.tsx
 
 import { QuestionSet } from "@/types"; // Assuming you have a 'types' directory for your models
+import HTMLReactParser from "html-react-parser";
 import Link from "next/link";
 
 interface QuizSetCardProps {
@@ -18,7 +19,9 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({
     <div className="max-w-md mx-auto bg-white rounded-md overflow-hidden shadow-md">
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-2">{questionSet.name}</h2>
-        <p className="text-gray-600">{questionSet.description}</p>
+        <p className="text-gray-600">
+          {HTMLReactParser(questionSet.description)}
+        </p>
       </div>
       <div className="p-4 bg-gray-100 border-t border-gray-200">
         <p className="text-gray-600">
