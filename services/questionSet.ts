@@ -59,6 +59,10 @@ export async function createQuestionSet({
   if (!name) {
     return { error: "Please enter name" };
   }
+
+  if(price && price < 0){
+    return { error: "Price should not be less than 0.0" };
+  }
   
   return await db.questionSet.create({
     data: {
@@ -85,6 +89,9 @@ export async function editQuestionSet({
     return { error: "Question/set not available" };
   }
   const {name,description,action,price} = reqData;
+  if(price && price < 0){
+    return { error: "Price should not be less than 0.0" };
+  }
   return await db.questionSet.update({
     where: {
       id,
