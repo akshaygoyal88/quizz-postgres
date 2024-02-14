@@ -128,9 +128,7 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="first_name"
                 id="first-name"
-                // autoComplete="given-name"
-                value={proData?.first_name}
-                defaultValue={undefined}
+                defaultValue={proData?.first_name}
                 // onChange={firstNameChange}
                 className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -141,10 +139,7 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="last_name"
                 id="last-name"
-                // autoComplete="family-name"
-                value={proData?.last_name}
-                defaultValue={undefined}
-                // onChange={lastNameChange}
+                defaultValue={proData?.last_name}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -233,10 +228,9 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="city"
                 id="city"
-                value={proData?.city}
                 // autoComplete="address-level2"
                 onChange={cityChange}
-                defaultValue={undefined}
+                defaultValue={proData?.city}
                 errors={error.city}
                 impAsterisk="*"
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -249,9 +243,9 @@ export default function Profile({ email }: UserEmail) {
                 type="number"
                 name="pincode"
                 id="postal-code"
-                value={proData?.pincode}
+                // value={proData?.pincode}
                 onChange={pincodeChange}
-                defaultValue={undefined}
+                defaultValue={proData?.pincode}
                 errors={
                   // (typeof error === "string" && error?.includes("6")) ||
                   // (typeof error === "string" && error?.includes("Zipcode"))
@@ -269,10 +263,7 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="address"
                 id="street-address"
-                value={proData?.address}
-                // onChange={addressChange}
-                // autoComplete="street-address"
-                defaultValue={undefined}
+                defaultValue={proData?.address}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
