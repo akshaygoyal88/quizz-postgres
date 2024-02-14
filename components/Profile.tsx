@@ -39,11 +39,8 @@ interface FormErrors {
 
 export default function Profile({ email }: UserEmail) {
   const [userData, setUserData] = useState<UserData>({});
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [state, setState] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [pincode, setPincode] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -53,9 +50,6 @@ export default function Profile({ email }: UserEmail) {
 
   const session = useSession();
 
-  const addressChange = (e: FormEvent) => {
-    setAddress((e.target as HTMLInputElement).value);
-  };
   const cityChange = (e: FormEvent) => {
     delete error.city;
     setCity((e.target as HTMLInputElement).value);
@@ -71,12 +65,6 @@ export default function Profile({ email }: UserEmail) {
     } else {
       setPincode((e.target as HTMLInputElement).value);
     }
-  };
-  const firstNameChange = (e: FormEvent) => {
-    setFirstName((e.target as HTMLInputElement).value);
-  };
-  const lastNameChange = (e: FormEvent) => {
-    setLastName((e.target as HTMLInputElement).value);
   };
 
   const handlePhoneChange = (value: string) => {
@@ -104,17 +92,9 @@ export default function Profile({ email }: UserEmail) {
   }, [proData]);
 
   useEffect(() => {
-    setPhoneNumber(userData.mobile_number || "");
-    setFirstName(userData.first_name || "");
-    setLastName(userData.last_name || "");
-    setAddress(userData.address || "");
     setCountry(userData.country || "");
-    setCity(userData.city || "");
     setState(userData.state || "");
-    setPincode(userData.pincode || "");
   }, [userData]);
-
-  // todo remove state and do it from user data
 
   const formAction = async (formData: FormData) => {
     const res = await handleProfileSubmit(formData);
@@ -149,7 +129,7 @@ export default function Profile({ email }: UserEmail) {
                 name="first_name"
                 id="first-name"
                 // autoComplete="given-name"
-                value={firstName}
+                value={proData?.first_name}
                 defaultValue={undefined}
                 // onChange={firstNameChange}
                 className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -162,7 +142,7 @@ export default function Profile({ email }: UserEmail) {
                 name="last_name"
                 id="last-name"
                 // autoComplete="family-name"
-                value={lastName}
+                value={proData?.last_name}
                 defaultValue={undefined}
                 // onChange={lastNameChange}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -196,7 +176,7 @@ export default function Profile({ email }: UserEmail) {
                   international
                   defaultCountry="IN"
                   name="mobile_number"
-                  value={phoneNumber}
+                  value={proData?.mobile_number}
                   onChange={handlePhoneChange}
                   className="input-field w-full py-1.5 h-full flex-1"
                   limitMaxLength
@@ -253,7 +233,7 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="city"
                 id="city"
-                value={city}
+                value={proData?.city}
                 // autoComplete="address-level2"
                 onChange={cityChange}
                 defaultValue={undefined}
@@ -269,7 +249,7 @@ export default function Profile({ email }: UserEmail) {
                 type="number"
                 name="pincode"
                 id="postal-code"
-                value={pincode}
+                value={proData?.pincode}
                 onChange={pincodeChange}
                 defaultValue={undefined}
                 errors={
@@ -289,7 +269,7 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="address"
                 id="street-address"
-                value={address}
+                value={proData?.address}
                 // onChange={addressChange}
                 // autoComplete="street-address"
                 defaultValue={undefined}
