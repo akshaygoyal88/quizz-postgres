@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import TinyMCEEditor from "./UI/TinyMCEEditor";
 import { useFetch } from "@/hooks/useFetch";
 import SimpleSelect from "../Shared/SimpleSelect";
+import SimpleToggle from "../Shared/SimpleToggle";
 
 interface QuestionFormProps {
   question: string;
@@ -24,7 +25,7 @@ interface QuestionFormProps {
   handleRadioChange: (event: { target: { value: string } }) => void;
   handleOptionTextChange: (index: number, option: string) => void;
   handleDescriptionChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleOptionChange: (index: number) => void;
+  handleCorrectOptionChange: (index: number) => void;
   handleSaveQuestion: () => void;
   handletQuesSetChange: (value: string) => void;
   handletQueChange: (value: string) => void;
@@ -33,6 +34,7 @@ interface QuestionFormProps {
   quesId?: string;
   editorsContent?: string;
   handleOptionIncrease: () => void;
+  handleOptionRemove: () => void;
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -49,12 +51,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   buttonText,
   headingText,
   handleRadioChange,
-  handleOptionChange,
+  handleCorrectOptionChange,
   action,
   quesId,
   editorsContent,
   handleOptionIncrease,
   handleOptionTextChange,
+  handleOptionRemove,
 }) => {
   const session = useSession();
   const [error, setError] = useState<string | null>(null);
@@ -87,12 +90,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const formAction = async (formData: FormData) => {
     setError(null);
     formData.append("editorContent", editorContent as string);
+    // console.log(correctAnswerIndex);
+    correctAnswerIndex?.forEach((ele: Number) =>
+      formData.append(`correctAnswer_${ele}`, ele as string)
+    );
     if (desEditorContent) {
-      formData.append("subjective_description", desEditorContent as string);
+      formData.append("solution", desEditorContent as string);
     }
-    // const serializedOptions = JSON.stringify(options);
-    // formData.append("options", serializedOptions);
-    // formData.append("options", options as Array);
     options.forEach((option, i) =>
       formData.append(`questionOptions_${i}`, option)
     );
@@ -110,6 +114,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       );
     }
   };
+  console.log(correctAnswerIndex);
 
   useEffect(() => {
     if (options.length > 0) {
@@ -165,112 +170,99 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               idx={"ques"}
             />
           </div>
-          <div className="my-4 flex justify-between">
-            <label className="font-semibold">Select Question Type</label>
-            <div>
-              <input
-                type="radio"
-                id="subjective"
-                name="questionType"
-                defaultValue={QuestionType.SUBJECTIVE}
-                checked={questionType === QuestionType.SUBJECTIVE}
-                onChange={handleRadioChange}
-              />
-              <label htmlFor="subjective" className="ml-2">
-                Subjective
-              </label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                id="objective"
-                name="questionType"
-                defaultValue={QuestionType.OBJECTIVE}
-                checked={questionType === QuestionType.OBJECTIVE}
-                onChange={handleRadioChange}
-              />
-              <label htmlFor="objective" className="ml-2">
-                Objective
-              </label>
-            </div>
-          </div>
-          <div className="mb-4 flex justify-between items-center">
-            <label className="font-semibold">Timer(in secs):</label>
-            <input
-              type="number"
-              className="border rounded-md p-2"
-              defaultValue={timer}
-              name="timer"
-            />
-          </div>
+
           {questionType === QuestionType.OBJECTIVE && (
             <div className="mb-4">
-              <label className="block text-lg font-semibold">Options:</label>
+              <div className="flex justify-between">
+                <label className="block text-lg font-semibold">Options:</label>
+                <span
+                  className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
+                  onClick={handleOptionIncrease}
+                >
+                  Add more options+
+                </span>
+              </div>
+              {/* <div className="my-4 flex justify-between gap-4">
+                <label className="font-semibold">Type of Answer</label>
+                <div>
+                  <input
+                    type="radio"
+                    id="Single Correct"
+                    name="answer_type"
+                    // defaultValue={QuestionType.SUBJECTIVE}
+                    // checked={questionType === QuestionType.SUBJECTIVE}
+                    // onChange={handleRadioChange}
+                  />
+                  <label htmlFor="Single Correct" className="ml-2">
+                    Single choice
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="multipleChoice"
+                    name="answer_type"
+                    // defaultValue={QuestionType.OBJECTIVE}
+                    // checked={questionType === QuestionType.OBJECTIVE}
+                    // onChange={handleRadioChange}
+                  />
+                  <label htmlFor="objective" className="ml-2">
+                    Multiple choice
+                  </label>
+                </div>
+              </div> */}
+
               {options.map((option, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center space-x-2 mt-2"
+                  className="flex flex-col items-end space-x-2 my-2"
                 >
-                  <TinyMCEEditor
-                    imagesList={imagesList}
-                    editorsContent={
-                      buttonText.includes("Edit") && savedOptions[index]
-                    }
-                    index={index}
-                    idx={index + buttonText}
-                    handleEditorChange={handleOptionTextChange}
-                  />
-                  <label className="flex items-center space-x-2 p-4">
-                    <input
-                      type="radio"
-                      checked={correctAnswerIndex === index}
-                      onChange={() => handleOptionChange(index)}
-                      className="form-radio text-blue-500 transform scale-125 font-bold"
+                  <span
+                    className="text-blue-600 hover:cursor-pointer"
+                    onClick={() => handleOptionRemove(index)}
+                  >
+                    Remove
+                  </span>
+                  <div className="flex items-center space-x-2">
+                    <label>Is correct</label>
+                    <SimpleToggle
+                      checked={correctAnswerIndex?.includes(index)}
+                      onChange={() => handleCorrectOptionChange(index)}
                     />
-                    {correctAnswerIndex !== null && (
+                    {/* {correctAnswerIndex !== null && (
                       <input
                         type="hidden"
                         name="correctAnswer"
                         value={correctAnswerIndex.toString()}
                       />
-                    )}
-                  </label>
-                  {options.length - 1 === index && (
-                    <span
-                      className="px-1 border-4 text-gray-600 font-semibold hover:cursor-pointer"
-                      onClick={handleOptionIncrease}
-                    >
-                      +
-                    </span>
-                  )}
+                    )} */}
+
+                    <TinyMCEEditor
+                      imagesList={imagesList}
+                      editorsContent={savedOptions[index]}
+                      index={index}
+                      idx={index + buttonText}
+                      handleEditorChange={handleOptionTextChange}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
           )}
-          {questionType === QuestionType.SUBJECTIVE && (
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 font-bold mb-2"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              {/* <textarea
-                className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
-                id="description"
-                name="description"
-                defaultValue={description}
-                placeholder="Write Description for Problem statement here...."
-              /> */}
-
-              <TinyMCEEditor
-                editorsContent={description}
-                handleEditorChange={handleDesChange}
-                imagesList={imagesList}
-                idx={"des"}
-              />
-            </div>
-          )}
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 font-bold mb-2"
+              htmlFor="description"
+            >
+              Solution:
+            </label>
+            <TinyMCEEditor
+              editorsContent={description}
+              handleEditorChange={handleDesChange}
+              imagesList={imagesList}
+              idx={"sol"}
+            />
+          </div>
           <div className="text-red-500 mb-2">{error}</div>
           {successMessage && (
             <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
@@ -284,6 +276,29 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             selectFor="Visibility"
             items={["Public", "private", "Password"]}
           />
+          <div className="my-4 flex flex-col justify-between gap-4">
+            <label className="font-semibold">Question Type:</label>
+            <div>
+              <select
+                className="px-4 py-2 rounded border-black"
+                defaultValue={questionType}
+                name="questionType"
+                onChange={handleRadioChange}
+              >
+                <option value={QuestionType.OBJECTIVE}>Objective</option>
+                <option value={QuestionType.SUBJECTIVE}>Subjective</option>
+              </select>
+            </div>
+          </div>
+          <div className="mb-4 flex flex-col justify-between ">
+            <label className="font-semibold py-2">Timer(in secs):</label>
+            <input
+              type="number"
+              className="w-3/4 border rounded-md p-2"
+              defaultValue={timer}
+              name="timer"
+            />
+          </div>
         </div>
       </form>
     </div>

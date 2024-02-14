@@ -120,6 +120,11 @@ enum QuestionType {
   SUBJECTIVE
 }
 
+enum AnswerType {
+  SINGLECHOICE
+  MULTIPLECHOICE
+}
+
 model Question {
   id                     String                  @id @default(cuid())
   question_text          String?                 @db.Text
@@ -135,6 +140,8 @@ model Question {
   isDeleted              Boolean                 @default(false)
   Quiz                   Quiz[]
   UserQuizAnswers        UserQuizAnswers[]
+  solution               String?                 @db.VarChar(1000)
+  // answer_type            AnswerType?
 }
 
 model ObjectiveOptions {

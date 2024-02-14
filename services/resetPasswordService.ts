@@ -50,7 +50,6 @@ export const cleanupExpiredTokens = async () => {
           },
         },
       });
-      console.log("Expired tokens cleaned up successfully.");
     } catch (error) {
       console.error("Error cleaning up expired tokens:", error);
       throw new Error("Error cleaning up expired tokens.");

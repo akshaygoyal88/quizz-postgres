@@ -15,7 +15,7 @@ interface availableSetTypes {
 function EditQuesForm({ quesId }: { quesId: string }) {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([]);
-  const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState([]);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [description, setDescription] = useState("");
@@ -51,14 +51,13 @@ function EditQuesForm({ quesId }: { quesId: string }) {
         (opt: { text: any }) => opt.text
       );
       setOptions(initialOptions);
-      const correctAnswerIndex = questionData?.objective_options.findIndex(
-        (opt: { isCorrect: any }) => opt.isCorrect
-      );
-      setCorrectAnswer(correctAnswerIndex);
-      const des = questionData?.subjective_description.map(
-        (ds: { description: any }) => ds.description
-      );
-      setDescription(des);
+      const correctAnswer: number[] = [];
+      questionData?.objective_options.forEach((element: any, i: number) => {
+        element.isCorrect == true && correctAnswer.push(i);
+      });
+      console.log(correctAnswer);
+      setCorrectAnswerIndex(correctAnswer);
+      setDescription(questionData.solution);
       setTimer(questionData?.timer);
     } else if (questionData?.error) {
       setValidationError(questionData?.error);
@@ -83,11 +82,17 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const handleOptionIncrease = () => {
     setOptions([...options, null]);
   };
-  const handleOptionChange = (index: any) => {
-    setCorrectAnswer(index);
+  const handleCorrectOptionChange = (index: Number) => {
+    setValidationError("");
+    if (!correctAnswerIndex.includes(index)) {
+      setCorrectAnswerIndex([...correctAnswerIndex, index]);
+    } else {
+      const updated = correctAnswerIndex.filter((i) => i !== index);
+      setCorrectAnswerIndex(updated);
+    }
+
     setValidationError("");
   };
-
   const handleSaveQuestion = async () => {
     let requestData;
 
@@ -182,7 +187,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     <QuestionForm
       question={question}
       options={options}
-      correctAnswerIndex={correctAnswer}
+      correctAnswerIndex={correctAnswerIndex}
       validationError={validationError}
       questionType={questionType}
       description={description}
@@ -195,7 +200,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       handleRadioChange={handleRadioChange}
       handleOptionTextChange={handleOptionTextChange}
       handleDescriptionChange={handleDescriptionChange}
-      handleOptionChange={handleOptionChange}
+      handleCorrectOptionChange={handleCorrectOptionChange}
       handleSaveQuestion={handleSaveQuestion}
       handletQuesSetChange={handletQuesSetChange}
       handletQueChange={handletQueChange}

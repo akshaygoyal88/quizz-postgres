@@ -12,7 +12,7 @@ import { QuestionSubmitE } from "@/services/questions";
 function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState([]);
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number[]>([]);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState(QuestionType.OBJECTIVE);
   const [description, setDescription] = useState("");
@@ -25,6 +25,7 @@ function AddQuestionUI() {
       ses.status !== "loading" && ses?.data?.id
     }`,
   });
+  const [answerType, setAnswerType] = useState();
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -37,9 +38,15 @@ function AddQuestionUI() {
     setDescription(e.target.value);
   };
 
-  const handleOptionChange = (index: any) => {
+  const handleCorrectOptionChange = (index: Number) => {
     setValidationError("");
-    setCorrectAnswerIndex(index);
+    if (!correctAnswerIndex.includes(index)) {
+      setCorrectAnswerIndex([...correctAnswerIndex, index]);
+    } else {
+      const updated = correctAnswerIndex.filter((i) => i !== index);
+      setCorrectAnswerIndex(updated);
+    }
+
     setValidationError("");
   };
 
@@ -58,72 +65,10 @@ function AddQuestionUI() {
   const handleOptionIncrease = () => {
     setOptions([...options, null]);
   };
-  const handleSaveQuestion = async () => {
-    let requestData;
 
-    if (questionType === QuestionType.OBJECTIVE) {
-      if (
-        question.trim() === "" ||
-        options.some((option) => option.trim() === "")
-      ) {
-        setValidationError(
-          "Please fill in both the question and options before saving."
-        );
-        return;
-      }
-
-      if (correctAnswerIndex === null) {
-        setValidationError("Please select the correct answer.");
-        return;
-      }
-      console.log(options);
-      requestData = {
-        question_text: question,
-        options: [...options],
-        type: QuestionType.OBJECTIVE,
-        correctAnswer: correctAnswerIndex,
-        // questionSet: questionSet,
-        timer: timer,
-        createdById: ses?.data?.id,
-        setId,
-      };
-    } else if (questionType === QuestionType.SUBJECTIVE) {
-      requestData = {
-        question_text: question,
-        type: QuestionType.SUBJECTIVE,
-        description: description,
-        // questionSet: questionSet,
-        timer: timer,
-        createdById: ses?.data?.id,
-        setId,
-      };
-    }
-
-    const {
-      data: saveQuesRes,
-      error: saveQuesError,
-      isLoading: saveQuesIsLoading,
-    } = await fetchData({
-      url: `${pathName.questionsApiPath.path}`,
-      method: FetchMethodE.POST,
-      body: requestData,
-    });
-    if (saveQuesRes && !saveQuesRes?.error) {
-      setQuestion("");
-      setOptions([null]);
-      setCorrectAnswerIndex(null);
-      setValidationError("");
-      setTimer("0");
-      setSuccessMessage("Successfully added Question.");
-      setDescription("");
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 10000);
-    } else if (saveQuesRes?.error) {
-      setValidationError(saveQuesRes?.error);
-    } else {
-      setValidationError(saveQuesError);
-    }
+  const handleOptionRemove = (index) => {
+    const updatedOptions = options.filter((_, i) => i !== index);
+    setOptions(updatedOptions);
   };
 
   const handletQuesSetChange = (quesSetId: string) => {
@@ -140,7 +85,6 @@ function AddQuestionUI() {
     setTimer(time);
   };
 
-  console.log("options>>>>>>>>>>>>.", options);
   return (
     <QuestionForm
       question={question}
@@ -157,13 +101,13 @@ function AddQuestionUI() {
       handleRadioChange={handleRadioChange}
       handleOptionTextChange={handleOptionTextChange}
       handleDescriptionChange={handleDescriptionChange}
-      handleOptionChange={handleOptionChange}
-      handleSaveQuestion={handleSaveQuestion}
+      handleCorrectOptionChange={handleCorrectOptionChange}
       handletQuesSetChange={handletQuesSetChange}
       handletQueChange={handletQueChange}
       handletTimerChange={handletTimerChange}
       action={QuestionSubmitE.ADD}
       handleOptionIncrease={handleOptionIncrease}
+      handleOptionRemove={handleOptionRemove}
     />
   );
 }

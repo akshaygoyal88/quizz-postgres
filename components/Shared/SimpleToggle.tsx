@@ -5,13 +5,24 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
-  const [enabled, setEnabled] = useState(false);
+export default function SimpleToggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: () => void;
+}) {
+  const [enabled, setEnabled] = useState(checked);
+
+  const handleChange = () => {
+    setEnabled((prev) => !prev);
+    onChange();
+  };
 
   return (
     <Switch
       checked={enabled}
-      onChange={setEnabled}
+      onChange={handleChange}
       className={classNames(
         enabled ? "bg-indigo-600" : "bg-gray-200",
         "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"

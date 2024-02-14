@@ -4,6 +4,9 @@ import { Question } from "@prisma/client";
 import { useState } from "react";
 import DeleteModal from "../Shared/DeleteModal";
 import HTMLReactParser from "html-react-parser";
+import DuplicateModal from "../Shared/DuplicateModal";
+import { handleQuestionSubmit } from "@/action/actionsQuesForm";
+import { QuestionSetSubmitE } from "@/services/questionSet";
 
 export default function QuestionsTable({
   ques,
@@ -16,6 +19,7 @@ export default function QuestionsTable({
   const [error, setError] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState("");
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 
   const deleteHandler = async () => {
     const { data, error, isLoading } = await fetchData({
@@ -35,6 +39,19 @@ export default function QuestionsTable({
     }
     setIsDeleteModalOpen(false);
   };
+
+  const duplicateHandler = async () => {
+    const queData = ques.find((q) => q.id === selectedQuestionId);
+    console.log(queData);
+    const { data, error, isLoading } = await fetchData({
+      url: `${pathName.questionsApiPath.path}`,
+      method: FetchMethodE.POST,
+      body: { ...queData },
+    });
+    setSelectedQuestionId("");
+  };
+
+  console.log(ques);
 
   return (
     <div className="sm:px-6">
@@ -108,6 +125,9 @@ export default function QuestionsTable({
                     </a>
                   </th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                    <span className="sr-only">Duplicate</span>
+                  </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-0">
                     <span className="sr-only">Edit</span>
                   </th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-0">
@@ -143,6 +163,17 @@ export default function QuestionsTable({
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
+                        onClick={() => {
+                          setIsDuplicateModalOpen(true);
+                          setSelectedQuestionId(que.id);
+                        }}
+                        className="text-orange-600 hover:text-orange-900 hover:cursor-pointer"
+                      >
+                        Duplicate
+                      </a>
+                    </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                      <a
                         href={`/admin/questions/${que.id}/edit`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
@@ -171,6 +202,11 @@ export default function QuestionsTable({
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={deleteHandler}
+      />
+      <DuplicateModal
+        isOpen={isDuplicateModalOpen}
+        onClose={() => setIsDuplicateModalOpen(false)}
+        onDuplicate={duplicateHandler}
       />
     </div>
   );

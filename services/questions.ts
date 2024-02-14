@@ -20,6 +20,7 @@ export async function getAllQuestions({
       objective_options: true,
       subjective_description: true,
       createdBy: true,
+      Quiz: true,
     },
     skip,
     take: pageSize,
@@ -37,7 +38,7 @@ export async function createQuestion(reqData: Question) {
     type,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
     createdById,
     editorContent,
@@ -58,20 +59,12 @@ export async function createQuestion(reqData: Question) {
               createMany: {
                 data: options.map((optionText: string, index: Number) => ({
                   text: optionText,
-                  isCorrect: index == correctAnswer,
+                  isCorrect: correctAnswer.includes(index),
                 })),
               },
             }
           : undefined,
-      subjective_description:
-        type === QuestionType.SUBJECTIVE
-          ? {
-              create: {
-                problem: editorContent,
-                description,
-              },
-            }
-          : undefined,
+      solution,
       createdById,
     },
   });
@@ -96,17 +89,16 @@ export async function editQuestions({
   id:string;
   reqData: Question
 }){
-  console.log("edit-------->", id,reqData)
+
 
   const {
+    setId,
     type,
-    questionSet,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
-    isDeleted,
-    editorContent
+    editorContent,
   } = reqData;
   const isAvailable = await db.question.findUnique({
     where: { id },
@@ -131,26 +123,16 @@ export async function editQuestions({
                 createMany: {
                   data: options.map((optionText: string, index: Number) => ({
                     text: optionText,
-                    isCorrect: index == correctAnswer,
+                    isCorrect: correctAnswer.includes(index),
                   })),
                 },
               }
             : undefined,
-        subjective_description:
-          type === QuestionType.SUBJECTIVE
-            ? {
-                create: {
-                  problem: question_text,
-                  description,
-                },
-              }
-            : undefined,
+       solution
       },
     });
     return editQues;
   } else {
     return {error: "Invalid question"}
   }
-  
-  
 }
