@@ -91,21 +91,6 @@ export default function Profile({ email }: UserEmail) {
     }
     setPhoneNumber(value);
   };
-
-  // const getUserData = async () => {
-  //   try {
-  //     const res = await fetch("/api/user/", {
-  //       method: "GET",
-  //     });
-  //     if (res.ok) {
-  //       const data = await res.json();
-  //       setUserData({ ...data });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const {
     data: proData,
     error: proDataErr,
@@ -129,75 +114,7 @@ export default function Profile({ email }: UserEmail) {
     setPincode(userData.pincode || "");
   }, [userData]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    // const parsedPhoneNumber = phoneNumber && parsePhoneNumber(phoneNumber);
-    // if (!parsedPhoneNumber || parsedPhoneNumber.nationalNumber.length < 10) {
-    //   setError("Phone number should not be less than 10 digits");
-    //   setTimeout(() => setError(""), 10000);
-    //   return;
-    // }
-
-    const setValues = async () => {
-      let updatedUserNewData = {};
-
-      if (phoneNumber) {
-        updatedUserNewData = {
-          ...updatedUserNewData,
-          mobile_number: phoneNumber,
-        };
-      }
-      if (firstName) {
-        updatedUserNewData = { ...updatedUserNewData, first_name: firstName };
-      }
-      if (lastName) {
-        updatedUserNewData = { ...updatedUserNewData, last_name: lastName };
-      }
-      if (address) {
-        updatedUserNewData = { ...updatedUserNewData, address };
-      }
-      if (country) {
-        updatedUserNewData = { ...updatedUserNewData, country: country };
-      }
-      if (state) {
-        updatedUserNewData = { ...updatedUserNewData, state };
-      }
-      if (city) {
-        updatedUserNewData = { ...updatedUserNewData, city };
-      }
-      if (pincode) {
-        updatedUserNewData = { ...updatedUserNewData, pincode };
-      }
-      return updatedUserNewData;
-    };
-
-    const updatedData = await setValues();
-
-    const {
-      data: updateProRes,
-      error: updateProError,
-      isLoading: updateProIsLoading,
-    } = await fetchData({
-      url: `${pathName.updateProfileApi.path}/${session?.data?.id}`,
-      method: FetchMethodE.PUT,
-      body: { ...updatedData },
-    });
-
-    if (!updateProError) {
-      if (updateProRes.error) {
-        setError(updateProRes.error);
-        return;
-      }
-      router.refresh();
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-      }, 10000);
-    } else {
-      setError(updateProError);
-    }
-  };
+  // todo remove state and do it from user data
 
   const formAction = async (formData: FormData) => {
     const res = await handleProfileSubmit(formData);
@@ -214,7 +131,6 @@ export default function Profile({ email }: UserEmail) {
 
   return (
     <form
-      // onSubmit={handleSubmit}
       className="p-4 flex flex-col items-center justify-center"
       action={formAction}
     >

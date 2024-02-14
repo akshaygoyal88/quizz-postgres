@@ -61,6 +61,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [editorContent, setEditorContent] = useState<string | null>(null);
   const [savedOptions, setSavedOptions] = useState<string[]>([]);
+  const [desEditorContent, setDesEditorContent] = useState<string | null>(null);
 
   const [imagesList, setImagesList] = useState([]);
   // const { data: imageList, error: imagesError, isLoading } = useFetch({url: })
@@ -86,6 +87,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const formAction = async (formData: FormData) => {
     setError(null);
     formData.append("editorContent", editorContent as string);
+    if (desEditorContent) {
+      formData.append("subjective_description", desEditorContent as string);
+    }
     // const serializedOptions = JSON.stringify(options);
     // formData.append("options", serializedOptions);
     // formData.append("options", options as Array);
@@ -121,41 +125,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setEditorContent(content);
     console.log("Content was updated:", content, "editor:", editor);
   };
+  const handleDesChange = (content: string, editor: any) => {
+    setDesEditorContent(content);
+  };
   return (
-    <div className="border rounded-lg shadow-lg">
-      <form action={formAction} className="flex">
-        <div className="m-4">
-          {/* <div className="py-2 flex justify-between items-center"> */}
+    <div className="border rounded-lg shadow-lg w-full">
+      <form action={formAction} className="flex justify-end">
+        <div className="m-4 w-3/4">
           <h1 className="text-lg font-semibold mb-4">{headingText}</h1>
-
-          {/* </div> */}
-
-          {/* Select Question Set */}
           <input type="hidden" name="createdById" value={session?.data?.id} />
           {action == QuestionSubmitE.EDIT && (
             <input type="hidden" name="id" value={quesId} />
           )}
-
           <div className="mb-4">
             <select
               className="w-full border rounded-md p-2"
-              // onChange={(e) => handletQuesSetChange(e.target.value)}
               defaultValue={defaultQuestionSet?.name}
               name="setId"
             >
               <option value="">Select question set</option>
               {data &&
-                data.map(
-                  (queSet: QuestionSet) =>
-                    !queSet.isDeleted && (
-                      <option key={queSet.id} value={queSet.id}>
-                        {queSet.name}
-                      </option>
-                    )
+                data.map((queSet: QuestionSet) =>
+                  !queSet.isDeleted ? (
+                    <option key={queSet.id} value={queSet.id}>
+                      {queSet.name}
+                    </option>
+                  ) : null
                 )}
             </select>
           </div>
-          {/* Question Input */}
           <div className="mb-4">
             <label className="block text-lg font-semibold" htmlFor="ques">
               Question:
@@ -167,8 +165,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               idx={"ques"}
             />
           </div>
-          {/* Question Type Radio Buttons */}
-          <div className="mb-4 flex justify-evenly">
+          <div className="my-4 flex justify-between">
             <label className="font-semibold">Select Question Type</label>
             <div>
               <input
@@ -197,35 +194,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               </label>
             </div>
           </div>
-
           <div className="mb-4 flex justify-between items-center">
             <label className="font-semibold">Timer(in secs):</label>
             <input
               type="number"
               className="border rounded-md p-2"
               defaultValue={timer}
-              // onChange={(e) => handletTimerChange(e.target.value)}
-              name="timer" // Add name attribute here
+              name="timer"
             />
           </div>
-
-          {/* Options for Objective Questions */}
           {questionType === QuestionType.OBJECTIVE && (
             <div className="mb-4">
               <label className="block text-lg font-semibold">Options:</label>
               {options.map((option, index) => (
-                <div key={index} className="flex items-center space-x-2 mt-2">
-                  <label>Answer:{index + 1}</label>
-                  {/* <input
-                  type="text"
-                  className="w-full border rounded-md p-2"
-                  defaultValue={option}
-                  placeholder={`Option ${index + 1}`}
-                  // onChange={(e) =>
-                  //   handleOptionTextChange(index, e.target.value)
-                  // }
-                  name={`questionOptions_${index}`} // Add name attribute here
-                /> */}
+                <div
+                  key={index}
+                  className="flex justify-between items-center space-x-2 mt-2"
+                >
                   <TinyMCEEditor
                     imagesList={imagesList}
                     editorsContent={
@@ -241,7 +226,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                       checked={correctAnswerIndex === index}
                       onChange={() => handleOptionChange(index)}
                       className="form-radio text-blue-500 transform scale-125 font-bold"
-                      // name="correctAnswer" // Add name attribute here
                     />
                     {correctAnswerIndex !== null && (
                       <input
@@ -263,7 +247,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               ))}
             </div>
           )}
-          {/* Description for Subjective Questions */}
           {questionType === QuestionType.SUBJECTIVE && (
             <div className="mb-4">
               <label
@@ -272,28 +255,29 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               >
                 Description
               </label>
-              <textarea
+              {/* <textarea
                 className="w-full h-9 px-3 py-2 border rounded-lg focus:outline-none focus:shadow-outline"
                 id="description"
-                name="description" // Add name attribute here
+                name="description"
                 defaultValue={description}
-                // onChange={handleDescriptionChange}
                 placeholder="Write Description for Problem statement here...."
+              /> */}
+
+              <TinyMCEEditor
+                editorsContent={description}
+                handleEditorChange={handleDesChange}
+                imagesList={imagesList}
+                idx={"des"}
               />
             </div>
           )}
-
           <div className="text-red-500 mb-2">{error}</div>
           {successMessage && (
             <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
           )}
         </div>
-
-        <div className=" border-l-2 flex flex-col mx-2 p-2">
-          <button
-            // onClick={handleSaveQuestion}
-            className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg"
-          >
+        <div className="border-l-2 flex flex-col mx-2 p-2 w-1/5">
+          <button className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg">
             {buttonText}
           </button>
           <SimpleSelect
