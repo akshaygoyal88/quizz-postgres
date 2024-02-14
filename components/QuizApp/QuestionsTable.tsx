@@ -10,10 +10,10 @@ import { QuestionSetSubmitE } from "@/services/questionSet";
 
 export default function QuestionsTable({
   ques,
-  onDelete,
+  onActionTaken,
 }: {
   ques: Question[];
-  onDelete: () => void;
+  onActionTaken: () => void;
 }) {
   const [deleteSuccess, setDeleteSuccess] = useState("");
   const [error, setError] = useState("");
@@ -33,7 +33,7 @@ export default function QuestionsTable({
       setTimeout(() => {
         setDeleteSuccess("");
       }, 10000);
-      onDelete();
+      onActionTaken();
     } else if (data.error) {
       setError(data.error);
     }
@@ -49,6 +49,7 @@ export default function QuestionsTable({
       body: { ...queData },
     });
     setSelectedQuestionId("");
+    onActionTaken();
   };
 
   console.log(ques);

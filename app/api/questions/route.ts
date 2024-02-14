@@ -61,8 +61,13 @@ export async function POST(req: any, res: any) {
     //   return NextResponse.json({ error: "Please provide question set." });
     // }
 
-    const correctAnswer: Number = objective_options.findIndex(option => option.isCorrect);
-    const options =  objective_options?.map(opt=> opt.text);
+    const correctAnswer: Number[] = []
+    
+    objective_options?.forEach((option: { isCorrect: any; }, i: Number) => {
+      option.isCorrect == true && correctAnswer.push(i)});
+
+    const options =  objective_options?.map((opt: { text: any; })=> opt.text);
+
     const setId = Quiz[0].setId;
 
     const addQuestion = await createQuestion(

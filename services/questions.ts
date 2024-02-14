@@ -33,6 +33,7 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
+  console.log("reqData", reqData)
   const {
     setId,
     type,
@@ -43,7 +44,7 @@ export async function createQuestion(reqData: Question) {
     createdById,
     editorContent,
   } = reqData;
-  console.log("reqData", reqData)
+  
 
   if (!setId) {
     return { error: "Please provide question set." };

@@ -35,7 +35,7 @@ export default function QuestionsListUI() {
     }
   };
 
-  const onDelete = () => {
+  const onActionTaken = () => {
     setTime(Date.now());
   };
   return (
@@ -49,7 +49,7 @@ export default function QuestionsListUI() {
         <QuestionsTable
           ques={quesData.questions}
           // getAvailableQuestions={getAvailableQuestions}
-          onDelete={onDelete}
+          onActionTaken={onActionTaken}
         />
       ) : (
         <EmptyState
