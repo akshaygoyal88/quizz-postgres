@@ -6,7 +6,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
 import { useSession } from "next-auth/react";
-import { QuestionType } from "@prisma/client";
+import { AnswerTypeE, QuestionType } from "@prisma/client";
 import { QuestionSubmitE } from "@/services/questions";
 
 function AddQuestionUI() {
@@ -19,6 +19,9 @@ function AddQuestionUI() {
   const [timer, setTimer] = useState("0");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [setId, setSetId] = useState<string | null>(null);
+  const [objAnsType, setObjAnsType] = useState<AnswerTypeE>(
+    AnswerTypeE.SINGLECHOICE
+  );
   const ses = useSession();
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}?createdById=${
@@ -31,6 +34,12 @@ function AddQuestionUI() {
     target: { value: React.SetStateAction<string> };
   }) => {
     setQuestionType(event.target.value);
+  };
+
+  const handleAnyTypeRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setObjAnsType(event.target.value);
   };
 
   const handleDescriptionChange = (e: any) => {
@@ -108,6 +117,8 @@ function AddQuestionUI() {
       action={QuestionSubmitE.ADD}
       handleOptionIncrease={handleOptionIncrease}
       handleOptionRemove={handleOptionRemove}
+      handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+      objAnsType={objAnsType}
     />
   );
 }

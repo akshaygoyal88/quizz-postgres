@@ -20,7 +20,7 @@ export default async function RootLayout({
     <html lang="en">
       <Provider>
         <body className={inter.className}>
-          <Nav />
+          {/* <Nav /> */}
           <main>{children}</main>
         </body>
       </Provider>

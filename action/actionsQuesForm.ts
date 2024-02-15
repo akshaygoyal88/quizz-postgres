@@ -33,7 +33,7 @@ export async function handleQuestionSubmit(
     createdById: rawFormData.createdById,
     solution: rawFormData.solution,
     editorContent: rawFormData.editorContent,
-    answerType: rawFormData.answerType,
+    answer_type: rawFormData.answer_type,
   };
   switch (action) {
     case QuestionSubmitE.ADD:

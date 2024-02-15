@@ -120,7 +120,7 @@ enum QuestionType {
   SUBJECTIVE
 }
 
-enum AnswerType {
+enum AnswerTypeE {
   SINGLECHOICE
   MULTIPLECHOICE
 }
@@ -141,7 +141,7 @@ model Question {
   Quiz                   Quiz[]
   UserQuizAnswers        UserQuizAnswers[]
   solution               String?                 @db.VarChar(1000)
-  // answer_type            AnswerType?
+  answer_type            AnswerTypeE?
 }
 
 model ObjectiveOptions {

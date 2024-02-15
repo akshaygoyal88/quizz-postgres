@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Textarea from "../Shared/Textarea";
-import { QuestionSet, QuestionType } from "@prisma/client";
+import { AnswerTypeE, QuestionSet, QuestionType } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
 import { useSession } from "next-auth/react";
@@ -35,6 +35,8 @@ interface QuestionFormProps {
   editorsContent?: string;
   handleOptionIncrease: () => void;
   handleOptionRemove: () => void;
+  handleAnyTypeRadioChange: (event: { target: { value: string } }) => void;
+  objAnsType: AnswerTypeE;
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -58,6 +60,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   handleOptionIncrease,
   handleOptionTextChange,
   handleOptionRemove,
+  handleAnyTypeRadioChange,
+  objAnsType,
 }) => {
   const session = useSession();
   const [error, setError] = useState<string | null>(null);
@@ -182,16 +186,17 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                   Add more options+
                 </span>
               </div>
-              {/* <div className="my-4 flex justify-between gap-4">
+              <div className="my-4 flex justify-between gap-4">
                 <label className="font-semibold">Type of Answer</label>
                 <div>
                   <input
                     type="radio"
                     id="Single Correct"
                     name="answer_type"
+                    value={AnswerTypeE.SINGLECHOICE}
                     // defaultValue={QuestionType.SUBJECTIVE}
-                    // checked={questionType === QuestionType.SUBJECTIVE}
-                    // onChange={handleRadioChange}
+                    checked={objAnsType === AnswerTypeE.SINGLECHOICE}
+                    onChange={handleAnyTypeRadioChange}
                   />
                   <label htmlFor="Single Correct" className="ml-2">
                     Single choice
@@ -202,15 +207,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     type="radio"
                     id="multipleChoice"
                     name="answer_type"
+                    value={AnswerTypeE.MULTIPLECHOICE}
                     // defaultValue={QuestionType.OBJECTIVE}
-                    // checked={questionType === QuestionType.OBJECTIVE}
-                    // onChange={handleRadioChange}
+                    checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
+                    onChange={handleAnyTypeRadioChange}
                   />
                   <label htmlFor="objective" className="ml-2">
                     Multiple choice
                   </label>
                 </div>
-              </div> */}
+              </div>
 
               {options.map((option, index) => (
                 <div

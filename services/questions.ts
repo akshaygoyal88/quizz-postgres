@@ -43,6 +43,7 @@ export async function createQuestion(reqData: Question) {
     timer,
     createdById,
     editorContent,
+    answer_type
   } = reqData;
   
 
@@ -66,6 +67,7 @@ export async function createQuestion(reqData: Question) {
             }
           : undefined,
       solution,
+      answer_type,
       createdById,
     },
   });
@@ -100,6 +102,7 @@ export async function editQuestions({
     solution,
     timer,
     editorContent,
+    answer_type
   } = reqData;
   const isAvailable = await db.question.findUnique({
     where: { id },
@@ -129,7 +132,8 @@ export async function editQuestions({
                 },
               }
             : undefined,
-       solution
+       solution,
+       answer_type
       },
     });
     return editQues;

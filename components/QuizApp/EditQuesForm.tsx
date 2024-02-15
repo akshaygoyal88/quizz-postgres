@@ -7,6 +7,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
 import { QuestionSubmitE } from "@/services/questions";
+import { AnswerTypeE } from "@prisma/client";
 
 interface availableSetTypes {
   name: string;
@@ -26,6 +27,9 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [timer, setTimer] = useState("0");
   const [setId, setSetId] = useState<string | null>(null);
+  const [objAnsType, setObjAnsType] = useState<AnswerTypeE>(
+    AnswerTypeE.SINGLECHOICE
+  );
   const {
     data: questionData,
     error: questionError,
@@ -59,6 +63,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       setCorrectAnswerIndex(correctAnswer);
       setDescription(questionData.solution);
       setTimer(questionData?.timer);
+      setObjAnsType(questionData.answer_type);
     } else if (questionData?.error) {
       setValidationError(questionData?.error);
     }
@@ -171,6 +176,12 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setTimer(time);
   };
 
+  const handleAnyTypeRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setObjAnsType(event.target.value);
+  };
+
   const handleOptionTextChange = (
     content: string,
     index: number,
@@ -209,6 +220,8 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       quesId={quesId}
       editorsContent={questionData?.editorContent}
       handleOptionIncrease={handleOptionIncrease}
+      handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+      objAnsType={objAnsType}
     />
   );
 }
