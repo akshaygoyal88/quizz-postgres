@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 
 function classNames(...classes) {
@@ -12,10 +12,14 @@ export default function SimpleToggle({
   checked: boolean;
   onChange: () => void;
 }) {
-  const [enabled, setEnabled] = useState(checked);
+  const [enabled, setEnabled] = useState();
+  console.log(checked);
+  useEffect(() => {
+    setEnabled(checked);
+  }, [checked]);
 
   const handleChange = () => {
-    setEnabled((prev) => !prev);
+    // setEnabled((prev) => !prev);
     onChange();
   };
 
@@ -24,7 +28,7 @@ export default function SimpleToggle({
       checked={enabled}
       onChange={handleChange}
       className={classNames(
-        enabled ? "bg-indigo-600" : "bg-gray-200",
+        enabled ? "bg-indigo-600" : "bg-gray-200 focus:ring-red-600",
         "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
       )}
     >

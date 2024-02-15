@@ -13,7 +13,7 @@ function AddQuestionUI() {
   const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState([]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number[]>([]);
-  const [validationError, setValidationError] = useState("");
+  const [validationError, setValidationError] = useState<string>("");
   const [questionType, setQuestionType] = useState(QuestionType.OBJECTIVE);
   const [description, setDescription] = useState("");
   const [timer, setTimer] = useState("0");
@@ -28,7 +28,6 @@ function AddQuestionUI() {
       ses.status !== "loading" && ses?.data?.id
     }`,
   });
-  const [answerType, setAnswerType] = useState();
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -39,6 +38,16 @@ function AddQuestionUI() {
   const handleAnyTypeRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
+    if (
+      objAnsType === AnswerTypeE.MULTIPLECHOICE &&
+      correctAnswerIndex.length > 1
+    ) {
+      setValidationError("Please select only one option for single choice");
+      setTimeout(() => {
+        setValidationError("");
+      }, 8000);
+      return;
+    }
     setObjAnsType(event.target.value);
   };
 
@@ -48,15 +57,24 @@ function AddQuestionUI() {
   };
 
   const handleCorrectOptionChange = (index: Number) => {
-    setValidationError("");
-    if (!correctAnswerIndex.includes(index)) {
+    if (
+      (objAnsType === AnswerTypeE.MULTIPLECHOICE ||
+        correctAnswerIndex.length == 0) &&
+      !correctAnswerIndex.includes(index)
+    ) {
       setCorrectAnswerIndex([...correctAnswerIndex, index]);
+    } else if (
+      objAnsType === AnswerTypeE.SINGLECHOICE &&
+      correctAnswerIndex.length === 0
+    ) {
+      setCorrectAnswerIndex([index]);
     } else {
       const updated = correctAnswerIndex.filter((i) => i !== index);
       setCorrectAnswerIndex(updated);
     }
-
-    setValidationError("");
+    setTimeout(() => {
+      setValidationError("");
+    }, 10000);
   };
 
   const handleOptionTextChange = (

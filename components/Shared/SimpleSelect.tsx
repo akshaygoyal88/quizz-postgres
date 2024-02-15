@@ -7,10 +7,7 @@ export default function SimpleSelect({
 }) {
   return (
     <div className="flex items-center my-4">
-      <label
-        htmlFor="location"
-        className="block text-sm font-medium leading-6 text-gray-900"
-      >
+      <label htmlFor="location" className="block text-lg font-semibold">
         {selectFor}
       </label>
       <select
