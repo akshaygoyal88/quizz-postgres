@@ -35,8 +35,8 @@ model User {
   profile_pic       String?
   isProfileComplete Boolean            @default(false)
   otps              UserOtp[]
-  createdShows      Show[]
-  ticket            Tickets[]
+  // createdShows      Show[]
+  // ticket            Tickets[]
   token             String?
   QuestionSet       QuestionSet[]
   Question          Question[]
@@ -59,46 +59,46 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
-enum ShowMode {
-  ONLINE
-  OFFLINE
-  BOTH
-}
+// enum ShowMode {
+//   ONLINE
+//   OFFLINE
+//   BOTH
+// }
 
-model Show {
-  id               String        @id @default(cuid())
-  Name             String
-  Type             String
-  Mode             ShowMode
-  StartDateAndTime DateTime
-  EndDateAndTime   DateTime?
-  noOfTickets      Int
-  createdBy        User          @relation(fields: [createdById], references: [id])
-  createdById      String
-  createdAt        DateTime      @default(now()) @map(name: "created_at")
-  TicketGroup      TicketGroup[]
-  Tickets          Tickets[]
-}
+// model Show {
+//   id               String        @id @default(cuid())
+//   Name             String
+//   Type             String
+//   Mode             ShowMode
+//   StartDateAndTime DateTime
+//   EndDateAndTime   DateTime?
+//   noOfTickets      Int
+//   createdBy        User          @relation(fields: [createdById], references: [id])
+//   createdById      String
+//   createdAt        DateTime      @default(now()) @map(name: "created_at")
+//   TicketGroup      TicketGroup[]
+//   Tickets          Tickets[]
+// }
 
-model TicketGroup {
-  id             String @id @default(cuid())
-  ticketGroup    String
-  showId         String
-  show           Show   @relation(fields: [showId], references: [id])
-  SeatZoneNumber Int?
-}
+// model TicketGroup {
+//   id             String @id @default(cuid())
+//   ticketGroup    String
+//   showId         String
+//   show           Show   @relation(fields: [showId], references: [id])
+//   SeatZoneNumber Int?
+// }
 
-model Tickets {
-  id          String  @id @default(cuid())
-  showId      String?
-  show        Show?   @relation(fields: [showId], references: [id])
-  ticketGroup String?
-  quantity    Int
-  price       Int
-  description String? @db.LongText
-  createdBy   User    @relation(fields: [createdById], references: [id])
-  createdById String
-}
+// model Tickets {
+//   id          String  @id @default(cuid())
+//   showId      String?
+//   show        Show?   @relation(fields: [showId], references: [id])
+//   ticketGroup String?
+//   quantity    Int
+//   price       Int
+//   description String? @db.LongText
+//   createdBy   User    @relation(fields: [createdById], references: [id])
+//   createdById String
+// }
 
 model QuestionSet {
   id              String            @id @default(cuid())
@@ -126,22 +126,22 @@ enum AnswerTypeE {
 }
 
 model Question {
-  id                     String                  @id @default(cuid())
-  question_text          String?                 @db.Text
-  type                   QuestionType // "objective" or "subjective"
-  objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
-  subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
-  timer                  Int                     @default(0)
-  createdAt              DateTime                @default(now()) @map(name: "created_at")
-  updatedAt              DateTime                @updatedAt @map(name: "updated_at")
-  editorContent          String?                 @db.VarChar(1000)
-  createdBy              User                    @relation(fields: [createdById], references: [id])
-  createdById            String
-  isDeleted              Boolean                 @default(false)
-  Quiz                   Quiz[]
-  UserQuizAnswers        UserQuizAnswers[]
-  solution               String?                 @db.VarChar(1000)
-  answer_type            AnswerTypeE?
+  id                String             @id @default(cuid())
+  question_text     String?            @db.Text
+  type              QuestionType // "objective" or "subjective"
+  objective_options ObjectiveOptions[] @relation("QuestionToAnswer")
+  // subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
+  timer             Int                @default(0)
+  createdAt         DateTime           @default(now()) @map(name: "created_at")
+  updatedAt         DateTime           @updatedAt @map(name: "updated_at")
+  editorContent     String?            @db.VarChar(1000)
+  createdBy         User               @relation(fields: [createdById], references: [id])
+  createdById       String
+  isDeleted         Boolean            @default(false)
+  Quiz              Quiz[]
+  UserQuizAnswers   UserQuizAnswers[]
+  solution          String?            @db.VarChar(1000)
+  answer_type       AnswerTypeE?
 }
 
 model ObjectiveOptions {
@@ -152,13 +152,13 @@ model ObjectiveOptions {
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
-model SubjectiveDescription {
-  id          String   @id @default(cuid())
-  problem     String   @db.LongText
-  description String   @db.LongText
-  questionId  String
-  question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
-}
+// model SubjectiveDescription {
+//   id          String   @id @default(cuid())
+//   problem     String   @db.LongText
+//   description String   @db.LongText
+//   questionId  String
+//   question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
+// }
 
 model Quiz {
   id          String       @id @default(cuid())
