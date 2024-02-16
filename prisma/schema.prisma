@@ -32,7 +32,7 @@ model User {
   state             String?
   city              String?
   pincode           String?
-  profile_pic       String?
+  profile_pic       String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
   isProfileComplete Boolean            @default(false)
   otps              UserOtp[]
   createdShows      Show[]
@@ -42,7 +42,7 @@ model User {
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
-  userImage         String?
+  userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
 }
 
 model UserOtp {

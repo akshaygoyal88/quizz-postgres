@@ -108,7 +108,6 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     type: QuestionType;
     timeOver: boolean;
   }) => {
-    console.log(timeTaken, timeOver);
     let userQueRes: { type: QuestionType; [key: string]: any } = { type };
     if (answer) {
       if (type === QuestionType.OBJECTIVE) {
