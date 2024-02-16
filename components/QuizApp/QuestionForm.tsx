@@ -61,7 +61,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   handleOptionTextChange,
   handleOptionRemove,
   handleAnyTypeRadioChange,
-  objAnsType,
+  objAnsType
 }) => {
   const session = useSession();
   const [error, setError] = useState<string | null>(null);
@@ -144,10 +144,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         {/* <div className="m-4 w-3/4"> */}
         <div className="flex flex-wrap justify-between items-center lg:flex-row">
           <h1 className="text-lg font-semibold">{headingText}</h1>
-          <SimpleSelect
-            selectFor="Visibility"
-            items={["Public", "private", "Password"]}
-          />
           <button className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg">
             {buttonText}
           </button>
@@ -160,24 +156,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         {action == QuestionSubmitE.EDIT && (
           <input type="hidden" name="id" value={quesId} />
         )}
-        <div className="mb-4">
-          <select
-            className="w-full border rounded-md p-2"
-            defaultValue={defaultQuestionSet?.name}
-            name="setId"
-          >
-            <option value="">Select question set</option>
-            {data &&
-              data.map((queSet: QuestionSet) =>
-                !queSet.isDeleted ? (
-                  <option key={queSet.id} value={queSet.id}>
-                    {queSet.name}
-                  </option>
-                ) : null
-              )}
-          </select>
-        </div>
-        <div className="mb-4">
+
+        <div className="mb-4 bg-gray-100 p-3 rounded-md">
           <label className="block text-lg font-semibold" htmlFor="ques">
             Question:
           </label>
@@ -187,60 +167,54 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             imagesList={imagesList}
             idx={"ques"}
           />
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <label className="font-semibold">Question Type:</label>
-            <div>
-              <select
-                className="w-48 m-2 block rounded-md border-0 py-1.5 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                defaultValue={questionType}
-                name="questionType"
-                onChange={handleRadioChange}
-              >
-                <option value={QuestionType.OBJECTIVE}>Objective</option>
-                <option value={QuestionType.SUBJECTIVE}>Subjective</option>
-              </select>
+          {/* SETTINGS */}
+          <div className="">
+            <div className="flex items-center space-x-2">
+              <label className="font-semibold">Question Type:</label>
+              <div>
+                <select
+                  className="w-48 m-2 block rounded-md border-0 py-1.5 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  defaultValue={questionType}
+                  name="questionType"
+                  onChange={handleRadioChange}
+                >
+                  <option value={QuestionType.OBJECTIVE}>Objective</option>
+                  <option value={QuestionType.SUBJECTIVE}>Subjective</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <label className="font-semibold py-2">Timer (in secs):</label>
-            <input
-              type="number"
-              className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={timer}
-              name="timer"
+            <div className="flex items-center space-x-2">
+              <label className="font-semibold py-2">Timer (in secs):</label>
+              <input
+                type="number"
+                className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                defaultValue={timer}
+                name="timer"
+              />
+            </div>
+            <SimpleSelect
+              selectFor="Visibility"
+              items={["Public", "private", "Password"]}
             />
+            <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
           </div>
-        </div>
-
-        {questionType === QuestionType.OBJECTIVE && (
-          <div className="mb-4">
-            <div className="text-red-500 mb-2">{validationError}</div>
-            <div className="flex justify-between">
-              <label className="block text-lg font-semibold">Options:</label>
-              <span
-                className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
-                onClick={handleOptionIncrease}
-              >
-                Add more options+
-              </span>
-            </div>
-            <div className="my-4 flex justify-between gap-4">
-              <label className="font-semibold">Type of Answer:</label>
+          {questionType === QuestionType.OBJECTIVE && (
+            <div className="my-4 flex gap-4">
+              <label className="font-semibold">
+                Is this question has multiple correct answers?
+              </label>
               <div>
                 <input
                   type="radio"
-                  id="Single Correct"
+                  id="SingleCorrect"
                   name="answer_type"
                   value={AnswerTypeE.SINGLECHOICE}
                   // defaultValue={QuestionType.SUBJECTIVE}
                   checked={objAnsType === AnswerTypeE.SINGLECHOICE}
                   onChange={handleAnyTypeRadioChange}
                 />
-                <label htmlFor="Single Correct" className="ml-2">
-                  Single choice
+                <label htmlFor="SingleCorrect" className="ml-2">
+                  No
                 </label>
               </div>
               <div>
@@ -253,21 +227,33 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                   checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
                   onChange={handleAnyTypeRadioChange}
                 />
-                <label htmlFor="objective" className="ml-2">
-                  Multiple choice
+                <label htmlFor="multipleChoice" className="ml-2">
+                  Yes
                 </label>
               </div>
             </div>
+          )}
+        </div>
+
+        {questionType === QuestionType.OBJECTIVE && (
+          <div className="mb-4">
+            <div className="my-3 text-right">
+              <div className="text-red-500 mb-2">{validationError}</div>
+              <span
+                className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
+                onClick={handleOptionIncrease}
+              >
+                Add more options+
+              </span>
+            </div>
 
             {options.map((option, index) => (
-              <div key={index} className="flex flex-col my-2">
-                <span className="flex text-blue-600 justify-end hover:cursor-pointer">
-                  <p onClick={() => handleOptionRemove(index)}>Remove</p>
-                </span>
-                <div className="flex flex-col lg:flex-row items-center justify-between">
-                  <span className="py-2">
-                    <p>Option:{index + 1}</p>
-                  </span>
+              <div
+                key={index}
+                className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md"
+              >
+                <div className="flex justify-between">
+                  <span className="py-2">Option:{index + 1}</span>
                   <span className="flex items-center gap-5 py-2">
                     <label>Is correct</label>
                     <SimpleToggle
@@ -275,6 +261,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                       onChange={() => handleCorrectOptionChange(index)}
                     />
                   </span>
+                  <span
+                    className="cursor-pointer text-red-600"
+                    onClick={() => handleOptionRemove(index)}
+                  >
+                    Remove
+                  </span>
+                </div>
+                <div className="">
                   <TinyMCEEditor
                     imagesList={imagesList}
                     editorsContent={savedOptions[index]}
@@ -287,7 +281,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             ))}
           </div>
         )}
-        <div className="mb-4">
+        <div className="mt-4 p-3 bg-cyan-100 rounded-md">
           <label
             className="block text-gray-700 font-bold mb-2"
             htmlFor="description"
@@ -307,3 +301,31 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 };
 
 export default QuestionForm;
+
+function SelectSet({
+  defaultValue,
+  data
+}: {
+  defaultValue: string;
+  data: QuestionSet[];
+}) {
+  return (
+    <div className="mb-4">
+      <select
+        className="w-full border rounded-md p-2"
+        defaultValue={defaultValue}
+        name="setId"
+      >
+        <option value="">Select question set</option>
+        {data &&
+          data.map((queSet: QuestionSet) =>
+            !queSet.isDeleted ? (
+              <option key={queSet.id} value={queSet.id}>
+                {queSet.name}
+              </option>
+            ) : null
+          )}
+      </select>
+    </div>
+  );
+}

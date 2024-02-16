@@ -11,7 +11,7 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-  PlusIcon,
+  PlusIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import pathName from "@/constants";
@@ -21,7 +21,7 @@ const navigation = [
     name: "Dashboard",
     href: pathName.dashboard.path,
     icon: HomeIcon,
-    current: true,
+    current: true
   },
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
@@ -29,21 +29,21 @@ const navigation = [
     name: "Create set",
     href: pathName.quizAdd.path,
     icon: PlusIcon,
-    current: false,
+    current: false
   },
   {
     name: "Question Set/Subject",
     href: pathName.quiz.path,
     icon: FolderIcon,
-    current: false,
+    current: false
   },
   {
     name: "All Questions",
     href: `${pathName.questions.path}?page=1`,
     icon: DocumentDuplicateIcon,
-    current: false,
+    current: false
   },
-  { name: "Publish test", href: "#", icon: CalendarIcon, current: false },
+  { name: "Publish test", href: "#", icon: CalendarIcon, current: false }
 ];
 
 function classNames(...classes) {
@@ -51,7 +51,7 @@ function classNames(...classes) {
 }
 
 export default function LeftSideBar({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
