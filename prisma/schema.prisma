@@ -42,6 +42,7 @@ model User {
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
+  userImage         String?
 }
 
 model UserOtp {
@@ -192,6 +193,7 @@ model UserQuizAnswers {
   timeTaken       Int?
   timeOver        Boolean?              @default(false)
   isCorrect       Boolean?              @default(false)
+  // finalSubmit     Boolean?              @default(false)
 }
 
 model UserNotification {

@@ -13,7 +13,7 @@ export default function RightSectionQuesList({
   handleQuesNoClick,
   currentQuestionId,
   currInitializedQue,
-}) {
+}: {}) {
   return (
     <div className="grid grid-cols-1 gap-4">
       <section aria-labelledby="candidate-info-title">
@@ -56,6 +56,15 @@ export default function RightSectionQuesList({
                   </div>
                 ))}
               </div>
+              {currentQuestionId ===
+                questionStates[questionStates.length - 1].id && (
+                <button
+                  className="mx-2 bg-blue-500 px-4 py-2 rounded-sm text-white"
+                  onClick={() => {}}
+                >
+                  Submit Test
+                </button>
+              )}
             </div>
           </div>
         </div>
