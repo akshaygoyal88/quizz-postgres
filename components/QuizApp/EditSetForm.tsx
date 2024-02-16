@@ -1,23 +1,13 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import InputWithLabel from "../Shared/InputWithLabel";
-import Textarea from "../Shared/Textarea";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { handleQuestionSetSubmit } from "@/action/actionSetForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
-
+import SetForm from "./SetForm";
+import { useSession } from "next-auth/react";
 interface QuestionSetFormProps {
-  onSubmit: (formData: FormData) => void;
   setId: string;
-}
-
-interface FormData {
-  name: string;
-  description?: string;
 }
 
 const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
@@ -29,16 +19,11 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
     url: `${pathName.questionSetApi.path}/${setId}`,
   });
 
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-  });
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const router = useRouter();
+  const [initialFormData, setInitialFormData] = useState<Object>({});
   const [addSetSuccessMessage, setAddSetSuccessMessage] = useState<
     string | null
   >(null);
+  const session = useSession();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -55,152 +40,16 @@ const EditSetForm: React.FC<QuestionSetFormProps> = ({ setId }) => {
 
   useEffect(() => {
     if (setsInfo) {
-      setFormData({ name: setsInfo.name, description: setsInfo.description });
+      setInitialFormData(setsInfo);
     }
   }, [setsInfo]);
-
-  // const handleInputChange = (
-  //   e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setFormData({ ...formData, [name]: value });
-  // };
-
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   const {
-  //     data: editSetRes,
-  //     error: editSetError,
-  //     isLoading: editSetIsLoading,
-  //   } = await fetchData({
-  //     url: `${pathName.questionSetApi.path}/${setId}`,
-  //     method: FetchMethodE.PUT,
-  //     body: formData,
-  //   });
-
-  //   if (!editSetError && !editSetRes?.error) {
-  //     setSuccessMessage("Successfully updated");
-  //     setTimeout(() => {
-  //       setSuccessMessage("");
-  //     }, 10000);
-  //   } else if (editSetRes.error) {
-  //     setError(editSetRes.error);
-  //   } else {
-  //     setError(editSetError);
-  //   }
-  // };const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   const {
-  //     data: editSetRes,
-  //     error: editSetError,
-  //     isLoading: editSetIsLoading,
-  //   } = await fetchData({
-  //     url: `${pathName.questionSetApi.path}/${setId}`,
-  //     method: FetchMethodE.PUT,
-  //     body: formData,
-  //   });
-
-  //   if (!editSetError && !editSetRes?.error) {
-  //     setSuccessMessage("Successfully updated");
-  //     setTimeout(() => {
-  //       setSuccessMessage("");
-  //     }, 10000);
-  //   } else if (editSetRes.error) {
-  //     setError(editSetRes.error);
-  //   } else {
-  //     setError(editSetError);
-  //   }
-  // };
-
-  const formAction = async (formData: FormData) => {
-    setError("");
-    const res = await handleQuestionSetSubmit(
-      formData,
-      QuestionSetSubmitE.EDIT
-    );
-    if (res.error) {
-      setError(res.error);
-    } else {
-      setSuccessMessage("Successfully updated");
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 10000);
-    }
-  };
-
   return (
-    <div className="h-screen m-4 flex flex-col items-center gap-5">
-      <h1 className="font-bold text-2xl">Edit Set</h1>
-      {addSetSuccessMessage && (
-        <p className="bg-green-500 px-10 py-1 text-white m-3">
-          {addSetSuccessMessage}
-        </p>
-      )}
-      <form
-        action={formAction}
-        // onSubmit={handleSubmit}
-        className="flex flex-col gap-5"
-      >
-        <input type="hidden" name="id" value={setId} />
-        <InputWithLabel
-          type="text"
-          id="name"
-          name="name"
-          defaultValue={formData.name}
-          // onChange={handleInputChange}'
-          label="Name:"
-          className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-        />
-        <div className="flex flex-col justify-between">
-          <label className="block text-sm font-medium leading-6 text-gray-900">
-            Action:
-          </label>
-          <select
-            defaultValue=""
-            name="action"
-            className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white"
-          >
-            <option value="Publish">Publish</option>
-            <option value="Draft">Draft</option>
-            <option value="Archived">Archived</option>
-          </select>
-        </div>
-
-        <Textarea
-          label="Description"
-          id="description"
-          name="description"
-          defaultValue={formData.description}
-          // onChange={handleInputChange}
-          className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-        />
-        <InputWithLabel
-          type="number"
-          id="price"
-          name="price"
-          // onChange={handleInputChange}
-          label="Price:"
-          className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
-          defaultValue={undefined}
-          step="0.1"
-          value={undefined}
-        />
-        {successMessage && (
-          <p className="bg-green-600 px-4 py-2 text-white m-3">
-            {successMessage}
-          </p>
-        )}
-
-        <div className="text-red-500 mb-2">{error}</div>
-
-        <button
-          className="bg-gray-500 text-white font-semibold px-4 py-2"
-          type="submit"
-        >
-          Edit
-        </button>
-      </form>
-    </div>
+    <SetForm
+      session={session}
+      action={QuestionSetSubmitE.EDIT}
+      addSetSuccessMessage={addSetSuccessMessage}
+      initialFormData={initialFormData}
+    />
   );
 };
 

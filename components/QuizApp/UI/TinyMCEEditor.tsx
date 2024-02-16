@@ -93,7 +93,7 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       apiKey="9iy1f4gyicomt4zn9qfm8rtwtg9zfd1mdhrddt5894jbv5a8"
       initialValue={editorVal}
       init={{
-        height: 500,
+        height: 200,
         plugins:
           "gallery image advlist autolink lists image charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen nonbreaking save  emoticons paste textpattern media image imagetools",
         // menubar: "insert",

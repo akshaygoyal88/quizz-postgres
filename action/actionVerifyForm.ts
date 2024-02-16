@@ -1,8 +1,8 @@
 "use server";
 
-import { verifyUser } from "@/Services/user";
+import { UserSerivce } from "@/services";
 
 export async function handleSubmitVerifyForm(formData: FormData){
     const rawFormData = Object.fromEntries(formData.entries());
-    return await verifyUser(rawFormData);
+    return await UserSerivce.verifyUser(rawFormData);
 }

@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -17,8 +16,9 @@ const NotificationIcon: React.FC = () => {
   } = useFetch({
     url: `${pathName.notificationApi.path}/${ses?.data?.id}?${actionTakenValue}`,
   });
-  const unReadNotification = notificationData?.find((notification: { isRead: boolean; }) => !notification.isRead);
-
+  const unReadNotification = notificationData?.find(
+    (notification: { isRead: boolean }) => !notification.isRead
+  );
 
   const handleIconClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -30,7 +30,7 @@ const NotificationIcon: React.FC = () => {
 
   const actionTaken = () => {
     setActionTakenValue(Math.random());
-  }
+  };
 
   return (
     <div className="relative">
@@ -55,7 +55,7 @@ const NotificationIcon: React.FC = () => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="w-6 h-6 text-blue-500"
+            className="w-6 h-6 text-yellow-500"
           >
             <path
               fillRule="evenodd"
@@ -66,14 +66,14 @@ const NotificationIcon: React.FC = () => {
         )}
       </button>
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2">
+        <div className="absolute right-0 mt-2 z-50">
           <UserNotificationDropdown
             userId={ses?.data?.id}
             notificationData={notificationData}
             onClose={handleCloseDropdown}
             actionTaken={actionTaken}
           />
-       </div>
+        </div>
       )}
     </div>
   );

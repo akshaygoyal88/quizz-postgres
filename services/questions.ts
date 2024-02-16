@@ -20,6 +20,7 @@ export async function getAllQuestions({
       objective_options: true,
       subjective_description: true,
       createdBy: true,
+      Quiz: true,
     },
     skip,
     take: pageSize,
@@ -32,17 +33,19 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
+  console.log("reqData", reqData)
   const {
     setId,
     type,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
     createdById,
     editorContent,
+    answer_type
   } = reqData;
-  console.log("reqData", reqData)
+  
 
   if (!setId) {
     return { error: "Please provide question set." };
@@ -58,20 +61,13 @@ export async function createQuestion(reqData: Question) {
               createMany: {
                 data: options.map((optionText: string, index: Number) => ({
                   text: optionText,
-                  isCorrect: index == correctAnswer,
+                  isCorrect: correctAnswer.includes(index),
                 })),
               },
             }
           : undefined,
-      subjective_description:
-        type === QuestionType.SUBJECTIVE
-          ? {
-              create: {
-                problem: editorContent,
-                description,
-              },
-            }
-          : undefined,
+      solution,
+      answer_type,
       createdById,
     },
   });
@@ -96,17 +92,17 @@ export async function editQuestions({
   id:string;
   reqData: Question
 }){
-  console.log("edit-------->", id,reqData)
+
 
   const {
+    setId,
     type,
-    questionSet,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
-    isDeleted,
-    editorContent
+    editorContent,
+    answer_type
   } = reqData;
   const isAvailable = await db.question.findUnique({
     where: { id },
@@ -131,26 +127,17 @@ export async function editQuestions({
                 createMany: {
                   data: options.map((optionText: string, index: Number) => ({
                     text: optionText,
-                    isCorrect: index == correctAnswer,
+                    isCorrect: correctAnswer.includes(index),
                   })),
                 },
               }
             : undefined,
-        subjective_description:
-          type === QuestionType.SUBJECTIVE
-            ? {
-                create: {
-                  problem: question_text,
-                  description,
-                },
-              }
-            : undefined,
+       solution,
+       answer_type
       },
     });
     return editQues;
   } else {
     return {error: "Invalid question"}
   }
-  
-  
 }

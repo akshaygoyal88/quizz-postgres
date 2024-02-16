@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { UserNotification } from "@prisma/client";
 import { fetchData, FetchMethodE } from "@/utils/fetch";
 import pathName from "@/constants";
+import { useSession } from "next-auth/react";
+import { NotificationService } from "@/services";
+import { useFetch } from "@/hooks/useFetch";
 
 interface NotificationDropdownProps {
   onClose: () => void;
@@ -17,29 +20,45 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   actionTaken,
 }) => {
   const [showAll, setShowAll] = useState(false);
+  const ses = useSession();
+  const {
+    data: isProfileComplete,
+    error: proComError,
+    isLoading: proIsLoading,
+  } = useFetch({ url: `/api/getProfileCompleted/${ses?.data?.id}` });
 
   const handleClearAll = async () => {
-    const {
-      data: dltRes,
-      error: dltErr,
-      isLoading: dltLoading,
-    } = await fetchData({
-      url: `${pathName.notificationApi.path}/${userId}`,
-      method: FetchMethodE.DELETE,
-    });
+    if (ses.status === "authenticated" && isProfileComplete) {
+      const {
+        data: dltRes,
+        error: dltErr,
+        isLoading: dltLoading,
+      } = await fetchData({
+        url: `${pathName.notificationApi.path}/${userId}`,
+        method: FetchMethodE.DELETE,
+      });
 
-    // onClose();
-    actionTaken();
+      // onClose();
+      actionTaken();
+    }
   };
 
-  const handleClickRead = async (notificationId: string) => {
+  const handleClickRead = async (notification: UserNotification) => {
+    if (
+      ses.status === "authenticated" &&
+      !isProfileComplete &&
+      notification?.message?.includes("Profile not completed")
+    ) {
+      return;
+    }
     const { data, error, isLoading } = await fetchData({
-      url: `${pathName.notificationApi.path}/${notificationId}`,
+      url: `${pathName.notificationApi.path}/${notification.id}`,
       method: FetchMethodE.PUT,
       body: {
         isRead: true,
       },
     });
+
     actionTaken();
   };
 
@@ -60,13 +79,20 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   };
 
-  const handleClearNotification = async (notificationId: string) => {
+  console.log(isProfileComplete);
+
+  const handleClearNotification = async (notification: UserNotification) => {
+    if (
+      ses.status === "authenticated" &&
+      !isProfileComplete &&
+      notification?.message?.includes("Profile not completed")
+    ) {
+      return;
+    }
     const { data, error, isLoading } = await fetchData({
-      url: `${pathName.notificationApi.path}/${userId}?notificationId=${notificationId}`,
+      url: `${pathName.notificationApi.path}/${userId}?notificationId=${notification.id}`,
       method: FetchMethodE.DELETE,
-     
     });
-    console.log(data);
     actionTaken();
   };
 
@@ -92,35 +118,36 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     ? "text-gray-600 bg-gray-200 "
                     : "font-bold bg-blue-300"
                 } px-4 py-3 flex items-start rounded-md hover:cursor-pointer transition duration-300 ease-in-out`}
-                onClick={() => handleClickRead(notification.id)}
+                onClick={() => handleClickRead(notification)}
               >
-                
                 <span>
-                <p className="text-sm">{notification.message}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {formatDate(notification.time)}
-                </p>
+                  <p className="text-sm">{notification.message}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formatDate(notification.time)}
+                  </p>
                 </span>
-                {notification.isRead && <button
-                  className="rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none"
-                  onClick={() => handleClearNotification(notification.id,)}
-                >
-                  {/* <XIcon className="h-4 w-4" /> */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
+                {notification.isRead && (
+                  <button
+                    className="rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none"
+                    onClick={() => handleClearNotification(notification)}
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
-                </button>}
+                    {/* <XIcon className="h-4 w-4" /> */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             ))}
             {sortedNotifications.length > 5 && !showAll && (

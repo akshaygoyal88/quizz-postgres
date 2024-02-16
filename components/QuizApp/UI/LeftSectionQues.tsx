@@ -2,31 +2,44 @@
 
 import Textarea from "@/components/Shared/Textarea";
 import { QuizContext } from "@/context/QuizProvider";
-import { ObjectiveOptions, QuestionType } from "@prisma/client";
+import {
+  ObjectiveOptions,
+  Question,
+  QuestionType,
+  UserQuizAnswers,
+} from "@prisma/client";
 import React, { useContext, useEffect, useState } from "react";
-import parse from "html-react-parser";
 import HTMLReactParser from "html-react-parser";
-import ReactHtmlParser, {
-  processNodes,
-  convertNodeToElement,
-  htmlparser2,
-} from "react-html-parser";
 
 export default function LeftSectionQues({
-  questions,
   currentQuestionId,
   handleMarkReviewQuestion,
   handleAnswerQuestion,
   handlePreviousQuestion,
   currInitializedQue,
-  handleNextQuestion,
+}: {
+  currentQuestionId: string;
+  handleMarkReviewQuestion: () => void;
+  handleAnswerQuestion: ({
+    answer,
+    timeTaken,
+    timeOver,
+    type,
+  }: {
+    answer: string;
+    timeTaken: number;
+    type: QuestionType;
+    timeOver: boolean;
+  }) => void;
+  handlePreviousQuestion: () => void;
+  currInitializedQue: Question;
 }) {
   const quizCtx = useContext(QuizContext);
   const filtredQues = quizCtx.questionSet.find(
     (q) => q.id === currentQuestionId
   );
-  const isTimerAvailable = filtredQues.timer !== 0;
-  const [timer, setTimer] = useState(filtredQues.timer);
+  const isTimerAvailable = filtredQues?.timer !== 0;
+  const [timer, setTimer] = useState(filtredQues?.timer);
   const [answer, setAnswer] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,8 +80,8 @@ export default function LeftSectionQues({
   }, [currentQuestionId]);
 
   const handleSubmitNextClick = () => {
-    const timeTaken = isTimerAvailable ? filtredQues.timer - timer : timer;
-    const timeOver = isTimerAvailable && timeTaken === filtredQues.timer;
+    const timeTaken = isTimerAvailable ? filtredQues?.timer - timer : timer;
+    const timeOver = isTimerAvailable && timeTaken === filtredQues?.timer;
     filtredQues &&
       handleAnswerQuestion({
         answer,
@@ -87,6 +100,7 @@ export default function LeftSectionQues({
     setAnswer(str);
   };
   console.log(filtredQues);
+  const optionsIndex = ["a", "b", "c", "d", "e", "f"];
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
@@ -111,13 +125,13 @@ export default function LeftSectionQues({
             {/* <div
               dangerouslySetInnerHTML={{ __html: filtredQues?.editorContent }}
             /> */}
-            <div>{ReactHtmlParser(filtredQues?.editorContent)}</div>
+            <div>{HTMLReactParser(filtredQues?.editorContent)}</div>
 
-            {filtredQues.type === QuestionType.OBJECTIVE ? (
+            {filtredQues?.type === QuestionType.OBJECTIVE ? (
               <div className="mt-4">
                 {filtredQues.objective_options.map(
                   (option: ObjectiveOptions, index: Number) => (
-                    <label key={index} className="block p-4">
+                    <div key={index} className="p-4 flex items-center">
                       <input
                         type="radio"
                         name="options"
@@ -125,10 +139,11 @@ export default function LeftSectionQues({
                         onChange={() => handleAnsOptInput(option.id)}
                         checked={answer === option.id}
                       />
+                      <text className="p-2">{`(${optionsIndex[index]})`}</text>
                       <span className="ml-2">
-                        {ReactHtmlParser(option.text)}
+                        {HTMLReactParser(option.text)}
                       </span>
-                    </label>
+                    </div>
                   )
                 )}
               </div>
@@ -159,19 +174,10 @@ export default function LeftSectionQues({
             </button>
             <button
               onClick={handleSubmitNextClick}
-              // disabled={timer === 0}
-              // className={`mr-4 px-4 py-2 ${timer === 0 ? 'bg-gray-300' : 'bg-blue-500'} text-white rounded-md`}
               className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
             >
               Submit and Next
             </button>
-
-            {/* <button
-              onClick={handleNextQuestion}
-              className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
-            >
-              Next
-            </button> */}
           </div>
         </div>
       </section>

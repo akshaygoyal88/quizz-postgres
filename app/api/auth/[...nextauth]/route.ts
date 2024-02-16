@@ -3,7 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { db } from "@/db";
-import { UserSerivce } from "@/services";
+import { NotificationService, UserSerivce } from "@/services";
+
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 export const authOptions: NextAuthOptions = {
@@ -35,6 +36,14 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (passwordCorrect) {
+            if(!user?.isProfileComplete){
+              const userId: string = user?.id;
+              const notificationAvailable = await NotificationService.getNotifications(userId);
+              const notiForProfile = notificationAvailable.find(noti=> noti?.message?.includes("Profile not completed"))
+              if(!notiForProfile){
+                await NotificationService.createNotiForProfileComplete(userId);
+              }
+            }
             return {
               id: user.id,
               email: user.email,
@@ -47,6 +56,7 @@ export const authOptions: NextAuthOptions = {
               profile_pic: user.profile_pic,
               isProfileComplete: user.isProfileComplete
             };
+            
           } else {
             throw new Error("Invalid password.");
           }

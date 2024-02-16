@@ -10,6 +10,7 @@ import { FetchMethodE, fetchData } from "@/utils/fetch";
 import pathName from "@/constants";
 import { useSession } from "next-auth/react";
 import { useFetch } from "@/hooks/useFetch";
+import { handleProfileSubmit } from "@/action/actionProfileForm";
 
 interface UserEmail {
   email?: string;
@@ -38,11 +39,8 @@ interface FormErrors {
 
 export default function Profile({ email }: UserEmail) {
   const [userData, setUserData] = useState<UserData>({});
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [state, setState] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [pincode, setPincode] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -52,9 +50,6 @@ export default function Profile({ email }: UserEmail) {
 
   const session = useSession();
 
-  const addressChange = (e: FormEvent) => {
-    setAddress((e.target as HTMLInputElement).value);
-  };
   const cityChange = (e: FormEvent) => {
     delete error.city;
     setCity((e.target as HTMLInputElement).value);
@@ -71,12 +66,6 @@ export default function Profile({ email }: UserEmail) {
       setPincode((e.target as HTMLInputElement).value);
     }
   };
-  const firstNameChange = (e: FormEvent) => {
-    setFirstName((e.target as HTMLInputElement).value);
-  };
-  const lastNameChange = (e: FormEvent) => {
-    setLastName((e.target as HTMLInputElement).value);
-  };
 
   const handlePhoneChange = (value: string) => {
     delete error.mobile_number;
@@ -90,21 +79,6 @@ export default function Profile({ email }: UserEmail) {
     }
     setPhoneNumber(value);
   };
-
-  // const getUserData = async () => {
-  //   try {
-  //     const res = await fetch("/api/user/", {
-  //       method: "GET",
-  //     });
-  //     if (res.ok) {
-  //       const data = await res.json();
-  //       setUserData({ ...data });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const {
     data: proData,
     error: proDataErr,
@@ -118,94 +92,33 @@ export default function Profile({ email }: UserEmail) {
   }, [proData]);
 
   useEffect(() => {
-    setPhoneNumber(userData.mobile_number || "");
-    setFirstName(userData.first_name || "");
-    setLastName(userData.last_name || "");
-    setAddress(userData.address || "");
     setCountry(userData.country || "");
-    setCity(userData.city || "");
     setState(userData.state || "");
-    setPincode(userData.pincode || "");
   }, [userData]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    // const parsedPhoneNumber = phoneNumber && parsePhoneNumber(phoneNumber);
-    // if (!parsedPhoneNumber || parsedPhoneNumber.nationalNumber.length < 10) {
-    //   setError("Phone number should not be less than 10 digits");
-    //   setTimeout(() => setError(""), 10000);
-    //   return;
-    // }
-
-    const setValues = async () => {
-      let updatedUserNewData = {};
-
-      if (phoneNumber) {
-        updatedUserNewData = {
-          ...updatedUserNewData,
-          mobile_number: phoneNumber,
-        };
-      }
-      if (firstName) {
-        updatedUserNewData = { ...updatedUserNewData, first_name: firstName };
-      }
-      if (lastName) {
-        updatedUserNewData = { ...updatedUserNewData, last_name: lastName };
-      }
-      if (address) {
-        updatedUserNewData = { ...updatedUserNewData, address };
-      }
-      if (country) {
-        updatedUserNewData = { ...updatedUserNewData, country: country };
-      }
-      if (state) {
-        updatedUserNewData = { ...updatedUserNewData, state };
-      }
-      if (city) {
-        updatedUserNewData = { ...updatedUserNewData, city };
-      }
-      if (pincode) {
-        updatedUserNewData = { ...updatedUserNewData, pincode };
-      }
-      return updatedUserNewData;
-    };
-
-    const updatedData = await setValues();
-
-    const {
-      data: updateProRes,
-      error: updateProError,
-      isLoading: updateProIsLoading,
-    } = await fetchData({
-      url: `${pathName.updateProfileApi.path}/${session?.data?.id}`,
-      method: FetchMethodE.PUT,
-      body: { ...updatedData },
-    });
-
-    if (!updateProError) {
-      if (updateProRes.error) {
-        setError(updateProRes.error);
-        return;
-      }
-      router.refresh();
+  const formAction = async (formData: FormData) => {
+    const res = await handleProfileSubmit(formData);
+    console.log(res);
+    if (res?.error) {
+      setError(res.error);
+    } else {
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
       }, 10000);
-    } else {
-      setError(updateProError);
     }
   };
 
   return (
     <form
-      onSubmit={handleSubmit}
       className="p-4 flex flex-col items-center justify-center"
+      action={formAction}
     >
       <div className="space-y-12">
         <h1 className="font-bold text-2xl">Profile</h1>
         {success && <p className="text-green-500">Succesfully saved.</p>}
+
+        <input type="hidden" name="id" value={session?.data?.id} />
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-2">
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
@@ -213,12 +126,10 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="First name"
                 type="text"
-                name="first-name"
+                name="first_name"
                 id="first-name"
-                // autoComplete="given-name"
-                value={firstName}
-                defaultValue={undefined}
-                onChange={firstNameChange}
+                defaultValue={proData?.first_name}
+                // onChange={firstNameChange}
                 className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -226,12 +137,9 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="Last name"
                 type="text"
-                name="last-name"
+                name="last_name"
                 id="last-name"
-                // autoComplete="family-name"
-                value={lastName}
-                defaultValue={undefined}
-                onChange={lastNameChange}
+                defaultValue={proData?.last_name}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -262,7 +170,8 @@ export default function Profile({ email }: UserEmail) {
                 <PhoneInput
                   international
                   defaultCountry="IN"
-                  value={phoneNumber}
+                  name="mobile_number"
+                  value={proData?.mobile_number}
                   onChange={handlePhoneChange}
                   className="input-field w-full py-1.5 h-full flex-1"
                   limitMaxLength
@@ -304,6 +213,7 @@ export default function Profile({ email }: UserEmail) {
               <RegionDropdown
                 country={country}
                 value={state}
+                name="state"
                 onChange={(val) => setState(val)}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
@@ -318,10 +228,9 @@ export default function Profile({ email }: UserEmail) {
                 type="text"
                 name="city"
                 id="city"
-                value={city}
                 // autoComplete="address-level2"
                 onChange={cityChange}
-                defaultValue={undefined}
+                defaultValue={proData?.city}
                 errors={error.city}
                 impAsterisk="*"
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -332,11 +241,11 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="ZIP / Postal code"
                 type="number"
-                name="postal-code"
+                name="pincode"
                 id="postal-code"
-                value={pincode}
+                // value={proData?.pincode}
                 onChange={pincodeChange}
-                defaultValue={undefined}
+                defaultValue={proData?.pincode}
                 errors={
                   // (typeof error === "string" && error?.includes("6")) ||
                   // (typeof error === "string" && error?.includes("Zipcode"))
@@ -352,12 +261,9 @@ export default function Profile({ email }: UserEmail) {
               <InputWithLabel
                 label="Street address"
                 type="text"
-                name="street-address"
+                name="address"
                 id="street-address"
-                value={address}
-                onChange={addressChange}
-                // autoComplete="street-address"
-                defaultValue={undefined}
+                defaultValue={proData?.address}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>

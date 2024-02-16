@@ -169,3 +169,34 @@ export async function verifyUser({email, verificationCode}:{email?:string, verif
       return { error: "Verification code is incorrect." };
     }
 }
+
+export async function updateProfile(rawFormData: User){
+  let result;
+  const id = rawFormData.id;
+  delete rawFormData.id;
+  const res = await db.user.update({
+    where: { id },
+    data: {
+      ...rawFormData,
+    },
+  });
+  result = res;
+
+if (
+  result &&
+  result.mobile_number &&
+  result.country &&
+  result.state &&
+  result.city &&
+  result.pincode
+) {
+  const res = await db.user.update({
+    where: { id },
+    data: {
+      isProfileComplete: true,
+    },
+  });
+  result = res;
+}
+ return result;
+}
