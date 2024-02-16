@@ -18,7 +18,6 @@ export async function getAllQuestions({
     },
     include: {
       objective_options: true,
-      subjective_description: true,
       createdBy: true,
       Quiz: true,
     },
@@ -110,11 +109,9 @@ export async function editQuestions({
 
   if (isAvailable) {
 
-    type === QuestionType.OBJECTIVE ? await db.objectiveOptions.deleteMany({
+    type === QuestionType.OBJECTIVE && await db.objectiveOptions.deleteMany({
       where: { questionId: id },
-    }) : await db.subjectiveDescription.deleteMany({
-      where: { questionId: id },
-    });
+    }) 
     const editQues =  await db.question.update({
       where: {id},
       data: {

@@ -10,7 +10,6 @@ export async function getQuiz({setId}: {setId: string}){
         question: {
           include: {
             objective_options: true,
-            subjective_description: true
           }
         }
       }
