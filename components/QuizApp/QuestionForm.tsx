@@ -192,10 +192,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 name="timer"
               />
             </div>
-            <SimpleSelect
+            {/* <SimpleSelect
               selectFor="Visibility"
               items={["Public", "private", "Password"]}
-            />
+            /> */}
             <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
           </div>
           {questionType === QuestionType.OBJECTIVE && (
@@ -316,7 +316,7 @@ function SelectSet({
         defaultValue={defaultValue}
         name="setId"
       >
-        <option value="">Select question set</option>
+        <option value="">Select Quiz</option>
         {data &&
           data.map((queSet: QuestionSet) =>
             !queSet.isDeleted ? (

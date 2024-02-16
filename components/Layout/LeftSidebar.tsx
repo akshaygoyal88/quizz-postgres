@@ -26,7 +26,7 @@ const navigation = [
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
-    name: "Create set",
+    name: "Create Quiz",
     href: pathName.quizAdd.path,
     icon: PlusIcon,
     current: false

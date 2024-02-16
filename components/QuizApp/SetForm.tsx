@@ -13,7 +13,7 @@ export default function SetForm({
   session,
   action,
   addSetSuccessMessage,
-  initialFormData,
+  initialFormData
 }: // successMessage,
 {
   session: User;
@@ -80,7 +80,7 @@ export default function SetForm({
         </p>
       )}
       <h1 className="font-bold text-2xl">
-        {action === "create" ? "Create Set" : "Edit set"}
+        {action === "create" ? "Create Quiz" : "Edit Quiz"}
       </h1>
       <input type="hidden" name="id" value={initialFormData?.id} />
       <InputWithLabel

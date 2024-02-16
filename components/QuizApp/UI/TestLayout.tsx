@@ -22,8 +22,10 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const [nextId, setNextId] = useState<string | null>(null);
 
   const { data: questionsRes, error: questionsError } = useFetch({
-    url: `${pathName.testSetApis.path}/${quizId}`,
+    url: `${pathName.testSetApis.path}/${quizId}`
   });
+
+  console.log(questionsRes, "questionsRes");
 
   useEffect(() => {
     if (questionsRes && !questionsRes.error && !questionsError) {
@@ -35,7 +37,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
 
       const questionStates = quesArr.map((ques) => ({
         id: ques.id,
-        status: UserQuizAnswerStatus.NOT_ATTEMPTED,
+        status: UserQuizAnswerStatus.NOT_ATTEMPTED
       }));
 
       setQuestionStates(questionStates);
@@ -60,13 +62,13 @@ export default function TestLayout({ quizId }: { quizId: string }) {
           const currQues = session?.id && {
             submittedBy: session.id,
             setId: quizId,
-            questionId: currentQuestionId,
+            questionId: currentQuestionId
           };
 
           const { data, error } = await fetchData({
             url: `${pathName.quizAnsApi.path}`,
             method: FetchMethodE.POST,
-            body: currQues,
+            body: currQues
           });
 
           if (data && !data.error) {
@@ -101,7 +103,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     answer,
     timeTaken,
     type,
-    timeOver,
+    timeOver
   }: {
     answer: string;
     timeTaken: number;
@@ -116,14 +118,14 @@ export default function TestLayout({ quizId }: { quizId: string }) {
           ...userQueRes,
           ans_optionsId: answer,
           timeTaken,
-          timeOver,
+          timeOver
         };
       } else if (type === QuestionType.SUBJECTIVE) {
         userQueRes = {
           ...userQueRes,
           ans_subjective: answer,
           timeTaken,
-          timeOver,
+          timeOver
         };
       }
     }
@@ -134,7 +136,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
               ...que,
               status: answer
                 ? UserQuizAnswerStatus.ATTEMPTED
-                : UserQuizAnswerStatus.SKIPPED,
+                : UserQuizAnswerStatus.SKIPPED
             }
           : que
       );
@@ -144,7 +146,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     const { data: saveQueRes } = await fetchData({
       url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
       method: FetchMethodE.PUT,
-      body: userQueRes,
+      body: userQueRes
     });
 
     handleNextQuestion();
@@ -154,14 +156,14 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     const { data: saveQueRes } = await fetchData({
       url: `${pathName.quizAnsApi.path}/${currInitializedQue.id}`,
       method: FetchMethodE.PUT,
-      body: { status: UserQuizAnswerStatus.REVIEW },
+      body: { status: UserQuizAnswerStatus.REVIEW }
     });
     setQuestionStates((prevStates) => {
       const updatedStates = prevStates.map((que) =>
         que.id === currentQuestionId
           ? {
               ...que,
-              status: UserQuizAnswerStatus.REVIEW,
+              status: UserQuizAnswerStatus.REVIEW
             }
           : que
       );
