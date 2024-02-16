@@ -6,6 +6,8 @@ import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
+  console.log("getttiiing")
+
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
@@ -45,45 +47,43 @@ export async function GET(req: Request) {
 export async function POST(req: any, res: any) {
   try {
     const {
-      question_text,
+      editorContent,
       type,
-      options,
-      correctAnswer,
-      description,
+      objective_options,
+      solution,
       timer,
       createdById,
-      setId
+      Quiz
     } = await req.json();
+    // console.log(await req.json())
 
-    if (!setId) {
-      return NextResponse.json({ error: "Please provide question set." });
-    }
+    // if (!Quiz[0]?.setId) {
+    //   return NextResponse.json({ error: "Please provide question set." });
+    // }
 
-    const isSetIdAvilable = await getQuesSetVailable({setId});
+    const correctAnswer: Number[] = []
+    
+    objective_options?.forEach((option: { isCorrect: any; }, i: Number) => {
+      option.isCorrect == true && correctAnswer.push(i)});
 
-    if (!isSetIdAvilable) {
-      return NextResponse.json({
-        error: "Please provide a valid question set.",
-      });
-    }
+    const options =  objective_options?.map((opt: { text: any; })=> opt.text);
+
+    const setId = Quiz[0].setId;
 
     const addQuestion = await createQuestion(
-      {question_text,
+    {editorContent,
       type,
       options,
       correctAnswer,
-      description,
+      solution,
       timer,
       createdById,
       setId
     })
-    const createdBy = createdById
-    const questionId = addQuestion.id;
-
-    const postQuesInQuizRes = await postQuestionInQuiz({setId, questionId, createdBy})
   
     return NextResponse.json(addQuestion);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error });
   }
 }

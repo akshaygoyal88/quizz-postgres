@@ -4,3 +4,6 @@ export * as Questions from "./questions"
 export * as UserSerivce from "./user";
 export * as QuestionSetService from "./questionSet";
 export * as QuizService from "./quiz";
+export * as sendEmail from "./sendEmail";
+export * as NotificationService from "./notification";
+export * as resetPasswordService from "./resetPasswordService"

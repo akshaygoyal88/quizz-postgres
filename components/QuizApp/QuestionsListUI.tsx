@@ -35,21 +35,21 @@ export default function QuestionsListUI() {
     }
   };
 
-  const onDelete = () => {
+  const onActionTaken = () => {
     setTime(Date.now());
   };
   return (
     <div className="">
-      {quesData && quesData.questions.length > 0 && (
+      {quesData && quesData.questions?.length > 0 && (
         <div className="p-1 flex justify-evenly">
           <Button href={`${pathName.questionsAdd.path}`} />
         </div>
       )}
-      {quesData && quesData.questions.length > 0 ? (
+      {quesData && quesData.questions?.length > 0 ? (
         <QuestionsTable
           ques={quesData.questions}
           // getAvailableQuestions={getAvailableQuestions}
-          onDelete={onDelete}
+          onActionTaken={onActionTaken}
         />
       ) : (
         <EmptyState
@@ -59,7 +59,7 @@ export default function QuestionsListUI() {
           buttonText="Add Questions"
         />
       )}
-      {quesData && quesData.questions.length > 0 && (
+      {quesData && quesData.questions?.length > 0 && (
         <Pagination
           page={page}
           totalpage={quesData?.totalPages || 0}

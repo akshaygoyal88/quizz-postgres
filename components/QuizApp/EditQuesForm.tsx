@@ -7,6 +7,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import QuestionForm from "./QuestionForm";
 import { QuestionSubmitE } from "@/services/questions";
+import { AnswerTypeE } from "@prisma/client";
 
 interface availableSetTypes {
   name: string;
@@ -14,8 +15,8 @@ interface availableSetTypes {
 
 function EditQuesForm({ quesId }: { quesId: string }) {
   const [question, setQuestion] = useState("");
-  const [options, setOptions] = useState(["", "", "", ""]);
-  const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState([]);
   const [validationError, setValidationError] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [description, setDescription] = useState("");
@@ -26,6 +27,9 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [timer, setTimer] = useState("0");
   const [setId, setSetId] = useState<string | null>(null);
+  const [objAnsType, setObjAnsType] = useState<AnswerTypeE>(
+    AnswerTypeE.SINGLECHOICE
+  );
   const {
     data: questionData,
     error: questionError,
@@ -33,7 +37,6 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   } = useFetch({
     url: `${pathName.questionsApiPath.path}/${quesId}`,
   });
-
   const {
     data: questionSetsData,
     error: questionSetsError,
@@ -43,6 +46,7 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   });
 
   useEffect(() => {
+    console.log(questionData);
     if (questionData && !questionData.error) {
       setQuestion(questionData?.question_text);
       // setDefaultQuestionSet(questionData?.questionSets[0].name);
@@ -51,15 +55,15 @@ function EditQuesForm({ quesId }: { quesId: string }) {
         (opt: { text: any }) => opt.text
       );
       setOptions(initialOptions);
-      const correctAnswerIndex = questionData?.objective_options.findIndex(
-        (opt: { isCorrect: any }) => opt.isCorrect
-      );
-      setCorrectAnswer(correctAnswerIndex);
-      const des = questionData?.subjective_description.map(
-        (ds: { description: any }) => ds.description
-      );
-      setDescription(des);
+      const correctAnswer: number[] = [];
+      questionData?.objective_options.forEach((element: any, i: number) => {
+        element.isCorrect == true && correctAnswer.push(i);
+      });
+      console.log(correctAnswer);
+      setCorrectAnswerIndex(correctAnswer);
+      setDescription(questionData.solution);
       setTimer(questionData?.timer);
+      setObjAnsType(questionData.answer_type);
     } else if (questionData?.error) {
       setValidationError(questionData?.error);
     }
@@ -80,18 +84,20 @@ function EditQuesForm({ quesId }: { quesId: string }) {
   const handleDescriptionChange = (e: any) => {
     setDescription(e.target.value);
   };
+  const handleOptionIncrease = () => {
+    setOptions([...options, null]);
+  };
+  const handleCorrectOptionChange = (index: Number) => {
+    setValidationError("");
+    if (!correctAnswerIndex.includes(index)) {
+      setCorrectAnswerIndex([...correctAnswerIndex, index]);
+    } else {
+      const updated = correctAnswerIndex.filter((i) => i !== index);
+      setCorrectAnswerIndex(updated);
+    }
 
-  const handleOptionChange = (index: any) => {
-    setCorrectAnswer(index);
     setValidationError("");
   };
-
-  const handleOptionTextChange = (index: any, option: any) => {
-    const newOptions = [...options];
-    newOptions[index] = option;
-    setOptions(newOptions);
-  };
-
   const handleSaveQuestion = async () => {
     let requestData;
 
@@ -170,11 +176,29 @@ function EditQuesForm({ quesId }: { quesId: string }) {
     setTimer(time);
   };
 
+  const handleAnyTypeRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setObjAnsType(event.target.value);
+  };
+
+  const handleOptionTextChange = (
+    content: string,
+    index: number,
+    editor: any
+  ) => {
+    // error && setValidationError("");
+    const newOptions = [...options];
+    console.log(index);
+    newOptions[index] = content;
+    setOptions(newOptions);
+  };
+
   return (
     <QuestionForm
       question={question}
       options={options}
-      correctAnswerIndex={correctAnswer}
+      correctAnswerIndex={correctAnswerIndex}
       validationError={validationError}
       questionType={questionType}
       description={description}
@@ -187,13 +211,17 @@ function EditQuesForm({ quesId }: { quesId: string }) {
       handleRadioChange={handleRadioChange}
       handleOptionTextChange={handleOptionTextChange}
       handleDescriptionChange={handleDescriptionChange}
-      handleOptionChange={handleOptionChange}
+      handleCorrectOptionChange={handleCorrectOptionChange}
       handleSaveQuestion={handleSaveQuestion}
       handletQuesSetChange={handletQuesSetChange}
       handletQueChange={handletQueChange}
       handletTimerChange={handletTimerChange}
       action={QuestionSubmitE.EDIT}
       quesId={quesId}
+      editorsContent={questionData?.editorContent}
+      handleOptionIncrease={handleOptionIncrease}
+      handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+      objAnsType={objAnsType}
     />
   );
 }

@@ -20,6 +20,7 @@ export async function getAllQuestions({
       objective_options: true,
       subjective_description: true,
       createdBy: true,
+      Quiz: true,
     },
     skip,
     take: pageSize,
@@ -32,23 +33,26 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
+  console.log("reqData", reqData)
   const {
     setId,
-    question_text,
     type,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
     createdById,
+    editorContent,
+    answer_type
   } = reqData;
+  
 
   if (!setId) {
     return { error: "Please provide question set." };
   }
-  const addQuestion =  await db.question.create({
+  const addQuestion = await db.question.create({
     data: {
-      question_text,
+      editorContent,
       type,
       timer: parseInt(timer, 10),
       objective_options:
@@ -57,33 +61,26 @@ export async function createQuestion(reqData: Question) {
               createMany: {
                 data: options.map((optionText: string, index: Number) => ({
                   text: optionText,
-                  isCorrect: index === correctAnswer,
+                  isCorrect: correctAnswer.includes(index),
                 })),
               },
             }
           : undefined,
-      subjective_description:
-        type === QuestionType.SUBJECTIVE
-          ? {
-              create: {
-                problem: question_text,
-                description,
-              },
-            }
-          : undefined,
+      solution,
+      answer_type,
       createdById,
     },
   });
-  const createdBy = createdById
+  const createdBy = createdById;
   const questionId = addQuestion.id;
 
   const quizAdd = await db.quiz.create({
-    data:{
+    data: {
       setId,
       questionId,
-      createdBy
-    }
-  })
+      createdBy,
+    },
+  });
   
   return {addQuestion, quizAdd};
 }
@@ -96,15 +93,16 @@ export async function editQuestions({
   reqData: Question
 }){
 
+
   const {
-    question_text,
+    setId,
     type,
-    questionSet,
     options,
     correctAnswer,
-    description,
+    solution,
     timer,
-    isDeleted,
+    editorContent,
+    answer_type
   } = reqData;
   const isAvailable = await db.question.findUnique({
     where: { id },
@@ -120,7 +118,7 @@ export async function editQuestions({
     const editQues =  await db.question.update({
       where: {id},
       data: {
-        question_text,
+        editorContent,
         type,
         timer: parseInt(timer, 10),              
         objective_options:
@@ -129,26 +127,17 @@ export async function editQuestions({
                 createMany: {
                   data: options.map((optionText: string, index: Number) => ({
                     text: optionText,
-                    isCorrect: index === correctAnswer,
+                    isCorrect: correctAnswer.includes(index),
                   })),
                 },
               }
             : undefined,
-        subjective_description:
-          type === QuestionType.SUBJECTIVE
-            ? {
-                create: {
-                  problem: question_text,
-                  description,
-                },
-              }
-            : undefined,
+       solution,
+       answer_type
       },
     });
     return editQues;
   } else {
     return {error: "Invalid question"}
   }
-  
-  
 }

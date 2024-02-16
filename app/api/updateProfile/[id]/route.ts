@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { UserSerivce } from "@/services";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request, {params}) {
@@ -41,31 +42,8 @@ export async function PUT(request: Request, {params}) {
   }else if (newData.mobile_number.length > 13){
     result = { error: {mobile_number: "Phone number should not be more than 10."} };
   }else {
-    const res = await db.user.update({
-      where: { id },
-      data: {
-        ...newData,
-      },
-    });
-    result = res;
+    result = await UserSerivce.updateProfile(id, newData);
+    
   }
-
-  if (
-    result &&
-    result.mobile_number &&
-    result.country &&
-    result.state &&
-    result.city &&
-    result.pincode
-  ) {
-    const res = await db.user.update({
-      where: { id },
-      data: {
-        isProfileComplete: true,
-      },
-    });
-    result = res;
-  }
-
   return NextResponse.json(result);
 }

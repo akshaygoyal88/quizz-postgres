@@ -7,7 +7,8 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
-    console.log(rawFormData);
+  console.log(rawFormData);
+
   const optionsArray = [];
   for (let key in rawFormData) {
     if (key.includes("questionOptions_")) {
@@ -15,15 +16,24 @@ export async function handleQuestionSubmit(
     }
   }
 
+  const correctAnswer = [];
+  for (let key in rawFormData) {
+    if(key.includes("correctAnswer_")){
+      correctAnswer.push(Number(rawFormData[key]))
+    }
+  }
+
   const reqData = {
     setId: rawFormData.setId,
     type: rawFormData.questionType,
     options: optionsArray,
-    question_text: rawFormData.question,
     questionType: rawFormData.questionType,
     timer: rawFormData.timer,
-    correctAnswer: rawFormData.correctAnswer,
-    createdById: rawFormData.createdById
+    correctAnswer: correctAnswer,
+    createdById: rawFormData.createdById,
+    solution: rawFormData.solution,
+    editorContent: rawFormData.editorContent,
+    answer_type: rawFormData.answer_type,
   };
   switch (action) {
     case QuestionSubmitE.ADD:

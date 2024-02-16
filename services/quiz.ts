@@ -24,14 +24,13 @@ export async function getQuiz({setId}: {setId: string}){
       }
     })
   }
-
-
-  export async function postQuestionInQuiz({setId, questionId, createdBy}: Quiz){
+  export async function postQuestionInQuiz({setId, questionId, createdBy}:{setId:string, questionId: string, createdBy:string}){
+    console.log({setId, questionId, createdBy})
     return await db.quiz.create({
-      data:{
+      data: {
         setId,
         questionId,
-        createdBy
-      }
-    })
+        createdBy,
+      },
+    });
   }

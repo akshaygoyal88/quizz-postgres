@@ -4,95 +4,105 @@ import { useState } from "react";
 import { UserOtpType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
-import { Button } from "./Button";
+import { handleResetPassword } from "@/action/actionResetPassForm";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState<string[]>([]);
+  const [error, setError] = useState<string>();
+  const [success, setSuccess] = useState(false);
 
   const clearErrors = () => {
-    setErrors([]);
+    setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let userId;
-
-    try {
-      const response = await fetch(`/api/useremail?email=${email}`);
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
-        userId = result.user.id;
-        console.log(userId, "userId:");
-      } else if (response.status === 404) {
-        setErrors(["User not found: "]);
-      } else if (response.status === 500) {
-        setErrors(["Server error: "]);
-      } else {
-        setErrors(["Unexpected error: "]);
-      }
-    } catch (error) {
-      console.error("Error:", error);
+  const formAction = async (formData: FormData) => {
+    setError("");
+    const res = await handleResetPassword(formData)
+    if (res?.error) {
+      setError(res.error);
     }
-
-    const token = generateUniqueAlphanumericOTP(4);
-
-    try {
-      const response = await fetch("/api/resetPassword/setResetToken/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId,
-          otp: token,
-          type: UserOtpType.RESET_TOKEN,
-        }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-
-    if (userId) {
-      const resetLink = `/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`;
-      console.log("Reset link:", resetLink);
-    }
-
-    try {
-      const response = await fetch("/api/sendEmail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to: email,
-          subject: "Password Reset Link",
-          text: `Click the following link to reset your password: http://localhost:3000/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`,
-        }),
-      });
-
-      if (response.ok) {
-        console.log("Password reset email sent successfully.");
-      } else {
-        console.error(
-          "Error sending password reset email:",
-          response.statusText
-        );
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    if(res.message){
+      setSuccess(true);
     }
   };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   let userId;
+
+  //   try {
+  //     const response = await fetch(`/api/useremail?email=${email}`);
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       userId = result.user.id;
+  //     } else if (response.status === 404) {
+  //       setErrors(["User not found: "]);
+  //     } else if (response.status === 500) {
+  //       setErrors(["Server error: "]);
+  //     } else {
+  //       setErrors(["Unexpected error: "]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+
+  //   const token = generateUniqueAlphanumericOTP(4);
+
+  //   try {
+  //     const response = await fetch("/api/resetPassword/setResetToken/", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userId: userId,
+  //         otp: token,
+  //         type: UserOtpType.RESET_TOKEN,
+  //       }),
+  //     });
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+
+  //   if (userId) {
+  //     const resetLink = `/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`;
+  //     console.log("Reset link:", resetLink);
+  //   }
+
+  //   try {
+  //     const response = await fetch("/api/sendEmail", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         to: email,
+  //         subject: "Password Reset Link",
+  //         text: `Click the following link to reset your password: http://localhost:3000/reset-password/${userId}/${token}/change-password/?userId=${userId}&token=${token}`,
+  //       }),
+  //     });
+
+  //     if (response.ok) {
+  //       console.log("Password reset email sent successfully.");
+  //     } else {
+  //       console.error(
+  //         "Error sending password reset email:",
+  //         response.statusText
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
 
   return (
-    <>
-      <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Reset Password
-      </h2>
-      <form onSubmit={handleSubmit} className="mt-10 grid grid-cols-1 gap-y-8">
-        <div className="mb-4">
+    <div className="max-w-md mx-auto my-8 ">
+      <form
+        // onSubmit={handleSubmit}
+        action={formAction}
+        className="bg-white p-8 shadow-md rounded-md"
+      >
+        {!success && <div className="mb-4">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-600"
@@ -111,16 +121,21 @@ const ResetPassword = () => {
             className="mt-1 p-2 w-full border rounded-md"
             required
           />
-        </div>
-        {errors.length > 0 && (
+        </div>}
+        {error && (
           <div className="mb-4 text-red-500">
-            {errors.map((error, index) => (
-              <p key={index}>{error}</p>
-            ))}
+              <p>{error}</p>
           </div>
         )}
 
-        <Button type="submit">Send Reset Link</Button>
+        <div className="mt-8">
+          {!success ?  <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+          >
+            Send Reset Link
+          </button> : <p>Succfully sent reset link.</p>}
+        </div>
       </form>
     </>
   );

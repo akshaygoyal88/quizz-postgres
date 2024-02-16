@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "ticketing",
   "version": "0.1.0",
@@ -48,3 +49,64 @@
     "typescript": "^5"
   }
 }
+=======
+{
+  "name": "ticketing",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.498.0",
+    "@aws-sdk/lib-storage": "^3.498.0",
+    "@aws-sdk/util-base64": "^3.374.0",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@prisma/client": "^5.9.1",
+    "@sendgrid/mail": "^8.1.0",
+    "@tinymce/tinymce-react": "^4.3.2",
+    "@types/react-select": "^5.0.1",
+    "@types/validator": "^13.11.7",
+    "aws-sdk": "^2.1542.0",
+    "axios": "^1.6.3",
+    "bcrypt": "^5.1.1",
+    "html-react-parser": "^5.1.2",
+    "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "next": "14.0.4",
+    "next-auth": "^4.24.5",
+    "next-connect": "^1.0.0",
+    "node-cron": "^3.0.3",
+    "npm": "^10.2.5",
+    "react": "^18.2.0",
+    "react-country-region-selector": "^3.6.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-phone-number-input": "^3.3.7",
+    "react-select": "^5.8.0",
+    "tinymce": "^6.8.2",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/validator": "^13.11.7",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "prisma": "^5.9.1",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}
+>>>>>>> dev
