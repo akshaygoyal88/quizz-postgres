@@ -96,7 +96,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
         height: 200,
         plugins:
           "gallery image advlist autolink lists image charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen nonbreaking save  emoticons paste textpattern media image imagetools",
-        // menubar: "insert",
         toolbar:
           "gallery | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image | gallery | outdent indent | ltr rtl | mediaembed",
         images_upload_handler: handleImageUpload,

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import InputWithLabel from "../Shared/InputWithLabel";
-import Textarea from "../Shared/Textarea";
 import { handleQuestionSetSubmit } from "@/action/actionSetForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
 import { useRouter } from "next/navigation";
-import { Session } from "next-auth";
 import pathName from "@/constants";
 import { QuestionSet, User } from "@prisma/client";
 import TinyMCEEditor from "./UI/TinyMCEEditor";
@@ -21,7 +19,6 @@ export default function SetForm({
   action: QuestionSetSubmitE;
   addSetSuccessMessage?: string;
   initialFormData?: QuestionSet;
-  // successMessage?: string;
 }) {
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -43,7 +40,7 @@ export default function SetForm({
 
       setImagesList(imageList);
     } catch (error) {
-      console.error("Error fetching images from S3:", error);
+      setError(error);
     }
   };
 
@@ -70,11 +67,7 @@ export default function SetForm({
     setEditorContent(content);
   };
   return (
-    <form
-      // onSubmit={handleSubmit}
-      action={formAction}
-      className="flex flex-col p-4 gap-5"
-    >
+    <form action={formAction} className="flex flex-col p-4 gap-5">
       {addSetSuccessMessage && (
         <p className="bg-green-500 px-10 py-1 text-white m-3">
           {addSetSuccessMessage}

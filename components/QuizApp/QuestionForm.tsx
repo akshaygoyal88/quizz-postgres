@@ -84,6 +84,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
       setImagesList(imageList);
     } catch (error) {
+      setError(error);
       console.error("Error fetching images from S3:", error);
     }
   };
@@ -126,7 +127,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   }, []);
   const handleEditorChange = (content: string, editor: any) => {
     setEditorContent(content);
-    console.log("Content was updated:", content, "editor:", editor);
   };
   const handleDesChange = (content: string, editor: any) => {
     setDesEditorContent(content);
