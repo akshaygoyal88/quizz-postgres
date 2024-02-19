@@ -99,7 +99,6 @@ export default function LeftSectionQues({
   const handleAnsOptInput = (str) => {
     setAnswer(str);
   };
-  console.log(filtredQues);
   const optionsIndex = ["a", "b", "c", "d", "e", "f"];
 
   return (

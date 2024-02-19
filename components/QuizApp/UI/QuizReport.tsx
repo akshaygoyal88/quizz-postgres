@@ -74,11 +74,11 @@ const QuizReport: React.FC<QuizReportProps> = (
           </li>
         </ul>
       </nav>
+      <h2 className="mx-4 mt-2 text-3xl font-extrabold text-gray-900">
+        Quiz Report
+      </h2>
       <div className="min-h-screen flex flex-col items-center bg-gray-50 sm:px-6">
         <div className="w-full">
-          <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-            Quiz Report
-          </h2>
           <div className="bg-white my-2 p-4 rounded-lg border border-gray-200 grid grid-cols-3 gap-4">
             <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
               <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">

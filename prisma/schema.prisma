@@ -35,14 +35,13 @@ model User {
   profile_pic       String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
   isProfileComplete Boolean            @default(false)
   otps              UserOtp[]
-  // createdShows      Show[]
-  // ticket            Tickets[]
   token             String?
   QuestionSet       QuestionSet[]
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
   userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
+  UserAttemptQuiz   UserAttemptQuiz[]
 }
 
 model UserOtp {
@@ -60,7 +59,6 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
-// TODO: Rename it to Quiz
 model QuestionSet {
   id              String            @id @default(cuid())
   name            String
@@ -112,7 +110,6 @@ model ObjectiveOptions {
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
-// TODO: Rename table to QuizQuestions and setId to QuizId
 model Quiz {
   id          String       @id @default(cuid())
   setId       String
@@ -155,4 +152,37 @@ model UserNotification {
   message String?
   isRead  Boolean? @default(false)
   time    DateTime @default(now()) @map(name: "time")
+}
+
+enum QuizStatusTypeE {
+  SUBMITTED
+  ONGOING
+  ONHOLD
+  DECLINED
+  INCOMPLETED
+  INITIALIZE
+}
+
+model UserAttemptQuiz {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  setId     String
+  status    QuizStatusTypeE? @default(INCOMPLETED)
+  startedAt DateTime         @default(now()) @map(name: "started_at")
+  endedAt   DateTime? // @map(name: "ended_at") @endedAt
+}
+
+model UserReportOfQuiz {
+  id             String           @id @default(cuid())
+  userId         String
+  setId          String
+  status         QuizStatusTypeE?
+  correctAnswers Int?             @default(0)
+  wrongAnswers   Int?             @default(0)
+  notAttempted   Int?             @default(0)
+  obtMarks       Float?           @default(0.0)
+  negMarks       Int?             @default(0)
+  timeTaken      Int?             @default(0)
+  totalMarks     Float            @default(0.0)
 }
