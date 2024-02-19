@@ -109,6 +109,8 @@ export default function Profile({ email }: UserEmail) {
     }
   };
 
+  const handleImageUpload = async () => {};
+
   return (
     <form
       className="p-4 flex flex-col items-center justify-center"
@@ -137,7 +139,7 @@ export default function Profile({ email }: UserEmail) {
                 accept="image/*"
                 id="image"
                 name="image"
-                // onChange={handleImageUpload}
+                onChange={handleImageUpload}
                 className="block w-full text-gray-900 shadow-sm sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>
