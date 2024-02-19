@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { returnResponse } from "@/utils/generateOtp";
+import { returnResponse } from "@/utils/returnResponse";
+
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

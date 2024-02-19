@@ -10,7 +10,6 @@ export async function GET(req: Request, {params}: {params:string}) {
       where: { id },
       include: {
         objective_options: true,
-        subjective_description: true,
       },
     });
 
@@ -36,7 +35,6 @@ export async function DELETE(req: any, res: any) {
       where: { id },
       include: {
         objective_options: true,
-        subjective_description: true,
       },
     });
 
@@ -44,10 +42,7 @@ export async function DELETE(req: any, res: any) {
       await Promise.all([
         ...isAvailable.objective_options.map((opt) =>
           db.objectiveOptions.delete({ where: { id: opt.id } })
-        ),
-        ...isAvailable.subjective_description.map((desc) =>
-          db.subjectiveDescription.delete({ where: { id: desc.id } })
-        ),
+        )
       ]);
 
       const deleteQue = await db.question.delete({
@@ -96,10 +91,6 @@ export async function PUT(req: Request, {params}: {params:string}) {
         where: { questionId: id },
       });
 
-      const deleteSubDes = await db.subjectiveDescription.deleteMany({
-        where: { questionId: id },
-      });
-
       if(isDeleted) {
         const deleteQue = await db.question.update({
           where: { id },
@@ -136,12 +127,6 @@ export async function PUT(req: Request, {params}: {params:string}) {
               question_text,
               type,
               timer: parseInt(timer, 10),              
-              subjective_description: {
-                create: {
-                  problem,
-                  description,
-                },
-              },
             },
           });
   

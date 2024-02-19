@@ -1,13 +1,13 @@
 export default function SimpleSelect({
   selectFor,
-  items,
+  items
 }: {
   selectFor: string;
   items: string[];
 }) {
   return (
     <div className="flex items-center my-4">
-      <label htmlFor="location" className="block text-lg font-semibold">
+      <label htmlFor="location" className="font-semibold">
         {selectFor}
       </label>
       <select

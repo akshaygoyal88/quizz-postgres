@@ -4,6 +4,7 @@ import { useState } from "react";
 import { UserOtpType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
+import { Button } from "./Button";
 import { handleResetPassword } from "@/action/actionResetPassForm";
 
 const ResetPassword = () => {
@@ -17,11 +18,11 @@ const ResetPassword = () => {
 
   const formAction = async (formData: FormData) => {
     setError("");
-    const res = await handleResetPassword(formData)
+    const res = await handleResetPassword(formData);
     if (res?.error) {
       setError(res.error);
     }
-    if(res.message){
+    if (res.message) {
       setSuccess(true);
     }
   };
@@ -97,44 +98,53 @@ const ResetPassword = () => {
 
   return (
     <div className="max-w-md mx-auto my-8 ">
+      <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        Reset Password
+      </h2>
       <form
         // onSubmit={handleSubmit}
         action={formAction}
         className="bg-white p-8 shadow-md rounded-md"
       >
-        {!success && <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-600"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              clearErrors();
-            }}
-            className="mt-1 p-2 w-full border rounded-md"
-            required
-          />
-        </div>}
+        {!success && (
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-600"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearErrors();
+              }}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+        )}
         {error && (
           <div className="mb-4 text-red-500">
-              <p>{error}</p>
+            <p>{error}</p>
           </div>
         )}
 
         <div className="mt-8">
-          {!success ?  <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-          >
-            Send Reset Link
-          </button> : <p>Succfully sent reset link.</p>}
+          {!success ? (
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            >
+              Send Reset Link
+            </button>
+          ) : (
+            <p>Succfully sent reset link.</p>
+          )}
         </div>
       </form>
     </div>
@@ -161,13 +171,13 @@ export const ChangePassword = () => {
         const response = await fetch("/api/resetPassword/changePassword", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             userId: userId,
             token: token,
-            password: newPassword,
-          }),
+            password: newPassword
+          })
         });
 
         if (response.status === 201) {

@@ -26,7 +26,7 @@ const navigation = [
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
-    name: "Create set",
+    name: "Create Quiz",
     href: pathName.quizAdd.path,
     icon: PlusIcon,
     current: false,
@@ -87,7 +87,7 @@ export default function LeftSideBar({
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <div className="relative flex flex-1 max-w-xs h-full w-full bg-white">
+              <div className="relative flex flex-1 max-w-xs w-full h-full bg-white">
                 <button
                   type="button"
                   className="absolute top-0 right-0 -mr-12 mt-2 p-2"
