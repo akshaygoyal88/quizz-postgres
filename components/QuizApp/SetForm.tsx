@@ -8,12 +8,13 @@ import { Session } from "next-auth";
 import pathName from "@/constants";
 import { QuestionSet, User } from "@prisma/client";
 import TinyMCEEditor from "./UI/TinyMCEEditor";
+import { Button } from "../Button";
 
 export default function SetForm({
   session,
   action,
   addSetSuccessMessage,
-  initialFormData
+  initialFormData,
 }: // successMessage,
 {
   session: User;
@@ -79,16 +80,17 @@ export default function SetForm({
           {addSetSuccessMessage}
         </p>
       )}
-      <h1 className="font-bold text-2xl">
-        {action === "create" ? "Create Quiz" : "Edit Quiz"}
-      </h1>
+      <div className="flex flex-wrap justify-between items-center lg:flex-row">
+        <h1 className="font-bold text-2xl">
+          {action === "create" ? "Create Quiz" : "Edit Quiz"}
+        </h1>
+        <Button color="blue">{action}</Button>
+      </div>
       <input type="hidden" name="id" value={initialFormData?.id} />
       <InputWithLabel
         type="text"
         id="name"
         name="name"
-        // value={formData.name}
-        // onChange={handleInputChange}
         label="Name:"
         className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
         defaultValue={initialFormData?.name}
@@ -107,27 +109,21 @@ export default function SetForm({
           <option value="Archived">Archived</option>
         </select>
       </div>
-
-      {/* <Textarea
-        label="Description"
-        id="description"
-        name="description"
-        // value={formData.description}
-        // onChange={handleInputChange}
-        defaultValue={initialFormData?.description}
-        className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-      /> */}
-      <TinyMCEEditor
-        editorsContent={initialFormData?.description}
-        handleEditorChange={handleEditorChange}
-        imagesList={imagesList}
-        idx="quesset"
-      />
+      <div>
+        <label className="block text-sm font-medium leading-6 text-gray-900">
+          Description:
+        </label>
+        <TinyMCEEditor
+          editorsContent={initialFormData?.description}
+          handleEditorChange={handleEditorChange}
+          imagesList={imagesList}
+          idx="quesset"
+        />
+      </div>
       <InputWithLabel
         type="number"
         id="price"
         name="price"
-        // onChange={handleInputChange}
         label="Price:"
         className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
         step="0.1"
@@ -141,12 +137,6 @@ export default function SetForm({
       )}
       <input type="hidden" name="createdById" value={session?.data?.id} />
       <p className="text-red-500 mb-2">{error}</p>
-      <button
-        className="bg-gray-500 text-white font-semibold px-4 py-2"
-        type="submit"
-      >
-        {action}
-      </button>
     </form>
   );
 }

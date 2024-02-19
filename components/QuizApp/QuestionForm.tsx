@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Textarea from "../Shared/Textarea";
 import { AnswerTypeE, QuestionSet, QuestionType } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
 import { useSession } from "next-auth/react";
 import TinyMCEEditor from "./UI/TinyMCEEditor";
-import { useFetch } from "@/hooks/useFetch";
-import SimpleSelect from "../Shared/SimpleSelect";
 import SimpleToggle from "../Shared/SimpleToggle";
+import { Button } from "../Button";
+import RadioInput from "../Shared/RadioInput";
+import Lable from "../Shared/Lable";
 
 interface QuestionFormProps {
   question: string;
@@ -48,7 +48,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   description,
   defaultQuestionSet,
   timer,
-  // successMessage,
   data,
   buttonText,
   headingText,
@@ -61,7 +60,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   handleOptionTextChange,
   handleOptionRemove,
   handleAnyTypeRadioChange,
-  objAnsType
+  objAnsType,
 }) => {
   const session = useSession();
   const [error, setError] = useState<string | null>(null);
@@ -69,10 +68,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [editorContent, setEditorContent] = useState<string | null>(null);
   const [savedOptions, setSavedOptions] = useState<string[]>([]);
   const [desEditorContent, setDesEditorContent] = useState<string | null>(null);
-
   const [imagesList, setImagesList] = useState([]);
-  // const { data: imageList, error: imagesError, isLoading } = useFetch({url: })
-  console.log(validationError);
 
   useEffect(() => {
     fetchImagesFromS3();
@@ -95,7 +91,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const formAction = async (formData: FormData) => {
     setError(null);
     formData.append("editorContent", editorContent as string);
-    // console.log(correctAnswerIndex);
     correctAnswerIndex?.forEach((ele: Number) =>
       formData.append(`correctAnswer_${ele}`, ele as string)
     );
@@ -107,7 +102,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     );
 
     const res = await handleQuestionSubmit(formData, action);
-    console.log(res);
 
     if (res?.error) {
       setError(res.error);
@@ -119,7 +113,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       );
     }
   };
-  console.log(correctAnswerIndex);
 
   useEffect(() => {
     if (options.length > 0) {
@@ -141,12 +134,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   return (
     <div className="border rounded-lg shadow-lg">
       <form action={formAction} className="m-4">
-        {/* <div className="m-4 w-3/4"> */}
         <div className="flex flex-wrap justify-between items-center lg:flex-row">
           <h1 className="text-lg font-semibold">{headingText}</h1>
-          <button className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-lg">
-            {buttonText}
-          </button>
+          <Button color="blue">{buttonText}</Button>
         </div>
         {successMessage && (
           <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
@@ -156,24 +146,20 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         {action == QuestionSubmitE.EDIT && (
           <input type="hidden" name="id" value={quesId} />
         )}
-
         <div className="mb-4 bg-gray-100 p-3 rounded-md">
-          <label className="block text-lg font-semibold" htmlFor="ques">
-            Question:
-          </label>
+          <Lable labelText="Question:" htmlFor="ques" />
           <TinyMCEEditor
             editorsContent={editorsContent}
             handleEditorChange={handleEditorChange}
             imagesList={imagesList}
             idx={"ques"}
           />
-          {/* SETTINGS */}
           <div className="">
-            <div className="flex items-center space-x-2">
-              <label className="font-semibold">Question Type:</label>
+            <div className="flex items-center gap-5">
+              <Lable labelText="Question Type:" htmlFor="questionType" />
               <div>
                 <select
-                  className="w-48 m-2 block rounded-md border-0 py-1.5 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="w-48 m-2 block rounded-md border-0 py-2 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   defaultValue={questionType}
                   name="questionType"
                   onChange={handleRadioChange}
@@ -183,8 +169,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 </select>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <label className="font-semibold py-2">Timer (in secs):</label>
+            <div className="flex items-center gap-4">
+              <Lable labelText="Timer (in secs):" htmlFor="timer" />
               <input
                 type="number"
                 className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -192,49 +178,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 name="timer"
               />
             </div>
-            {/* <SimpleSelect
-              selectFor="Visibility"
-              items={["Public", "private", "Password"]}
-            /> */}
             <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
           </div>
           {questionType === QuestionType.OBJECTIVE && (
             <div className="my-4 flex gap-4">
-              <label className="font-semibold">
-                Is this question has multiple correct answers?
-              </label>
-              <div>
-                <input
-                  type="radio"
-                  id="SingleCorrect"
-                  name="answer_type"
-                  value={AnswerTypeE.SINGLECHOICE}
-                  // defaultValue={QuestionType.SUBJECTIVE}
-                  checked={objAnsType === AnswerTypeE.SINGLECHOICE}
-                  onChange={handleAnyTypeRadioChange}
-                />
-                <label htmlFor="SingleCorrect" className="ml-2">
-                  No
-                </label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="multipleChoice"
-                  name="answer_type"
-                  value={AnswerTypeE.MULTIPLECHOICE}
-                  // defaultValue={QuestionType.OBJECTIVE}
-                  checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
-                  onChange={handleAnyTypeRadioChange}
-                />
-                <label htmlFor="multipleChoice" className="ml-2">
-                  Yes
-                </label>
-              </div>
+              <Lable
+                labelText="Is this question has multiple correct answers?"
+                htmlFor="answer_type"
+              />
+              <RadioInput
+                id="SingleCorrect"
+                value={AnswerTypeE.SINGLECHOICE}
+                checked={objAnsType === AnswerTypeE.SINGLECHOICE}
+                handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+                name="answer_type"
+                htmlFor="SingleCorrect"
+                label="No"
+              />
+              <RadioInput
+                id="MultipleCorrect"
+                value={AnswerTypeE.MULTIPLECHOICE}
+                checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
+                handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+                name="answer_type"
+                htmlFor="MultipleCorrect"
+                label="Yes"
+              />
             </div>
           )}
         </div>
-
         {questionType === QuestionType.OBJECTIVE && (
           <div className="mb-4">
             <div className="my-3 text-right">
@@ -246,48 +218,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 Add more options+
               </span>
             </div>
-
             {options.map((option, index) => (
-              <div
-                key={index}
-                className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md"
-              >
-                <div className="flex justify-between">
-                  <span className="py-2">Option:{index + 1}</span>
-                  <span className="flex items-center gap-5 py-2">
-                    <label>Is correct</label>
-                    <SimpleToggle
-                      checked={correctAnswerIndex?.includes(index)}
-                      onChange={() => handleCorrectOptionChange(index)}
-                    />
-                  </span>
-                  <span
-                    className="cursor-pointer text-red-600"
-                    onClick={() => handleOptionRemove(index)}
-                  >
-                    Remove
-                  </span>
-                </div>
-                <div className="">
-                  <TinyMCEEditor
-                    imagesList={imagesList}
-                    editorsContent={savedOptions[index]}
-                    index={index}
-                    idx={index + buttonText}
-                    handleEditorChange={handleOptionTextChange}
-                  />
-                </div>
-              </div>
+              <OptionCard
+                option={option}
+                index={index}
+                correctAnswerIndex={correctAnswerIndex}
+                handleCorrectOptionChange={handleCorrectOptionChange}
+                handleOptionRemove={handleOptionRemove}
+                imagesList={imagesList}
+                savedOptions={savedOptions}
+                buttonText={buttonText}
+                handleOptionTextChange={handleOptionTextChange}
+              />
             ))}
           </div>
         )}
         <div className="mt-4 p-3 bg-cyan-100 rounded-md">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="description"
-          >
-            Solution:
-          </label>
+          <Lable labelText="Solution:" />
           <TinyMCEEditor
             editorsContent={description}
             handleEditorChange={handleDesChange}
@@ -304,13 +251,14 @@ export default QuestionForm;
 
 function SelectSet({
   defaultValue,
-  data
+  data,
 }: {
   defaultValue: string;
   data: QuestionSet[];
 }) {
   return (
-    <div className="mb-4">
+    <div className="mb-4 flex items-center gap-4">
+      <Lable labelText="Quiz:" />
       <select
         className="w-full border rounded-md p-2"
         defaultValue={defaultValue}
@@ -326,6 +274,58 @@ function SelectSet({
             ) : null
           )}
       </select>
+    </div>
+  );
+}
+
+function OptionCard({
+  option,
+  index,
+  correctAnswerIndex,
+  handleCorrectOptionChange,
+  handleOptionRemove,
+  imagesList,
+  savedOptions,
+  buttonText,
+  handleOptionTextChange,
+}: {
+  option?: string;
+  index?: number;
+  correctAnswerIndex?: number | null;
+  handleCorrectOptionChange: (index) => void;
+  handleOptionRemove: (index) => void;
+  imagesList?: [];
+  savedOptions?: string[];
+  buttonText: string;
+  handleOptionTextChange: () => void;
+}) {
+  return (
+    <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
+      <div className="flex justify-between">
+        <Lable labelText={`Option:${index + 1}`} />
+        <span className="flex items-center gap-5 py-2">
+          <label>Is correct</label>
+          <SimpleToggle
+            checked={correctAnswerIndex?.includes(index)}
+            onChange={() => handleCorrectOptionChange(index)}
+          />
+        </span>
+        <span
+          className="cursor-pointer text-red-600"
+          onClick={() => handleOptionRemove(index)}
+        >
+          Remove
+        </span>
+      </div>
+      <div className="">
+        <TinyMCEEditor
+          imagesList={imagesList}
+          editorsContent={savedOptions[index]}
+          index={index}
+          idx={index + buttonText}
+          handleEditorChange={handleOptionTextChange}
+        />
+      </div>
     </div>
   );
 }
