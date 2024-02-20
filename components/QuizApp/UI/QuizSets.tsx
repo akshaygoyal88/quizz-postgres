@@ -33,10 +33,11 @@ export default function QuizSets() {
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
         {data &&
-          data.map((questionSet: QuestionSet) => (
+          data.map((quizSet: QuestionSet) => (
             <QuizSetCard
-              key={questionSet.id}
-              questionSet={questionSet}
+              key={quizSet.id}
+              quizSet={quizSet}
+              submittedBy={userId}
               // questionCount={getQuestionCount(questionSet)}
             />
           ))}

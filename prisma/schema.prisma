@@ -41,7 +41,7 @@ model User {
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
   userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
-  UserAttemptQuiz   UserAttemptQuiz[]
+  UserReportOfQuiz  UserReportOfQuiz[]
 }
 
 model UserOtp {
@@ -163,26 +163,36 @@ enum QuizStatusTypeE {
   INITIALIZE
 }
 
-model UserAttemptQuiz {
-  id        String           @id @default(cuid())
-  userId    String
-  user      User             @relation(fields: [userId], references: [id])
-  setId     String
-  status    QuizStatusTypeE? @default(INCOMPLETED)
-  startedAt DateTime         @default(now()) @map(name: "started_at")
-  endedAt   DateTime? // @map(name: "ended_at") @endedAt
+// model UserAttemptQuiz {
+//   id          String           @id @default(cuid())
+//   submittedBy String
+//   user        User             @relation(fields: [submittedBy], references: [id])
+//   quizId      String
+//   status      QuizStatusTypeE? @default(INCOMPLETED)
+//   startedAt   DateTime         @default(now()) @map(name: "started_at")
+
+//   endedAt DateTime? // @map(name: "ended_at") @endedAt
+// }
+
+enum ReportStatusTypeE {
+  GENERATED
+  UNDERREVIEW
 }
 
 model UserReportOfQuiz {
-  id             String           @id @default(cuid())
-  userId         String
-  setId          String
+  id             String             @id @default(cuid())
+  submittedBy    String
+  user           User               @relation(fields: [submittedBy], references: [id])
+  quizId         String
   status         QuizStatusTypeE?
-  correctAnswers Int?             @default(0)
-  wrongAnswers   Int?             @default(0)
-  notAttempted   Int?             @default(0)
-  obtMarks       Float?           @default(0.0)
-  negMarks       Int?             @default(0)
-  timeTaken      Int?             @default(0)
-  totalMarks     Float            @default(0.0)
+  startedAt      DateTime           @default(now()) @map(name: "started_at")
+  endedAt        DateTime?
+  correctAnswers Int?               @default(0)
+  wrongAnswers   Int?               @default(0)
+  notAttempted   Int?               @default(0)
+  obtMarks       Float?             @default(0.0)
+  negMarks       Int?               @default(0)
+  timeTaken      Int?               @default(0)
+  totalMarks     Float?             @default(0.0)
+  reportStatus   ReportStatusTypeE?
 }
