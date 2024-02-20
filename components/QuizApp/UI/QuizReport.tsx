@@ -107,9 +107,9 @@ const QuizReport = ({ userId }: { userId: string }) => {
       ) : (
         <div className="min-h-screen flex flex-col items-center bg-gray-50 sm:px-6">
           <div className="w-full">
-            {/* {dataOfSelectedQuiz.reportStatus ===
-            ReportStatusTypeE.UNDERREVIEW ? ( */}
-            {/* <div className="px-4 py-4 bg-gray-100 mb-4 rounded-lg">
+            {dataOfSelectedQuiz.reportStatus ===
+            ReportStatusTypeE.UNDERREVIEW ? (
+              <div className="px-4 py-4 bg-gray-100 mb-4 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="bg-gradient-to-r from-yellow-400 font-semibold to-red-500 text-transparent bg-clip-text">
                     Report status
@@ -122,84 +122,89 @@ const QuizReport = ({ userId }: { userId: string }) => {
                   <text>Will announce report soon</text>
                 </div>
               </div>
-            ) : ( */}
-            <div className="bg-white my-2 p-4 rounded-lg border border-gray-200 grid grid-cols-3 gap-4">
-              <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Attempts
-                </span>
-                <span className="text-lg font-semibold">
-                  {dummyData.attempts}
-                </span>
-              </div>
+            ) : (
+              <div className="bg-white my-2 p-4 rounded-lg border border-gray-200 grid grid-cols-3 gap-4">
+                <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Attempts
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {dummyData.attempts}
+                  </span>
+                </div>
 
-              <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Start at
-                </span>
-                <span className="text-lg font-semibold">
-                  {new Date(dataOfSelectedQuiz.startedAt).toLocaleDateString()}{" "}
-                  {new Date(dataOfSelectedQuiz.startedAt).toLocaleTimeString()}
-                </span>
-              </div>
+                <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Start at
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {new Date(
+                      dataOfSelectedQuiz?.startedAt
+                    ).toLocaleDateString()}{" "}
+                    {new Date(
+                      dataOfSelectedQuiz?.startedAt
+                    ).toLocaleTimeString()}
+                  </span>
+                </div>
 
-              <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  End at
-                </span>
-                <span className="text-lg font-semibold">
-                  {new Date(dataOfSelectedQuiz.endedAt).toLocaleDateString()}{" "}
-                  {new Date(dataOfSelectedQuiz.endedAt).toLocaleTimeString()}
-                </span>
-              </div>
+                <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    End at
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {new Date(dataOfSelectedQuiz?.endedAt).toLocaleDateString()}{" "}
+                    {new Date(dataOfSelectedQuiz?.endedAt).toLocaleTimeString()}
+                  </span>
+                </div>
 
-              <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Time Taken
-                </span>
-                <span className="text-lg font-semibold">
-                  {Math.floor(dataOfSelectedQuiz?.timeTaken / 3600)} hrs{" "}
-                  {Math.floor((dataOfSelectedQuiz?.timeTaken % 3600) / 60)} mins
-                </span>
-              </div>
+                <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Time Taken
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {Math.floor(dataOfSelectedQuiz?.timeTaken / 3600)} hrs{" "}
+                    {Math.floor((dataOfSelectedQuiz?.timeTaken % 3600) / 60)}{" "}
+                    mins
+                  </span>
+                </div>
 
-              <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Questions Not Attempted
-                </span>
-                <span className="text-lg font-semibold">
-                  {dataOfSelectedQuiz.notAttempted}
-                </span>
-              </div>
-              <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Correct answers
-                </span>
-                <span className="text-lg font-semibold">
-                  {dataOfSelectedQuiz.correctAnswers}
-                </span>
-              </div>
-              <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Wrong answers
-                </span>
-                <span className="text-lg font-semibold">
-                  {dataOfSelectedQuiz.wrongAnswers}
-                </span>
-              </div>
+                <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Questions Not Attempted
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {dataOfSelectedQuiz?.notAttempted}
+                  </span>
+                </div>
+                <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Correct answers
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {dataOfSelectedQuiz?.correctAnswers}
+                  </span>
+                </div>
+                <div className="px-4 bg-gray-100 mb-4 rounded-lg flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Wrong answers
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {dataOfSelectedQuiz?.wrongAnswers}
+                  </span>
+                </div>
 
-              <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
-                <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
-                  Marks
-                </span>
-                <span className="text-lg font-semibold">
-                  {dataOfSelectedQuiz.totalMarks}
-                </span>
+                <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
+                  <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
+                    Marks
+                  </span>
+                  <span className="text-lg font-semibold">
+                    {dataOfSelectedQuiz?.totalMarks}
+                  </span>
+                </div>
               </div>
-            </div>
-            {/* )} */}
+            )}
 
-            {dataOfSelectedQuiz.reportStatus ===
+            {dataOfSelectedQuiz?.reportStatus ===
               ReportStatusTypeE.GENERATED && (
               <div className="grid gap-4 grid-cols-1">
                 {quizReportData.map((item, index) => (
