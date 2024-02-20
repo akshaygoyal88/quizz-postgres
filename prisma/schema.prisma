@@ -177,6 +177,7 @@ enum QuizStatusTypeE {
 enum ReportStatusTypeE {
   GENERATED
   UNDERREVIEW
+  INITIALIZED
 }
 
 model UserReportOfQuiz {
@@ -194,5 +195,5 @@ model UserReportOfQuiz {
   negMarks       Int?               @default(0)
   timeTaken      Int?               @default(0)
   totalMarks     Float?             @default(0.0)
-  reportStatus   ReportStatusTypeE?
+  reportStatus   ReportStatusTypeE? @default(INITIALIZED)
 }

@@ -178,6 +178,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
       negMarks: 0,
       timeTaken,
       totalMarks: correctAnswers * 2 - 0,
+      endedAt: new Date(),
       reportStatus
     },
   });
