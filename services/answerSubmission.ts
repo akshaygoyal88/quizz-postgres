@@ -7,8 +7,12 @@ import {
   UserQuizAnswers,
   UserReportOfQuiz,
 } from "@prisma/client";
+import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 
-export async function questionInitialization(reqData) {
+export async function questionInitialization(reqData: UserQuizAnswers) {
+
+  // const isProgress = await getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
+  // console.log({reqData})
   const initiallyQues = await db.userQuizAnswers.create({
     data: {
       ...reqData,
@@ -112,7 +116,7 @@ export async function quizInitializationForReport(
     };
   }
   const initializeQuizRes = await db.userReportOfQuiz.create({
-    data: { submittedBy, quizId, status: QuizStatusTypeE.INCOMPLETED },
+    data: { submittedBy, quizId, status: QuizStatusTypeE.INPROGRESS },
   });
   return {
     initializeQuizRes,
@@ -126,7 +130,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     where: { quizId, submittedBy },
   });
   const networkRes = [];
-  let reportStatus: ReportStatusTypeE = ReportStatusTypeE.GENERATED
+  let reportStatus: ReportStatusTypeE = ReportStatusTypeE.UNDERREVIEW
   for (const res of userQuizRes) {
     const que = questions.find((q) => q.questionId === res?.questionId);
     if(que.question.type === QuestionType.SUBJECTIVE){

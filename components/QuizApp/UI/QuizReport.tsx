@@ -2,7 +2,7 @@
 
 import Lable from "@/components/Shared/Lable";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { QuestionSet, ReportStatusTypeE } from "@prisma/client";
+import { Quiz, ReportStatusTypeE } from "@prisma/client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -36,13 +36,6 @@ interface QuizQuestion {
 // };
 
 const QuizReport = ({ userId }: { userId: string }) => {
-  const dummyData: QuizReportProps = {
-    attempts: 3,
-    startDate: new Date(2022, 0, 1),
-    endDate: new Date(2022, 0, 2),
-    timeTaken: "1 hour 30 minutes",
-    marks: 8,
-  };
   const quizReportData: QuizQuestion[] = [
     { question: "Question 1", answer: "Answer 1", correct: true },
     { question: "Question 2", answer: "Answer 2", correct: false },
@@ -257,7 +250,7 @@ function SelectQuiz({
   handleSelectQuiz,
 }: {
   defaultValue: string;
-  quizzes: QuestionSet[];
+  quizzes: Quiz[];
   handleSelectQuiz: (id) => void;
 }) {
   return (

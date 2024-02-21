@@ -96,7 +96,7 @@ model Question {
   createdBy         User               @relation(fields: [createdById], references: [id])
   createdById       String
   isDeleted         Boolean            @default(false)
-  Quiz              QuizQuestions[]
+  QuizQuestions     QuizQuestions[]
   UserQuizAnswers   UserQuizAnswers[]
   solution          String?            @db.VarChar(1000)
   answer_type       AnswerTypeE?
@@ -157,11 +157,8 @@ model UserNotification {
 
 enum QuizStatusTypeE {
   SUBMITTED
-  ONGOING
-  ONHOLD
-  DECLINED
   INCOMPLETED
-  INITIALIZE
+  INPROGRESS
 }
 
 // model UserAttemptQuiz {

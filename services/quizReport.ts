@@ -9,4 +9,16 @@ export async function getReportsBySubmittedBy(submittedBy: string) {
     }
     return {reportRes, quizzes};
   }
+
+  export async function getReportByQuizIdAndSubmittedBy({quizId, submittedBy}:{quizId: string, submittedBy: string}){
+    return db.userReportOfQuiz.findFirst({where: {quizId, submittedBy}})
+  }
+
+  export async function getReportsByQuizId({skip, pageSize, quizId}: {skip:number, pageSize:number, quizId:string}) {
+    const quizResByUser =  db.userReportOfQuiz.findMany({
+      where: {quizId},
+      skip,
+      take: pageSize,});
+    return quizResByUser
+  }
   
