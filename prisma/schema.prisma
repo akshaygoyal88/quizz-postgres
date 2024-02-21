@@ -70,7 +70,7 @@ model Quiz {
   isDeleted       Boolean           @default(false)
   price           Float?            @default(0.0)
   status          String?
-  Quiz            QuizQuestions[]
+  QuizQuestions   QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
 }
 
