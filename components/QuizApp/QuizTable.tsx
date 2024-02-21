@@ -1,6 +1,6 @@
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { QuestionSet } from "@prisma/client";
+import { Quiz } from "@prisma/client";
 import { useState } from "react";
 import DeleteModal from "../Shared/DeleteModal";
 
@@ -8,7 +8,7 @@ export default function QuizTable({
   queSets,
   onDelete,
 }: {
-  queSets: QuestionSet;
+  queSets: Quiz;
   onDelete: () => void;
 }) {
   const [deleteSuccess, setDeleteSuccess] = useState<string>("");
@@ -100,7 +100,7 @@ export default function QuizTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {queSets.map((set: QuestionSet) => (
+                {queSets.map((set: Quiz) => (
                   <tr key={set.id}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {set.name}

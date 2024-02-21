@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { QuestionSet } from "@prisma/client";
+import { Quiz } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function getAllQuestionsSet({
@@ -80,7 +80,7 @@ export async function editQuestionSet({
   reqData,
 }: {
   id:string;
-  reqData: QuestionSet
+  reqData: Quiz
 }) {
   const isAvailable = await db.quiz.findUnique({
     where: { id },
