@@ -36,7 +36,7 @@ model User {
   isProfileComplete Boolean            @default(false)
   otps              UserOtp[]
   token             String?
-  QuestionSet       QuestionSet[]
+  Quiz              Quiz[]
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
@@ -59,7 +59,7 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
-model QuestionSet {
+model Quiz {
   id              String            @id @default(cuid())
   name            String
   description     String?
@@ -69,8 +69,8 @@ model QuestionSet {
   createdById     String
   isDeleted       Boolean           @default(false)
   price           Float?            @default(0.0)
-  action          String?
-  Quiz            Quiz[]
+  status          String?
+  Quiz            QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
 }
 
@@ -96,7 +96,7 @@ model Question {
   createdBy         User               @relation(fields: [createdById], references: [id])
   createdById       String
   isDeleted         Boolean            @default(false)
-  Quiz              Quiz[]
+  Quiz              QuizQuestions[]
   UserQuizAnswers   UserQuizAnswers[]
   solution          String?            @db.VarChar(1000)
   answer_type       AnswerTypeE?
@@ -110,13 +110,14 @@ model ObjectiveOptions {
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
-model Quiz {
-  id          String       @id @default(cuid())
-  setId       String
-  set         QuestionSet? @relation(fields: [setId], references: [id])
+// Quiz to QuizQuestions
+model QuizQuestions {
+  id          String    @id @default(cuid())
+  quizId      String
+  quiz        Quiz?     @relation(fields: [quizId], references: [id])
   questionId  String
-  question    Question?    @relation(fields: [questionId], references: [id])
-  lastUpdated DateTime     @default(now()) @map(name: "lastUpdated")
+  question    Question? @relation(fields: [questionId], references: [id])
+  lastUpdated DateTime  @default(now()) @map(name: "lastUpdated")
   createdBy   String
 }
 
@@ -131,8 +132,8 @@ model UserQuizAnswers {
   id              String                @id @default(cuid())
   submittedBy     String
   submittedByUser User                  @relation(fields: [submittedBy], references: [id])
-  setId           String
-  questionSet     QuestionSet?          @relation(fields: [setId], references: [id])
+  quizId          String
+  Quiz            Quiz?                 @relation(fields: [quizId], references: [id])
   questionId      String
   question        Question?             @relation(fields: [questionId], references: [id])
   isAnswered      Boolean?              @default(false)

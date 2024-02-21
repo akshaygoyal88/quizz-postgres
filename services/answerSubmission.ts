@@ -26,9 +26,10 @@ export async function getQuesStatus({
   submittedBy: string;
   questionId: string;
 }) {
+  const quizId = setId;
   return await db.userQuizAnswers.findFirst({
     where: {
-      setId,
+      quizId,
       submittedBy,
       questionId,
     },
@@ -59,9 +60,10 @@ export async function getUserQuiz({
   submittedBy: string;
   questionId: string;
 }) {
+  const quizId = setId;
   return await db.userQuizAnswers.findFirst({
     where: {
-      setId,
+      quizId,
       submittedBy,
     },
   });
@@ -121,7 +123,7 @@ export async function quizInitializationForReport(
 
 export async function finalTestSubmission({ questions, quizId, submittedBy }) {
   const userQuizRes = await db.userQuizAnswers.findMany({
-    where: { setId: quizId, submittedBy },
+    where: { quizId, submittedBy },
   });
   const networkRes = [];
   let reportStatus: ReportStatusTypeE = ReportStatusTypeE.GENERATED
@@ -151,7 +153,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     where: { submittedBy, quizId },
   });
   const userAnswers = await db.userQuizAnswers.findMany({
-    where: { setId: quizId, submittedBy },
+    where: { quizId, submittedBy },
   });
 
   let correctAnswers = 0;

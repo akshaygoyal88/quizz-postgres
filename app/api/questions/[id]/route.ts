@@ -78,7 +78,7 @@ export async function PUT(req: Request, {params}: {params:string}) {
       where: { id },
     });
 
-    const setsAvailable = await db.questionSet.findMany();
+    const setsAvailable = await db.quiz.findMany();
     const setDetail = setsAvailable.filter((set) => set.name === questionSet);
 
     if(!isDeleted && setDetail.length == 0 ) {

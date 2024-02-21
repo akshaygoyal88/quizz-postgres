@@ -11,7 +11,7 @@ export async function getAllQuestionsSet({
   pageSize: number;
   createdById: string;
 }) {
-  return await db.questionSet.findMany({
+  return await db.quiz.findMany({
     where: {
       isDeleted: false,
       createdById,
@@ -24,7 +24,7 @@ export async function getAllQuestionsSet({
   });
 }
 export async function getQuestionSets(createdById?: string) {
-  return await db.questionSet.findMany({
+  return await db.quiz.findMany({
     where: {
       createdById,
       isDeleted: false,
@@ -43,14 +43,14 @@ export enum QuestionSetSubmitE {
 export async function createQuestionSet({
   name,
   description,
-  action,
+  status,
   price,
   createdById,
 }: {
   name: string;
   description?: string;
   createdById: string;
-  action?: string;
+  status?: string;
   price?: number;
 }) {
   if (!createdById) {
@@ -64,12 +64,12 @@ export async function createQuestionSet({
     return { error: "Price should not be less than 0.0" };
   }
   
-  return await db.questionSet.create({
+  return await db.quiz.create({
     data: {
       name,
       description,
       createdById,
-      action,
+      status,
       price: parseFloat(price)
     },
   });
@@ -82,29 +82,29 @@ export async function editQuestionSet({
   id:string;
   reqData: QuestionSet
 }) {
-  const isAvailable = await db.questionSet.findUnique({
+  const isAvailable = await db.quiz.findUnique({
     where: { id },
   });
   if(!id || !isAvailable){
     return { error: "Question/set not available" };
   }
-  const {name,description,action,price} = reqData;
+  const {name,description,status,price} = reqData;
   if(price && price < 0){
     return { error: "Price should not be less than 0.0" };
   }
-  return await db.questionSet.update({
+  return await db.quiz.update({
     where: {
       id,
     },
     data: { name,
       description,
-      action,
+      status,
       price: price ? parseFloat(price) : undefined },
   });
 }
 
 export async function getQuesSetVailable({ setId }: { setId: string }) {
-  return await db.questionSet.findUnique({
+  return await db.quiz.findUnique({
     where: {
       id: setId,
     },

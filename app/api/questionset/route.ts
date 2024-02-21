@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   try {
     if (page > 0 && pageSize > 0 && createdById) {
-      const totalRows = await db.questionSet.count({
+      const totalRows = await db.quiz.count({
         where: {
           isDeleted: false,
           createdById

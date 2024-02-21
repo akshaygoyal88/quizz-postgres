@@ -262,7 +262,7 @@ function SelectSet({
       <select
         className="w-full border rounded-md p-2"
         defaultValue={defaultValue}
-        name="setId"
+        name="quizId"
       >
         <option value="">Select Quiz</option>
         {data &&

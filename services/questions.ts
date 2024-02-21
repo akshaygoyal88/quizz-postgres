@@ -34,7 +34,7 @@ export enum QuestionSubmitE {
 export async function createQuestion(reqData: Question) {
   console.log("reqData", reqData)
   const {
-    setId,
+    quizId,
     type,
     options,
     correctAnswer,
@@ -46,7 +46,7 @@ export async function createQuestion(reqData: Question) {
   } = reqData;
   
 
-  if (!setId) {
+  if (!quizId) {
     return { error: "Please provide question set." };
   }
   const addQuestion = await db.question.create({
@@ -73,9 +73,9 @@ export async function createQuestion(reqData: Question) {
   const createdBy = createdById;
   const questionId = addQuestion.id;
 
-  const quizAdd = await db.quiz.create({
+  const quizAdd = await db.quizQuestions.create({
     data: {
-      setId,
+      quizId,
       questionId,
       createdBy,
     },
@@ -94,7 +94,7 @@ export async function editQuestions({
 
 
   const {
-    setId,
+    quizId,
     type,
     options,
     correctAnswer,

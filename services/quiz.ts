@@ -2,9 +2,10 @@ import { db } from "@/db";
 import { Quiz } from "@prisma/client";
 
 export async function getQuiz({setId}: {setId: string}){
-    return await db.quiz.findMany({
+  const quizId = setId;
+    return await db.quizQuestions.findMany({
       where: {
-        setId,
+        quizId,
       },
       include:{
         question: {
@@ -17,17 +18,19 @@ export async function getQuiz({setId}: {setId: string}){
   }
 
   export async function deleteQuiz({setId}: {setId: string}){
-    return await db.quiz.deleteMany({
+    const quizId = setId;
+    return await db.quizQuestions.deleteMany({
       where: {
-        setId,
+        quizId,
       }
     })
   }
   export async function postQuestionInQuiz({setId, questionId, createdBy}:{setId:string, questionId: string, createdBy:string}){
     console.log({setId, questionId, createdBy})
-    return await db.quiz.create({
+    const quizId = setId;
+    return await db.quizQuestions.create({
       data: {
-        setId,
+        quizId,
         questionId,
         createdBy,
       },

@@ -24,7 +24,7 @@ export async function handleQuestionSubmit(
   }
 
   const reqData = {
-    setId: rawFormData.setId,
+    quizId: rawFormData.quizId,
     type: rawFormData.questionType,
     options: optionsArray,
     questionType: rawFormData.questionType,
