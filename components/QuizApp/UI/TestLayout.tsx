@@ -60,7 +60,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
           const session = await getSession();
           const currQues = session?.id && {
             submittedBy: session.id,
-            setId: quizId,
+            quizId,
             questionId: currentQuestionId,
             // correctAnswerId: '<otion_id>'
           };

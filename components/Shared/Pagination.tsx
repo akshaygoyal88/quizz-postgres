@@ -6,6 +6,7 @@ interface PaginationProps {
   page: number;
   totalpage: number;
   totalRows: number;
+  pageSize?: number;
   paginate: (pageNumber: React.SetStateAction<number>) => void;
 }
 
@@ -13,6 +14,7 @@ const Pagination: React.FC<PaginationProps> = ({
   page,
   totalpage,
   totalRows,
+  pageSize,
   paginate,
 }) => {
   const router = useRouter();
@@ -56,11 +58,13 @@ const Pagination: React.FC<PaginationProps> = ({
           <p className="text-sm text-gray-700">
             Showing{" "}
             <span className="font-medium">
-              {totalpage ? 1 + (page - 1) * 9 : totalpage}
+              {totalpage ? 1 + (page - 1) * (pageSize || 9) : totalpage}
             </span>{" "}
             to{" "}
             <span className="font-medium">
-              {page * 9 < totalRows ? page * 9 : totalRows}
+              {page * (pageSize || 9) < totalRows
+                ? page * (pageSize || 9)
+                : totalRows}
             </span>{" "}
             of <span className="font-medium">{totalRows}</span> results
           </p>

@@ -20,7 +20,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <Provider>
-        <body className={inter.className}>
+        <body className="">
           {/* <Nav /> */}
           <main>
             <Header />

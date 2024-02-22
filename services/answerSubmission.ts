@@ -12,7 +12,7 @@ import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 export async function questionInitialization(reqData: UserQuizAnswers) {
 
   // const isProgress = await getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
-  // console.log({reqData})
+  console.log({reqData})
   const initiallyQues = await db.userQuizAnswers.create({
     data: {
       ...reqData,
@@ -22,15 +22,15 @@ export async function questionInitialization(reqData: UserQuizAnswers) {
 }
 
 export async function getQuesStatus({
-  setId,
+  quizId,
   submittedBy,
   questionId,
 }: {
-  setId: string;
+  quizId: string;
   submittedBy: string;
   questionId: string;
 }) {
-  const quizId = setId;
+
   return await db.userQuizAnswers.findFirst({
     where: {
       quizId,

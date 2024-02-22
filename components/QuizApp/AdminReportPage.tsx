@@ -32,7 +32,7 @@ export default function AdminReportPage() {
     error: quizReportError,
     isLoading: quizReportLoading,
   } = useFetch({
-    url: `${pathName.adminReportApiRoute.path}/${selectedQuiz}?page=${page}&pageSize=9&time=${time}`,
+    url: `${pathName.adminReportApiRoute.path}/${selectedQuiz}?page=${page}&pageSize=3&time=${time}`,
   });
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {
@@ -66,6 +66,7 @@ export default function AdminReportPage() {
             totalpage={quizReportData?.totalPages || 0}
             paginate={paginate}
             totalRows={quizReportData?.totalRows || 0}
+            pageSize={3}
           />
         </div>
       )}
