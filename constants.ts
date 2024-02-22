@@ -109,6 +109,11 @@ const pathName: IPathName = {
     roles: [],
     requireToken: false
   },
+  userQuizResponseApiRoute: {
+    path: "/api/quiz/userResponse",
+    roles: [],
+    requireToken: false
+  }
   
 };
 

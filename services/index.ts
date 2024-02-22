@@ -8,3 +8,4 @@ export * as sendEmail from "./sendEmail";
 export * as NotificationService from "./notification";
 export * as resetPasswordService from "./resetPasswordService"
 export * as QuizReportsService from "./quizReport"
+export * as AnswerSubmisionService from "./answerSubmission";

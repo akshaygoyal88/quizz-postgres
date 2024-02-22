@@ -1,7 +1,7 @@
 import { db } from "@/db";
 
 export async function getReportsBySubmittedBy(submittedBy: string) {
-    const reportRes = await db.userReportOfQuiz.findMany({ where: { submittedBy } });
+    const reportRes = await db.userQuizReport.findMany({ where: { submittedBy } });
     const quizzes = [];
     for (const report of reportRes) {
       const quiz = await db.quiz.findMany({ where: { id: report.quizId } });
@@ -11,14 +11,20 @@ export async function getReportsBySubmittedBy(submittedBy: string) {
   }
 
   export async function getReportByQuizIdAndSubmittedBy({quizId, submittedBy}:{quizId: string, submittedBy: string}){
-    return db.userReportOfQuiz.findFirst({where: {quizId, submittedBy}})
+    return db.userQuizReport.findFirst({where: {quizId, submittedBy}})
   }
 
   export async function getReportsByQuizId({skip, pageSize, quizId}: {skip:number, pageSize:number, quizId:string}) {
-    const quizResByUser =  db.userReportOfQuiz.findMany({
-      where: {quizId},
+    const quizResByUser =  db.userQuizReport.findMany({
+      where: {
+        quizId
+      },
+      include: {
+        user: true,
+      }, 
       skip,
-      take: pageSize,});
+      take: pageSize
+    });
     return quizResByUser
   }
   

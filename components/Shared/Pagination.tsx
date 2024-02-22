@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -8,6 +8,7 @@ interface PaginationProps {
   totalRows: number;
   pageSize?: number;
   paginate: (pageNumber: React.SetStateAction<number>) => void;
+  urlInitialization?: any;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -16,6 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({
   totalRows,
   pageSize,
   paginate,
+  urlInitialization,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -24,6 +26,14 @@ const Pagination: React.FC<PaginationProps> = ({
   if (currentPage) {
     paginate(currentPage);
   }
+
+  useEffect(() => {
+    if (urlInitialization) {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      router.push(`${pathname}?${params.toString()}`);
+    }
+  }, [urlInitialization]);
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);

@@ -1,8 +1,10 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
 import AdminReportPage from "@/components/QuizApp/AdminReportPage";
+import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";
 
-export default function page() {
+export default async function page() {
+  await isUnauthorised("/signin");
   return (
     <LeftSideBar>
       <AdminReportPage />

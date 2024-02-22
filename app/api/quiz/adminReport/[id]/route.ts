@@ -11,7 +11,7 @@ export async function GET(req: Request, {params}: {params:string}) {
 
     try {
       
-          const totalRows = await db.userReportOfQuiz.count({
+          const totalRows = await db.userQuizReport.count({
             where: {
               quizId          
             },

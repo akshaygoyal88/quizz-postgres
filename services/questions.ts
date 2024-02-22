@@ -7,8 +7,8 @@ export async function getAllQuestions({
   pageSize,
   createdById,
 }: {
-  skip: Number;
-  pageSize: Number;
+  skip: number;
+  pageSize: number;
   createdById: string;
 }) {
   return await db.question.findMany({
@@ -19,7 +19,6 @@ export async function getAllQuestions({
     include: {
       objective_options: true,
       createdBy: true,
-      Quiz: true,
     },
     skip,
     take: pageSize,

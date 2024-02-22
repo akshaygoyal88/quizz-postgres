@@ -2,10 +2,10 @@ import { db } from "@/db";
 import {
   QuestionType,
   QuizStatusTypeE,
-  ReportStatusTypeE,
+  ReportStatusE,
   UserQuizAnswerStatus,
   UserQuizAnswers,
-  UserReportOfQuiz,
+  userQuizReport,
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 
@@ -62,14 +62,20 @@ export async function getUserQuiz({
 }: {
   setId: string;
   submittedBy: string;
-  questionId: string;
 }) {
   const quizId = setId;
-  return await db.userQuizAnswers.findFirst({
+  return await db.userQuizAnswers.findMany({
     where: {
       quizId,
       submittedBy,
     },
+    include:{
+      question: {
+        include: {
+          objective_options: true
+        }
+      }
+    }
   });
 }
 
@@ -105,7 +111,7 @@ export async function quizInitializationForReport(
   quizId: string,
   submittedBy: string
 ) {
-  const isAvailableRes = await db.userReportOfQuiz.findFirst({
+  const isAvailableRes = await db.userQuizReport.findFirst({
     where: { quizId, submittedBy },
   });
   if (isAvailableRes) {
@@ -115,7 +121,7 @@ export async function quizInitializationForReport(
       message: "Quiz already initialized",
     };
   }
-  const initializeQuizRes = await db.userReportOfQuiz.create({
+  const initializeQuizRes = await db.userQuizReport.create({
     data: { submittedBy, quizId, status: QuizStatusTypeE.INPROGRESS },
   });
   return {
@@ -130,11 +136,11 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     where: { quizId, submittedBy },
   });
   const networkRes = [];
-  let reportStatus: ReportStatusTypeE = ReportStatusTypeE.UNDERREVIEW
+  let reportStatus: ReportStatusE = ReportStatusE.UNDERREVIEW
   for (const res of userQuizRes) {
     const que = questions.find((q) => q.questionId === res?.questionId);
     if(que.question.type === QuestionType.SUBJECTIVE){
-      reportStatus = ReportStatusTypeE.UNDERREVIEW
+      reportStatus = ReportStatusE.UNDERREVIEW
     }
     const correctOpt = que?.question?.objective_options.find(
       (o) => o.isCorrect === true
@@ -153,7 +159,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     }
   }
 
-  const userReport = await db.userReportOfQuiz.findFirst({
+  const userReport = await db.userQuizReport.findFirst({
     where: { submittedBy, quizId },
   });
   const userAnswers = await db.userQuizAnswers.findMany({
@@ -173,7 +179,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
 
-  const quizReportRes: UserReportOfQuiz = await db.userReportOfQuiz.update({
+  const quizReportRes: userQuizReport = await db.userQuizReport.update({
     where: { id: userReport?.id },
     data: {
       status: QuizStatusTypeE.SUBMITTED,

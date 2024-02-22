@@ -2,7 +2,7 @@
 
 import Lable from "@/components/Shared/Lable";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { Quiz, ReportStatusTypeE } from "@prisma/client";
+import { Quiz, ReportStatusE } from "@prisma/client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -100,8 +100,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
       ) : (
         <div className="min-h-screen flex flex-col items-center bg-gray-50 sm:px-6">
           <div className="w-full">
-            {dataOfSelectedQuiz.reportStatus ===
-            ReportStatusTypeE.UNDERREVIEW ? (
+            {dataOfSelectedQuiz.reportStatus === ReportStatusE.UNDERREVIEW ? (
               <div className="px-4 py-4 bg-gray-100 mb-4 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="bg-gradient-to-r from-yellow-400 font-semibold to-red-500 text-transparent bg-clip-text">
@@ -197,8 +196,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
               </div>
             )}
 
-            {dataOfSelectedQuiz?.reportStatus ===
-              ReportStatusTypeE.GENERATED && (
+            {dataOfSelectedQuiz?.reportStatus === ReportStatusE.GENERATED && (
               <div className="grid gap-4 grid-cols-1">
                 {quizReportData.map((item, index) => (
                   <div key={index} className="rounded-lg shadow-lg bg-white">

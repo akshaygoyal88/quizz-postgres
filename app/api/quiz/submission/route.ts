@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { QuizReportsService } from '@/services';
 import { getQuesStatus, questionInitialization } from '@/services/answerSubmission';
-import { QuizStatusTypeE } from '@prisma/client';
+import { UserQuizStatusE } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request, res: Response) {
@@ -11,7 +11,7 @@ export async function POST(req: Request, res: Response) {
 
     const statusOfQuiz = await QuizReportsService.getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
     console.log({statusOfQuiz})
-    if(statusOfQuiz?.status !== QuizStatusTypeE.INPROGRESS){
+    if(statusOfQuiz?.status !== UserQuizStatusE.INPROGRESS){
       return NextResponse.json({error: 'Your test timed out'});
     }
     const isQueIntialized = await getQuesStatus({quizId : reqData.quizId,submittedBy:reqData.submittedBy, questionId:reqData.questionId, })

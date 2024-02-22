@@ -41,7 +41,7 @@ model User {
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
   userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
-  UserReportOfQuiz  UserReportOfQuiz[]
+  UserQuizReport    UserQuizReport[]
 }
 
 model UserOtp {
@@ -155,43 +155,32 @@ model UserNotification {
   time    DateTime @default(now()) @map(name: "time")
 }
 
-enum QuizStatusTypeE {
+enum UserQuizStatusE {
   SUBMITTED
   INCOMPLETED
   INPROGRESS
 }
 
-// model UserAttemptQuiz {
-//   id          String           @id @default(cuid())
-//   submittedBy String
-//   user        User             @relation(fields: [submittedBy], references: [id])
-//   quizId      String
-//   status      QuizStatusTypeE? @default(INCOMPLETED)
-//   startedAt   DateTime         @default(now()) @map(name: "started_at")
-
-//   endedAt DateTime? // @map(name: "ended_at") @endedAt
-// }
-
-enum ReportStatusTypeE {
+enum ReportStatusE {
   GENERATED
   UNDERREVIEW
   INITIALIZED
 }
 
-model UserReportOfQuiz {
-  id             String             @id @default(cuid())
-  submittedBy    String
-  user           User               @relation(fields: [submittedBy], references: [id])
-  quizId         String
-  status         QuizStatusTypeE?
-  startedAt      DateTime           @default(now()) @map(name: "started_at")
-  endedAt        DateTime?
-  correctAnswers Int?               @default(0)
-  wrongAnswers   Int?               @default(0)
-  notAttempted   Int?               @default(0)
-  obtMarks       Float?             @default(0.0)
-  negMarks       Int?               @default(0)
-  timeTaken      Int?               @default(0)
-  totalMarks     Float?             @default(0.0)
-  reportStatus   ReportStatusTypeE? @default(INITIALIZED)
+model UserQuizReport {
+  id           String           @id @default(cuid())
+  submittedBy  String
+  user         User             @relation(fields: [submittedBy], references: [id])
+  quizId       String
+  status       UserQuizStatusE?
+  startedAt    DateTime         @default(now()) @map(name: "started_at")
+  endedAt      DateTime?
+  // correctAnswers Int?               @default(0)
+  // wrongAnswers   Int?               @default(0)
+  // notAttempted   Int?               @default(0)
+  obtMarks     Float?           @default(0.0)
+  // negMarks       Int?               @default(0)
+  // timeTaken      Int?               @default(0)
+  totalMarks   Float?           @default(0.0)
+  reportStatus ReportStatusE?   @default(INITIALIZED)
 }

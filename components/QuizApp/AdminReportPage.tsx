@@ -6,7 +6,7 @@ import { Quiz } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
-import QuizReportTable from "./QuizReportTable";
+import QuizReportList from "./QuizReportList";
 
 export default function AdminReportPage() {
   const ses = useSession();
@@ -44,6 +44,8 @@ export default function AdminReportPage() {
     }
   };
 
+  console.log(quizReportData);
+
   return (
     <div className="sm:px-6">
       <SelectQuiz
@@ -57,7 +59,7 @@ export default function AdminReportPage() {
         </div>
       ) : (
         <div>
-          <QuizReportTable
+          <QuizReportList
             quizResByUser={quizReportData?.quizResByUser}
             quizData={quizData}
           />
@@ -67,6 +69,7 @@ export default function AdminReportPage() {
             paginate={paginate}
             totalRows={quizReportData?.totalRows || 0}
             pageSize={3}
+            urlInitialization={selectedQuiz}
           />
         </div>
       )}
