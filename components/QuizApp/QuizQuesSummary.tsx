@@ -111,7 +111,9 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
         <text
           className={`${
             reportStatus === ReportStatusE.GENERATED
-          } ? text-green-500 : ""`}
+              ? "text-green-500"
+              : "text-yellow-500"
+          } `}
         >
           {reportStatus}
         </text>
