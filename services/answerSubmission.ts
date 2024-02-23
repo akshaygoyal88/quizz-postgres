@@ -5,6 +5,7 @@ import {
   ReportStatusE,
   UserQuizAnswerStatus,
   UserQuizAnswers,
+  UserQuizStatusE,
   userQuizReport,
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
@@ -122,7 +123,7 @@ export async function quizInitializationForReport(
     };
   }
   const initializeQuizRes = await db.userQuizReport.create({
-    data: { submittedBy, quizId, status: QuizStatusTypeE.INPROGRESS },
+    data: { submittedBy, quizId, status: UserQuizStatusE.INPROGRESS },
   });
   return {
     initializeQuizRes,
