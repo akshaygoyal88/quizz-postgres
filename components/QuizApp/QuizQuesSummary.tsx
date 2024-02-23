@@ -23,16 +23,20 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSucessMessage] = useState<string | null>(null);
 
-  const { data: oridinalQueAndAns, error: oridinalQueAndAnsError } = useFetch({
-    url: `${pathName.testSetApis.path}/${quizId}`,
-  });
+  // const {
+  //   data: oridinalQueAndAns,
+  //   error: oridinalQueAndAnsError,
+  //   isLoading,
+  // } = useFetch({
+  //   url: `${pathName.testSetApis.path}/${quizId}`,
+  // });
 
   const { data: candidateResponse, error: candidateResponseError } = useFetch({
     url: `${pathName.userQuizResponseApiRoute.path}/${quizId}?submittedBy=${submittedBy}`,
   });
 
   useEffect(() => {
-    if (candidateResponse && candidateResponse.length > 0) {
+    if (candidateResponse?.length > 0) {
       for (const res of candidateResponse) {
         const id: string = res.id;
         const mark =
@@ -79,7 +83,6 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
       method: FetchMethodE.POST,
       body: { marks, reportId },
     });
-    console.log(markSaveRes);
     if (markSaveRes?.error?.length > 0) {
       setErrorMessage("Please check missing field");
       for (const error of markSaveRes.error) {
@@ -91,8 +94,6 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
       setTimeout(() => {}, 10000);
     }
   };
-  console.log(missingMark);
-  const handlePublishReport = () => {};
 
   return (
     <div className="sm:px-6">
@@ -234,16 +235,11 @@ function TableRow({
           className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
             missingMark.includes(queRes.id) ? "border-red-600 border-3" : ""
           }`}
-          // defaultValue={
-          //   queRes.question.type === QuestionType.OBJECTIVE &&
-          //   (queRes.isCorrect ? 1 : 0)
-          // }
           value={marks[queRes.id]}
           step="0.01"
           min="0"
           max="1"
           onChange={(e) => {
-            // You can add your own logic here to handle the change event
             handleMarksInputChange(e);
           }}
         />

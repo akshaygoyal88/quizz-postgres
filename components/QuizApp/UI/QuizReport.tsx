@@ -1,6 +1,7 @@
 "use client";
 
 import Lable from "@/components/Shared/Lable";
+import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Quiz, ReportStatusE } from "@prisma/client";
 import Link from "next/link";
@@ -49,7 +50,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
   useEffect(() => {
     const fetchReport = async () => {
       const { data, error, isLoading } = await fetchData({
-        url: `/api/quiz/quizReport/${userId}`,
+        url: `${pathName.quizReportApiRoute.path}/${userId}`,
         method: FetchMethodE.GET,
       });
       console.log(data);
@@ -69,7 +70,6 @@ const QuizReport = ({ userId }: { userId: string }) => {
 
     reportForSelectedQuiz && setDataOfSelectedQuiz(reportForSelectedQuiz);
   };
-  console.log(dataOfSelectedQuiz);
 
   return (
     <div>
@@ -120,9 +120,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
                   <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
                     Attempts
                   </span>
-                  <span className="text-lg font-semibold">
-                    {dummyData.attempts}
-                  </span>
+                  <span className="text-lg font-semibold">{1}</span>
                 </div>
 
                 <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
