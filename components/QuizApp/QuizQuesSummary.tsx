@@ -7,6 +7,7 @@ import pathName from "@/constants";
 import {
   ObjectiveOptions,
   QuestionType,
+  ReportStatusE,
   UserQuizAnswers,
 } from "@prisma/client";
 import { Button } from "../Button";
@@ -16,10 +17,11 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
   const searchParams = useSearchParams();
   const quizId = searchParams.get("quizId");
   const submittedBy = searchParams.get("submittedBy");
+  const reportStatus = searchParams.get("reportStatus");
   const [marks, setMarks] = useState<{ [key: string]: number }>({});
   const [missingMark, setMissingMark] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSucessMessage] = useState<string | null>();
+  const [successMessage, setSucessMessage] = useState<string | null>(null);
 
   const { data: oridinalQueAndAns, error: oridinalQueAndAnsError } = useFetch({
     url: `${pathName.testSetApis.path}/${quizId}`,
@@ -86,6 +88,7 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
       }
     } else if (markSaveRes.result.length > 0) {
       setSucessMessage("Successfully saved marks.");
+      setTimeout(() => {}, 10000);
     }
   };
   console.log(missingMark);
@@ -99,9 +102,20 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
         </h1>
         <Button onClick={handleSave}>Save and Publish Report</Button>
       </div>
-      <p className="text-white bg-green-700 p-2">{successMessage}</p>
-
-      <p className="text-red-600">{errorMessage}</p>
+      {successMessage && (
+        <p className="text-white bg-green-700 p-2">{successMessage}</p>
+      )}
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+      <span className="">
+        Report Status:{" "}
+        <text
+          className={`${
+            reportStatus === ReportStatusE.GENERATED
+          } ? text-green-500 : ""`}
+        >
+          {reportStatus}
+        </text>
+      </span>
       <div className="overflow-x-auto">
         <table className="table-auto min-w-full divide-y divide-gray-300">
           <thead>

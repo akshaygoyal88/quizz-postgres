@@ -77,7 +77,7 @@ const QuizReportList = ({
           </div>
           <div className="flex flex-none items-center gap-x-4">
             <Link
-              href={`${pathName.adminReportsRoute.path}/${quiz.id}?quizId=${quiz.quizId}&submittedBy=${quiz.submittedBy}`}
+              href={`${pathName.adminReportsRoute.path}/${quiz.id}?quizId=${quiz.quizId}&submittedBy=${quiz.submittedBy}&reportStatus=${quiz.reportStatus}`}
               className="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block"
             >
               View <span className="sr-only">, {quiz.name}</span>
