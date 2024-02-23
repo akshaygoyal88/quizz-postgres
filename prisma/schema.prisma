@@ -144,6 +144,7 @@ model UserQuizAnswers {
   timeOver        Boolean?              @default(false)
   isCorrect       Boolean?              @default(false)
   // finalSubmit     Boolean?              @default(false)
+  marks           Float?
 }
 
 model UserNotification {

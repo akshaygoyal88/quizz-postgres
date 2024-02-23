@@ -1,98 +1,174 @@
 "use client";
-
-import pathName from "@/constants";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import HTMLReactParser from "html-react-parser";
 import { useFetch } from "@/hooks/useFetch";
+import pathName from "@/constants";
 import {
   ObjectiveOptions,
   QuestionType,
   UserQuizAnswers,
 } from "@prisma/client";
-import HTMLReactParser from "html-react-parser";
-import { useSearchParams } from "next/navigation";
-import React from "react";
+import { Button } from "../Button";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
 
-export default function QuizQuesSummary() {
+export default function QuizQuesSummary({ reportId }: { reportId: string }) {
   const searchParams = useSearchParams();
   const quizId = searchParams.get("quizId");
   const submittedBy = searchParams.get("submittedBy");
+  const [marks, setMarks] = useState<{ [key: string]: number }>({});
+  const [missingMark, setMissingMark] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSucessMessage] = useState<string | null>();
 
   const { data: oridinalQueAndAns, error: oridinalQueAndAnsError } = useFetch({
     url: `${pathName.testSetApis.path}/${quizId}`,
   });
-  console.log(oridinalQueAndAns);
 
   const { data: candidateResponse, error: candidateResponseError } = useFetch({
     url: `${pathName.userQuizResponseApiRoute.path}/${quizId}?submittedBy=${submittedBy}`,
   });
-  console.log(candidateResponse);
+
+  useEffect(() => {
+    if (candidateResponse && candidateResponse.length > 0) {
+      for (const res of candidateResponse) {
+        const id: string = res.id;
+        const mark =
+          res.marks === null
+            ? res.question.type === QuestionType.OBJECTIVE &&
+              (res.isCorrect ? 1 : 0)
+            : res.marks;
+        setMarks((prevMarks) => ({
+          ...prevMarks,
+          [id]: mark,
+        }));
+      }
+    }
+  }, [candidateResponse]);
+
+  const handleMarksChange = (id: string, mark: number) => {
+    if (missingMark.includes(id)) {
+      const filterArr = missingMark.filter((m) => m !== id);
+      setMissingMark(filterArr);
+    }
+    setMarks((prevMarks) => ({
+      ...prevMarks,
+      [id]: mark,
+    }));
+  };
+
+  const handleSave = async () => {
+    setErrorMessage(null);
+    // for (const [id, mark] of Object.entries(marks)) {
+    //   if (!missingMark.includes(id) && mark === false) {
+    //     setErrorMessage("Please check missing field");
+    //     setMissingMark((prev) => [...prev, id]);
+    //   }
+    // }
+    // if (missingMark.length > 0) {
+    //   return;
+    // }
+    const {
+      data: markSaveRes,
+      error: markSaveError,
+      isLoading: markSaveLoading,
+    } = await fetchData({
+      url: `${pathName.marksApiRoute.path}`,
+      method: FetchMethodE.POST,
+      body: { marks, reportId },
+    });
+    console.log(markSaveRes);
+    if (markSaveRes?.error?.length > 0) {
+      setErrorMessage("Please check missing field");
+      for (const error of markSaveRes.error) {
+        const id = Object.keys(error)[0];
+        setMissingMark((prev) => [...prev, id]);
+      }
+    } else if (markSaveRes.result.length > 0) {
+      setSucessMessage("Successfully saved marks.");
+    }
+  };
+  console.log(missingMark);
+  const handlePublishReport = () => {};
 
   return (
     <div className="sm:px-6">
-      <h1>Detailed Quiz Report of candidate</h1>
-      <div className="flow-root">
-        <div className="overflow-x-auto sm:-mx-6">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                  >
-                    Question
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Given Answer
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Answer Status
-                  </th>
+      <div className="flex items-start justify-between my-4">
+        <h1 className="font-bold text-gray-700 text-2xl">
+          Detailed Quiz Report of candidate
+        </h1>
+        <Button onClick={handleSave}>Save and Publish Report</Button>
+      </div>
+      <p className="text-white bg-green-700 p-2">{successMessage}</p>
 
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Marks
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Time Taken
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
-                {candidateResponse?.map((queRes: UserQuizAnswers) => (
-                  <TableRow key={queRes.id} queRes={queRes} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <p className="text-red-600">{errorMessage}</p>
+      <div className="overflow-x-auto">
+        <table className="table-auto min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                Question
+              </th>
+              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                Given Answer
+              </th>
+              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                Answer Status
+              </th>
+              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                Marks
+              </th>
+              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                Time Taken
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white">
+            {candidateResponse?.map((queRes: UserQuizAnswers) => (
+              <TableRow
+                key={queRes.id}
+                queRes={queRes}
+                marks={marks}
+                onMarksChange={handleMarksChange}
+                missingMark={missingMark}
+              />
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
 
-function TableRow({ queRes }: { queRes: UserQuizAnswers }) {
+function TableRow({
+  queRes,
+  marks,
+  onMarksChange,
+  missingMark,
+}: {
+  queRes: UserQuizAnswers;
+  marks: { id: string; marks: number }[];
+  onMarksChange: (id: string, mark: number) => void;
+  missingMark: string[];
+}) {
   const findGivenAnsText = (id: string, opts: ObjectiveOptions[]) => {
     const givAns = opts.find((ans: ObjectiveOptions) => ans.id === id);
     return givAns?.text;
   };
 
+  const handleMarksInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    queRes.question.type === QuestionType.SUBJECTIVE &&
+      onMarksChange(queRes.id, parseFloat(event.target.value));
+  };
+
   return (
     <tr key={queRes.id}>
-      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+      <td className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
         {HTMLReactParser(queRes.question.editorContent)}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+      <td className="px-3 py-4 text-sm text-gray-500">
         {(queRes.question.type === QuestionType.SUBJECTIVE &&
           queRes.ans_subjective) ||
           (queRes.ans_optionsId &&
@@ -103,7 +179,7 @@ function TableRow({ queRes }: { queRes: UserQuizAnswers }) {
               )
             ))}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+      <td className="px-3 py-4 text-sm text-gray-500">
         {(queRes.question.type === QuestionType.SUBJECTIVE &&
           "Subjective Type") ||
           (queRes.isCorrect ? (
@@ -119,7 +195,7 @@ function TableRow({ queRes }: { queRes: UserQuizAnswers }) {
                 clipRule="evenodd"
               />
             </svg>
-          ) : (
+          ) : queRes.ans_optionsId ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -132,22 +208,35 @@ function TableRow({ queRes }: { queRes: UserQuizAnswers }) {
                 clipRule="evenodd"
               />
             </svg>
+          ) : (
+            "Skipped"
           ))}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+      <td className="px-3 py-4 text-sm text-gray-500">
         <input
           type="number"
-          className="border-2 border-gray-400 rounded w-2/5 pl-1 py-1 text-black"
-          defaultValue={
-            queRes.question.type === QuestionType.OBJECTIVE &&
-            (queRes.isCorrect ? 1 : 0)
-          }
+          className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
+            missingMark.includes(queRes.id) ? "border-red-600 border-3" : ""
+          }`}
+          // defaultValue={
+          //   queRes.question.type === QuestionType.OBJECTIVE &&
+          //   (queRes.isCorrect ? 1 : 0)
+          // }
+          value={marks[queRes.id]}
+          step="0.01"
+          min="0"
+          max="1"
+          onChange={(e) => {
+            // You can add your own logic here to handle the change event
+            handleMarksInputChange(e);
+          }}
         />
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        {queRes.timeTaken / 60 < 1
-          ? queRes.timeTaken + " sec"
-          : queRes.timeTaken / 60 + " min"}
+      <td className="px-3 py-4 text-sm text-gray-500">
+        {queRes.timeTaken &&
+          (queRes.timeTaken / 60 < 1
+            ? queRes.timeTaken + " sec"
+            : queRes.timeTaken / 60 + " min")}
       </td>
     </tr>
   );
