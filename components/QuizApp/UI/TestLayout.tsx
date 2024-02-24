@@ -8,6 +8,7 @@ import pathName from "@/constants";
 import { QuizContext } from "@/context/QuizProvider";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
+import email from "next-auth/providers/email";
 
 export default function TestLayout({ quizId }: { quizId: string }) {
   const ses = useSession();
@@ -59,8 +60,9 @@ export default function TestLayout({ quizId }: { quizId: string }) {
           const session = await getSession();
           const currQues = session?.id && {
             submittedBy: session.id,
-            setId: quizId,
+            quizId,
             questionId: currentQuestionId,
+            // correctAnswerId: '<otion_id>'
           };
 
           const { data, error } = await fetchData({
@@ -108,7 +110,6 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     type: QuestionType;
     timeOver: boolean;
   }) => {
-    console.log(timeTaken, timeOver);
     let userQueRes: { type: QuestionType; [key: string]: any } = { type };
     if (answer) {
       if (type === QuestionType.OBJECTIVE) {
@@ -174,8 +175,23 @@ export default function TestLayout({ quizId }: { quizId: string }) {
     setCurrentQuestionId(id);
   };
 
-  const handleSubmit = () => {
-    // Logic for submitting the quiz
+  const handleFinalSubmitTest = async () => {
+    // questions, setId, submittedBy
+    console.log("Final Submit Test");
+    const {
+      data: finalSubRes,
+      error: finalSubError,
+      isLoading: finalSubLoading,
+    } = await fetchData({
+      url: `/api/quiz/finalSubmission`,
+      method: FetchMethodE.POST,
+      body: {
+        questions: questionsRes?.questions,
+        quizId,
+        submittedBy: ses?.data?.id,
+      },
+    });
+    console.log(finalSubRes);
   };
 
   return (
@@ -205,18 +221,19 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                   setId={quizId}
                   submittedBy={ses.status === "authenticated" && ses.data.id}
                   currInitializedQue={currInitializedQue}
+                  handleFinalSubmitTest={handleFinalSubmitTest}
                 />
               )}
             </div>
 
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <button
-                onClick={handleSubmit}
+                onClick={handleFinalSubmitTest}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md"
               >
                 Submit
               </button>
-            </div>
+            </div> */}
           </div>
         </main>
       </div>

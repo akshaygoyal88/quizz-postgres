@@ -23,10 +23,15 @@ const navigation = [
     icon: HomeIcon,
     current: true,
   },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  {
+    name: "Reports",
+    href: pathName.adminReportsRoute.path,
+    icon: ChartPieIcon,
+    current: false,
+  },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
-    name: "Create set",
+    name: "Create Quiz",
     href: pathName.quizAdd.path,
     icon: PlusIcon,
     current: false,

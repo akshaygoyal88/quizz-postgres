@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: Request, {params}: {params:string}) {
   const id = params.id;
-  const setData = await db.questionSet.findUnique({
+  const setData = await db.quiz.findUnique({
     where: { id },
   });
   return NextResponse.json(setData);
@@ -13,12 +13,12 @@ export async function DELETE(req: Request, {params}: {params:string}) {
   let err;
   try {
     const id = params.id
-    const isAvailable = await db.questionSet.findUnique({
+    const isAvailable = await db.quiz.findUnique({
       where: { id },
     });
 
     if (isAvailable) {
-      const deleteSet = await db.questionSet.delete({
+      const deleteSet = await db.quiz.delete({
         where: {
           id,
         },
@@ -39,12 +39,12 @@ export async function PUT(req: Request, {params}: {params:string}) {
   try {
     const id = params.id
     const reqData = await req.json();
-    const isAvailable = await db.questionSet.findUnique({
+    const isAvailable = await db.quiz.findUnique({
       where: { id },
     });
 
     if (isAvailable) {
-      const updateSet = await db.questionSet.update({
+      const updateSet = await db.quiz.update({
         where: {
           id,
         },

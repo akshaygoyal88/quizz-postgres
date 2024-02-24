@@ -32,16 +32,16 @@ model User {
   state             String?
   city              String?
   pincode           String?
-  profile_pic       String?
+  profile_pic       String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
   isProfileComplete Boolean            @default(false)
   otps              UserOtp[]
-  createdShows      Show[]
-  ticket            Tickets[]
   token             String?
-  QuestionSet       QuestionSet[]
+  Quiz              Quiz[]
   Question          Question[]
   UserQuizAnswers   UserQuizAnswers[]
   notifications     UserNotification[]
+  userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
+  UserQuizReport    UserQuizReport[]
 }
 
 model UserOtp {
@@ -59,48 +59,7 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
-enum ShowMode {
-  ONLINE
-  OFFLINE
-  BOTH
-}
-
-model Show {
-  id               String        @id @default(cuid())
-  Name             String
-  Type             String
-  Mode             ShowMode
-  StartDateAndTime DateTime
-  EndDateAndTime   DateTime?
-  noOfTickets      Int
-  createdBy        User          @relation(fields: [createdById], references: [id])
-  createdById      String
-  createdAt        DateTime      @default(now()) @map(name: "created_at")
-  TicketGroup      TicketGroup[]
-  Tickets          Tickets[]
-}
-
-model TicketGroup {
-  id             String @id @default(cuid())
-  ticketGroup    String
-  showId         String
-  show           Show   @relation(fields: [showId], references: [id])
-  SeatZoneNumber Int?
-}
-
-model Tickets {
-  id          String  @id @default(cuid())
-  showId      String?
-  show        Show?   @relation(fields: [showId], references: [id])
-  ticketGroup String?
-  quantity    Int
-  price       Int
-  description String? @db.LongText
-  createdBy   User    @relation(fields: [createdById], references: [id])
-  createdById String
-}
-
-model QuestionSet {
+model Quiz {
   id              String            @id @default(cuid())
   name            String
   description     String?
@@ -110,8 +69,8 @@ model QuestionSet {
   createdById     String
   isDeleted       Boolean           @default(false)
   price           Float?            @default(0.0)
-  action          String?
-  Quiz            Quiz[]
+  status          String?
+  QuizQuestions   QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
 }
 
@@ -126,22 +85,21 @@ enum AnswerTypeE {
 }
 
 model Question {
-  id                     String                  @id @default(cuid())
-  question_text          String?                 @db.Text
-  type                   QuestionType // "objective" or "subjective"
-  objective_options      ObjectiveOptions[]      @relation("QuestionToAnswer")
-  subjective_description SubjectiveDescription[] @relation("SubjectiveQuestionToAnswer")
-  timer                  Int                     @default(0)
-  createdAt              DateTime                @default(now()) @map(name: "created_at")
-  updatedAt              DateTime                @updatedAt @map(name: "updated_at")
-  editorContent          String?                 @db.VarChar(1000)
-  createdBy              User                    @relation(fields: [createdById], references: [id])
-  createdById            String
-  isDeleted              Boolean                 @default(false)
-  Quiz                   Quiz[]
-  UserQuizAnswers        UserQuizAnswers[]
-  solution               String?                 @db.VarChar(1000)
-  answer_type            AnswerTypeE?
+  id                String             @id @default(cuid())
+  question_text     String?            @db.Text
+  type              QuestionType // "objective" or "subjective"
+  objective_options ObjectiveOptions[] @relation("QuestionToAnswer")
+  timer             Int                @default(0)
+  createdAt         DateTime           @default(now()) @map(name: "created_at")
+  updatedAt         DateTime           @updatedAt @map(name: "updated_at")
+  editorContent     String?            @db.VarChar(1000)
+  createdBy         User               @relation(fields: [createdById], references: [id])
+  createdById       String
+  isDeleted         Boolean            @default(false)
+  QuizQuestions     QuizQuestions[]
+  UserQuizAnswers   UserQuizAnswers[]
+  solution          String?            @db.VarChar(1000)
+  answer_type       AnswerTypeE?
 }
 
 model ObjectiveOptions {
@@ -152,21 +110,14 @@ model ObjectiveOptions {
   question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
 }
 
-model SubjectiveDescription {
-  id          String   @id @default(cuid())
-  problem     String   @db.LongText
-  description String   @db.LongText
+// Quiz to QuizQuestions
+model QuizQuestions {
+  id          String    @id @default(cuid())
+  quizId      String
+  quiz        Quiz?     @relation(fields: [quizId], references: [id])
   questionId  String
-  question    Question @relation("SubjectiveQuestionToAnswer", fields: [questionId], references: [id])
-}
-
-model Quiz {
-  id          String       @id @default(cuid())
-  setId       String
-  set         QuestionSet? @relation(fields: [setId], references: [id])
-  questionId  String
-  question    Question?    @relation(fields: [questionId], references: [id])
-  lastUpdated DateTime     @default(now()) @map(name: "lastUpdated")
+  question    Question? @relation(fields: [questionId], references: [id])
+  lastUpdated DateTime  @default(now()) @map(name: "lastUpdated")
   createdBy   String
 }
 
@@ -181,8 +132,8 @@ model UserQuizAnswers {
   id              String                @id @default(cuid())
   submittedBy     String
   submittedByUser User                  @relation(fields: [submittedBy], references: [id])
-  setId           String
-  questionSet     QuestionSet?          @relation(fields: [setId], references: [id])
+  quizId          String
+  Quiz            Quiz?                 @relation(fields: [quizId], references: [id])
   questionId      String
   question        Question?             @relation(fields: [questionId], references: [id])
   isAnswered      Boolean?              @default(false)
@@ -192,6 +143,8 @@ model UserQuizAnswers {
   timeTaken       Int?
   timeOver        Boolean?              @default(false)
   isCorrect       Boolean?              @default(false)
+  // finalSubmit     Boolean?              @default(false)
+  marks           Float?
 }
 
 model UserNotification {
@@ -201,4 +154,34 @@ model UserNotification {
   message String?
   isRead  Boolean? @default(false)
   time    DateTime @default(now()) @map(name: "time")
+}
+
+enum UserQuizStatusE {
+  SUBMITTED
+  INCOMPLETED
+  INPROGRESS
+}
+
+enum ReportStatusE {
+  GENERATED
+  UNDERREVIEW
+  INITIALIZED
+}
+
+model UserQuizReport {
+  id           String           @id @default(cuid())
+  submittedBy  String
+  user         User             @relation(fields: [submittedBy], references: [id])
+  quizId       String
+  status       UserQuizStatusE?
+  startedAt    DateTime         @default(now()) @map(name: "started_at")
+  endedAt      DateTime?
+  // correctAnswers Int?               @default(0)
+  // wrongAnswers   Int?               @default(0)
+  // notAttempted   Int?               @default(0)
+  obtMarks     Float?           @default(0.0)
+  // negMarks       Int?               @default(0)
+  // timeTaken      Int?               @default(0)
+  totalMarks   Float?           @default(0.0)
+  reportStatus ReportStatusE?   @default(INITIALIZED)
 }

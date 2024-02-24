@@ -53,7 +53,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method === "POST") {
       const formData = await req.formData();
-      console.log(formData, "formDataformData");
+
       const file = formData.get("file");
 
       console.log(req.body, "req.bodyreq.body", file);

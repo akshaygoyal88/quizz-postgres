@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -6,14 +6,18 @@ interface PaginationProps {
   page: number;
   totalpage: number;
   totalRows: number;
+  pageSize?: number;
   paginate: (pageNumber: React.SetStateAction<number>) => void;
+  urlInitialization?: any;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
   page,
   totalpage,
   totalRows,
+  pageSize,
   paginate,
+  urlInitialization,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -22,6 +26,14 @@ const Pagination: React.FC<PaginationProps> = ({
   if (currentPage) {
     paginate(currentPage);
   }
+
+  useEffect(() => {
+    if (urlInitialization) {
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "1");
+      router.push(`${pathname}?${params.toString()}`);
+    }
+  }, [urlInitialization]);
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
@@ -56,11 +68,13 @@ const Pagination: React.FC<PaginationProps> = ({
           <p className="text-sm text-gray-700">
             Showing{" "}
             <span className="font-medium">
-              {totalpage ? 1 + (page - 1) * 9 : totalpage}
+              {totalpage ? 1 + (page - 1) * (pageSize || 9) : totalpage}
             </span>{" "}
             to{" "}
             <span className="font-medium">
-              {page * 9 < totalRows ? page * 9 : totalRows}
+              {page * (pageSize || 9) < totalRows
+                ? page * (pageSize || 9)
+                : totalRows}
             </span>{" "}
             of <span className="font-medium">{totalRows}</span> results
           </p>

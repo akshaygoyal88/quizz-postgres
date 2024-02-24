@@ -6,7 +6,7 @@ import React, { createContext, useContext, useState } from "react";
 
 export const QuizContext = createContext({
   questionSet: [],
-  handleQuestionSet: () => {},
+  handleQuestionSet: () => {}
 });
 
 const QuizProvider = ({ children }) => {
@@ -14,7 +14,7 @@ const QuizProvider = ({ children }) => {
   const ses = useSession();
   const handleQuestionSet = async ({
     quesArr,
-    quizId,
+    quizId
   }: {
     quesArr: [];
     quizId?: string;
@@ -42,7 +42,7 @@ const QuizProvider = ({ children }) => {
 
   const contextValue = {
     questionSet: questionSet,
-    handleQuestionSet,
+    handleQuestionSet
   };
 
   return (

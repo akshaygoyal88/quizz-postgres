@@ -98,7 +98,35 @@ const pathName: IPathName = {
     path: "/api/notification",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
+  },
+  adminReportsRoute: {
+    path: "/admin/reports",
+    roles: [],
+    requireToken: false
+  },
+  adminReportApiRoute: {
+    path: "/api/quiz/adminReport",
+    roles: [],
+    requireToken: false
+  },
+  userQuizResponseApiRoute: {
+    path: "/api/quiz/userResponse",
+    roles: [],
+    requireToken: false
+  },
+
+  marksApiRoute: {
+    path: "/api/quiz/marksSubmission",
+    roles: [],
+    requireToken: false
+  },
+
+  quizReportApiRoute: {
+    path: "/api/quiz/quizReport",
+    roles: [],
+    requireToken: false
   }
+  
 };
 
 export default pathName;

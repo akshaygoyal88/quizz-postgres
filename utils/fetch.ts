@@ -6,15 +6,18 @@ export enum FetchMethodE {
   }
   
   export const fetchData = async ({ url, method, body }: { url: string, method: FetchMethodE, body?: Object }) => {
+    
     const requestOptions: RequestInit = {
       method: method,
       headers: {
         'Content-Type': 'application/json',
       },
     };
+    
     if (body) {
       requestOptions.body = JSON.stringify(body);
     }
+    console.log(requestOptions)
     try {
       const response = await fetch(url, requestOptions);
       if (!response.ok) {
@@ -23,6 +26,7 @@ export enum FetchMethodE {
       const result = await response.json();
       return {data:result, error: false, isLoading: false};
     } catch (error) {  
+      console.error(error);
       return { data: null, error, isLoading:false };
     }
   };

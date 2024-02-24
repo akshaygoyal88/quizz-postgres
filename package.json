@@ -22,6 +22,7 @@
     "aws-sdk": "^2.1542.0",
     "axios": "^1.6.3",
     "bcrypt": "^5.1.1",
+    "clsx": "^2.1.0",
     "html-react-parser": "^5.1.2",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",

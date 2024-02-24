@@ -7,8 +7,8 @@ export async function getAllQuestions({
   pageSize,
   createdById,
 }: {
-  skip: Number;
-  pageSize: Number;
+  skip: number;
+  pageSize: number;
   createdById: string;
 }) {
   return await db.question.findMany({
@@ -18,9 +18,7 @@ export async function getAllQuestions({
     },
     include: {
       objective_options: true,
-      subjective_description: true,
       createdBy: true,
-      Quiz: true,
     },
     skip,
     take: pageSize,
@@ -35,7 +33,7 @@ export enum QuestionSubmitE {
 export async function createQuestion(reqData: Question) {
   console.log("reqData", reqData)
   const {
-    setId,
+    quizId,
     type,
     options,
     correctAnswer,
@@ -47,7 +45,7 @@ export async function createQuestion(reqData: Question) {
   } = reqData;
   
 
-  if (!setId) {
+  if (!quizId) {
     return { error: "Please provide question set." };
   }
   const addQuestion = await db.question.create({
@@ -74,9 +72,9 @@ export async function createQuestion(reqData: Question) {
   const createdBy = createdById;
   const questionId = addQuestion.id;
 
-  const quizAdd = await db.quiz.create({
+  const quizAdd = await db.quizQuestions.create({
     data: {
-      setId,
+      quizId,
       questionId,
       createdBy,
     },
@@ -95,7 +93,7 @@ export async function editQuestions({
 
 
   const {
-    setId,
+    quizId,
     type,
     options,
     correctAnswer,
@@ -110,11 +108,9 @@ export async function editQuestions({
 
   if (isAvailable) {
 
-    type === QuestionType.OBJECTIVE ? await db.objectiveOptions.deleteMany({
+    type === QuestionType.OBJECTIVE && await db.objectiveOptions.deleteMany({
       where: { questionId: id },
-    }) : await db.subjectiveDescription.deleteMany({
-      where: { questionId: id },
-    });
+    }) 
     const editQues =  await db.question.update({
       where: {id},
       data: {

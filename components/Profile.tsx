@@ -109,6 +109,8 @@ export default function Profile({ email }: UserEmail) {
     }
   };
 
+  const handleImageUpload = async () => {};
+
   return (
     <form
       className="p-4 flex flex-col items-center justify-center"
@@ -122,6 +124,25 @@ export default function Profile({ email }: UserEmail) {
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-2">
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
+            <div className="sm:col-span-3 w-1/2">
+              <img src={`${proData?.profile_pic}`} />
+            </div>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="image"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Image
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                id="image"
+                name="image"
+                onChange={handleImageUpload}
+                className="block w-full text-gray-900 shadow-sm sm:max-w-xs sm:text-sm sm:leading-6"
+              />
+            </div>
             <div className="sm:col-span-3">
               <InputWithLabel
                 label="First name"

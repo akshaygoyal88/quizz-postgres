@@ -1,40 +1,89 @@
-// QuestionSetCard.tsx
-
 import { QuestionSet } from "@/types"; // Assuming you have a 'types' directory for your models
 import HTMLReactParser from "html-react-parser";
 import Link from "next/link";
 
+import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { useRouter } from "next/navigation";
+
 interface QuizSetCardProps {
-  questionSet: QuestionSet;
-  // questionCount: number; // Assuming you have a way to get the question count for each set
+  quizSet: QuestionSet;
 }
 
-const QuizSetCard: React.FC<QuizSetCardProps> = ({
-  questionSet,
-  // questionCount,
-}) => {
-  const formattedDate = new Date(questionSet.createdAt).toLocaleDateString();
+const QuizSetCard: React.FC<QuizSetCardProps> = ({ quizSet, submittedBy }) => {
+  const formattedDate = new Date(quizSet.createdAt).toLocaleDateString();
+  const router = useRouter();
+
+  const handleQuickStart = async () => {
+    const {
+      data: initializeQuizRes,
+      error: initializeQueryError,
+      isLoading: initializeQueLoading,
+    } = await fetchData({
+      url: "/api/quiz",
+      method: FetchMethodE.POST,
+      body: {
+        quizId: quizSet.id,
+        submittedBy,
+      },
+    });
+
+    if (initializeQuizRes.isAvailable || initializeQuizRes.isInitialized) {
+      router.push(`/quiz/${quizSet.id}`);
+    }
+  };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-md overflow-hidden shadow-md">
-      <div className="p-4">
-        <h2 className="text-xl font-semibold mb-2">{questionSet.name}</h2>
-        <p className="text-gray-600">
-          {HTMLReactParser(questionSet.description)}
-        </p>
-      </div>
-      <div className="p-4 bg-gray-100 border-t border-gray-200">
-        <p className="text-gray-600">
-          created by:{" "}
-          {questionSet.createdBy.first_name || questionSet.createdBy.email}
-        </p>
+    <li
+      key={quizSet.id}
+      className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
+    >
+      <div className="flex flex-1 flex-col p-8">
+        <img
+          className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
+          src={`https://source.unsplash.com/random/200x200?sig=${quizSet.id}`}
+          alt=""
+        />
+        <h3 className="mt-6 text-sm font-medium text-gray-900">
+          {quizSet.name}
+        </h3>
+        <dl className="mt-1 flex flex-grow flex-col justify-between mb-2">
+          <dt className="sr-only">Quiz Description</dt>
+          <dd className="text-sm text-gray-500">
+            {HTMLReactParser(quizSet.description)}
+          </dd>
+          <dt className="sr-only">Created by</dt>
+          <dd className="mt-3">
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+              {quizSet.createdBy.first_name || quizSet.createdBy.email}
+            </span>
+          </dd>
+        </dl>
         <p className="text-xs text-gray-500">Created on {formattedDate}</p>
         <p className="text-xs text-gray-500">Number of Questions: 0</p>
-        <Link href={`/quiz/${questionSet.id}`}>
-          <p className="text-indigo-600 hover:underline">View Details</p>
-        </Link>
       </div>
-    </div>
+      <div>
+        <div className="-mt-px flex divide-x divide-gray-200">
+          <div className="flex w-0 flex-1">
+            <Link
+              href="#"
+              className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+            >
+              View Details
+            </Link>
+          </div>
+          <div className="-ml-px flex w-0 flex-1">
+            <button
+              // href={`/quiz/${quizSet.id}`}
+              onClick={handleQuickStart}
+              className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+            >
+              Quick Start
+            </button>
+          </div>
+        </div>
+      </div>
+    </li>
   );
 };
 

@@ -1,6 +1,5 @@
-// Import React and other necessary modules
-
-import { UserQuizAnswerStatus } from "@prisma/client";
+import { Question, UserQuizAnswerStatus } from "@prisma/client";
+import { Session } from "next-auth";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -13,6 +12,15 @@ export default function RightSectionQuesList({
   handleQuesNoClick,
   currentQuestionId,
   currInitializedQue,
+  handleFinalSubmitTest,
+}: {
+  questions: Question[];
+  ses: Session;
+  questionStates: Object[];
+  handleQuesNoClick: (quesId) => void;
+  currentQuestionId: string;
+  currInitializedQue: string;
+  handleFinalSubmitTest: () => void;
 }) {
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -56,6 +64,15 @@ export default function RightSectionQuesList({
                   </div>
                 ))}
               </div>
+              {currentQuestionId ===
+                questionStates[questionStates.length - 1].id && (
+                <button
+                  className="mx-2 bg-blue-500 px-4 py-2 rounded-sm text-white"
+                  onClick={handleFinalSubmitTest}
+                >
+                  Submit Test
+                </button>
+              )}
             </div>
           </div>
         </div>
