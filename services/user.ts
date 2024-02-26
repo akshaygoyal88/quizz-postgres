@@ -6,6 +6,7 @@ import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
 import { mainModule } from "process";
 import { createNotification } from "./notification";
+import { generateOrUpdateOtp } from "./resetPasswordService";
 
 export async function getUserData() {
   const session = await getServerSession();
@@ -169,35 +170,37 @@ export async function verifyUser({
   }
 }
 
-export async function resendVerficationCode(reqData) {
+export async function resendVerficationCode(reqData: User) {
   const userId = reqData.id;
-  const isCodeAvailable = await db.userOtp.findFirst({
-    where: { userId },
-  });
-  let result;
+  // const isCodeAvailable = await db.userOtp.findFirst({
+  //   where: { userId },
+  // });
+  // let result;
   const otp = generateUniqueAlphanumericOTP(4);
-  const expirationTime = new Date();
-  expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-  if (isCodeAvailable) {
-    const updateCodeRes = await db.userOtp.update({
-      where: { id: isCodeAvailable.id },
-      data: {
-        otp,
-        expirationTime,
-      },
-    });
-    if (updateCodeRes) result = updateCodeRes;
-  } else {
-    const createNewCode = await db.userOtp.create({
-      data: {
-        userId: reqData.id,
-        otp,
-        type: UserOtpType.REGISTRATION_OTP,
-        expirationTime,
-      },
-    });
-    if (createNewCode) result = createNewCode;
-  }
+  // const expirationTime = new Date();
+  // expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+  // if (isCodeAvailable) {
+  //   const updateCodeRes = await db.userOtp.update({
+  //     where: { id: isCodeAvailable.id },
+  //     data: {
+  //       otp,
+  //       expirationTime,
+  //     },
+  //   });
+  //   if (updateCodeRes) result = updateCodeRes;
+  // } else {
+  //   const createNewCode = await db.userOtp.create({
+  //     data: {
+  //       userId: reqData.id,
+  //       otp,
+  //       type: UserOtpType.REGISTRATION_OTP,
+  //       expirationTime,
+  //     },
+  //   });
+  //   if (createNewCode) result = createNewCode;
+  // }
+  const type = UserOtpType.REGISTRATION_OTP;
+  const result = await generateOrUpdateOtp(userId, otp, type)
   if (result) {
     const msg = {
       to: reqData.email,

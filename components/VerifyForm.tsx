@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 
@@ -38,7 +38,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     }
   };
 
-  const handleVerification = async () => {
+  const handleResendVerificationCode = async () => {
     const { data, error, isLoading } = await fetchData({
       url: `/api/user/verifyCodeResend`,
       method: FetchMethodE.POST,
@@ -46,7 +46,9 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     });
 
     if (data && !data.error && !error) {
-      setSuccess("Successfully resend verification code.");
+      setSuccess(
+        "Successfully resend verification code. Please check your email."
+      );
       setTimeout(() => {
         setSuccess(null);
       }, 10000);
@@ -115,7 +117,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
             {!user?.isVerified && (
               <button
                 className="hover:underline text-blue-500 hover:text-blue-700 hover:underline"
-                onClick={handleVerification}
+                onClick={handleResendVerificationCode}
               >
                 Resend code
               </button>
