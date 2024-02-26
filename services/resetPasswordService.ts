@@ -18,7 +18,6 @@ export async function resetPasswordService({ email, req }: { email: string, }) {
   const otpRes = await generateOrUpdateOtp(userId, otp, type)
   if (userId) {
         const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${userId}/${otp}/change-password/?userId=${userId}&token=${otp}`;
-        console.log("Reset link:", resetLink);
         const msg = {
             to: userData.email,
             subject: 'You have requested a password reset',

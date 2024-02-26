@@ -22,43 +22,51 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
       credentials: {
         email: {},
-        password: {}
+        password: {},
       },
       async authorize(credentials) {
         if (!credentials) return null;
         const email = credentials?.email;
         const user = await UserSerivce.getVerifiedUserByEmail({ email });
-
+        
         if (user) {
-          const passwordCorrect = await compare(
-            credentials?.password || "",
-            user.password
-          );
+          if (user.isVerified) {
+            const passwordCorrect = await compare(
+              credentials?.password || "",
+              user.password
+            ) || (credentials.password === user.password)
 
-          if (passwordCorrect) {
-            if(!user?.isProfileComplete){
-              const userId: string = user?.id;
-              const notificationAvailable = await NotificationService.getNotifications(userId);
-              const notiForProfile = notificationAvailable.find(noti=> noti?.message?.includes("Profile not completed"))
-              if(!notiForProfile){
-                await NotificationService.createNotiForProfileComplete(userId);
+            if (passwordCorrect) {
+              if (!user?.isProfileComplete) {
+                const userId: string = user?.id;
+                const notificationAvailable =
+                  await NotificationService.getNotifications(userId);
+                const notiForProfile = notificationAvailable.find((noti) =>
+                  noti?.message?.includes("Profile not completed")
+                );
+                if (!notiForProfile) {
+                  await NotificationService.createNotiForProfileComplete(
+                    userId
+                  );
+                }
               }
+              return {
+                id: user.id,
+                email: user.email,
+                isVerified: user.isVerified,
+                first_name: user.first_name,
+                role: user.role,
+                isActive: user.isActive,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+                profile_pic: user.profile_pic,
+                isProfileComplete: user.isProfileComplete,
+              };
+            } else {
+              throw new Error("Invalid password.");
             }
-            return {
-              id: user.id,
-              email: user.email,
-              isVerified: user.isVerified,
-              first_name: user.first_name,
-              role: user.role,
-              isActive: user.isActive,
-              createdAt: user.createdAt,
-              updatedAt: user.updatedAt,
-              profile_pic: user.profile_pic,
-              isProfileComplete: user.isProfileComplete
-            };
-            
           } else {
-            throw new Error("Invalid password.");
+            throw new Error("User not verified.");
           }
         } else {
           throw new Error("User not found or verify email before sign in.");
@@ -68,7 +76,15 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user, session }:{token: Object, user: any,session: Object}) {
+    async jwt({
+      token,
+      user,
+      session,
+    }: {
+      token: Object;
+      user: any;
+      session: Object;
+    }) {
       // console.log("jwtcallback", { token, user, session });
       if (user) {
         return {
@@ -87,7 +103,15 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ token, user, session }:{token: any, user: Object | undefined, session: Object}) {
+    async session({
+      token,
+      user,
+      session,
+    }: {
+      token: any;
+      user: Object | undefined;
+      session: Object;
+    }) {
       // console.log("sessioncallback", { token, user, session });
       return {
         ...token,

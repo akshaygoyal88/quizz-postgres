@@ -24,5 +24,5 @@ export default async function Verify({ params }: VerifyProps) {
 
   const userExist = await getUserExists(decodedEmail);
 
-  return <VerifyForm email={decodedEmail} user={userExist ? true : false} />;
+  return <VerifyForm email={decodedEmail} user={userExist} />;
 }
