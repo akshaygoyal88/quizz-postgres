@@ -11,12 +11,19 @@ import {
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 
 export async function questionInitialization(reqData: UserQuizAnswers) {
-
   // const isProgress = await getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
-  console.log({reqData})
+  const updateIsCurrent = await db.userQuizAnswers.updateMany({
+    where: {
+      quizId: reqData.quizId,
+      submittedBy: reqData.submittedBy,
+    },
+    data: { isCurrent: false },
+  });
+
   const initiallyQues = await db.userQuizAnswers.create({
     data: {
       ...reqData,
+      isCurrent: true,
     },
   });
   return initiallyQues;
@@ -31,7 +38,6 @@ export async function getQuesStatus({
   submittedBy: string;
   questionId: string;
 }) {
-
   return await db.userQuizAnswers.findFirst({
     where: {
       quizId,
@@ -70,13 +76,13 @@ export async function getUserQuiz({
       quizId,
       submittedBy,
     },
-    include:{
+    include: {
       question: {
         include: {
-          objective_options: true
-        }
-      }
-    }
+          objective_options: true,
+        },
+      },
+    },
   });
 }
 
@@ -137,17 +143,15 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     where: { quizId, submittedBy },
   });
   const networkRes = [];
-  let reportStatus: ReportStatusE = ReportStatusE.UNDERREVIEW
+  let reportStatus: ReportStatusE = ReportStatusE.UNDERREVIEW;
   for (const res of userQuizRes) {
     const que = questions.find((q) => q.questionId === res?.questionId);
-    if(que.question.type === QuestionType.SUBJECTIVE){
-      reportStatus = ReportStatusE.UNDERREVIEW
+    if (que.question.type === QuestionType.SUBJECTIVE) {
+      reportStatus = ReportStatusE.UNDERREVIEW;
     }
     const correctOpt = que?.question?.objective_options.find(
       (o) => o.isCorrect === true
     );
-
-    // console.log({ correctOptId})
     const id = res.id;
     if (que) {
       const updateIsCorrect = await db.userQuizAnswers.update({
@@ -192,7 +196,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
       timeTaken,
       totalMarks: correctAnswers * 2 - 0,
       endedAt: new Date(),
-      reportStatus
+      reportStatus,
     },
   });
 

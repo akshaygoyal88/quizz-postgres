@@ -145,6 +145,7 @@ model UserQuizAnswers {
   isCorrect       Boolean?              @default(false)
   // finalSubmit     Boolean?              @default(false)
   marks           Float?
+  isCurrent       Boolean?              @default(false)
 }
 
 model UserNotification {
