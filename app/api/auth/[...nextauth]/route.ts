@@ -28,15 +28,14 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
         const email = credentials?.email;
         const user = await UserSerivce.getVerifiedUserByEmail({ email });
-        
-        if (user) {
-          if (user.isVerified) {
-            const passwordCorrect = await compare(
-              credentials?.password || "",
-              user.password
-            ) || (credentials.password === user.password)
 
-            if (passwordCorrect) {
+        if (user) {
+          const passwordCorrect =
+            (await compare(credentials?.password || "", user.password)) ||
+            credentials.password === user.password;
+
+          if (passwordCorrect) {
+            if (user.isVerified) {
               if (!user?.isProfileComplete) {
                 const userId: string = user?.id;
                 const notificationAvailable =
@@ -63,10 +62,10 @@ export const authOptions: NextAuthOptions = {
                 isProfileComplete: user.isProfileComplete,
               };
             } else {
-              throw new Error("Invalid password.");
+              throw new Error("User not verified.");
             }
           } else {
-            throw new Error("User not verified.");
+            throw new Error("Invalid password.");
           }
         } else {
           throw new Error("User not found or verify email before sign in.");

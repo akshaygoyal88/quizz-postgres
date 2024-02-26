@@ -94,6 +94,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
                       defaultValue={undefined}
                       maxLength={4}
                       errors={error}
+                      onChange={() => setError("")}
                     />
                     <div>
                       <button
