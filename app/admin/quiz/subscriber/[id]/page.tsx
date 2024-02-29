@@ -1,11 +1,10 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
 import SubscribersList from "@/components/QuizApp/AdminPanel/SubscribersList";
-import React from "react";
 
-export default function subscriber() {
+export default function page({ params }: { params: string }) {
   return (
     <LeftSideBar>
-      <SubscribersList />
+      <SubscribersList quizId={params.id} />
     </LeftSideBar>
   );
 }

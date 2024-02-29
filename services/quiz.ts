@@ -108,3 +108,8 @@ export async function isSubscribedToQuiz({
 }) {
   return await db.subscription.findFirst({ where: { candidateId, quizId } });
 }
+
+export async function getSubscribersByQuizId(quizId: string) {
+  if (!quizId) return { error: "Quiz Id missing" };
+  return await db.subscription.findMany({ where: { quizId }, include: {user: true} });
+}
