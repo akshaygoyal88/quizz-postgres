@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import QuizSetCard from "./QuizSetCard";
 import { Quiz } from "@prisma/client";
 import pathName from "@/constants";
@@ -30,14 +30,15 @@ export default function QuizSets() {
       </Link>
       <ul
         role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
       >
         {data &&
-          data.map((quizSet: Quiz) => (
+          data.map((quiz: Quiz) => (
             <QuizSetCard
-              key={quizSet.id}
-              quizSet={quizSet}
+              key={quiz.id}
+              quiz={quiz}
               submittedBy={userId}
+
               // questionCount={getQuestionCount(questionSet)}
             />
           ))}

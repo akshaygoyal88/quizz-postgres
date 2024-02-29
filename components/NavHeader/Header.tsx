@@ -9,6 +9,7 @@ import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 import { Button } from "../Button";
 import { getSession, signOut, useSession } from "next-auth/react";
+import NotificationIcon from "../Shared/NotificationIcon";
 
 function MobileNavLink({
   href,
@@ -121,9 +122,12 @@ export function Header() {
               {ses.status !== "authenticated" ? (
                 <NavLink href="/signin">Sign in</NavLink>
               ) : (
-                <Button className="bg-red-700" onClick={() => signOut()}>
-                  Logout
-                </Button>
+                <div className="flex items-end gap-5">
+                  <NotificationIcon />
+                  <Button className="bg-red-700" onClick={() => signOut()}>
+                    Logout
+                  </Button>
+                </div>
               )}
             </div>
             <Button href="/register" color="blue">

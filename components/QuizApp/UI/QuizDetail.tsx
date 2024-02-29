@@ -7,7 +7,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { useFetch } from "@/hooks/useFetch";
 import HTMLReactParser from "html-react-parser/lib/index";
-import { Subscription } from "@prisma/client";
+import { Subscription, Quiz } from "@prisma/client";
 import Modal from "@/components/Shared/Modal";
 import { Session } from "next-auth";
 
@@ -140,6 +140,7 @@ const QuizDetail = ({ quizId }: { quizId: string }) => {
             >
               <ModalElements
                 subscribedSuccess={subscribedSuccess}
+                quizDetail={quizDetail}
                 handleSubscribeConfirm={handleSubscribeConfirm}
                 handleCancelAndCountinue={handleCancelAndCountinue}
               />
@@ -155,17 +156,20 @@ const QuizDetail = ({ quizId }: { quizId: string }) => {
 
 export default QuizDetail;
 
-const ModalElements = ({
+export const ModalElements = ({
   subscribedSuccess,
+  quizDetail,
   handleSubscribeConfirm,
   handleCancelAndCountinue,
 }: {
   subscribedSuccess: string | null;
+  quizDetail: Quiz;
   handleSubscribeConfirm: () => void;
   handleCancelAndCountinue: () => void;
 }) => {
   return (
     <>
+      <h1>{quizDetail.name}</h1>
       {subscribedSuccess && (
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">

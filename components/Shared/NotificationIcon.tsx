@@ -42,7 +42,7 @@ const NotificationIcon: React.FC = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 text-white"
+            className="w-6 h-6 text-blue-500"
           >
             <path
               strokeLinecap="round"

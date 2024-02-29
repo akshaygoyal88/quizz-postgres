@@ -1,5 +1,7 @@
 import { db } from "@/db";
 import { Quiz, Subscription } from "@prisma/client";
+import { createNotification } from "./notification";
+import { getUserById } from "./user";
 
 export async function getQuizQuestions({ quizId }: { quizId: string }) {
   return await db.quizQuestions.findMany({
@@ -55,25 +57,46 @@ export async function getQuizDetailByQuizId(quizId: string) {
       createdBy: true,
     },
   });
-  return quizRes ? quizRes : { error: "Invalid quiz"};
+  return quizRes ? quizRes : { error: "Invalid quiz" };
 }
 
 export async function createSubscriptionOfQuiz(reqData: Subscription) {
-  if (!reqData.quizId) {
+  const { quizId, candidateId } = reqData;
+  if (!quizId) {
     return { error: "QuizId is missing" };
   }
-  if (!reqData.candidateId) {
+  if (!candidateId) {
     return { error: "CandidateId is missing" };
   }
   const isAlreadySubsCribed = await isSubscribedToQuiz(reqData);
   if (isAlreadySubsCribed) {
     return { error: "Candidate already subscribed this quiz." };
   }
-  return await db.subscription.create({
+  const res = await db.subscription.create({
     data: {
-      ...reqData,
+      quizId,
+      candidateId,
     },
   });
+
+  const quiz = await getQuizDetailByQuizId(quizId);
+
+  const candidate = await getUserById(candidateId);
+
+  if (res) {
+    await createNotification({
+      userId: candidateId,
+      message: `Successfully subscribed to ${quiz.name} quiz.`,
+    });
+    await createNotification({
+      userId: quiz.createdById,
+      message: `${candidate.first_name || candidate.email} subscibed your ${
+        quiz.name
+      } quiz.`,
+    });
+  }
+
+  return res;
 }
 
 export async function isSubscribedToQuiz({

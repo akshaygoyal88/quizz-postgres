@@ -28,7 +28,6 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
         const email = credentials?.email;
         const user = await UserSerivce.getVerifiedUserByEmail({ email });
-        console.log(user);
 
         if (user) {
           const passwordCorrect = await compare(
