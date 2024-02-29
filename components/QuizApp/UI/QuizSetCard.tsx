@@ -1,4 +1,5 @@
-import { QuestionSet } from "@/types"; // Assuming you have a 'types' directory for your models
+"use client";
+import React, { useEffect, useState } from "react";
 import HTMLReactParser from "html-react-parser";
 import Link from "next/link";
 
@@ -6,14 +7,33 @@ import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
+import { useFetch } from "@/hooks/useFetch";
 
 interface QuizSetCardProps {
-  quizSet: QuestionSet;
+  quizSet: Quiz;
 }
 
 const QuizSetCard: React.FC<QuizSetCardProps> = ({ quizSet, submittedBy }) => {
   const formattedDate = new Date(quizSet.createdAt).toLocaleDateString();
   const router = useRouter();
+  const [isUserSubscribed, setIsUserSubscribed] = useState<boolean>(false);
+
+  const {
+    data: userData,
+    error: userDataError,
+    isLoading: userDataLoading,
+  } = useFetch({
+    url: `${pathName.userApi.path}/${submittedBy}`,
+  });
+
+  useEffect(() => {
+    if (!userData?.error) {
+      const alreadySubscribed = userData?.Subscription.find(
+        (i) => i.quizId === quizSet.id
+      );
+      if (alreadySubscribed) setIsUserSubscribed(true);
+    }
+  }, [userData]);
 
   const handleQuickStart = async () => {
     const {
@@ -76,20 +96,23 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quizSet, submittedBy }) => {
             </Link>
           </div>
           <div className="-ml-px flex w-0 flex-1">
-            <button
-              // href={`/quiz/${quizSet.id}`}
-              onClick={handleQuickStart}
-              className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-            >
-              Quick Start
-            </button>
-            <button
-              // href={`/quiz/${quizSet.id}`}
-              onClick={handleSubscribe}
-              className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-            >
-              Subscribe Now
-            </button>
+            {isUserSubscribed ? (
+              <button
+                // href={`/quiz/${quizSet.id}`}
+                onClick={handleQuickStart}
+                className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+              >
+                Quick Start
+              </button>
+            ) : (
+              <button
+                // href={`/quiz/${quizSet.id}`}
+                onClick={handleSubscribe}
+                className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+              >
+                Subscribe Now
+              </button>
+            )}
           </div>
         </div>
       </div>
