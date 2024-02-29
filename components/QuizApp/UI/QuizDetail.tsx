@@ -7,7 +7,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { useFetch } from "@/hooks/useFetch";
 import HTMLReactParser from "html-react-parser/lib/index";
-import { Quiz, Subscription } from "@prisma/client";
+import { Subscription } from "@prisma/client";
 import Modal from "@/components/Shared/Modal";
 import { Session } from "next-auth";
 
@@ -45,7 +45,7 @@ const QuizDetail = ({ quizId }: { quizId: string }) => {
   });
 
   useEffect(() => {
-    if (ses.status === "authenticated" && !userData?.error) {
+    if (ses.status === "authenticated" && !userData?.error && !userDataError) {
       const alreadySubscribed = userData?.Subscription.find(
         (i: Subscription) => i.quizId === quizId
       );
@@ -81,7 +81,7 @@ const QuizDetail = ({ quizId }: { quizId: string }) => {
           <div className="container mx-auto py-6 px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <img
-                src={`https://source.unsplash.com/random/200x200?sig=${quizId}`}
+                src={`https://source.unsplash.com/random/?city,night200x200?sig=${quizId}`}
                 alt="Quiz Image"
                 className="w-full h-auto mb-4 md:mb-0 md:max-w-sm md:self-start"
               />

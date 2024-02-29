@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from "react";
 import HTMLReactParser from "html-react-parser";
 import Link from "next/link";
-
-import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
+import { Quiz, Subscription } from "@prisma/client";
 
 interface QuizSetCardProps {
   quizSet: Quiz;
@@ -29,7 +28,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quizSet, submittedBy }) => {
   useEffect(() => {
     if (!userData?.error) {
       const alreadySubscribed = userData?.Subscription.find(
-        (i) => i.quizId === quizSet.id
+        (i: Subscription) => i.quizId === quizSet.id
       );
       if (alreadySubscribed) setIsUserSubscribed(true);
     }

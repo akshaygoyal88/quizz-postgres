@@ -4,22 +4,7 @@ import { hash } from "bcrypt";
 import { User, UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
-import { mainModule } from "process";
 import { createNotification } from "./notification";
-
-// export const userProjection = {
-//   id: true,
-//   email: true,
-//   role: true,
-//   isVerified: true,
-//   first_name: true,
-//   last_name: true,
-//   isActive: true,
-//   createdAt: true,
-//   updatedAt: true,
-//   profile_pic: true,
-//   isProfileComplete: true
-// };
 
 export async function getUserData() {
   const session = await getServerSession();
