@@ -28,6 +28,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) return null;
         const email = credentials?.email;
         const user = await UserSerivce.getVerifiedUserByEmail({ email });
+        console.log(user);
 
         if (user) {
           const passwordCorrect = await compare(
@@ -54,7 +55,8 @@ export const authOptions: NextAuthOptions = {
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,
               profile_pic: user.profile_pic,
-              isProfileComplete: user.isProfileComplete
+              isProfileComplete: user.isProfileComplete,
+              subscription: user.Subscription
             };
             
           } else {
@@ -83,6 +85,7 @@ export const authOptions: NextAuthOptions = {
           updatedAt: user.updatedAt,
           profile_pic: user.profile_pic,
           isProfileComplete: user.isProfileComplete,
+          subscription: user.Subscription
         };
       }
       return token;
@@ -101,6 +104,7 @@ export const authOptions: NextAuthOptions = {
         updatedAt: token.updatedAt,
         profile_pic: token.profile_pic,
         isProfileComplete: token.isProfileComplete,
+        subscription: token.Subscription
       };
       return session;
     },

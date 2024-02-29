@@ -38,7 +38,10 @@ export async function getUserData() {
 
 export async function getVerifiedUserByEmail({ email }: { email: string }) {
   return await db.user.findUnique({
-    where: { email, isVerified: true }
+    where: { email, isVerified: true },
+    include:{
+      Subscription: true,
+    }
   });
 }
 
@@ -97,9 +100,18 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserById(id: string) {
-  return await db.user.findUnique({
-    where: { id }
+  if(!id){
+    return {error: 'Please provide user ID.'};
+  }
+  const result =  await db.user.findUnique({
+    where: { id },
+    include: {
+      Subscription: true
+    }
   });
+  console.log(result);
+  if(!result) return {error: 'User not found'};
+  else return result;
 }
 
 export async function verifyUser({email, verificationCode}:{email?:string, verificationCode?: string}) {

@@ -1,8 +1,7 @@
 import { db } from "@/db";
 import { Quiz, Subscription } from "@prisma/client";
 
-export async function getQuiz({ setId }: { setId: string }) {
-  const quizId = setId;
+export async function getQuizQuestions({ quizId }: { quizId: string }) {
   return await db.quizQuestions.findMany({
     where: {
       quizId,
@@ -35,7 +34,6 @@ export async function postQuestionInQuiz({
   questionId: string;
   createdBy: string;
 }) {
-  console.log({ setId, questionId, createdBy });
   const quizId = setId;
   return await db.quizQuestions.create({
     data: {
@@ -46,16 +44,44 @@ export async function postQuestionInQuiz({
   });
 }
 
-export async function createSubscriptionOfQuiz(reqData: Subscription) {
-  if(!reqData.quizId){
-    return {error: "QuizId is missing"}
+export async function getQuizDetailByQuizId(quizId: string) {
+  if (!quizId) {
+    return { error: "Quiz name missing." };
   }
-  if(!reqData.candidateId){
-    return {error: "CandidateId is missing"}
+
+  const quizRes = await db.quiz.findUnique({
+    where: { id: quizId },
+    include: {
+      createdBy: true,
+    },
+  });
+  return quizRes ? quizRes : { error: "Invalid quiz"};
+}
+
+export async function createSubscriptionOfQuiz(reqData: Subscription) {
+  if (!reqData.quizId) {
+    return { error: "QuizId is missing" };
+  }
+  if (!reqData.candidateId) {
+    return { error: "CandidateId is missing" };
+  }
+  const isAlreadySubsCribed = await isSubscribedToQuiz(reqData);
+  if (isAlreadySubsCribed) {
+    return { error: "Candidate already subscribed this quiz." };
   }
   return await db.subscription.create({
     data: {
-      ...reqData
-    }
-  })
+      ...reqData,
+    },
+  });
+}
+
+export async function isSubscribedToQuiz({
+  candidateId,
+  quizId,
+}: {
+  candidateId: string;
+  quizId: string;
+}) {
+  return await db.subscription.findFirst({ where: { candidateId, quizId } });
 }
