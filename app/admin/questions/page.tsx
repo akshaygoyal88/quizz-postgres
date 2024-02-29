@@ -1,5 +1,5 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
-import QuestionsListUI from "@/components/QuizApp/QuestionsListUI";
+import QuestionsListUI from "@/components/QuizApp/AdminPanel/QuestionsListUI";
 import { isAdmin } from "@/utils/isAdmin";
 import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";

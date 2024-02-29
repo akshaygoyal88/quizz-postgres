@@ -10,7 +10,7 @@ import {
   ReportStatusE,
   UserQuizAnswers,
 } from "@prisma/client";
-import { Button } from "../Button";
+import { Button } from "../../Button";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 
 export default function QuizQuesSummary({ reportId }: { reportId: string }) {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import InputWithLabel from "../Shared/InputWithLabel";
+import InputWithLabel from "../../Shared/InputWithLabel";
 import { handleQuestionSetSubmit } from "@/action/actionSetForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { QuestionSet, User } from "@prisma/client";
-import TinyMCEEditor from "./UI/TinyMCEEditor";
-import { Button } from "../Button";
+import TinyMCEEditor from "../UI/TinyMCEEditor";
+import { Button } from "../../Button";
 
 export default function SetForm({
   session,

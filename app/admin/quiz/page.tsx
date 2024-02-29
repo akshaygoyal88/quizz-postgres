@@ -1,5 +1,5 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
-import QuizCreation from "@/components/QuizApp/QuizCreation";
+import QuizListUI from "@/components/QuizApp/AdminPanel/QuizListUI";
 import { isUnauthorised } from "@/utils/isUnauthorised";
 import { getSession } from "next-auth/react";
 
@@ -9,7 +9,7 @@ export default async function User() {
   await isUnauthorised("/signin");
   return (
     <LeftSideBar>
-      <QuizCreation />
+      <QuizListUI />
     </LeftSideBar>
   );
 }
