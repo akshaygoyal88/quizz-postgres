@@ -119,7 +119,7 @@ export default function QuizTable({
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a
-                        href={`quiz/subscriber/${set.id}`}
+                        href={`quiz/subscriber/${set.id}?quizName=${set.name}`}
                         className="text-orange-500 hover:text-orange-900"
                       >
                         View Subscribers
