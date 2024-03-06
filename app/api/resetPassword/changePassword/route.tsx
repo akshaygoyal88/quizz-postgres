@@ -26,7 +26,7 @@ export async function POST(req, res) {
       const hashedPassword = await hash(password, 10);
       await db.user.update({
         where: { id: userId },
-        data: { password: password },
+        data: { password: hashedPassword },
       });
 
       await db.userOtp.delete({

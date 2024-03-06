@@ -18,7 +18,6 @@ export async function resetPasswordService({ email, req }: { email: string, }) {
   const otpRes = await generateOrUpdateOtp(userId, otp, type)
   if (userId) {
         const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${userId}/${otp}/change-password/?userId=${userId}&token=${otp}`;
-        console.log("Reset link:", resetLink);
         const msg = {
             to: userData.email,
             subject: 'You have requested a password reset',
@@ -56,35 +55,32 @@ export const cleanupExpiredTokens = async () => {
     }
   };
   
-  // Schedule cron job for cleanup
-  cron.schedule("* * * * *", cleanupExpiredTokens);
 
-
-  export const generateOrUpdateOtp = async (userId: string, otp: string, type: string) => {
-    try {
-        const expirationTime = new Date();
-        expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-    
-        const existingUserOtp = await db.userOtp.findUnique({
+export const generateOrUpdateOtp = async (userId: string, otp: string, type: UserOtpType) => {
+  try {
+      const expirationTime = new Date();
+      expirationTime.setMinutes(expirationTime.getMinutes() + 10);
+  
+      const existingUserOtp = await db.userOtp.findUnique({
+        where: { userId },
+      });
+  
+      if (existingUserOtp) {
+        const updatedUserOtp = await db.userOtp.update({
           where: { userId },
-        });
-    
-        if (existingUserOtp) {
-          const updatedUserOtp = await db.userOtp.update({
-            where: { userId },
-            data: { otp, type, expirationTime },
-          });
-    
-          return updatedUserOtp;
-      } else {
-        const newUserOtp = await db.userOtp.create({
-          data: { userId, otp, type, expirationTime },
+          data: { otp, type, expirationTime },
         });
   
-        return newUserOtp;
-      }
-    } catch (error) {
-      console.error("Error inserting/updating data:", error);
-      throw new Error("Could not insert/update Reset Token otp details.");
+        return updatedUserOtp;
+    } else {
+      const newUserOtp = await db.userOtp.create({
+        data: { userId, otp, type, expirationTime },
+      });
+
+      return newUserOtp;
     }
-  };
+  } catch (error) {
+    console.error("Error inserting/updating data:", error);
+    throw new Error("Could not insert/update Reset Token otp details.");
+  }
+};

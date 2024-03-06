@@ -20,10 +20,9 @@ export default function LoginForm({ className }: { className?: string }) {
     const result = await signIn("credentials", {
       email: email,
       password: password,
-      redirect: false
+      redirect: false,
       // callbackUrl: "http://localhost:3000/signin"
     });
-
     if (result && !result.ok) {
       setError("Invalid credentials. Please try again.");
     }
@@ -31,7 +30,10 @@ export default function LoginForm({ className }: { className?: string }) {
     if (result && !result.error) {
       router.push("/");
       router.refresh();
-    } else if (result) {
+    } else if (result?.error) {
+      if (result.error.includes("User not verified.")) {
+        router.push(`/verify/${email}`);
+      }
       setError(`${result.error}`);
     }
   };

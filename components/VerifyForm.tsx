@@ -1,61 +1,23 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { handleSubmitVerifyForm } from "@/action/actionVerifyForm";
+import { useFetch } from "@/hooks/useFetch";
+import { signIn } from "next-auth/react";
 
 interface VerifyFormProps {
   email: string;
-  user: boolean;
+  user: object;
 }
 
 export default function VerifyForm({ email, user }: VerifyFormProps) {
-  const [verificationCode, setVerificationCode] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
-
-  const handleVerificationCodeChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVerificationCode(e.target.value);
-  };
-
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-
-    // try {
-    //   const res = await fetch("/api/user", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ email, verificationCode }),
-    //   });
-    //   const data = await res.json();
-    //   if (res.ok) {
-    //     router.push("/signin?success=1");
-    //   } else if (res.status === 404) {
-    //     setError(data.error);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
-  //   const {
-  //     data: verifyRes,
-  //     error: verifyError,
-  //     isLoading: verifyIsLoading,
-  //   } = await fetchData({
-  //     url: `/api/user`,
-  //     method: FetchMethodE.POST,
-  //     body: { email, verificationCode },
-  //   });
-  //   if (!verifyRes.error) {
-  //     router.push("/signin?success=1");
-  //   } else if (verifyRes.error) {
-  //     setError(verifyRes.error);
-  //   }
-  // };
+  console.log(user);
 
   const formAction = async (formData: FormData) => {
     setError("");
@@ -64,11 +26,34 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     if (res?.error) {
       setError(res.error);
     } else {
-      router.push("/signin?success=1");    
+      const result = await signIn("credentials", {
+        email,
+        password: user.password,
+        redirect: false,
+      });
+      if (result && !result.error) {
+        router.push("/");
+        router.refresh();
+      }
     }
   };
 
+  const handleResendVerificationCode = async () => {
+    const { data, error, isLoading } = await fetchData({
+      url: `/api/user/verifyCodeResend`,
+      method: FetchMethodE.POST,
+      body: user,
+    });
 
+    if (data && !data.error && !error) {
+      setSuccess(
+        "Successfully resend verification code. Please check your email."
+      );
+      setTimeout(() => {
+        setSuccess(null);
+      }, 10000);
+    }
+  };
 
   return (
     <>
@@ -86,6 +71,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+            {success && <p className="bg-green-500 p-2">{success}</p>}
             <form
               className="space-y-6"
               action={formAction}
@@ -98,33 +84,44 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
                 <input type="hidden" name="email" value={email} />
               </div>
               {user ? (
-                <div>
-                  <InputWithLabel
-                    type="text"
-                    name="verificationCode"
-                    label="Verification Code"
-                    id="verificationCode"
-                    placeholder="****"
-                    className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-                    defaultValue={undefined}
-                    value={verificationCode}
-                    onChange={handleVerificationCodeChange}
-                    maxLength={4}
-                    errors={error}
-                  />
+                !user.isVerified ? (
                   <div>
-                    <button
-                      type="submit"
-                      className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >
-                      Verify
-                    </button>
+                    <InputWithLabel
+                      type="text"
+                      name="verificationCode"
+                      label="Verification Code"
+                      id="verificationCode"
+                      placeholder="****"
+                      className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
+                      defaultValue={undefined}
+                      maxLength={4}
+                      errors={error}
+                      onChange={() => setError("")}
+                    />
+                    <div>
+                      <button
+                        type="submit"
+                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Verify
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>Already Verified.</div>
+                )
               ) : (
                 <p>User not exists. Please try to register.</p>
               )}
             </form>
+            {!user?.isVerified && (
+              <button
+                className="hover:underline text-blue-500 hover:text-blue-700 hover:underline"
+                onClick={handleResendVerificationCode}
+              >
+                Resend code
+              </button>
+            )}
           </div>
         </div>
       </div>
