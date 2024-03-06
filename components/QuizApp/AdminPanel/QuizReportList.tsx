@@ -5,10 +5,7 @@ import React from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "@/utils/classNames";
 
 const statuses = {
   GENERATED: "text-green-700 bg-green-50 ring-green-600/20",

@@ -135,6 +135,11 @@ const pathName: IPathName = {
     path: "/api/quiz/quizDetail",
     roles: [],
     requireToken: false
+  },
+  finalSubmissionApiRoute: {
+    path: "/api/quiz/finalSubmission",
+    roles: [],
+    requireToken: false
   }
   
 };

@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Switch } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "@/utils/classNames";
 
 export default function ContactUs() {
   const [agreed, setAgreed] = useState(false);

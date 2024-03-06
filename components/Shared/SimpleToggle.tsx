@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "@/utils/classNames";
 
 export default function SimpleToggle({
   checked,

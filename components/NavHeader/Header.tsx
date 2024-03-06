@@ -10,6 +10,8 @@ import { NavLink } from "./NavLink";
 import { Button } from "../Button";
 import { getSession, signOut, useSession } from "next-auth/react";
 import NotificationIcon from "../Shared/NotificationIcon";
+import { usePathname } from "next/navigation";
+import { UserRole } from "@prisma/client";
 
 function MobileNavLink({
   href,
@@ -100,6 +102,14 @@ function MobileNavigation() {
 
 export function Header() {
   const ses = useSession();
+  const path = usePathname();
+
+  if (
+    (ses?.data?.role !== UserRole.USER && path.includes("/admin")) ||
+    path.includes("/quiz/")
+  ) {
+    return null;
+  }
   return (
     <header className="py-10">
       <Container>

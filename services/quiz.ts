@@ -4,9 +4,6 @@ import { createNotification } from "./notification";
 import { getUserById } from "./user";
 
 export async function getQuizQuestions({ quizId }: { quizId: string }) {
-  if (!quizId) {
-    return { error: "Invalid quiz set." };
-  }
   return await db.quizQuestions.findMany({
     where: {
       quizId,

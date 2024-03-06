@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import pathName from "@/constants";
+import { classNames } from "@/utils/classNames";
 
 const navigation = [
   {
@@ -50,10 +51,6 @@ const navigation = [
   },
   { name: "Publish test", href: "#", icon: CalendarIcon, current: false },
 ];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function LeftSideBar({
   children,

@@ -138,7 +138,7 @@ export default function Profile({ email }: UserEmail) {
                 type="file"
                 accept="image/*"
                 id="image"
-                name="image"
+                // name="image"
                 onChange={handleImageUpload}
                 className="block w-full text-gray-900 shadow-sm sm:max-w-xs sm:text-sm sm:leading-6"
               />
