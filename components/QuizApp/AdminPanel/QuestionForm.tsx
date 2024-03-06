@@ -3,11 +3,11 @@ import { AnswerTypeE, QuestionSet, QuestionType } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
 import { useSession } from "next-auth/react";
-import TinyMCEEditor from "./UI/TinyMCEEditor";
-import SimpleToggle from "../Shared/SimpleToggle";
-import { Button } from "../Button";
-import RadioInput from "../Shared/RadioInput";
-import Lable from "../Shared/Lable";
+import TinyMCEEditor from "../UI/TinyMCEEditor";
+import SimpleToggle from "../../Shared/SimpleToggle";
+import { Button } from "../../Button";
+import RadioInput from "../../Shared/RadioInput";
+import Lable from "../../Shared/Lable";
 
 interface QuestionFormProps {
   question: string;

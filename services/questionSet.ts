@@ -103,11 +103,5 @@ export async function editQuestionSet({
   });
 }
 
-export async function getQuesSetVailable({ setId }: { setId: string }) {
-  return await db.quiz.findUnique({
-    where: {
-      id: setId,
-    },
-  });
-}
+
 

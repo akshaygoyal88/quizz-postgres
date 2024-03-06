@@ -1,5 +1,5 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
-import QuizQuesSummary from "@/components/QuizApp/QuizQuesSummary";
+import QuizQuesSummary from "@/components/QuizApp/AdminPanel/QuizQuesSummary";
 import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";
 

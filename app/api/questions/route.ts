@@ -1,13 +1,8 @@
 import { db } from "@/db";
 import { createQuestion, getAllQuestions } from "@/services/questions";
-import { getQuesSetVailable } from "@/services/questionSet";
-import { postQuestionInQuiz } from "@/services/quiz";
-import { QuestionType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-  console.log("getttiiing")
-
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
@@ -55,12 +50,6 @@ export async function POST(req: any, res: any) {
       createdById,
       Quiz
     } = await req.json();
-    // console.log(await req.json())
-
-    // if (!Quiz[0]?.setId) {
-    //   return NextResponse.json({ error: "Please provide question set." });
-    // }
-
     const correctAnswer: Number[] = []
     
     objective_options?.forEach((option: { isCorrect: any; }, i: Number) => {

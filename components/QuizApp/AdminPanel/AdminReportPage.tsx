@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import Pagination from "../Shared/Pagination";
-import Lable from "../Shared/Lable";
+import Pagination from "../../Shared/Pagination";
+import Lable from "../../Shared/Lable";
 import { Quiz } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import pathName from "@/constants";

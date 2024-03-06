@@ -2,9 +2,9 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
 import { useState } from "react";
-import DeleteModal from "../Shared/DeleteModal";
+import DeleteModal from "../../Shared/DeleteModal";
 import HTMLReactParser from "html-react-parser";
-import DuplicateModal from "../Shared/DuplicateModal";
+import DuplicateModal from "../../Shared/DuplicateModal";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
 

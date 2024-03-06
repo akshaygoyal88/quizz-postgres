@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FormEvent, useEffect, useState } from "react";
-import Textarea from "../Shared/Textarea";
+import Textarea from "../../Shared/Textarea";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
 import { FetchMethodE, fetchData } from "@/utils/fetch";

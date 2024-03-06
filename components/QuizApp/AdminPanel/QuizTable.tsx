@@ -2,7 +2,7 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Quiz } from "@prisma/client";
 import { useState } from "react";
-import DeleteModal from "../Shared/DeleteModal";
+import DeleteModal from "../../Shared/DeleteModal";
 
 export default function QuizTable({
   queSets,
@@ -116,6 +116,15 @@ export default function QuizTable({
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {new Date(set.updatedAt).toLocaleString()}
+                    </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                      <a
+                        href={`quiz/subscriber/${set.id}?quizName=${set.name}`}
+                        className="text-orange-500 hover:text-orange-900"
+                      >
+                        View Subscribers
+                        <span className="sr-only">, {set.name}</span>
+                      </a>
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
                       <a

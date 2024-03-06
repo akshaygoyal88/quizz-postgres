@@ -3,20 +3,20 @@
 import React, { useEffect, useState } from "react";
 import QuizTable from "./QuizTable";
 import Link from "next/link";
-import Pagination from "../Shared/Pagination";
+import Pagination from "../../Shared/Pagination";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { useSession } from "next-auth/react";
-import EmptyState from "../Shared/EmptyState";
+import EmptyState from "../../Shared/EmptyState";
 
-export default function QuizCreation() {
+export default function QuizListUI() {
   const [page, setPage] = useState(1);
   const [time, setTime] = useState<Number>(Date.now());
   const ses = useSession();
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}?page=${page}&pageSize=9&createdById=${
       ses.status !== "loading" && ses?.data?.id
-    }&time=${time}`
+    }&time=${time}`,
   });
 
   const paginate = (pageNumber: React.SetStateAction<number>) => {

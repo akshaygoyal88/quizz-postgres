@@ -42,6 +42,7 @@ model User {
   notifications     UserNotification[]
   userImage         String?            @default("https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg")
   UserQuizReport    UserQuizReport[]
+  Subscription      Subscription[]
 }
 
 model UserOtp {
@@ -72,6 +73,7 @@ model Quiz {
   status          String?
   QuizQuestions   QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
+  Subscription    Subscription[]
 }
 
 enum QuestionType {
@@ -185,4 +187,16 @@ model UserQuizReport {
   // timeTaken      Int?               @default(0)
   totalMarks   Float?           @default(0.0)
   reportStatus ReportStatusE?   @default(INITIALIZED)
+}
+
+model Subscription {
+  id          String    @id @default(cuid())
+  candidateId String
+  user        User      @relation(fields: [candidateId], references: [id])
+  quizId      String
+  quiz        Quiz      @relation(fields: [quizId], references: [id])
+  startedAt   DateTime  @default(now()) @map(name: "startedAt")
+  expiresOn   DateTime?
+  isApproved  Boolean?  @default(false)
+  isDeleted   Boolean?  @default(false)
 }

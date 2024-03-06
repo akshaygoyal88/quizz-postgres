@@ -1,5 +1,5 @@
 import LeftSideBar from "@/components/Layout/LeftSidebar";
-import EditSetForm from "@/components/QuizApp/EditSetForm";
+import EditSetForm from "@/components/QuizApp/AdminPanel/EditSetForm";
 import { isAdmin } from "@/utils/isAdmin";
 import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";

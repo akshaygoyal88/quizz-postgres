@@ -64,6 +64,20 @@ export const authOptions: NextAuthOptions = {
             } else {
               throw new Error("User not verified.");
             }
+            return {
+              id: user.id,
+              email: user.email,
+              isVerified: user.isVerified,
+              first_name: user.first_name,
+              role: user.role,
+              isActive: user.isActive,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+              profile_pic: user.profile_pic,
+              isProfileComplete: user.isProfileComplete,
+              subscription: user.Subscription
+            };
+            
           } else {
             throw new Error("Invalid password.");
           }
@@ -98,6 +112,7 @@ export const authOptions: NextAuthOptions = {
           updatedAt: user.updatedAt,
           profile_pic: user.profile_pic,
           isProfileComplete: user.isProfileComplete,
+          subscription: user.Subscription
         };
       }
       return token;
@@ -124,6 +139,7 @@ export const authOptions: NextAuthOptions = {
         updatedAt: token.updatedAt,
         profile_pic: token.profile_pic,
         isProfileComplete: token.isProfileComplete,
+        subscription: token.Subscription
       };
       return session;
     },

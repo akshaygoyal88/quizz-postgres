@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 import QuestionsTable from "./QuestionsTable";
 import Link from "next/link";
-import Pagination from "../Shared/Pagination";
+import Pagination from "../../Shared/Pagination";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
-import Button from "../Shared/Button";
+import Button from "../../Shared/Button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import EmptyState from "../Shared/EmptyState";
+import EmptyState from "../../Shared/EmptyState";
 
 export default function QuestionsListUI() {
   const [page, setPage] = useState(1);
