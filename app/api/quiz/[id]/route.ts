@@ -12,7 +12,6 @@ export async function GET(req: Request, { params }: { params: string }) {
 
     return NextResponse.json({ questions: [...getQuizAndQues] });
   } catch (error) {
-    console.error(error);
     return NextResponse.json({ error: error });  }
 }
 

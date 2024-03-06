@@ -18,7 +18,7 @@ export default function LeftSectionQues({
   handlePreviousQuestion,
   currInitializedQue,
 }: {
-  currentQuestionId: string;
+  currentQuestionId: string | null;
   handleMarkReviewQuestion: () => void;
   handleAnswerQuestion: ({
     answer,
@@ -32,7 +32,7 @@ export default function LeftSectionQues({
     timeOver: boolean;
   }) => void;
   handlePreviousQuestion: () => void;
-  currInitializedQue: Question;
+  currInitializedQue: object;
 }) {
   const quizCtx = useContext(QuizContext);
   const filtredQues = quizCtx.questionSet.find(

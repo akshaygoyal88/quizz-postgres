@@ -7,10 +7,16 @@ import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { QuizContext } from "@/context/QuizProvider";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
+import { Question, QuestionType, UserQuizAnswerStatus } from "@prisma/client";
 import email from "next-auth/providers/email";
 
-export default function TestLayout({ quizId }: { quizId: string }) {
+export default function TestLayout({
+  allQuestions,
+  quizId,
+}: {
+  allQuestions: Question[];
+  quizId: string;
+}) {
   const ses = useSession();
   const quizCtx = useContext(QuizContext);
 
@@ -22,28 +28,26 @@ export default function TestLayout({ quizId }: { quizId: string }) {
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
 
-  const { data: questionsRes, error: questionsError } = useFetch({
-    url: `${pathName.testSetApis.path}/${quizId}`,
-  });
+  // const { data: questionsRes, error: questionsError } = useFetch({
+  //   url: `${pathName.testSetApis.path}/${quizId}`,
+  // });
 
   useEffect(() => {
-    if (questionsRes && !questionsRes.error && !questionsError) {
-      const quesArr: any[] = questionsRes.questions.map(
-        (ques: any) => ques.question
-      );
+    if (allQuestions && !allQuestions.error) {
+      const quesArr: any[] = allQuestions?.map((ques: any) => ques.question);
+      quizCtx.handleQuestionSet({ quesArr });
 
-      quizCtx.handleQuestionSet({ quesArr, quizId });
-
-      const questionStates = quesArr.map((ques) => ({
+      const questionStates = quesArr?.map((ques) => ({
         id: ques.id,
         status: UserQuizAnswerStatus.NOT_ATTEMPTED,
       }));
 
       setQuestionStates(questionStates);
-      const firstQuestionId = questionStates.length > 0 && questionStates[0].id;
+      const firstQuestionId =
+        questionStates?.length > 0 && questionStates[0].id;
       setCurrentQuestionId(firstQuestionId);
     }
-  }, [questionsRes, questionsError]);
+  }, []);
 
   useEffect(() => {
     if (currentQuestionId) {
@@ -69,7 +73,7 @@ export default function TestLayout({ quizId }: { quizId: string }) {
             url: `${pathName.quizAnsApi.path}`,
             method: FetchMethodE.POST,
             body: currQues,
-          });
+          }); //question initialization or if it's initialized then set the preStatus....
 
           if (data && !data.error) {
             setQuestionStates((prevStates) => {
@@ -202,12 +206,10 @@ export default function TestLayout({ quizId }: { quizId: string }) {
             <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
               {quizCtx.questionSet.length > 0 && (
                 <LeftSectionQues
-                  questions={quizCtx.questionSet}
                   currentQuestionId={currentQuestionId}
                   handleMarkReviewQuestion={handleMarkReviewQuestion}
                   handleAnswerQuestion={handleAnswerQuestion}
                   handlePreviousQuestion={handlePreviousQuestion}
-                  handleNextQuestion={handleNextQuestion}
                   currInitializedQue={currInitializedQue}
                 />
               )}
@@ -225,15 +227,6 @@ export default function TestLayout({ quizId }: { quizId: string }) {
                 />
               )}
             </div>
-
-            {/* <div className="mt-8">
-              <button
-                onClick={handleFinalSubmitTest}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-              >
-                Submit
-              </button>
-            </div> */}
           </div>
         </main>
       </div>
