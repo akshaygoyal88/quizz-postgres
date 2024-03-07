@@ -17,12 +17,6 @@ export default async function page({ params }: { params: Params }) {
 
   const quizId = params.id;
   const questionId = params.questionId;
-
-  // const allQuizQuestions = await getQuizQuestions({ quizId });
-  // const allQuestions = allQuizQuestions.map(
-  //   (ques: QuizQuestions) => ques.question
-  // );
-
   const allQuestions = await getUserQuizQuestionsAnswers({
     quizId,
     userId: userData?.id,
@@ -33,9 +27,6 @@ export default async function page({ params }: { params: Params }) {
     quizId,
     questionId,
   });
-
-  console.log(allQuestions);
-
   const index = allQuestions.findIndex((que) => que.id === questionId);
 
   if (allQuestions.length > 0) {

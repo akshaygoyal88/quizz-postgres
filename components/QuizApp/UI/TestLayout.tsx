@@ -34,8 +34,8 @@ type allQuestionsTypes =
       question_text: string | null;
       type: QuestionType;
       timer: number;
-      // Add other properties as needed
       answer_type: AnswerTypeE | null;
+      status: UserQuizAnswerStatus;
     })
   | null;
 
@@ -113,7 +113,7 @@ function CandidateQuizQuestion({
   userQuizQuestionWithAnswer: UserQuizAnswers;
   handleNextQuestion: () => void;
   quizId: string | boolean;
-  prevId: string | boolean;
+  prevId?: string | boolean;
 }) {
   const question = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
@@ -275,7 +275,7 @@ function CandidateQuestionStatus({
   questionListHeading: string;
   finalSubmitButtonLabel: string;
   handleFinalSubmitTest: () => void;
-  allQuestions: Question[];
+  allQuestions: allQuestionsTypes[];
   quizId: string;
   questionId: string;
   nextId: string | boolean;
@@ -300,14 +300,14 @@ function CandidateQuestionStatus({
                       // onClick={() => handleQuesNoClick(question.id)}
                       className={classNames(
                         "text-sm px-2 py-1 rounded-md w-full",
-                        ques.status === UserQuizAnswerStatus.ATTEMPTED
+                        ques?.status === UserQuizAnswerStatus.ATTEMPTED
                           ? "bg-green-300"
-                          : ques.status === UserQuizAnswerStatus.SKIPPED
+                          : ques?.status === UserQuizAnswerStatus.SKIPPED
                           ? "bg-red-600"
-                          : ques.status === UserQuizAnswerStatus.REVIEW
+                          : ques?.status === UserQuizAnswerStatus.REVIEW
                           ? "bg-yellow-400"
                           : "bg-gray-300",
-                        questionId == ques.id ? "border-2 border-blue-500" : ""
+                        questionId == ques?.id ? "border-2 border-blue-500" : ""
                       )}
                       href={`/quiz/${quizId}/question/${ques?.id}`}
                     >
