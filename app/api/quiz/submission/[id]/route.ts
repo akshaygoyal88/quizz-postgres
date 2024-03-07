@@ -1,8 +1,9 @@
 import { saveResponseForQues } from "@/services/answerSubmission";
 import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextResponse } from "next/server";
 
-export async function PUT(req: Request, { params }: { params: string }) {
+export async function PUT(req: Request, { params }: { params: Params }) {
   const id = params?.id;
   try {
     const reqDetail = await req.json();

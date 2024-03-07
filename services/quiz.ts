@@ -1,7 +1,8 @@
 import { db } from "@/db";
-import { Quiz, Subscription } from "@prisma/client";
+import { AnswerTypeE, ObjectiveOptions, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus } from "@prisma/client";
 import { createNotification } from "./notification";
 import { getUserById } from "./user";
+import { getUserQuizAllQuestionAnswers } from "./answerSubmission";
 
 export async function getQuizQuestions({ quizId }: { quizId: string }) {
   return await db.quizQuestions.findMany({
@@ -112,4 +113,32 @@ export async function isSubscribedToQuiz({
 export async function getSubscribersByQuizId(quizId: string) {
   if (!quizId) return { error: "Quiz Id missing" };
   return await db.subscription.findMany({ where: { quizId }, include: {user: true} });
+}
+
+export async function getQuizQuestionByID({ quizId, questionId }: { quizId: string, questionId: string }) {
+  return await db.quizQuestions.findFirst({
+    where: { quizId, questionId },
+    include: {
+      question: {
+        include: {
+          objective_options: true
+        }
+      }
+    }
+  });
+}
+
+export async function getUserQuizQuestionsAnswers({ quizId, userId }: { quizId:string, userId:string}){
+  const allQuestions = await getQuizQuestions({quizId});
+  const questions = allQuestions.map(q => q.question);
+  const allUserQuestionAnswer = await getUserQuizAllQuestionAnswers({userId, quizId});
+  let final = [...questions];
+  for (let i = 0; i<final.length; i++) {
+    for (const u of allUserQuestionAnswer) {
+      if(final[i]?.id === u.questionId) {
+        final[i] = {...final[i], status: u.status}
+      } 
+    }
+  }
+  return final;
 }

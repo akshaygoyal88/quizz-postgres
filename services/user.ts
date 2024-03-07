@@ -81,7 +81,7 @@ export async function registerUser({
   return result;
 }
 
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string){
   return await db.user.findUnique({
     where: { email },
   });

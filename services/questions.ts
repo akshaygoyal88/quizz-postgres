@@ -31,7 +31,7 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
-  console.log("reqData", reqData)
+
   const {
     quizId,
     type,

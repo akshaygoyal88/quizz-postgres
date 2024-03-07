@@ -98,7 +98,6 @@ export default function Profile({ email }: UserEmail) {
 
   const formAction = async (formData: FormData) => {
     const res = await handleProfileSubmit(formData);
-    console.log(res);
     if (res?.error) {
       setError(res.error);
     } else {

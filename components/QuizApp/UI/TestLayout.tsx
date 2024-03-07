@@ -1,13 +1,10 @@
 "use client";
-import { useSession } from "next-auth/react";
 import { useState, useEffect, useContext } from "react";
-import pathName from "@/constants";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
 import {
+  AnswerTypeE,
   ObjectiveOptions,
   Question,
   QuestionType,
-  QuizQuestions,
   User,
   UserQuizAnswerStatus,
   UserQuizAnswers,
@@ -15,210 +12,90 @@ import {
 import HTMLReactParser from "html-react-parser";
 import Textarea from "@/components/Shared/Textarea";
 import { classNames } from "@/utils/classNames";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { handleAnsSubmission } from "@/action/actionTestAnsForm";
 
 export interface QuestionState {
   id: string;
   status: UserQuizAnswerStatus;
 }
 
+type allQuestionsTypes =
+  | ({
+      objective_options: {
+        id: string;
+        text: string;
+        isCorrect: boolean;
+        questionId: string;
+      }[];
+    } & {
+      id: string;
+      question_text: string | null;
+      type: QuestionType;
+      timer: number;
+      // Add other properties as needed
+      answer_type: AnswerTypeE | null;
+    })
+  | null;
+
 function TestLayout({
-  allQuizQuestions,
-  quizId,
   allQuestions,
+  quizId,
+  nextId,
+  prevId,
+  userQuizQuestionWithAnswer,
+  userData,
 }: {
-  allQuizQuestions: QuizQuestions[];
+  allQuestions: allQuestionsTypes[];
   quizId: string;
-  allQuestions: Question[];
+  nextId?: string | boolean;
+  prevId?: string | boolean;
+  userQuizQuestionWithAnswer: UserQuizAnswers;
+  userData: User;
 }) {
-  const ses = useSession();
-  const userData: User = ses?.data;
-  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
-    null
-  );
-  const [currInitializedQue, setCurrInitializedQue] =
-    useState<UserQuizAnswers | null>(null);
-  const [questionStates, setQuestionStates] = useState<QuestionState[]>([]);
-  const [prevId, setPrevId] = useState<string | null>(null);
-  const [nextId, setNextId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (allQuestions?.length > 0) {
-      const questionStates = allQuestions?.map((ques) => ({
-        id: ques.id,
-        status: UserQuizAnswerStatus.NOT_ATTEMPTED,
-      }));
-
-      if (questionStates && questionStates.length > 0) {
-        setQuestionStates(questionStates);
-        const firstQuestionId = questionStates[0].id;
-        setCurrentQuestionId(firstQuestionId);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentQuestionId) {
-      const currentIndex = questionStates.findIndex(
-        (que) => que.id === currentQuestionId
-      );
-
-      if (currentIndex !== -1) {
-        currentIndex < questionStates.length - 1 &&
-          setNextId(questionStates[currentIndex + 1].id);
-        currentIndex > 0 && setPrevId(questionStates[currentIndex - 1].id);
-
-        const initializeQue = async () => {
-          const currQues = {
-            submittedBy: userData?.id,
-            quizId,
-            questionId: currentQuestionId,
-            // correctAnswerId: '<otion_id>'
-          };
-
-          const { data, error } = await fetchData({
-            url: `${pathName.quizAnsApi.path}`,
-            method: FetchMethodE.POST,
-            body: currQues,
-          }); //question initialization or if it's initialized then set the preStatus....
-
-          if (data && !data.error) {
-            setQuestionStates((prevStates) => {
-              const updatedStates = prevStates.map((que) =>
-                que.id === currentQuestionId
-                  ? { ...que, status: data.ques.status }
-                  : que
-              );
-              return updatedStates;
-            });
-            setCurrInitializedQue(data.ques);
-          }
-        };
-        initializeQue();
-      }
-    }
-  }, [currentQuestionId, ses]);
+  const router = useRouter();
 
   const handleNextQuestion = () => {
-    nextId && setCurrentQuestionId(nextId);
-  };
-
-  const handlePreviousQuestion = () => {
-    prevId && setCurrentQuestionId(prevId);
-  };
-
-  const handleAnswerQuestion = async ({
-    answer,
-    timeTaken,
-    type,
-    timeOver,
-  }: {
-    answer: string | null;
-    timeTaken: number | undefined;
-    type: QuestionType;
-    timeOver: boolean;
-  }) => {
-    let userQueRes: { type: QuestionType; [key: string]: any } = { type };
-    if (answer) {
-      if (type === QuestionType.OBJECTIVE) {
-        userQueRes = {
-          ...userQueRes,
-          ans_optionsId: answer,
-          timeTaken,
-          timeOver,
-        };
-      } else if (type === QuestionType.SUBJECTIVE) {
-        userQueRes = {
-          ...userQueRes,
-          ans_subjective: answer,
-          timeTaken,
-          timeOver,
-        };
-      }
-    }
-    setQuestionStates((prevStates) => {
-      const updatedStates = prevStates.map((que) =>
-        que.id === currentQuestionId
-          ? {
-              ...que,
-              status: answer
-                ? UserQuizAnswerStatus.ATTEMPTED
-                : UserQuizAnswerStatus.SKIPPED,
-            }
-          : que
-      );
-      return updatedStates;
-    });
-
-    const { data: saveQueRes } = await fetchData({
-      url: `${pathName.quizAnsApi.path}/${currInitializedQue?.id}`,
-      method: FetchMethodE.PUT,
-      body: userQueRes,
-    });
-
-    handleNextQuestion();
-  };
-
-  const handleMarkReviewQuestion = async () => {
-    const { data: saveQueRes } = await fetchData({
-      url: `${pathName.quizAnsApi.path}/${currInitializedQue?.id}`,
-      method: FetchMethodE.PUT,
-      body: { status: UserQuizAnswerStatus.REVIEW },
-    });
-    setQuestionStates((prevStates) => {
-      const updatedStates = prevStates.map((que) =>
-        que.id === currentQuestionId
-          ? {
-              ...que,
-              status: UserQuizAnswerStatus.REVIEW,
-            }
-          : que
-      );
-      return updatedStates;
-    });
-    handleNextQuestion();
-  };
-
-  const handleQuesNoClick = (id: string) => {
-    setCurrentQuestionId(id);
+    nextId && router.push(`/quiz/${quizId}/question/${nextId}`);
   };
 
   const handleFinalSubmitTest = async () => {
-    const {
-      data: finalSubRes,
-      error: finalSubError,
-      isLoading: finalSubLoading,
-    } = await fetchData({
-      url: `${pathName.finalSubmissionApiRoute.path}`,
-      method: FetchMethodE.POST,
-      body: {
-        questions: allQuizQuestions,
-        quizId,
-        submittedBy: userData?.id,
-      },
-    });
+    // const {
+    //   data: finalSubRes,
+    //   error: finalSubError,
+    //   isLoading: finalSubLoading,
+    // } = await fetchData({
+    //   url: `${pathName.finalSubmissionApiRoute.path}`,
+    //   method: FetchMethodE.POST,
+    //   body: {
+    //     questions: allQuizQuestions,
+    //     quizId,
+    //     submittedBy: userData?.id,
+    //   },
+    // });
   };
 
   return (
     <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
       {allQuestions.length > 0 && (
         <CandidateQuizQuestion
-          currentQuestionId={currentQuestionId}
-          handleMarkReviewQuestion={handleMarkReviewQuestion}
-          handleAnswerQuestion={handleAnswerQuestion}
-          handlePreviousQuestion={handlePreviousQuestion}
-          currInitializedQue={currInitializedQue}
-          allQuestions={allQuestions}
+          handleNextQuestion={handleNextQuestion}
+          userQuizQuestionWithAnswer={userQuizQuestionWithAnswer}
+          prevId={prevId}
+          quizId={quizId}
         />
       )}
       {allQuestions.length > 0 && (
         <CandidateQuestionStatus
-          questionStates={questionStates}
-          handleQuesNoClick={handleQuesNoClick}
-          currentQuestionId={currentQuestionId}
           handleFinalSubmitTest={handleFinalSubmitTest}
           questionListHeading="Question List"
           candidateName={userData?.first_name}
           finalSubmitButtonLabel="Submit Test"
+          allQuestions={allQuestions}
+          quizId={quizId}
+          questionId={userQuizQuestionWithAnswer?.questionId}
+          nextId={nextId}
         />
       )}
     </div>
@@ -228,46 +105,29 @@ function TestLayout({
 export default TestLayout;
 
 function CandidateQuizQuestion({
-  currentQuestionId,
-  handleMarkReviewQuestion,
-  handleAnswerQuestion,
-  handlePreviousQuestion,
-  currInitializedQue,
-  allQuestions,
+  userQuizQuestionWithAnswer,
+  handleNextQuestion,
+  quizId,
+  prevId,
 }: {
-  currentQuestionId: string | null;
-  handleMarkReviewQuestion: () => void;
-  handleAnswerQuestion: ({
-    answer,
-    timeTaken,
-    timeOver,
-    type,
-  }: {
-    answer: string | null;
-    timeTaken: number | undefined;
-    type: QuestionType;
-    timeOver: boolean;
-  }) => void;
-  handlePreviousQuestion: () => void;
-  currInitializedQue: UserQuizAnswers | null;
-  allQuestions: Question[];
+  userQuizQuestionWithAnswer: UserQuizAnswers;
+  handleNextQuestion: () => void;
+  quizId: string | boolean;
+  prevId: string | boolean;
 }) {
-  const filtredQues: Question | undefined = allQuestions?.find(
-    (q) => q.id === currentQuestionId
+  const question = userQuizQuestionWithAnswer?.question;
+  const isTimerAvailable = question?.timer !== 0;
+  const [timer, setTimer] = useState<number>(
+    (question?.timer
+      ? question?.timer - userQuizQuestionWithAnswer?.timeTaken
+      : question?.timer) || 0
   );
-  const isTimerAvailable = filtredQues?.timer !== 0;
-  const [timer, setTimer] = useState<number>(filtredQues?.timer || 0);
-  const [answer, setAnswer] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (currInitializedQue) {
-      setAnswer(
-        filtredQues?.type === QuestionType.OBJECTIVE
-          ? currInitializedQue.ans_optionsId
-          : currInitializedQue.ans_subjective
-      );
-    }
-  }, [currInitializedQue]);
+  const [answer, setAnswer] = useState<string | null>(
+    userQuizQuestionWithAnswer.ans_optionsId ||
+      userQuizQuestionWithAnswer.ans_subjective ||
+      null
+  );
+  const [markReview, setMarkReview] = useState<boolean>(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -283,120 +143,118 @@ function CandidateQuizQuestion({
     };
   }, [isTimerAvailable, timer]);
 
-  useEffect(() => {
-    if (isTimerAvailable && timer === 0) {
-      handleSubmitNextClick();
-    }
-  }, [timer]);
-
-  useEffect(() => {
-    setAnswer(null);
-    filtredQues && setTimer(filtredQues.timer);
-  }, [currentQuestionId]);
-
-  const handleSubmitNextClick = () => {
-    const timeTaken = isTimerAvailable
-      ? filtredQues && timer && filtredQues.timer - timer
-      : timer;
-    const timeOver = isTimerAvailable && timeTaken === filtredQues?.timer;
-    console.log(timeOver, timeTaken);
-    filtredQues &&
-      handleAnswerQuestion({
-        answer,
-        timeTaken,
-        timeOver,
-        type: filtredQues.type,
-      });
-    answer && setAnswer(null);
-  };
-
-  const handlePrevious = () => {
-    handlePreviousQuestion();
-  };
+  // useEffect(() => {
+  //   if (isTimerAvailable && timer === 0) {
+  //     handleSubmitNextClick();
+  //   }
+  // }, [timer]);
 
   const handleAnsOptInput = (str: string) => {
     setAnswer(str);
   };
   const optionsIndex = ["a", "b", "c", "d", "e", "f"];
 
+  const formAction = async (formData: FormData) => {
+    const timeTaken = isTimerAvailable
+      ? question && timer && question.timer - timer
+      : timer;
+    const timeOver = isTimerAvailable && timeTaken === question?.timer;
+    formData.append("id", userQuizQuestionWithAnswer.id);
+    formData.append("timeTaken", timeTaken.toString());
+    formData.append("timeOver", timeOver ? "1" : "0");
+    formData.append(
+      "status",
+      !markReview
+        ? answer
+          ? UserQuizAnswerStatus.ATTEMPTED
+          : UserQuizAnswerStatus.SKIPPED
+        : UserQuizAnswerStatus.REVIEW
+    );
+    const res = await handleAnsSubmission(formData);
+    if (res) {
+      // !markReview &&
+      handleNextQuestion();
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
       <section aria-labelledby="question-title">
         <div className="border-2 overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <div className="flex justify-between items-center">
-              <h2 className="" id="question-title">
-                Question {filtredQues && allQuestions.indexOf(filtredQues) + 1}
-              </h2>
-              {isTimerAvailable && (
-                <div className="">
-                  <h3 className="text-lg font-semibold">Time</h3>
+          <form action={formAction}>
+            <div className="p-6">
+              <div className="flex justify-between items-center">
+                {isTimerAvailable && (
+                  <div className="">
+                    <h3 className="text-lg font-semibold">Time</h3>
+                    <p>
+                      {Math.floor(timer / 60)}:{timer % 60}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <p className="py-4">{question?.question_text}</p>
+              <div>{question && HTMLReactParser(question?.editorContent)}</div>
 
-                  <p>
-                    {Math.floor(timer / 60)}:{timer % 60}
-                  </p>
+              {question?.type === QuestionType.OBJECTIVE ? (
+                <div className="mt-4">
+                  {question?.objective_options?.map(
+                    (option: ObjectiveOptions, index: number) => (
+                      <div key={index} className="p-4 flex items-center">
+                        <input
+                          type="radio"
+                          name="ans_optionsId"
+                          value={option.id}
+                          onChange={() => handleAnsOptInput(option.id)}
+                          checked={answer === option.id}
+                        />
+                        <span className="p-2">{`(${optionsIndex[index]})`}</span>
+                        <span className="ml-2">
+                          {HTMLReactParser(option.text)}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="mt-4">
+                  <Textarea
+                    id="answer"
+                    label="Type Answer"
+                    className="border-2 w-3/4"
+                    value={answer === null ? "" : answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    name="ans_subjective"
+                  />
                 </div>
               )}
             </div>
-            <p className="py-4">{filtredQues?.question_text}</p>
-            <div>
-              {filtredQues &&
-                filtredQues.editorContent &&
-                HTMLReactParser(filtredQues.editorContent)}
+            <div className="m-2 flex justify-between">
+              <button
+                onClick={() => {
+                  setMarkReview(true);
+                }}
+                className="mr-4 px-4 py-2 bg-yellow-500 text-white rounded-md"
+                type="submit"
+              >
+                Mark for Review
+              </button>
+              {prevId && (
+                <Link
+                  className="mr-4 px-4 py-2 bg-gray-300 rounded-md"
+                  href={`/quiz/${quizId}/question/${prevId}`}
+                >
+                  Previous
+                </Link>
+              )}
+              <button
+                className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
+                type="submit"
+              >
+                Submit and Next
+              </button>
             </div>
-
-            {filtredQues?.type === QuestionType.OBJECTIVE ? (
-              <div className="mt-4">
-                {filtredQues.objective_options.map(
-                  (option: ObjectiveOptions, index: number) => (
-                    <div key={index} className="p-4 flex items-center">
-                      <input
-                        type="radio"
-                        name="options"
-                        value={option.text}
-                        onChange={() => handleAnsOptInput(option.id)}
-                        checked={answer === option.id}
-                      />
-                      <text className="p-2">{`(${optionsIndex[index]})`}</text>
-                      <span className="ml-2">
-                        {HTMLReactParser(option.text)}
-                      </span>
-                    </div>
-                  )
-                )}
-              </div>
-            ) : (
-              <div className="mt-4">
-                <Textarea
-                  id="answer"
-                  label="Type Answer"
-                  className="border-2 w-3/4"
-                  value={answer === null ? "" : answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                />
-              </div>
-            )}
-          </div>
-          <div className="m-2 flex justify-between">
-            <button
-              onClick={handlePrevious}
-              className="mr-4 px-4 py-2 bg-gray-300 rounded-md"
-            >
-              Previous
-            </button>
-            <button
-              onClick={handleMarkReviewQuestion}
-              className="mr-4 px-4 py-2 bg-yellow-500 text-white rounded-md"
-            >
-              Mark For Review
-            </button>
-            <button
-              onClick={handleSubmitNextClick}
-              className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
-            >
-              Submit and Next
-            </button>
-          </div>
+          </form>
         </div>
       </section>
     </div>
@@ -407,18 +265,20 @@ function CandidateQuestionStatus({
   candidateName,
   questionListHeading,
   finalSubmitButtonLabel,
-  questionStates,
-  handleQuesNoClick,
-  currentQuestionId,
   handleFinalSubmitTest,
+  allQuestions,
+  quizId,
+  questionId,
+  nextId,
 }: {
   candidateName: string | null;
   questionListHeading: string;
   finalSubmitButtonLabel: string;
-  questionStates: QuestionState[];
-  handleQuesNoClick: (quesId: string) => void;
-  currentQuestionId: string | null;
   handleFinalSubmitTest: () => void;
+  allQuestions: Question[];
+  quizId: string;
+  questionId: string;
+  nextId: string | boolean;
 }) {
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -434,34 +294,29 @@ function CandidateQuestionStatus({
             <div className="mt-8">
               <h3 className="text-lg font-semibold">{questionListHeading}</h3>
               <div className="flex flex-wrap mt-2">
-                {questionStates.map((question, index) => (
-                  <div key={question.id} className="w-1/6 mb-4 mx-2">
-                    <button
-                      onClick={() => handleQuesNoClick(question.id)}
+                {allQuestions.map((ques, index) => (
+                  <div key={ques?.id} className="w-1/6 mb-4 mx-2">
+                    <Link
+                      // onClick={() => handleQuesNoClick(question.id)}
                       className={classNames(
                         "text-sm px-2 py-1 rounded-md w-full",
-                        questionStates[index].status ===
-                          UserQuizAnswerStatus.ATTEMPTED
+                        ques.status === UserQuizAnswerStatus.ATTEMPTED
                           ? "bg-green-300"
-                          : questionStates[index].status ===
-                            UserQuizAnswerStatus.SKIPPED
+                          : ques.status === UserQuizAnswerStatus.SKIPPED
                           ? "bg-red-600"
-                          : questionStates[index].status ===
-                            UserQuizAnswerStatus.REVIEW
+                          : ques.status === UserQuizAnswerStatus.REVIEW
                           ? "bg-yellow-400"
                           : "bg-gray-300",
-                        currentQuestionId == question.id
-                          ? "border-2 border-blue-500"
-                          : ""
+                        questionId == ques.id ? "border-2 border-blue-500" : ""
                       )}
+                      href={`/quiz/${quizId}/question/${ques?.id}`}
                     >
                       Q{index + 1}
-                    </button>
+                    </Link>
                   </div>
                 ))}
               </div>
-              {currentQuestionId ===
-                questionStates[questionStates.length - 1]?.id && (
+              {!nextId && (
                 <button
                   className="mx-2 bg-blue-500 px-4 py-2 rounded-sm text-white"
                   onClick={handleFinalSubmitTest}

@@ -10,9 +10,12 @@ import {
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 
-export async function questionInitialization(reqData: UserQuizAnswers) {
-  // const isProgress = await getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
-  const updateIsCurrent = await db.userQuizAnswers.updateMany({
+export async function userQuizQuestionInitilization(reqData: {quizId: string, questionId: string, submittedBy: string}) {
+  if(!reqData.submittedBy) {
+    return {error: "Submitted by is missing"}
+  }
+  
+  await db.userQuizAnswers.updateMany({
     where: {
       quizId: reqData.quizId,
       submittedBy: reqData.submittedBy,
@@ -20,16 +23,33 @@ export async function questionInitialization(reqData: UserQuizAnswers) {
     data: { isCurrent: false },
   });
 
-  const initiallyQues = await db.userQuizAnswers.create({
-    data: {
-      ...reqData,
-      isCurrent: true,
-    },
+  const alreadyExists = await getUserQuizQuestion({
+    quizId : reqData.quizId,
+    submittedBy:reqData.submittedBy, 
+    questionId:reqData.questionId
   });
-  return initiallyQues;
+
+  if(alreadyExists){
+    return alreadyExists;
+  } else{
+    return await db.userQuizAnswers.create({
+      data: {
+        ...reqData,
+        isCurrent: true,
+      },
+      include:{
+        question: {
+          include: {
+            objective_options: true
+          }
+        }
+      
+      }
+    });
+  } 
 }
 
-export async function getQuesStatus({
+export async function getUserQuizQuestion({
   quizId,
   submittedBy,
   questionId,
@@ -44,37 +64,45 @@ export async function getQuesStatus({
       submittedBy,
       questionId,
     },
+    include:{
+      question: {
+        include: {
+          objective_options: true
+        }
+      }
+    
+    }
   });
 }
 
-export async function saveResponseForQues({
-  id,
-  reqData,
-}: {
-  id: string;
-  reqData: UserQuizAnswers;
-}) {
-  console.log("markrevie", reqData);
+export async function saveResponseForQues(reqData: UserQuizAnswers) {
+  const {id, status, timeTaken: timeTakenStr, timeOver: timeOverStr, ans_optionsId, ans_subjective} = reqData;
+  const timeTaken = parseInt(timeTakenStr);
+  const timeOver = timeOverStr === "1" ? true : false
+
   return await db.userQuizAnswers.update({
     where: { id },
     data: {
-      ...reqData,
+      status,
+      timeTaken,
+      timeOver,
+      ans_optionsId,
+      ans_subjective
     },
   });
 }
 
-export async function getUserQuiz({
-  setId,
-  submittedBy,
+export async function getUserQuizAllQuestionAnswers({
+  quizId,
+  userId,
 }: {
-  setId: string;
-  submittedBy: string;
+  quizId: string;
+  userId: string;
 }) {
-  const quizId = setId;
   return await db.userQuizAnswers.findMany({
     where: {
       quizId,
-      submittedBy,
+      submittedBy: userId,
     },
     include: {
       question: {
@@ -82,7 +110,7 @@ export async function getUserQuiz({
           objective_options: true,
         },
       },
-    },
+    }
   });
 }
 

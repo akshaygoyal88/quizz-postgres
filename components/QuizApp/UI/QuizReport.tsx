@@ -110,8 +110,8 @@ const QuizReport = ({ userId }: { userId: string }) => {
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-600">
-                  <p className="font-bold">Note:</p>{" "}
-                  <text>Will announce report soon</text>
+                  <span className="font-bold">Note:</span>{" "}
+                  <span>Will announce report soon</span>
                 </div>
               </div>
             ) : (
