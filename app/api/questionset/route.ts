@@ -31,7 +31,6 @@ export async function GET(req: Request) {
         }
       );
     } else {
-      
       const allQuestionSets =  createdById ? await getQuestionSets(createdById) : await getQuestionSets()
       return NextResponse.json(allQuestionSets);
     }

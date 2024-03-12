@@ -1,8 +1,10 @@
 import QuizDetail from "@/components/QuizApp/UI/QuizDetail";
+import { getFirstQuesIdOfQuiz } from "@/services/questionSet";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React from "react";
 
-export default function page({ params }: { params: string }) {
+export default async function page({ params }: { params: Params }) {
   const quizId: string = params.id;
-
-  return <QuizDetail quizId={quizId} />;
+  const firstQuesId = await getFirstQuesIdOfQuiz(quizId);
+  return <QuizDetail quizId={quizId} firstQuesId={firstQuesId} />;
 }

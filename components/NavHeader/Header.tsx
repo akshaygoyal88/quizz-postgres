@@ -8,7 +8,7 @@ import { Container } from "../Container";
 import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 import { Button } from "../Button";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import NotificationIcon from "../Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
@@ -106,7 +106,7 @@ export function Header() {
 
   if (
     (ses?.data?.role !== UserRole.USER && path.includes("/admin")) ||
-    path.includes("/quiz/")
+    path.includes("/question/")
   ) {
     return null;
   }

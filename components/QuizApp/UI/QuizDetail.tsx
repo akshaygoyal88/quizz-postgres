@@ -19,7 +19,13 @@ const quiz = {
   ],
 };
 
-const QuizDetail = ({ quizId }: { quizId: string }) => {
+const QuizDetail = ({
+  quizId,
+  firstQuesId,
+}: {
+  quizId: string;
+  firstQuesId: string;
+}) => {
   const ses = useSession();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
@@ -55,8 +61,26 @@ const QuizDetail = ({ quizId }: { quizId: string }) => {
 
   const handleButton = async () => {
     if (ses.status !== "authenticated") router.push(`${pathName.login.path}`);
-    if (isCandidateSubscribed) router.push(`/quiz/${quizId}`);
-    else setModalOpen(true);
+    if (isCandidateSubscribed) {
+      // router.push(`/quiz/${quizId}`)
+
+      const {
+        data: initializeQuizRes,
+        error: initializeQueryError,
+        isLoading: initializeQueLoading,
+      } = await fetchData({
+        url: `${pathName.testSetApis.path}`,
+        method: FetchMethodE.POST,
+        body: {
+          quizId: quiz.id,
+          submittedBy: ses?.data?.id,
+        },
+      });
+
+      if (initializeQuizRes.isAvailable || initializeQuizRes.isInitialized) {
+        router.push(`/quiz/${quizId}/question/${firstQuesId}`);
+      }
+    } else setModalOpen(true);
   };
 
   const handleSubscribeConfirm = async () => {

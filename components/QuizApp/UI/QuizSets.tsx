@@ -9,15 +9,12 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 export default function QuizSets() {
-  const questionSets: Quiz[] = [];
   const ses = useSession();
 
   const { data, error, isLoading } = useFetch({
     url: `${pathName.questionSetApi.path}`,
   });
-
-  const getQuestionCount = (questionSet: Quiz): number => {};
-
+  console.log(data);
   const userId = ses?.data?.id;
 
   return (

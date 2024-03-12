@@ -47,22 +47,22 @@ const QuizSetCard = ({
   }, [userData]);
 
   const handleQuickStart = async () => {
-    const {
-      data: initializeQuizRes,
-      error: initializeQueryError,
-      isLoading: initializeQueLoading,
-    } = await fetchData({
-      url: `${pathName.testSetApis.path}`,
-      method: FetchMethodE.POST,
-      body: {
-        quizId: quiz.id,
-        submittedBy,
-      },
-    });
+    // const {
+    //   data: initializeQuizRes,
+    //   error: initializeQueryError,
+    //   isLoading: initializeQueLoading,
+    // } = await fetchData({
+    //   url: `${pathName.testSetApis.path}`,
+    //   method: FetchMethodE.POST,
+    //   body: {
+    //     quizId: quiz.id,
+    //     submittedBy,
+    //   },
+    // });
 
-    if (initializeQuizRes.isAvailable || initializeQuizRes.isInitialized) {
-      router.push(`/quiz/${quiz.id}`);
-    }
+    // if (initializeQuizRes.isAvailable || initializeQuizRes.isInitialized) {
+    router.push(`/quiz/detail/${quiz.id}`);
+    // }
   };
 
   const handleSubscribeConfirm = async () => {

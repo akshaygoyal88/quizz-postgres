@@ -35,6 +35,16 @@ export async function getQuestionSets(createdById?: string) {
   });
 }
 
+export async function getFirstQuesIdOfQuiz(quizId: string) {
+  const res = await db.quizQuestions.findFirst({
+    where: {
+      quizId
+    }
+  })
+  
+  return res?.questionId;
+}
+
 export enum QuestionSetSubmitE {
   CREATE="create",
   EDIT="edit",
