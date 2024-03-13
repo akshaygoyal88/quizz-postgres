@@ -1,12 +1,13 @@
 import { getServerSession } from "next-auth";
 import { db } from "../db";
 import { hash } from "bcrypt";
-import { User, UserOtpType, UserRole } from "@prisma/client";
+import { UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
 import { createNotification } from "./notification";
 
 import { generateOrUpdateOtp } from "./resetPasswordService";
+
 
 export async function getUserData() {
   const session = await getServerSession();
@@ -82,9 +83,19 @@ export async function registerUser({
 }
 
 export async function getUserByEmail(email: string){
-  return await db.user.findUnique({
+
+  // if(!email){
+  //   return {error: 'Please provide user email.'};
+  // }
+  const result =  await db.user.findUnique({
     where: { email },
+    include: {
+      Subscription: true
+    }
   });
+  // if(!result) return {error: 'User not found'};
+  // else return result;
+  return result
 }
 
 export async function getUserById(id: string) {
@@ -97,7 +108,6 @@ export async function getUserById(id: string) {
       Subscription: true
     }
   });
-  console.log(result);
   if(!result) return {error: 'User not found'};
   else return result;
 }

@@ -1,29 +1,44 @@
-import FullWidthLayout from "@/components/Layout/FullWidthLayout";
-import TestLayout from "@/components/QuizApp/UI/TestLayout";
-import { QuizReportsService } from "@/services";
-import { getQuizQuestions } from "@/services/quiz";
-import { getUserByEmail } from "@/services/user";
-import { QuizQuestions } from "@prisma/client";
+import QuizDetail from "@/components/QuizApp/UI/QuizDetail";
+import pathName from "@/constants";
+import { QuizService, UserSerivce } from "@/services";
+import { getFirstQuesIdOfQuiz } from "@/services/questionSet";
+import { QuizDetailType, UserDataType } from "@/types/types";
+import { Quiz, Subscription, User } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { redirect } from "next/navigation";
 import React from "react";
 
-export default async function QuizTestPage({ params }: { params: string }) {
-  // const allQuizQuestions = await getQuizQuestions({ quizId: params.id });
-  // const allQuestions = allQuizQuestions.map(
-  //   (ques: QuizQuestions) => ques.question
-  // );
+export default async function page({ params }: { params: Params }) {
+  const session = await getServerSession();
+  const quizId: string = params.id;
 
-  // if (allQuizQuestions.length > 0) {
-  //   return (
-  //     <FullWidthLayout>
-  //       <TestLayout
-  //         allQuestions={allQuestions}
-  //         allQuizQuestions={allQuizQuestions}
-  //         quizId={params?.id}
-  //       />
-  //     </FullWidthLayout>
-  //   );
-  // } else {
-  //   return <>ERROR COMPONENT</>;
+  const userData: UserDataType | null = await UserSerivce.getUserByEmail(
+    session?.user?.email || ""
+  );
+  // if (!userData) {
+  //   // redirect(`${pathName.login.path}`);
+  //   return <>Not authenticated</>;
   // }
-  return <div>h</div>;
+  // if ("error" in userData) {
+  //   return <>{userData.error}</>;
+  // } else {
+  const isCandidateSubscribed = userData?.Subscription.find(
+    (sub: Subscription) => sub.quizId === quizId
+  );
+  const firstQuesId = await getFirstQuesIdOfQuiz(quizId);
+  const quizDetails: QuizDetailType = await QuizService.getQuizDetailByQuizId(
+    quizId
+  );
+
+  return (
+    <QuizDetail
+      quizId={quizId}
+      firstQuesId={firstQuesId}
+      quizDetails={quizDetails}
+      userData={userData}
+      isCandidateSubscribed={isCandidateSubscribed}
+    />
+  );
 }
+// }
