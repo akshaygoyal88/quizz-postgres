@@ -1,3 +1,4 @@
+import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import QuizDetail from "@/components/QuizApp/UI/QuizDetail";
 import pathName from "@/constants";
 import { QuizService, UserSerivce } from "@/services";
@@ -16,29 +17,25 @@ export default async function page({ params }: { params: Params }) {
   const userData: UserDataType | null = await UserSerivce.getUserByEmail(
     session?.user?.email || ""
   );
-  // if (!userData) {
-  //   // redirect(`${pathName.login.path}`);
-  //   return <>Not authenticated</>;
-  // }
-  // if ("error" in userData) {
-  //   return <>{userData.error}</>;
-  // } else {
+
   const isCandidateSubscribed = userData?.Subscription.find(
     (sub: Subscription) => sub.quizId === quizId
   );
+
   const firstQuesId = await getFirstQuesIdOfQuiz(quizId);
   const quizDetails: QuizDetailType = await QuizService.getQuizDetailByQuizId(
     quizId
   );
 
   return (
-    <QuizDetail
-      quizId={quizId}
-      firstQuesId={firstQuesId}
-      quizDetails={quizDetails}
-      userData={userData}
-      isCandidateSubscribed={isCandidateSubscribed}
-    />
+    <FullWidthLayout>
+      <QuizDetail
+        quizId={quizId}
+        firstQuesId={firstQuesId}
+        quizDetails={quizDetails}
+        userData={userData}
+        isCandidateSubscribed={isCandidateSubscribed}
+      />
+    </FullWidthLayout>
   );
 }
-// }

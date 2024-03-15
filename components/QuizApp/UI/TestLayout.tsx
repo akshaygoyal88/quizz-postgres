@@ -15,13 +15,15 @@ import { classNames } from "@/utils/classNames";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { handleAnsSubmission } from "@/action/actionTestAnsForm";
+import List from "@/components/Shared/List";
+import ShadowSection from "@/components/Shared/ShadowSection";
 
 export interface QuestionState {
   id: string;
   status: UserQuizAnswerStatus;
 }
 
-type allQuestionsTypes =
+type QuestionsTypes =
   | ({
       objective_options: {
         id: string;
@@ -47,7 +49,7 @@ function TestLayout({
   userQuizQuestionWithAnswer,
   userData,
 }: {
-  allQuestions: allQuestionsTypes[];
+  allQuestions: QuestionsTypes[];
   quizId: string;
   nextId?: string | boolean;
   prevId?: string | boolean;
@@ -283,39 +285,18 @@ function CandidateQuestionStatus({
   return (
     <div className="grid grid-cols-1 gap-4">
       <section aria-labelledby="candidate-info-title">
-        <div className="border-2 overflow-hidden rounded-lg bg-white shadow">
+        <ShadowSection classForSec="border-2 shadow">
           <div className="p-6">
-            <div>
-              <h2 className="" id="candidate-info-title">
-                Candidate Information
-              </h2>
-              <p>Name: {candidateName}</p>
-            </div>
+            <List
+              features={["Candidate Information", `Name: ${candidateName}`]}
+            />
             <div className="mt-8">
-              <h3 className="text-lg font-semibold">{questionListHeading}</h3>
-              <div className="flex flex-wrap mt-2">
-                {allQuestions.map((ques, index) => (
-                  <div key={ques?.id} className="w-1/6 mb-4 mx-2">
-                    <Link
-                      // onClick={() => handleQuesNoClick(question.id)}
-                      className={classNames(
-                        "text-sm px-2 py-1 rounded-md w-full",
-                        ques?.status === UserQuizAnswerStatus.ATTEMPTED
-                          ? "bg-green-300"
-                          : ques?.status === UserQuizAnswerStatus.SKIPPED
-                          ? "bg-red-600"
-                          : ques?.status === UserQuizAnswerStatus.REVIEW
-                          ? "bg-yellow-400"
-                          : "bg-gray-300",
-                        questionId == ques?.id ? "border-2 border-blue-500" : ""
-                      )}
-                      href={`/quiz/${quizId}/question/${ques?.id}`}
-                    >
-                      Q{index + 1}
-                    </Link>
-                  </div>
-                ))}
-              </div>
+              <QuestionListWithNumber
+                allQuestions={allQuestions}
+                questionListHeading={questionListHeading}
+                questionId={questionId}
+                quizId={quizId}
+              />
               {!nextId && (
                 <button
                   className="mx-2 bg-blue-500 px-4 py-2 rounded-sm text-white"
@@ -326,8 +307,47 @@ function CandidateQuestionStatus({
               )}
             </div>
           </div>
-        </div>
+        </ShadowSection>
       </section>
     </div>
   );
 }
+
+const QuestionListWithNumber = ({
+  allQuestions,
+  questionListHeading,
+  questionId,
+  quizId,
+}: {
+  allQuestions: QuestionsTypes[];
+  questionListHeading: string;
+  questionId: string;
+  quizId: string;
+}) => {
+  return (
+    <>
+      <h3 className="text-lg font-semibold">{questionListHeading}</h3>
+      <div className="flex flex-wrap mt-2">
+        {allQuestions?.map((ques: QuestionsTypes, index: number) => (
+          <Link
+            key={ques?.id}
+            className={classNames(
+              "text-sm px-2 py-1 rounded-md w-1/6 mb-4 mx-2 text-center",
+              ques?.status === UserQuizAnswerStatus.ATTEMPTED
+                ? "bg-green-300"
+                : ques?.status === UserQuizAnswerStatus.SKIPPED
+                ? "bg-red-600"
+                : ques?.status === UserQuizAnswerStatus.REVIEW
+                ? "bg-yellow-400"
+                : "bg-gray-300",
+              questionId == ques?.id ? "border-2 border-blue-500" : ""
+            )}
+            href={`/quiz/${quizId}/question/${ques?.id}`}
+          >
+            Q{index + 1}
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+};

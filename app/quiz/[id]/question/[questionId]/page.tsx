@@ -3,18 +3,17 @@ import TestLayout from "@/components/QuizApp/UI/TestLayout";
 import { userQuizQuestionInitilization } from "@/services/answerSubmission";
 import { getQuizQuestions, getUserQuizQuestionsAnswers } from "@/services/quiz";
 import { getUserByEmail } from "@/services/user";
+import { getSessionUser } from "@/utils/getSessionUser";
 import { QuizQuestions } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React from "react";
 
 export default async function page({ params }: { params: Params }) {
-  const session = await getServerSession();
-  const userData = await getUserByEmail(session?.user?.email ?? "");
+  const userData = await getSessionUser();
   if (!userData) {
     return <>Not authenticated</>;
   }
-
   const quizId = params.id;
   const questionId = params.questionId;
   const allQuestions = await getUserQuizQuestionsAnswers({

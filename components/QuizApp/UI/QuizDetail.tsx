@@ -1,14 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import HTMLReactParser from "html-react-parser/lib/index";
 import { Subscription, Quiz, User } from "@prisma/client";
 import Modal from "@/components/Shared/Modal";
-import { QuizDetailType, UserDataType } from "@/types/types";
+import { QuizDetailType } from "@/types/types";
+import List from "@/components/Shared/List";
+import ShadowSection from "@/components/Shared/ShadowSection";
+import CustomGrid from "@/components/Shared/CustomGrid";
+import CustomImage from "@/components/Shared/CustomImage";
 
 const quiz = {
   negativeMarking: true,
@@ -75,81 +78,67 @@ const QuizDetail = ({
     setModalOpen(false);
     if (subscribedSuccess) setSubscribedSuccess(null);
   };
-
   if ("error" in quizDetails) {
     return <>{quizDetails.error}</>;
   } else {
+    const publishedDate = `Published Date: ${quizDetails.createdAt.toLocaleString(
+      "en-US",
+      {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      }
+    )}`;
+
+    const des = HTMLReactParser(quizDetails.description || "");
+
     return (
-      <div className="container mx-auto py-6 px-4">
+      <>
         {quizDetails ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <img
+            <CustomGrid columns={2}>
+              <CustomImage
                 src={`https://source.unsplash.com/random/?city,night200x200?sig=${quizId}`}
                 alt="Quiz Image"
-                className="w-full h-auto mb-4 md:mb-0 md:max-w-sm md:self-start"
+                className="object-cover w-full h-48 md:h-auto"
+                style={{ borderRadius: "1%" }}
               />
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="p-6">
-                  <h1 className="text-3xl font-bold mb-4">
-                    {quizDetails?.name}
-                  </h1>
-                  <div className="text-lg mb-2">
-                    <span className="font-semibold">Owner:</span>{" "}
-                    <span>
-                      {quizDetails?.createdBy?.first_name ||
-                        quizDetails?.createdBy?.email}
-                    </span>
-                  </div>
-                  <div className="text-lg mb-2">
-                    <span className="font-semibold">Description:</span>{" "}
-                    <span>
-                      {quizDetails.description &&
-                        HTMLReactParser(quizDetails.description)}
-                    </span>
-                  </div>
-                  <div className="text-lg mb-2">
-                    <span className="font-semibold">Number of Questions:</span>{" "}
-                    <span>{"<need to figure out logic>"}</span>
-                  </div>
-                  <div className="text-lg mb-2">
-                    <span className="font-semibold">Published Date:</span>{" "}
-                    <span>
-                      {quizDetails.createdAt.toLocaleString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true,
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="text-lg mb-2">
-                    <span className="font-semibold">Total Marks:</span>{" "}
-                    <span>{"<need to figure out logic>"}</span>
-                  </div>
-
-                  <h2 className="text-xl font-bold mb-2">Reviews</h2>
-                  <div className="space-y-2">
-                    {quiz.reviews.map((review, index) => (
-                      <div key={index} className="flex items-center">
-                        <span className="text-lg font-semibold mr-2">
-                          {review.rating}/5
-                        </span>
-                        <p className="text-lg">{review.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <ButtonForDetail
-                    authStatus={userData !== null}
-                    isCandidateSubscribed={isCandidateSubscribed}
-                    handleButton={handleButton}
-                  />
+              <ShadowSection classForSec="flex flex-col justify-between">
+                <List
+                  heading={quizDetails?.name}
+                  description={des}
+                  classesForlist="px-6 sm:px-8"
+                  features={[
+                    `Owner: ${
+                      quizDetails?.createdBy?.first_name ||
+                      quizDetails?.createdBy?.email
+                    }`,
+                    `${publishedDate}`,
+                    "Number of Questions: <need to figure out logic>",
+                    "Total Marks: <need to figure out logic>",
+                  ]}
+                />
+                <ButtonForDetail
+                  authStatus={userData !== null}
+                  isCandidateSubscribed={isCandidateSubscribed}
+                  handleButton={handleButton}
+                />
+              </ShadowSection>
+            </CustomGrid>
+            <h2 className="text-xl font-bold mb-2">Reviews</h2>
+            <div className="space-y-2">
+              {quiz.reviews.map((review, index) => (
+                <div key={index} className="flex items-center">
+                  <span className="text-lg font-semibold mr-2">
+                    {review.rating}/5
+                  </span>
+                  <p className="text-lg">{review.comment}</p>
                 </div>
-              </div>
+              ))}
             </div>
             {!isCandidateSubscribed && (
               <Modal
@@ -169,7 +158,7 @@ const QuizDetail = ({
         ) : (
           <p>Loading...</p>
         )}
-      </div>
+      </>
     );
   }
 };
@@ -252,7 +241,7 @@ const ButtonForDetail = ({
           : "bg-orange-700"
         : "bg-purple-600"
     }  
-    text-white px-4 py-2 rounded-md mt-4 font-semibold hover:cursor-pointer`}
+    text-white px-4 py-2 rounded-bottom-md mt-4 font-semibold hover:cursor-pointer w-full`}
       onClick={handleButton}
     >
       {authStatus

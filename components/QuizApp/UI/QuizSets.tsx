@@ -2,21 +2,16 @@
 
 import React, { useState } from "react";
 import QuizSetCard from "./QuizSetCard";
-import { Quiz } from "@prisma/client";
-import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { QuizDetail } from "@/types/types";
 
-export default function QuizSets() {
-  const ses = useSession();
-
-  const { data, error, isLoading } = useFetch({
-    url: `${pathName.questionSetApi.path}`,
-  });
-  console.log(data);
-  const userId = ses?.data?.id;
-
+export default function QuizSets({
+  allQuizzes,
+  userId,
+}: {
+  allQuizzes: QuizDetail[];
+  userId: string;
+}) {
   return (
     <>
       <Link
@@ -29,13 +24,12 @@ export default function QuizSets() {
         role="list"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
       >
-        {data &&
-          data.map((quiz: Quiz) => (
+        {allQuizzes &&
+          allQuizzes.map((quiz: QuizDetail) => (
             <QuizSetCard
               key={quiz.id}
               quiz={quiz}
               submittedBy={userId}
-
               // questionCount={getQuestionCount(questionSet)}
             />
           ))}
