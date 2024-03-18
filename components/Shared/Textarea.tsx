@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export default function Textarea({
   label,
   rows,

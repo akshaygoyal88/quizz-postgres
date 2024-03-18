@@ -16,11 +16,8 @@ import { handleAnsSubmission } from "@/action/actionTestAnsForm";
 import List from "@/components/Shared/List";
 import ShadowSection from "@/components/Shared/ShadowSection";
 import { QuesType, UserQuizAnsType } from "@/types/types";
-
-export interface QuestionState {
-  id: string;
-  status: UserQuizAnswerStatus;
-}
+import CustomGrid from "@/components/Shared/CustomGrid";
+import { Button } from "@/components/Button";
 
 type QuestionsTypes =
   | ({
@@ -78,7 +75,7 @@ function TestLayout({
   };
 
   return (
-    <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
+    <CustomGrid customClasses="items-start lg:grid-cols-3 lg:gap-8">
       {allQuestions.length > 0 && (
         <CandidateQuizQuestion
           handleNextQuestion={handleNextQuestion}
@@ -99,7 +96,7 @@ function TestLayout({
           nextId={nextId}
         />
       )}
-    </div>
+    </CustomGrid>
   );
 }
 
@@ -179,88 +176,60 @@ function CandidateQuizQuestion({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-      <section aria-labelledby="question-title">
-        <div className="border-2 overflow-hidden rounded-lg bg-white shadow">
-          <form action={formAction}>
-            <div className="p-6">
-              <div className="flex justify-between items-center">
-                {isTimerAvailable && (
-                  <div className="">
-                    <h3 className="text-lg font-semibold">Time</h3>
-                    <p>
-                      {Math.floor(timer / 60)}:{timer % 60}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <p className="py-4">{question?.question_text}</p>
-              <div>
-                {question && HTMLReactParser(question?.editorContent || "")}
-              </div>
-
-              {question?.type === QuestionType.OBJECTIVE ? (
-                <div className="mt-4">
-                  {question?.objective_options?.map(
-                    (option: ObjectiveOptions, index: number) => (
-                      <div key={index} className="p-4 flex items-center">
-                        <input
-                          type="radio"
-                          name="ans_optionsId"
-                          value={option.id}
-                          onChange={() => handleAnsOptInput(option.id)}
-                          checked={answer === option.id}
-                        />
-                        <span className="p-2">{`(${optionsIndex[index]})`}</span>
-                        <span className="ml-2">
-                          {HTMLReactParser(option.text)}
-                        </span>
-                      </div>
-                    )
-                  )}
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <Textarea
-                    id="answer"
-                    label="Type Answer"
-                    className="border-2 w-3/4"
-                    value={answer === null ? "" : answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    name="ans_subjective"
-                  />
-                </div>
-              )}
+    <ShadowSection
+      classForSec="border-2 grid grid-cols-1 gap-4 lg:col-span-2"
+      aria-labelledby="question-title"
+    >
+      <form action={formAction} className="p-6">
+        <div className="flex justify-between items-center">
+          {isTimerAvailable && (
+            <div className="">
+              <h3 className="text-lg font-semibold">Time</h3>
+              <p>
+                {Math.floor(timer / 60)}:{timer % 60}
+              </p>
             </div>
-            <div className="m-2 flex justify-between">
-              <button
-                onClick={() => {
-                  setMarkReview(true);
-                }}
-                className="mr-4 px-4 py-2 bg-yellow-500 text-white rounded-md"
-                type="submit"
-              >
-                Mark for Review
-              </button>
-              {prevId && (
-                <Link
-                  className="mr-4 px-4 py-2 bg-gray-300 rounded-md"
-                  href={`/quiz/${quizId}/question/${prevId}`}
-                >
-                  Previous
-                </Link>
-              )}
-              <button
-                className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
-                type="submit"
-              >
-                Submit and Next
-              </button>
-            </div>
-          </form>
+          )}
         </div>
-      </section>
-    </div>
+        <div>{question && HTMLReactParser(question?.editorContent || "")}</div>
+        {question?.type === QuestionType.OBJECTIVE ? (
+          <div className="mt-4">
+            {question?.objective_options?.map(
+              (option: ObjectiveOptions, index: number) => (
+                <div key={index} className="p-4 flex items-center">
+                  <input
+                    type="radio"
+                    name="ans_optionsId"
+                    value={option.id}
+                    onChange={() => handleAnsOptInput(option.id)}
+                    checked={answer === option.id}
+                  />
+                  <span className="p-2">{`(${optionsIndex[index]})`}</span>
+                  <span className="ml-2">{HTMLReactParser(option.text)}</span>
+                </div>
+              )
+            )}
+          </div>
+        ) : (
+          <div className="mt-4">
+            <Textarea
+              id="answer"
+              label="Type Answer"
+              className="border-2 w-3/4"
+              value={answer === null ? "" : answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              name="ans_subjective"
+            />
+          </div>
+        )}
+
+        <ButtonForQuesAction
+          prevId={prevId}
+          quizId={quizId}
+          setMarkReview={setMarkReview}
+        />
+      </form>
+    </ShadowSection>
   );
 }
 
@@ -284,33 +253,27 @@ function CandidateQuestionStatus({
   nextId: string | boolean | undefined;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <section aria-labelledby="candidate-info-title">
-        <ShadowSection classForSec="border-2 shadow">
-          <div className="p-6">
-            <List
-              features={["Candidate Information", `Name: ${candidateName}`]}
-            />
-            <div className="mt-8">
-              <QuestionListWithNumber
-                allQuestions={allQuestions}
-                questionListHeading={questionListHeading}
-                questionId={questionId}
-                quizId={quizId}
-              />
-              {!nextId && (
-                <button
-                  className="mx-2 bg-blue-500 px-4 py-2 rounded-sm text-white"
-                  onClick={handleFinalSubmitTest}
-                >
-                  {finalSubmitButtonLabel}
-                </button>
-              )}
-            </div>
-          </div>
-        </ShadowSection>
-      </section>
-    </div>
+    <ShadowSection
+      classForSec="border-2 shadow grid grid-cols-1 gap-4"
+      aria-labelledby="candidate-info-title"
+    >
+      <div className="p-6">
+        <List features={["Candidate Information", `Name: ${candidateName}`]} />
+        <div className="mt-8">
+          <QuestionListWithNumber
+            allQuestions={allQuestions}
+            questionListHeading={questionListHeading}
+            questionId={questionId}
+            quizId={quizId}
+          />
+          {!nextId && (
+            <Button className="rounded-md" onClick={handleFinalSubmitTest}>
+              {finalSubmitButtonLabel}
+            </Button>
+          )}
+        </div>
+      </div>
+    </ShadowSection>
   );
 }
 
@@ -350,5 +313,43 @@ const QuestionListWithNumber = ({
         ))}
       </div>
     </>
+  );
+};
+
+const ButtonForQuesAction = ({
+  prevId,
+  quizId,
+  setMarkReview,
+}: {
+  prevId?: string | boolean;
+  quizId: string | boolean;
+  setMarkReview: (value: boolean) => void;
+}) => {
+  return (
+    <div className="m-2 flex justify-between">
+      <button
+        onClick={() => {
+          setMarkReview(true);
+        }}
+        className="mr-4 px-4 py-2 bg-yellow-500 text-white rounded-md"
+        type="button"
+      >
+        Mark for Review
+      </button>
+      {prevId && (
+        <Link
+          href={`/quiz/${quizId}/question/${prevId}`}
+          className="mr-4 px-4 py-2 bg-gray-300 rounded-md"
+        >
+          Previous
+        </Link>
+      )}
+      <button
+        className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
+        type="submit"
+      >
+        Submit and Next
+      </button>
+    </div>
   );
 };
