@@ -13,12 +13,12 @@ export default function RadioInput({
   value: string;
   checked: boolean;
   handleAnyTypeRadioChange: () => void;
-  label: string;
+  label: string | JSX.Element | JSX.Element[];
   name: string;
   htmlFor: string;
 }) {
   return (
-    <div>
+    <div className="flex items-center">
       <input
         type="radio"
         id={id}

@@ -18,6 +18,8 @@ import { QuesType, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
 import { Button } from "@/components/Button";
 import HtmlParser from "@/components/Shared/HtmlParser";
+import RadioInput from "@/components/Shared/RadioInput";
+import HTMLReactParser from "html-react-parser";
 
 type QuestionsTypes =
   | ({
@@ -180,16 +182,7 @@ function CandidateQuizQuestion({
       aria-labelledby="question-title"
     >
       <form action={formAction} className="p-6">
-        <div className="flex justify-between items-center my-4">
-          {isTimerAvailable && (
-            <div className="">
-              <h3 className="text-lg font-semibold">Time</h3>
-              <p>
-                {Math.floor(timer / 60)}:{timer % 60}
-              </p>
-            </div>
-          )}
-        </div>
+        <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
         <HtmlParser content={question.editorContent || ""} />
         {question?.type === QuestionType.OBJECTIVE ? (
           question?.objective_options?.map(
@@ -353,30 +346,37 @@ const OptionContainer = ({
 }) => {
   return (
     <div key={index} className="p-4 flex items-center">
-      <input
-        type="radio"
-        name="ans_optionsId"
-        value={option.id}
-        onChange={() => handleAnsOptInput(option.id)}
-        checked={answer === option.id}
-      />
       <span className="p-2">{`(${optionsIndex[index]})`}</span>
-      <HtmlParser content={option.text} />
+      <RadioInput
+        id={option.id}
+        value={option.id}
+        checked={answer === option.id}
+        handleAnyTypeRadioChange={() => handleAnsOptInput(option.id)}
+        label={HTMLReactParser(option.text) || ""}
+        name="ans_optionsId"
+        htmlFor={"option"}
+      />
     </div>
   );
 };
 
-// const TimerContainer = ({isTimerAvailable, timer}) => {
-//   return (
-//     <div className="flex justify-between items-center my-4">
-//       {isTimerAvailable && (
-//         <div className="">
-//           <h3 className="text-lg font-semibold">Time</h3>
-//           <p>
-//             {Math.floor(timer / 60)}:{timer % 60}
-//           </p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
+const TimerContainer = ({
+  isTimerAvailable,
+  timer,
+}: {
+  isTimerAvailable: boolean;
+  timer: number;
+}) => {
+  return (
+    <div className="flex justify-between items-center my-4">
+      {isTimerAvailable && (
+        <div className="">
+          <h3 className="text-lg font-semibold">Time</h3>
+          <p>
+            {Math.floor(timer / 60)}:{timer % 60}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
