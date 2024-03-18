@@ -365,3 +365,18 @@ const OptionContainer = ({
     </div>
   );
 };
+
+// const TimerContainer = ({isTimerAvailable, timer}) => {
+//   return (
+//     <div className="flex justify-between items-center my-4">
+//       {isTimerAvailable && (
+//         <div className="">
+//           <h3 className="text-lg font-semibold">Time</h3>
+//           <p>
+//             {Math.floor(timer / 60)}:{timer % 60}
+//           </p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
