@@ -11,7 +11,7 @@ import { Subscription } from "@prisma/client";
 
 interface QuizSetCardProps {
   quiz: QuizDetail;
-  userData: UserDataType;
+  userData: UserDataType | null;
 }
 interface QuizInformationProps {
   quiz: QuizDetail;
@@ -58,7 +58,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
     const { data, error, isLoading } = await fetchData({
       url: `${pathName.subscriptionApiRoute.path}`,
       method: FetchMethodE.POST,
-      body: { quizId: quiz.id, candidateId: userData.id },
+      body: { quizId: quiz.id, candidateId: userData?.id },
     });
     if (data && !data.error) {
       setSubscribedSuccess("Successfully taken subscription.");

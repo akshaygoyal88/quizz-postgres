@@ -10,12 +10,12 @@ export default function QuizSets({
   userData,
 }: {
   allQuizzes: QuizDetail[];
-  userData: UserDataType;
+  userData: UserDataType | null;
 }) {
   return (
     <>
       <Link
-        href={`/quizzes/reports/${userData.id}`}
+        href={`/quizzes/reports/${userData?.id}`}
         className="mx-4 px-4 py-2 bg-yellow-300 rounded-md flex items-center w-fit text-blue-700 hover:underline"
       >
         See Your Reports
