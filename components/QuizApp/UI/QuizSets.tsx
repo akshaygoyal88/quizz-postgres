@@ -29,7 +29,7 @@ export default function QuizSets({
             <QuizSetCard
               key={quiz.id}
               quiz={quiz}
-              userData={userData} // submittedBy={userId}
+              userData={userData}
               // questionCount={getQuestionCount(questionSet)}
             />
           ))}

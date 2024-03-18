@@ -7,7 +7,6 @@ import {
   User,
   UserQuizAnswerStatus,
 } from "@prisma/client";
-import HTMLReactParser from "html-react-parser";
 import Textarea from "@/components/Shared/Textarea";
 import { classNames } from "@/utils/classNames";
 import Link from "next/link";
@@ -18,6 +17,7 @@ import ShadowSection from "@/components/Shared/ShadowSection";
 import { QuesType, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
 import { Button } from "@/components/Button";
+import HtmlParser from "@/components/Shared/HtmlParser";
 
 type QuestionsTypes =
   | ({
@@ -77,24 +77,23 @@ function TestLayout({
   return (
     <CustomGrid customClasses="items-start lg:grid-cols-3 lg:gap-8">
       {allQuestions.length > 0 && (
-        <CandidateQuizQuestion
-          handleNextQuestion={handleNextQuestion}
-          userQuizQuestionWithAnswer={userQuizQuestionWithAnswer}
-          prevId={prevId}
-          quizId={quizId}
-        />
-      )}
-      {allQuestions.length > 0 && (
-        <CandidateQuestionStatus
-          handleFinalSubmitTest={handleFinalSubmitTest}
-          questionListHeading="Question List"
-          candidateName={userData?.first_name}
-          finalSubmitButtonLabel="Submit Test"
-          allQuestions={allQuestions}
-          quizId={quizId}
-          questionId={userQuizQuestionWithAnswer?.questionId}
-          nextId={nextId}
-        />
+        <>
+          <CandidateQuizQuestion
+            handleNextQuestion={handleNextQuestion}
+            userQuizQuestionWithAnswer={userQuizQuestionWithAnswer}
+            prevId={prevId}
+            quizId={quizId}
+          />
+          <CandidateQuestionStatus
+            handleFinalSubmitTest={handleFinalSubmitTest}
+            questionListHeading="Question List"
+            candidateName={userData?.first_name}
+            allQuestions={allQuestions}
+            quizId={quizId}
+            questionId={userQuizQuestionWithAnswer?.questionId}
+            nextId={nextId}
+          />
+        </>
       )}
     </CustomGrid>
   );
@@ -181,7 +180,7 @@ function CandidateQuizQuestion({
       aria-labelledby="question-title"
     >
       <form action={formAction} className="p-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center my-4">
           {isTimerAvailable && (
             <div className="">
               <h3 className="text-lg font-semibold">Time</h3>
@@ -191,38 +190,29 @@ function CandidateQuizQuestion({
             </div>
           )}
         </div>
-        <div>{question && HTMLReactParser(question?.editorContent || "")}</div>
+        <HtmlParser content={question.editorContent || ""} />
         {question?.type === QuestionType.OBJECTIVE ? (
-          <div className="mt-4">
-            {question?.objective_options?.map(
-              (option: ObjectiveOptions, index: number) => (
-                <div key={index} className="p-4 flex items-center">
-                  <input
-                    type="radio"
-                    name="ans_optionsId"
-                    value={option.id}
-                    onChange={() => handleAnsOptInput(option.id)}
-                    checked={answer === option.id}
-                  />
-                  <span className="p-2">{`(${optionsIndex[index]})`}</span>
-                  <span className="ml-2">{HTMLReactParser(option.text)}</span>
-                </div>
-              )
-            )}
-          </div>
+          question?.objective_options?.map(
+            (option: ObjectiveOptions, index: number) => (
+              <OptionContainer
+                index={index}
+                option={option}
+                handleAnsOptInput={handleAnsOptInput}
+                answer={answer}
+                optionsIndex={optionsIndex}
+              />
+            )
+          )
         ) : (
-          <div className="mt-4">
-            <Textarea
-              id="answer"
-              label="Type Answer"
-              className="border-2 w-3/4"
-              value={answer === null ? "" : answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              name="ans_subjective"
-            />
-          </div>
+          <Textarea
+            id="answer"
+            label="Type Answer"
+            className="border-2 w-3/4 mt-4"
+            value={answer === null ? "" : answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            name="ans_subjective"
+          />
         )}
-
         <ButtonForQuesAction
           prevId={prevId}
           quizId={quizId}
@@ -236,7 +226,6 @@ function CandidateQuizQuestion({
 function CandidateQuestionStatus({
   candidateName,
   questionListHeading,
-  finalSubmitButtonLabel,
   handleFinalSubmitTest,
   allQuestions,
   quizId,
@@ -245,7 +234,6 @@ function CandidateQuestionStatus({
 }: {
   candidateName: string | null;
   questionListHeading: string;
-  finalSubmitButtonLabel: string;
   handleFinalSubmitTest: () => void;
   allQuestions: QuestionsTypes[];
   quizId: string;
@@ -254,25 +242,21 @@ function CandidateQuestionStatus({
 }) {
   return (
     <ShadowSection
-      classForSec="border-2 shadow grid grid-cols-1 gap-4"
+      classForSec="border-2 shadow grid grid-cols-1 gap-4 p-6"
       aria-labelledby="candidate-info-title"
     >
-      <div className="p-6">
-        <List features={["Candidate Information", `Name: ${candidateName}`]} />
-        <div className="mt-8">
-          <QuestionListWithNumber
-            allQuestions={allQuestions}
-            questionListHeading={questionListHeading}
-            questionId={questionId}
-            quizId={quizId}
-          />
-          {!nextId && (
-            <Button className="rounded-md" onClick={handleFinalSubmitTest}>
-              {finalSubmitButtonLabel}
-            </Button>
-          )}
-        </div>
-      </div>
+      <List features={["Candidate Information", `Name: ${candidateName}`]} />
+      <QuestionListWithNumber
+        allQuestions={allQuestions}
+        questionListHeading={questionListHeading}
+        questionId={questionId}
+        quizId={quizId}
+      />
+      {!nextId && (
+        <Button className="rounded-md" onClick={handleFinalSubmitTest}>
+          Submit Test
+        </Button>
+      )}
     </ShadowSection>
   );
 }
@@ -291,7 +275,7 @@ const QuestionListWithNumber = ({
   return (
     <>
       <h3 className="text-lg font-semibold">{questionListHeading}</h3>
-      <div className="flex flex-wrap mt-2">
+      <div className="flex flex-wrap mt-6">
         {allQuestions?.map((ques: QuestionsTypes, index: number) => (
           <Link
             key={ques?.id}
@@ -350,6 +334,34 @@ const ButtonForQuesAction = ({
       >
         Submit and Next
       </button>
+    </div>
+  );
+};
+
+const OptionContainer = ({
+  index,
+  option,
+  handleAnsOptInput,
+  answer,
+  optionsIndex,
+}: {
+  index: number;
+  option: ObjectiveOptions;
+  handleAnsOptInput: (id: string) => void;
+  answer: string | null;
+  optionsIndex: string[];
+}) => {
+  return (
+    <div key={index} className="p-4 flex items-center">
+      <input
+        type="radio"
+        name="ans_optionsId"
+        value={option.id}
+        onChange={() => handleAnsOptInput(option.id)}
+        checked={answer === option.id}
+      />
+      <span className="p-2">{`(${optionsIndex[index]})`}</span>
+      <HtmlParser content={option.text} />
     </div>
   );
 };
