@@ -1,4 +1,4 @@
-import { Quiz, Subscription, User } from "@prisma/client";
+import { ObjectiveOptions, Question, Quiz, Subscription, User, UserQuizAnswers } from "@prisma/client";
 
 export type UserDataType = User & { Subscription: Subscription[] }
 //   | { error: string };
@@ -8,3 +8,11 @@ export interface QuizDetail extends Quiz {
 }
 
 export type QuizDetailType = QuizDetail | { error: string };
+
+export interface UserQuizAnsType extends UserQuizAnswers {
+  question: Question;
+}
+
+export interface QuesType extends Question {
+  objective_options?: ObjectiveOptions[]
+}

@@ -1,13 +1,11 @@
 "use client";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import {
   AnswerTypeE,
   ObjectiveOptions,
-  Question,
   QuestionType,
   User,
   UserQuizAnswerStatus,
-  UserQuizAnswers,
 } from "@prisma/client";
 import HTMLReactParser from "html-react-parser";
 import Textarea from "@/components/Shared/Textarea";
@@ -17,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { handleAnsSubmission } from "@/action/actionTestAnsForm";
 import List from "@/components/Shared/List";
 import ShadowSection from "@/components/Shared/ShadowSection";
+import { QuesType, UserQuizAnsType } from "@/types/types";
 
 export interface QuestionState {
   id: string;
@@ -53,7 +52,7 @@ function TestLayout({
   quizId: string;
   nextId?: string | boolean;
   prevId?: string | boolean;
-  userQuizQuestionWithAnswer: UserQuizAnswers;
+  userQuizQuestionWithAnswer: UserQuizAnsType;
   userData: User;
 }) {
   const router = useRouter();
@@ -112,16 +111,16 @@ function CandidateQuizQuestion({
   quizId,
   prevId,
 }: {
-  userQuizQuestionWithAnswer: UserQuizAnswers;
+  userQuizQuestionWithAnswer: UserQuizAnsType;
   handleNextQuestion: () => void;
   quizId: string | boolean;
   prevId?: string | boolean;
 }) {
-  const question = userQuizQuestionWithAnswer?.question;
+  const question: QuesType = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
   const [timer, setTimer] = useState<number>(
     (question?.timer
-      ? question?.timer - userQuizQuestionWithAnswer?.timeTaken
+      ? question?.timer - (userQuizQuestionWithAnswer?.timeTaken || 0)
       : question?.timer) || 0
   );
   const [answer, setAnswer] = useState<string | null>(
@@ -196,7 +195,9 @@ function CandidateQuizQuestion({
                 )}
               </div>
               <p className="py-4">{question?.question_text}</p>
-              <div>{question && HTMLReactParser(question?.editorContent)}</div>
+              <div>
+                {question && HTMLReactParser(question?.editorContent || "")}
+              </div>
 
               {question?.type === QuestionType.OBJECTIVE ? (
                 <div className="mt-4">
@@ -277,10 +278,10 @@ function CandidateQuestionStatus({
   questionListHeading: string;
   finalSubmitButtonLabel: string;
   handleFinalSubmitTest: () => void;
-  allQuestions: allQuestionsTypes[];
+  allQuestions: QuestionsTypes[];
   quizId: string;
   questionId: string;
-  nextId: string | boolean;
+  nextId: string | boolean | undefined;
 }) {
   return (
     <div className="grid grid-cols-1 gap-4">

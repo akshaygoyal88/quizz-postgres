@@ -76,7 +76,7 @@ const QuizDetail = ({
   };
   const handleCancelAndCountinue = () => {
     setModalOpen(false);
-    if (subscribedSuccess) setSubscribedSuccess(null);
+    // if (subscribedSuccess) setSubscribedSuccess(null);
   };
   if ("error" in quizDetails) {
     return <>{quizDetails.error}</>;
@@ -145,14 +145,9 @@ const QuizDetail = ({
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 title="Subscription of quiz"
-              >
-                <ModalElements
-                  subscribedSuccess={subscribedSuccess}
-                  quizDetails={quizDetails}
-                  handleSubscribeConfirm={handleSubscribeConfirm}
-                  handleCancelAndCountinue={handleCancelAndCountinue}
-                />
-              </Modal>
+                onConfirm={handleSubscribeConfirm}
+                description="Are you sure you want to subscribe to this quiz?"
+              />
             )}
           </>
         ) : (
@@ -164,63 +159,6 @@ const QuizDetail = ({
 };
 
 export default QuizDetail;
-
-export const ModalElements = ({
-  subscribedSuccess,
-  quizDetails,
-  handleSubscribeConfirm,
-  handleCancelAndCountinue,
-}: {
-  subscribedSuccess: string | null;
-  quizDetails: Quiz;
-  handleSubscribeConfirm: () => void;
-  handleCancelAndCountinue: () => void;
-}) => {
-  return (
-    <>
-      <h1>{quizDetails.name}</h1>
-      {subscribedSuccess && (
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
-            <svg
-              aria-hidden="true"
-              className="w-8 h-8 text-green-500 dark:text-green-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            <span className="sr-only text-gray-600">{subscribedSuccess}</span>
-          </div>
-          <p className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-            {subscribedSuccess}
-          </p>
-        </div>
-      )}
-      <div className="flex justify-end space-x-4">
-        {!subscribedSuccess && (
-          <button
-            className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 focus:outline-none"
-            onClick={handleSubscribeConfirm}
-          >
-            Confirm
-          </button>
-        )}
-        <button
-          className="px-6 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 focus:outline-none"
-          onClick={handleCancelAndCountinue}
-        >
-          {subscribedSuccess ? "Continue" : "Cancel"}
-        </button>
-      </div>
-    </>
-  );
-};
 
 const ButtonForDetail = ({
   authStatus,

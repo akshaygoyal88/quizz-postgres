@@ -11,7 +11,7 @@ export default async function Quizzes() {
   const allQuizzes = await getQuestionSets();
   return (
     <FullWidthLayout>
-      <QuizSets allQuizzes={allQuizzes} userId={userData?.id} />
+      <QuizSets allQuizzes={allQuizzes} userData={userData} />
     </FullWidthLayout>
   );
 }

@@ -3,19 +3,19 @@
 import React, { useState } from "react";
 import QuizSetCard from "./QuizSetCard";
 import Link from "next/link";
-import { QuizDetail } from "@/types/types";
+import { QuizDetail, UserDataType } from "@/types/types";
 
 export default function QuizSets({
   allQuizzes,
-  userId,
+  userData,
 }: {
   allQuizzes: QuizDetail[];
-  userId: string;
+  userData: UserDataType;
 }) {
   return (
     <>
       <Link
-        href={`/quizzes/reports/${userId}`}
+        href={`/quizzes/reports/${userData.id}`}
         className="mx-4 px-4 py-2 bg-yellow-300 rounded-md flex items-center w-fit text-blue-700 hover:underline"
       >
         See Your Reports
@@ -29,7 +29,7 @@ export default function QuizSets({
             <QuizSetCard
               key={quiz.id}
               quiz={quiz}
-              submittedBy={userId}
+              userData={userData} // submittedBy={userId}
               // questionCount={getQuestionCount(questionSet)}
             />
           ))}
