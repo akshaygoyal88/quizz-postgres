@@ -9,7 +9,7 @@ const DuplicateModal = ({
   onClose: () => void;
   onDuplicate: () => void;
 }) => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleBackgroundClick = (e: { target: any }) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {

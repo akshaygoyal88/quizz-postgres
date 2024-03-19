@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import ReactDOMServer from "react-dom/server";
 
 interface TinyMCEEditorProps {
   initialValue?: string;

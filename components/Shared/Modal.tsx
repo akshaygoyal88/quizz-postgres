@@ -3,16 +3,17 @@ import React, { useRef } from "react";
 const Modal = ({
   isOpen,
   onClose,
-
+  description,
   title,
-  children,
+  onConfirm,
 }: {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: React.ReactNode;
+  description?: string;
+  onConfirm: () => void;
 }) => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleBackgroundClick = (e: { target: any }) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -53,7 +54,24 @@ const Modal = ({
             </svg>
           </button>
         </div>
-        {children}
+        <p className="text-gray-700 mb-6">{description}</p>
+        <div className="flex justify-end space-x-4">
+          <button
+            className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 focus:outline-none"
+            onClick={() => {
+              onConfirm();
+              onClose();
+            }}
+          >
+            Confirm
+          </button>
+          <button
+            className="px-6 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition duration-300 focus:outline-none"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

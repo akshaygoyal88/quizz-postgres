@@ -1,14 +1,15 @@
 import LoginForm from "@/components/LoginForm";
 import React from "react";
-import authorization from "../authorization";
 import pathName from "@/constants";
-import { SlimLayout } from "@/components/SlimLayout";
+import { Container, FormContainer } from "@/components/Container";
 
 export default async function login() {
-  await authorization({ redirectTo: pathName.home.path });
+  // await authorization({ redirectTo: pathName.home.path });
   return (
-    <SlimLayout>
-      <LoginForm />
-    </SlimLayout>
+    <Container>
+      <FormContainer>
+        <LoginForm />
+      </FormContainer>
+    </Container>
   );
 }

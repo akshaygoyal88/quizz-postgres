@@ -10,8 +10,8 @@ export default async function ProfilePage() {
   if (!session) redirect("/signin");
   const email = session!.user!.email!;
   return (
-    <LeftSideBar>
-      <Profile email={email} />
-    </LeftSideBar>
+    // <LeftSideBar>
+    <Profile email={email} />
+    // </LeftSideBar>
   );
 }

@@ -7,6 +7,7 @@ import HTMLReactParser from "html-react-parser";
 import DuplicateModal from "../../Shared/DuplicateModal";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
+import Modal from "@/components/Shared/Modal";
 
 export default function QuestionsTable({
   ques,
@@ -199,19 +200,25 @@ export default function QuestionsTable({
           </div>
         </div>
       </div>
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onDelete={deleteHandler}
-      />
       <DuplicateModal
         isOpen={isDuplicateModalOpen}
         onClose={() => setIsDuplicateModalOpen(false)}
         onDuplicate={duplicateHandler}
       />
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Deletion"
+        onConfirm={deleteHandler}
+        description="Are you sure you want to delete this item?"
+      />
+      <Modal
+        isOpen={isDuplicateModalOpen}
+        onClose={() => setIsDuplicateModalOpen(false)}
+        title="Confirm Duplication"
+        onConfirm={duplicateHandler}
+        description="Are you sure you want to duplicate this item?"
+      />
     </div>
   );
-}
-function useEffect(arg0: () => void, arg1: never[]) {
-  throw new Error("Function not implemented.");
 }

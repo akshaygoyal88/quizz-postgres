@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { Pricing } from "@/components/Pricing";
 import { PrimaryFeatures } from "@/components/PrimaryFeatures";
-import QuizSets from "@/components/QuizApp/UI/QuizSets";
+import QuizSets from "@/components/QuizApp/UI/QuizList";
 import { SecondaryFeatures } from "@/components/SecondaryFeatures";
 import { Testimonials } from "@/components/Testimonials";
 import { getServerSession } from "next-auth";

@@ -48,15 +48,15 @@ export default function RegisterForm() {
       const {
         data: regRes,
         error: regError,
-        isLoading: regIsLoading
+        isLoading: regIsLoading,
       } = await fetchData({
         url: `/api/register`,
         method: FetchMethodE.POST,
         body: {
           email: email,
           password: password,
-          roleOfUser: roleOfUser
-        }
+          roleOfUser: roleOfUser,
+        },
       });
 
       if (!regRes.error) {
@@ -70,7 +70,7 @@ export default function RegisterForm() {
     }
   };
   return (
-    <>
+    <main className="mx-auto w-full max-w-md sm:px-4 md:w-96 md:max-w-sm md:px-0">
       <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
         Register
       </h2>
@@ -142,6 +142,6 @@ export default function RegisterForm() {
           Sign In
         </Link>
       </p>
-    </>
+    </main>
   );
 }

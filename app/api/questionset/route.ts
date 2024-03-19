@@ -31,7 +31,7 @@ export async function GET(req: Request) {
         }
       );
     } else {
-      
+      console.log(createdById, "getQuestionSetsgetQuestionSets")
       const allQuestionSets =  createdById ? await getQuestionSets(createdById) : await getQuestionSets()
       return NextResponse.json(allQuestionSets);
     }
