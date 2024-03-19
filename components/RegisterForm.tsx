@@ -1,13 +1,13 @@
 "use client";
 
 import React, { FormEvent, useState } from "react";
-import InputWithLabel from "./Shared/InputWithLabel";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { User, UserRole } from "@prisma/client";
 import { Button } from "./Button";
 import Heading from "./Shared/Heading";
 import { handleRegisterForm } from "@/action/actionRegisterForm";
+import Form from "./Shared/Form";
 
 export default function RegisterForm() {
   return (
@@ -73,60 +73,27 @@ function RegistrationForm() {
     },
   ];
   return (
-    <form
-      className="mt-10 grid grid-cols-1 gap-y-8"
+    <Form
+      classes="mt-6 grid grid-cols-1 gap-y-8"
       action={formAction}
-      method="POST"
-    >
-      <InputsForForm inputList={inputList} />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      <div className="flex gap-4">
+      inputsForForm={inputList}
+      button={[
         <Button
           type="submit"
           onClick={() => setRoleOfUser(UserRole.USER)}
           className="flex w-full "
         >
           Register as user
-        </Button>
-
+        </Button>,
         <Button
           type="submit"
           onClick={() => setRoleOfUser(UserRole.ADMIN)}
           className="flex w-full "
         >
           Register as admin
-        </Button>
-      </div>
-    </form>
+        </Button>,
+      ]}
+      error={error}
+    />
   );
 }
-
-interface InputItem {
-  type: string;
-  name: string;
-  label: string;
-  id: string;
-  placeholder: string;
-  defaultValue?: string | undefined;
-  otherText?: string | undefined;
-}
-
-const InputsForForm = ({ inputList }: { inputList: InputItem[] }) => {
-  return (
-    <>
-      {inputList.map((inputContent, index) => (
-        <InputWithLabel
-          key={inputContent.id}
-          type={inputContent.type}
-          name={inputContent.name}
-          label={inputContent.label}
-          id={inputContent.id}
-          placeholder={inputContent.placeholder}
-          defaultValue={inputContent.defaultValue}
-          otherText={inputContent.otherText}
-          className="block w-full rounded-md border-0 p-1.5 pr-10 ring-1 ring-inset sm:text-sm sm:leading-6"
-        />
-      ))}
-    </>
-  );
-};

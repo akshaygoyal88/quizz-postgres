@@ -9,7 +9,7 @@ export default function Heading({ headingText, tag = "h2" }: HeadingProps) {
   const Tag = tag;
 
   return (
-    <Tag className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+    <Tag className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
       {headingText}
     </Tag>
   );
