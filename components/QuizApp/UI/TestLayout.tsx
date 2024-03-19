@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  AnswerTypeE,
   ObjectiveOptions,
   QuestionType,
   User,
@@ -14,30 +13,12 @@ import { useRouter } from "next/navigation";
 import { handleAnsSubmission } from "@/action/actionTestAnsForm";
 import List from "@/components/Shared/List";
 import ShadowSection from "@/components/Shared/ShadowSection";
-import { QuesType, UserQuizAnsType } from "@/types/types";
+import { QuesType, QuestionsTypes, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
 import { Button } from "@/components/Button";
 import HtmlParser from "@/components/Shared/HtmlParser";
 import RadioInput from "@/components/Shared/RadioInput";
 import HTMLReactParser from "html-react-parser";
-
-type QuestionsTypes =
-  | ({
-      objective_options: {
-        id: string;
-        text: string;
-        isCorrect: boolean;
-        questionId: string;
-      }[];
-    } & {
-      id: string;
-      question_text: string | null;
-      type: QuestionType;
-      timer: number;
-      answer_type: AnswerTypeE | null;
-      status: UserQuizAnswerStatus;
-    })
-  | null;
 
 function TestLayout({
   allQuestions,
@@ -114,7 +95,7 @@ function CandidateQuizQuestion({
   quizId: string | boolean;
   prevId?: string | boolean;
 }) {
-  const question: QuesType = userQuizQuestionWithAnswer?.question;
+  const question: QuesType | null = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
   const [timer, setTimer] = useState<number>(
     (question?.timer
@@ -159,7 +140,7 @@ function CandidateQuizQuestion({
       : timer;
     const timeOver = isTimerAvailable && timeTaken === question?.timer;
     formData.append("id", userQuizQuestionWithAnswer.id);
-    formData.append("timeTaken", timeTaken.toString());
+    timeTaken && formData.append("timeTaken", timeTaken.toString());
     formData.append("timeOver", timeOver ? "1" : "0");
     formData.append(
       "status",
@@ -183,7 +164,7 @@ function CandidateQuizQuestion({
     >
       <form action={formAction} className="p-6">
         <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
-        <HtmlParser content={question.editorContent || ""} />
+        <HtmlParser content={question?.editorContent || ""} />
         {question?.type === QuestionType.OBJECTIVE ? (
           question?.objective_options?.map(
             (option: ObjectiveOptions, index: number) => (

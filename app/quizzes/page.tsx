@@ -1,5 +1,5 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
-import QuizSets from "@/components/QuizApp/UI/QuizSets";
+import QuizSets from "@/components/QuizApp/UI/QuizList";
 import { getQuestionSets } from "@/services/questionSet";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { getServerSession } from "next-auth";

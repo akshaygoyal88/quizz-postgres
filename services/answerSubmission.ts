@@ -6,7 +6,7 @@ import {
   UserQuizAnswerStatus,
   UserQuizAnswers,
   UserQuizStatusE,
-  userQuizReport,
+  UserQuizReport,
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 
@@ -146,7 +146,7 @@ export async function quizInitializationForReport(
   quizId: string,
   submittedBy: string
 ) {
-  const isAvailableRes = await db.userQuizReport.findFirst({
+  const isAvailableRes = await db.UserQuizReport.findFirst({
     where: { quizId, submittedBy },
   });
   if (isAvailableRes) {
@@ -156,7 +156,7 @@ export async function quizInitializationForReport(
       message: "Quiz already initialized",
     };
   }
-  const initializeQuizRes = await db.userQuizReport.create({
+  const initializeQuizRes = await db.UserQuizReport.create({
     data: { submittedBy, quizId, status: UserQuizStatusE.INPROGRESS },
   });
   return {
@@ -192,7 +192,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     }
   }
 
-  const userReport = await db.userQuizReport.findFirst({
+  const userReport = await db.UserQuizReport.findFirst({
     where: { submittedBy, quizId },
   });
   const userAnswers = await db.userQuizAnswers.findMany({
@@ -212,7 +212,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
 
-  const quizReportRes: userQuizReport = await db.userQuizReport.update({
+  const quizReportRes: UserQuizReport = await db.UserQuizReport.update({
     where: { id: userReport?.id },
     data: {
       status: QuizStatusTypeE.SUBMITTED,

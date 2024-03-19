@@ -5,7 +5,7 @@ import QuizSetCard from "./QuizSetCard";
 import Link from "next/link";
 import { QuizDetail, UserDataType } from "@/types/types";
 
-export default function QuizSets({
+export default function QuizList({
   allQuizzes,
   userData,
 }: {
@@ -26,12 +26,7 @@ export default function QuizSets({
       >
         {allQuizzes &&
           allQuizzes.map((quiz: QuizDetail) => (
-            <QuizSetCard
-              key={quiz.id}
-              quiz={quiz}
-              userData={userData}
-              // questionCount={getQuestionCount(questionSet)}
-            />
+            <QuizSetCard key={quiz.id} quiz={quiz} userData={userData} />
           ))}
       </ul>
     </>
