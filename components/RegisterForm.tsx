@@ -8,13 +8,22 @@ import { Button } from "./Button";
 import Heading from "./Shared/Heading";
 import { handleRegisterForm } from "@/action/actionRegisterForm";
 import Form from "./Shared/Form";
+import LinksList from "./Shared/LinksList";
 
 export default function RegisterForm() {
   return (
     <>
       <Heading headingText="Register" tag="h2" />
       <RegistrationForm />
-      <AuthLinks />
+      <LinksList
+        linksList={[
+          {
+            description: "Already have an account?",
+            href: "signin",
+            link: "Sign In",
+          },
+        ]}
+      />
     </>
   );
 }
@@ -93,14 +102,3 @@ function RegistrationForm() {
     />
   );
 }
-
-const AuthLinks = () => {
-  return (
-    <span className="mt-4 flex align-middle justify-center text-md text-gray-700">
-      Already have an account?
-      <Link href="signin" className="text-blue-700 hover:underline">
-        Sign In
-      </Link>
-    </span>
-  );
-};

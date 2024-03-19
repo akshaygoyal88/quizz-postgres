@@ -1,12 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "./Button";
 import Heading from "./Shared/Heading";
 import Form from "./Shared/Form";
+import LinksList from "./Shared/LinksList";
 
 export default function LoginForm({ className }: { className?: string }) {
   const [email, setEmail] = useState<string>("");
@@ -86,28 +86,19 @@ export default function LoginForm({ className }: { className?: string }) {
           </Button>,
         ]}
       />
-      <AuthLinks />
-    </>
-  );
-}
-
-function AuthLinks() {
-  return (
-    <>
-      <span className="mt-4 flex align-middle justify-center text-md text-gray-700">
-        Don't have an account?
-        <Link href="/register" className="text-blue-700 hover:underline">
-          Register
-        </Link>
-      </span>
-      <span className="flex justify-center">
-        <Link
-          href="/reset-password"
-          className="text-blue-500 font-semibold hover:underline"
-        >
-          Forget password
-        </Link>
-      </span>
+      <LinksList
+        linksList={[
+          {
+            description: " Don't have an account?",
+            href: "/register",
+            link: "Register",
+          },
+          {
+            href: "/reset-password",
+            link: "Forget password",
+          },
+        ]}
+      />
     </>
   );
 }
