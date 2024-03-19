@@ -2,7 +2,6 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Quiz } from "@prisma/client";
 import { useState } from "react";
-import DeleteModal from "../../Shared/DeleteModal";
 import Modal from "@/components/Shared/Modal";
 
 export default function QuizTable({

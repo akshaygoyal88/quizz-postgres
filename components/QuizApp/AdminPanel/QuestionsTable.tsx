@@ -2,11 +2,8 @@ import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { Question } from "@prisma/client";
 import { useState } from "react";
-import DeleteModal from "../../Shared/DeleteModal";
 import HTMLReactParser from "html-react-parser";
-import DuplicateModal from "../../Shared/DuplicateModal";
-import { handleQuestionSubmit } from "@/action/actionsQuesForm";
-import { QuestionSetSubmitE } from "@/services/questionSet";
+
 import Modal from "@/components/Shared/Modal";
 
 export default function QuestionsTable({
@@ -200,11 +197,6 @@ export default function QuestionsTable({
           </div>
         </div>
       </div>
-      <DuplicateModal
-        isOpen={isDuplicateModalOpen}
-        onClose={() => setIsDuplicateModalOpen(false)}
-        onDuplicate={duplicateHandler}
-      />
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

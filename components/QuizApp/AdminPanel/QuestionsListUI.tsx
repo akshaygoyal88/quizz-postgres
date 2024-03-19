@@ -6,10 +6,10 @@ import Link from "next/link";
 import Pagination from "../../Shared/Pagination";
 import pathName from "@/constants";
 import { useFetch } from "@/hooks/useFetch";
-import Button from "../../Shared/Button";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import EmptyState from "../../Shared/EmptyState";
+import { Button } from "@/components/Button";
 
 export default function QuestionsListUI() {
   const [page, setPage] = useState(1);
@@ -42,7 +42,9 @@ export default function QuestionsListUI() {
     <div className="">
       {quesData && quesData.questions?.length > 0 && (
         <div className="p-1 flex justify-evenly">
-          <Button href={`${pathName.questionsAdd.path}`} />
+          <Button href={`${pathName.questionsAdd.path}`} color="slate">
+            Add question
+          </Button>
         </div>
       )}
       {quesData && quesData.questions?.length > 0 ? (
