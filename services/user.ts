@@ -8,6 +8,7 @@ import { createNotification } from "./notification";
 
 import { generateOrUpdateOtp } from "./resetPasswordService";
 import validator from "validator";
+import { signIn } from "next-auth/react";
 
 export async function getUserData() {
   const session = await getServerSession();
@@ -110,6 +111,15 @@ export async function registerUser({
     }
   }
 }
+
+// export async function signInUser({email, password}:{email: string, password: string}){
+//   return await signIn("credentials", {
+//     email: email,
+//     password: password,
+//     redirect: false,
+//     // callbackUrl: "http://localhost:3000/signin"
+//   });
+// }
 
 export async function getUserByEmail(email: string) {
   const result = await db.user.findUnique({

@@ -14,12 +14,7 @@ export default function RegisterForm() {
     <>
       <Heading headingText="Register" tag="h2" />
       <RegistrationForm />
-      <span className="mt-4 flex align-middle justify-center text-md text-gray-700">
-        Already have an account?
-        <Link href="signin" className="text-blue-700 hover:underline">
-          Sign In
-        </Link>
-      </span>
+      <AuthLinks />
     </>
   );
 }
@@ -94,6 +89,18 @@ function RegistrationForm() {
         </Button>,
       ]}
       error={error}
+      gridClassesForBtn="grid gap-4 grid-cols-2 sm:grid-cols-2"
     />
   );
 }
+
+const AuthLinks = () => {
+  return (
+    <span className="mt-4 flex align-middle justify-center text-md text-gray-700">
+      Already have an account?
+      <Link href="signin" className="text-blue-700 hover:underline">
+        Sign In
+      </Link>
+    </span>
+  );
+};

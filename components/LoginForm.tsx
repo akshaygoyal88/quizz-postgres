@@ -1,19 +1,19 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import InputWithLabel from "./Shared/InputWithLabel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "./Button";
 import Heading from "./Shared/Heading";
+import Form from "./Shared/Form";
 
 export default function LoginForm({ className }: { className?: string }) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
-  const [error, setError] = useState<string>("");
 
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -40,64 +40,74 @@ export default function LoginForm({ className }: { className?: string }) {
   };
 
   const emailChangeHandler = (e: FormEvent) => {
-    if (error.includes("email")) setError("");
+    if (error?.includes("email")) setError("");
     setEmail((e.target as HTMLInputElement).value);
   };
 
   const passwordChangeHandler = (e: FormEvent) => {
-    if (error.includes("password")) setError("");
+    if (error?.includes("password")) setError("");
     setPassword((e.target as HTMLInputElement).value);
   };
+
+  const inputList = [
+    {
+      type: "email",
+      name: "email",
+      label: "Email",
+      id: "email",
+      placeholder: "sample@mail.com",
+      defaultValue: undefined,
+      value: email,
+      onChange: emailChangeHandler,
+    },
+    {
+      type: "password",
+      name: "password",
+      label: "Password",
+      id: "password",
+      placeholder: "*********",
+      defaultValue: undefined,
+      value: password,
+      onChange: passwordChangeHandler,
+    },
+  ];
+
   return (
     <>
       <Heading headingText="Sign in to your account" tag="h2" />
-      <form
-        className="mt-10 grid grid-cols-1 gap-y-8"
-        action="#"
-        method="POST"
+      <Form
+        classes="mt-10 grid grid-cols-1 gap-y-8"
+        error={error}
+        inputsForForm={inputList}
         onSubmit={handleFormSubmit}
-      >
-        <InputWithLabel
-          type="email"
-          name="email"
-          label="Email"
-          id="email"
-          placeholder="sample@mail.com"
-          className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-          defaultValue={undefined}
-          value={email}
-          onChange={emailChangeHandler}
-        />
+        button={[
+          <Button type="submit" className="flex w-full">
+            Sign in
+          </Button>,
+        ]}
+      />
+      <AuthLinks />
+    </>
+  );
+}
 
-        <InputWithLabel
-          type="password"
-          name="password"
-          label="Password"
-          id="password"
-          placeholder="*********"
-          className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-          defaultValue={undefined}
-          value={password}
-          onChange={passwordChangeHandler}
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit">Sign in</Button>
-      </form>
-      <p className="mt-4 flex align-middle justify-center text-md text-gray-700">
+function AuthLinks() {
+  return (
+    <>
+      <span className="mt-4 flex align-middle justify-center text-md text-gray-700">
         Don't have an account?
         <Link href="/register" className="text-blue-700 hover:underline">
           Register
         </Link>
-      </p>
-
-      <div className="flex justify-center">
+      </span>
+      <span className="flex justify-center">
         <Link
           href="/reset-password"
           className="text-blue-500 font-semibold hover:underline"
         >
           Forget password
         </Link>
-      </div>
+      </span>
     </>
   );
 }
