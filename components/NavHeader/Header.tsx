@@ -12,6 +12,7 @@ import { signOut, useSession } from "next-auth/react";
 import NotificationIcon from "../Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
+import { UserDataType } from "@/types/types";
 
 function MobileNavLink({
   href,
@@ -100,12 +101,11 @@ function MobileNavigation() {
   );
 }
 
-export function Header() {
-  const ses = useSession();
+export function Header({ userData }: { userData: UserDataType }) {
   const path = usePathname();
 
   if (
-    (ses?.data?.role !== UserRole.USER && path.includes("/admin")) ||
+    (userData?.role !== UserRole.USER && path.includes("/admin")) ||
     path.includes("/question/")
   ) {
     return null;
@@ -124,13 +124,17 @@ export function Header() {
               <NavLink href="#features">Features</NavLink>
               <NavLink href="#testimonials">Testimonials</NavLink>
               <NavLink href="#pricing">Pricing</NavLink>
-              {ses.data && <NavLink href="/profile">Profile</NavLink>}
+              {userData && (
+                <NavLink href={`/${userData.id}/profile`}>Profile</NavLink>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:block">
-              {ses.status !== "authenticated" ? (
-                <NavLink href="/signin">Sign in</NavLink>
+              {!userData ? (
+                <Button variant="outline" href="/signin">
+                  Sign in
+                </Button>
               ) : (
                 <div className="flex items-end gap-5">
                   <NotificationIcon />
@@ -140,11 +144,11 @@ export function Header() {
                 </div>
               )}
             </div>
-            <Button href="/register" color="blue">
-              <span>
-                Get started <span className="hidden lg:inline">today</span>
-              </span>
-            </Button>
+            {userData && (
+              <Button href={`/${userData?.id}/reports`} color="blue">
+                <span>See your reports</span>
+              </Button>
+            )}
             <div className="-mr-1 md:hidden">
               <MobileNavigation />
             </div>

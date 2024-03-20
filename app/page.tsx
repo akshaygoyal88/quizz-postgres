@@ -7,6 +7,7 @@ import { PrimaryFeatures } from "@/components/PrimaryFeatures";
 import QuizSets from "@/components/QuizApp/UI/QuizList";
 import { SecondaryFeatures } from "@/components/SecondaryFeatures";
 import { Testimonials } from "@/components/Testimonials";
+import { getSessionUser } from "@/utils/getSessionUser";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -17,9 +18,7 @@ import { redirect } from "next/navigation";
 // };
 
 export default async function Home() {
-  // const isProfileCompleted = await profileCompleted();
-  // if (!isProfileCompleted) redirect("/profile");
-  const session = await getServerSession();
+  const userData = await getSessionUser();
   return (
     <>
       <main>

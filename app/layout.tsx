@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import Provider from "@/context/Provider";
 import "./globals.css";
 import { Header } from "@/components/NavHeader/Header";
-import { getSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
+import { getSessionUser } from "@/utils/getSessionUser";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +17,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const userData = await getSessionUser();
   return (
     <html lang="en">
       <Provider>
         <body className="">
-          {/* <Nav /> */}
           <main>
-            <Header />
+            <Header userData={userData!} />
             {children}
           </main>
         </body>
