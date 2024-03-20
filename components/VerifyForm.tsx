@@ -1,26 +1,26 @@
 "use client";
-import React, { FormEvent, useState, useEffect } from "react";
-import InputWithLabel from "./Shared/InputWithLabel";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { handleSubmitVerifyForm } from "@/action/actionVerifyForm";
-import { useFetch } from "@/hooks/useFetch";
 import { signIn } from "next-auth/react";
+import { User } from "@prisma/client";
+import Heading from "./Shared/Heading";
+import Form from "./Shared/Form";
+import { Button } from "./Button";
 
 interface VerifyFormProps {
   email: string;
-  user: object;
+  user?: User;
 }
 
 export default function VerifyForm({ email, user }: VerifyFormProps) {
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
-  console.log(user);
 
   const formAction = async (formData: FormData) => {
-    setError("");
+    setError(null);
     const res = await handleSubmitVerifyForm(formData);
 
     if (res?.error) {
@@ -28,7 +28,7 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
     } else {
       const result = await signIn("credentials", {
         email,
-        password: user.password,
+        password: user?.password,
         redirect: false,
       });
       if (result && !result.error) {
@@ -57,74 +57,72 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
-          <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            {success && <p className="bg-green-500 p-2">{success}</p>}
-            <form
-              className="space-y-6"
-              action={formAction}
-              method="POST"
-              // onSubmit={handleSubmit}
-            >
+      <Heading headingText="Verify your account" tag="h2" />
+      {!user?.isVerified ? (
+        <>
+          <Form
+            classes="space-y-6 mt-8"
+            error={error}
+            success={success}
+            inputsForForm={[
+              {
+                type: "text",
+                name: "verificationCode",
+                label: "Verification Code",
+                id: "verificationCode",
+                placeholder: "****",
+                defaultValue: undefined,
+                maxLength: 4,
+                onChange: () => setError(null),
+              },
+            ]}
+            action={formAction}
+            button={[
+              <Button type="submit" className="flex w-full">
+                Verify
+              </Button>,
+            ]}
+            otherInputs={[
               <div className="flex align-middle gap-4">
                 <strong>Email:</strong>
                 <p>{email}</p>
                 <input type="hidden" name="email" value={email} />
-              </div>
-              {user ? (
-                !user.isVerified ? (
-                  <div>
-                    <InputWithLabel
-                      type="text"
-                      name="verificationCode"
-                      label="Verification Code"
-                      id="verificationCode"
-                      placeholder="****"
-                      className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-                      defaultValue={undefined}
-                      maxLength={4}
-                      errors={error}
-                      onChange={() => setError("")}
-                    />
-                    <div>
-                      <button
-                        type="submit"
-                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      >
-                        Verify
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>Already Verified.</div>
-                )
-              ) : (
-                <p>User not exists. Please try to register.</p>
-              )}
-            </form>
-            {!user?.isVerified && (
-              <button
-                className="hover:underline text-blue-500 hover:text-blue-700 hover:underline"
-                onClick={handleResendVerificationCode}
-              >
-                Resend code
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+              </div>,
+            ]}
+          />
+          {user && (
+            <ResendLink
+              user={user}
+              handleResendVerificationCode={handleResendVerificationCode}
+            />
+          )}
+        </>
+      ) : (
+        <span className="w-full flex flex-col items-center mt-10">
+          Already Verified.
+        </span>
+      )}
     </>
   );
 }
+
+const ResendLink = ({
+  user,
+  handleResendVerificationCode,
+}: {
+  user: User;
+  handleResendVerificationCode: () => void;
+}) => {
+  return (
+    <>
+      {!user?.isVerified && (
+        <button
+          className="hover:underline text-blue-500 hover:text-blue-700"
+          onClick={handleResendVerificationCode}
+        >
+          Resend code
+        </button>
+      )}
+    </>
+  );
+};

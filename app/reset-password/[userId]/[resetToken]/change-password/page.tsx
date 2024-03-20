@@ -1,11 +1,15 @@
+import { Container, FormContainer } from "@/components/Container";
 import { ChangePassword } from "@/components/ResetPassword";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React from "react";
 
-const page = () => {
+const page = ({ params }: Params) => {
   return (
-    <div>
-      <ChangePassword />
-    </div>
+    <Container>
+      <FormContainer>
+        <ChangePassword userId={params.userId} token={params.resetToken} />
+      </FormContainer>
+    </Container>
   );
 };
 

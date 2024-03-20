@@ -1,192 +1,109 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { handleResetPassword } from "@/action/actionResetPassForm";
+import Heading from "./Shared/Heading";
+import Form from "./Shared/Form";
+import { Button } from "./Button";
+import { handleChangePasswordForm } from "@/action/actionChangePasswordForm";
 
 const ResetPassword = () => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState<string>();
-  const [success, setSuccess] = useState(false);
-
-  const clearErrors = () => {
-    setError("");
-  };
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const formAction = async (formData: FormData) => {
-    setError("");
+    setError(null);
     const res = await handleResetPassword(formData);
     if (res?.error) {
       setError(res.error);
     }
     if (res.message) {
-      setSuccess(true);
+      setSuccess("Succfully sent reset link.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto my-8 ">
-      <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Reset Password
-      </h2>
-      <form
-        // onSubmit={handleSubmit}
-        action={formAction}
-        className="bg-white p-8 shadow-md rounded-md"
-      >
-        {!success && (
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                clearErrors();
-              }}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
-          </div>
-        )}
-        {error && (
-          <div className="mb-4 text-red-500">
-            <p>{error}</p>
-          </div>
-        )}
-
-        <div className="mt-8">
-          {!success ? (
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-            >
+    <>
+      <Heading headingText="Reset Password" tag="h2" />
+      <span className="mt-10 flex flex-col items-center">{success}</span>
+      {!success && (
+        <Form
+          classes={""}
+          error={error}
+          success={success}
+          action={formAction}
+          inputsForForm={[
+            {
+              type: "email",
+              id: "email",
+              name: "email",
+              label: "Email",
+              placeholder: "user@mail.com",
+            },
+          ]}
+          button={[
+            <Button type="submit" className="mt-8">
               Send Reset Link
-            </button>
-          ) : (
-            <p>Succfully sent reset link.</p>
-          )}
-        </div>
-      </form>
-    </div>
+            </Button>,
+          ]}
+        />
+      )}
+    </>
   );
 };
 
 export default ResetPassword;
 
-export const ChangePassword = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+export const ChangePassword = ({
+  userId,
+  token,
+}: {
+  userId: string;
+  token: string;
+}) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const url = useSearchParams();
-  const userId = url.get("userId");
-  const token = url.get("token");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (newPassword === confirmPassword) {
-      try {
-        const response = await fetch("/api/resetPassword/changePassword", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: userId,
-            token: token,
-            password: newPassword,
-          }),
-        });
-
-        if (response.status === 201) {
-          setSuccessMessage("Password changed successfully");
-        } else if (response.status === 400) {
-          const data = await response.json();
-          setErrorMessage(data.error);
-        } else {
-          console.error("Error:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    } else {
-      console.error("Passwords do not match");
-      setPasswordsMatch(false);
-      setErrorMessage("Passwords not match");
+  const formAction = async (formData: FormData) => {
+    formData.append("userId", userId);
+    formData.append("token", token);
+    const res = await handleChangePasswordForm(formData);
+    if (!res.error) {
+      setSuccessMessage("Password changed successfully");
+    } else if (res.error) {
+      setErrorMessage(res.error);
     }
   };
   return (
     <>
+      <Heading headingText="Change Password" tag="h2" />
       {!successMessage ? (
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md"
-        >
-          <div className="mb-4">
-            <label
-              htmlFor="newPassword"
-              className="block text-gray-600 font-semibold mb-2"
-            >
-              New Password
-            </label>
-            <input
-              type="password"
-              id="newPassword"
-              name="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-gray-600 font-semibold mb-2"
-            >
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                setPasswordsMatch(true);
-                setErrorMessage("");
-              }}
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
-                passwordsMatch ? "focus:border-blue-500" : "border-red-500"
-              }`}
-              required
-            />
-            {errorMessage.length > 0 && (
-              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-            )}
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+        <Form
+          classes="my-10 space-y-4"
+          error={errorMessage}
+          inputsForForm={[
+            {
+              type: "password",
+              id: "newPassword",
+              name: "newPassword",
+              placeholder: "New Password",
+              label: "New Password",
+            },
+            {
+              type: "password",
+              id: "confirmPassword",
+              name: "confirmPassword",
+              placeholder: "Confirm Password",
+              label: "confirmPassword",
+            },
+          ]}
+          action={formAction}
+          button={[<Button type="submit">Submit</Button>]}
+        />
       ) : (
-        <div className="bg-green-600 text-white p-6">{successMessage}</div>
+        <span className=" text-green-500 flex flex-col mt-10 items-center">
+          {successMessage}
+        </span>
       )}
     </>
   );

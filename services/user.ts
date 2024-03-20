@@ -8,7 +8,6 @@ import { createNotification } from "./notification";
 
 import { generateOrUpdateOtp } from "./resetPasswordService";
 import validator from "validator";
-import { signIn } from "next-auth/react";
 
 export async function getUserData() {
   const session = await getServerSession();
@@ -38,18 +37,18 @@ export async function registerUser({
   email,
   password,
   roleOfUser,
-  confirmPassword
+  confirmPassword,
 }: {
   email: string;
   password: string;
   roleOfUser: string;
   confirmPassword: string;
 }) {
-  if(!email || !password || !confirmPassword) {
-    return {error: "Fill Required."}
+  if (!email || !password || !confirmPassword) {
+    return { error: "Fill Required." };
   }
   const userExist = await getUserByEmail(email);
-  
+
   if (userExist) {
     return { error: "User already exists." };
   } else {
@@ -64,7 +63,8 @@ export async function registerUser({
             data: {
               email,
               password: hashedPassword,
-              role: roleOfUser === UserRole.ADMIN ? UserRole.ADMIN : UserRole.USER,
+              role:
+                roleOfUser === UserRole.ADMIN ? UserRole.ADMIN : UserRole.USER,
               otps: {
                 create: {
                   otp,
@@ -84,42 +84,33 @@ export async function registerUser({
                 otp,
                 verification_link: `${process.env.NEXT_PUBLIC_BASE_URL}/verify/${result.email}`,
               },
-              text: ""
+              text: "",
             };
             try {
               await sendEmail(msg);
             } catch (error) {
-              if (error && typeof error === 'object') {
+              if (error && typeof error === "object") {
                 console.error("An error occurred:", error);
               } else {
                 console.error("An unexpected error occurred:", error);
               }
             }
           }
-          return {userData: result};
+          return { userData: result };
         } else {
           return {
             error:
               "Password must be at least 8 characters./Include at least one lowercase letter./One uppercase letter, one number./One special character.",
           };
         }
-      }else {
-        return {error: "Password does not match."};
+      } else {
+        return { error: "Password does not match." };
       }
     } else {
       return { error: "Email is not valid.", data: null };
     }
   }
 }
-
-// export async function signInUser({email, password}:{email: string, password: string}){
-//   return await signIn("credentials", {
-//     email: email,
-//     password: password,
-//     redirect: false,
-//     // callbackUrl: "http://localhost:3000/signin"
-//   });
-// }
 
 export async function getUserByEmail(email: string) {
   const result = await db.user.findUnique({
@@ -227,33 +218,7 @@ export async function verifyUser({
 
 export async function resendVerficationCode(reqData: User) {
   const userId = reqData.id;
-  // const isCodeAvailable = await db.userOtp.findFirst({
-  //   where: { userId },
-  // });
-  // let result;
   const otp = generateUniqueAlphanumericOTP(4);
-  // const expirationTime = new Date();
-  // expirationTime.setMinutes(expirationTime.getMinutes() + 10);
-  // if (isCodeAvailable) {
-  //   const updateCodeRes = await db.userOtp.update({
-  //     where: { id: isCodeAvailable.id },
-  //     data: {
-  //       otp,
-  //       expirationTime,
-  //     },
-  //   });
-  //   if (updateCodeRes) result = updateCodeRes;
-  // } else {
-  //   const createNewCode = await db.userOtp.create({
-  //     data: {
-  //       userId: reqData.id,
-  //       otp,
-  //       type: UserOtpType.REGISTRATION_OTP,
-  //       expirationTime,
-  //     },
-  //   });
-  //   if (createNewCode) result = createNewCode;
-  // }
   const type = UserOtpType.REGISTRATION_OTP;
   const result = await generateOrUpdateOtp(userId, otp, type);
   if (result) {
@@ -308,3 +273,4 @@ export async function updateProfile(rawFormData: User) {
   }
   return result;
 }
+

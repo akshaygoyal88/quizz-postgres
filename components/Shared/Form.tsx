@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, JSXElementConstructor } from "react";
 import InputWithLabel from "./InputWithLabel";
 
 export interface InputItemTypes {
@@ -11,6 +11,7 @@ export interface InputItemTypes {
   otherText?: string | undefined;
   onChange?: (e: FormEvent) => void;
   value?: string;
+  maxLength?: number;
 }
 
 export default function Form({
@@ -23,39 +24,29 @@ export default function Form({
   button,
   onSubmit,
   gridClassesForBtn,
+  otherInputs,
 }: {
   classes: string;
   action?: (formData: FormData) => void;
   method?: string;
   error: string | null;
-  success?: string;
+  success?: string | null;
   button?: JSX.Element[];
   inputsForForm: InputItemTypes[];
   onSubmit?: (e: FormEvent) => void;
   gridClassesForBtn?: string;
+  otherInputs?: JSX.Element[];
 }) {
   return (
-    // <form
-    //   className={classes}
-    //   action={action}
-    //   method={method}
-    //   onSubmit={onSubmit}
-    // >
-    //   <FormInputs inputList={inputsForForm} />
-    //   {error && <p className="text-red-500 text-sm">{error}</p>}
-    //   {success && <p className="text-green-500 text-sm">{success}</p>}
-    //   <div className="grid gap-4 grid-cols-2 sm:grid-cols-1">
-    //     {button?.map((btn, index) => (
-    //       <div key={index}>{btn}</div>
-    //     ))}
-    //   </div>
-    // </form>
     <form
       className={classes}
       action={action}
       method={method}
       onSubmit={onSubmit}
     >
+      {otherInputs?.map((i, index) => (
+        <React.Fragment key={index}>{i}</React.Fragment>
+      ))}
       <FormInputs inputList={inputsForForm} />
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && <p className="text-green-500 text-sm">{success}</p>}
@@ -90,6 +81,7 @@ export function FormInputs({ inputList }: { inputList: InputItemTypes[] }) {
           className="block w-full rounded-md border-0 p-1.5 pr-10 ring-1 ring-inset sm:text-sm sm:leading-6"
           onChange={inputContent.onChange}
           value={inputContent.value}
+          maxLength={inputContent.maxLength}
         />
       ))}
     </>
