@@ -3,8 +3,7 @@
 import Lable from "@/components/Shared/Lable";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
-import { Quiz, ReportStatusE } from "@prisma/client";
-import Link from "next/link";
+import { Quiz, ReportStatusE, UserQuizReport } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 
 interface QuizQuestion {
@@ -44,8 +43,9 @@ const QuizReport = ({ userId }: { userId: string }) => {
   ];
   const [attempetdQuiz, setAttemptedQuiz] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState("");
-  const [reportsList, setReportsList] = useState([]);
-  const [dataOfSelectedQuiz, setDataOfSelectedQuiz] = useState({});
+  const [reportsList, setReportsList] = useState<UserQuizReport[]>([]);
+  const [dataOfSelectedQuiz, setDataOfSelectedQuiz] =
+    useState<UserQuizReport | null>(null);
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -64,7 +64,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
     userId && fetchReport();
   }, [userId]);
 
-  const handleSelectQuiz = (id) => {
+  const handleSelectQuiz = (id: string) => {
     setSelectedQuiz(id);
     const reportForSelectedQuiz = reportsList.find((rep) => rep.quizId === id);
 
@@ -100,7 +100,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
       ) : (
         <div className="min-h-screen flex flex-col items-center bg-gray-50 sm:px-6">
           <div className="w-full">
-            {dataOfSelectedQuiz.reportStatus === ReportStatusE.UNDERREVIEW ? (
+            {dataOfSelectedQuiz?.reportStatus === ReportStatusE.UNDERREVIEW ? (
               <div className="px-4 py-4 bg-gray-100 mb-4 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="bg-gradient-to-r from-yellow-400 font-semibold to-red-500 text-transparent bg-clip-text">
@@ -129,10 +129,10 @@ const QuizReport = ({ userId }: { userId: string }) => {
                   </span>
                   <span className="text-lg font-semibold">
                     {new Date(
-                      dataOfSelectedQuiz?.startedAt
+                      dataOfSelectedQuiz?.startedAt!
                     ).toLocaleDateString()}{" "}
                     {new Date(
-                      dataOfSelectedQuiz?.startedAt
+                      dataOfSelectedQuiz?.startedAt!
                     ).toLocaleTimeString()}
                   </span>
                 </div>
@@ -142,12 +142,16 @@ const QuizReport = ({ userId }: { userId: string }) => {
                     End at
                   </span>
                   <span className="text-lg font-semibold">
-                    {new Date(dataOfSelectedQuiz?.endedAt).toLocaleDateString()}{" "}
-                    {new Date(dataOfSelectedQuiz?.endedAt).toLocaleTimeString()}
+                    {new Date(
+                      dataOfSelectedQuiz?.endedAt!
+                    ).toLocaleDateString()}{" "}
+                    {new Date(
+                      dataOfSelectedQuiz?.endedAt!
+                    ).toLocaleTimeString()}
                   </span>
                 </div>
 
-                <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
+                {/* <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
                   <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
                     Time Taken
                   </span>
@@ -181,7 +185,7 @@ const QuizReport = ({ userId }: { userId: string }) => {
                   <span className="text-lg font-semibold">
                     {dataOfSelectedQuiz?.wrongAnswers}
                   </span>
-                </div>
+                </div> */}
 
                 <div className="p-4 bg-gray-100 mb-4 rounded-lg h-32 flex justify-between items-center">
                   <span className="bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text">
@@ -247,7 +251,7 @@ function SelectQuiz({
 }: {
   defaultValue: string;
   quizzes: Quiz[];
-  handleSelectQuiz: (id) => void;
+  handleSelectQuiz: (id: string) => void;
 }) {
   return (
     <div className="m-4 flex items-center gap-4">
@@ -260,7 +264,7 @@ function SelectQuiz({
       >
         <option value="">Select Quiz</option>
         {quizzes &&
-          quizzes.map((queSet: QuestionSet) =>
+          quizzes.map((queSet: Quiz) =>
             !queSet.isDeleted ? (
               <option key={queSet.id} value={queSet.id}>
                 {queSet.name}

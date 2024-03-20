@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import HTMLReactParser from "html-react-parser/lib/index";
-import { Subscription, Quiz, User } from "@prisma/client";
+import { Subscription, User } from "@prisma/client";
 import Modal from "@/components/Shared/Modal";
 import { QuizDetailType } from "@/types/types";
 import List from "@/components/Shared/List";
@@ -72,11 +72,8 @@ const QuizDetail = ({
     });
     if (data && !data.error) {
       setSubscribedSuccess("Successfully taken subscription.");
+      router.refresh();
     }
-  };
-  const handleCancelAndCountinue = () => {
-    setModalOpen(false);
-    // if (subscribedSuccess) setSubscribedSuccess(null);
   };
   if ("error" in quizDetails) {
     return <>{quizDetails.error}</>;

@@ -4,14 +4,14 @@ import { redirect } from "next/navigation";
 import React from "react";
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import { getSessionUser } from "@/utils/getSessionUser";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: Params) {
   const userData = await getSessionUser();
-  if (!userData) redirect("/signin");
-  const email = userData.email!;
+  if (!params.userId && !userData) redirect("/signin");
   return (
     <FullWidthLayout>
-      <Profile email={email} />
+      <Profile email={userData?.email!} />
     </FullWidthLayout>
   );
 }

@@ -62,6 +62,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
     });
     if (data && !data.error) {
       setSubscribedSuccess("Successfully taken subscription.");
+      router.refresh();
     }
   };
 
