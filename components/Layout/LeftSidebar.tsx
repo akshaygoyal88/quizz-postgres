@@ -9,7 +9,6 @@ import {
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
-  UsersIcon,
   XMarkIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
@@ -17,50 +16,64 @@ import Link from "next/link";
 import pathName from "@/constants";
 import { classNames } from "@/utils/classNames";
 import { User } from "@prisma/client";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "../Button";
+import { Session } from "inspector";
 
 const navigation = [
   {
     name: "Dashboard",
     href: pathName.dashboard.path,
     icon: HomeIcon,
-    current: true,
+    current: "dashboard",
   },
   {
     name: "Reports",
     href: pathName.adminReportsRoute.path,
     icon: ChartPieIcon,
-    current: false,
+    current: "reports",
   },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
     name: "Create Quiz",
     href: pathName.quizAdd.path,
     icon: PlusIcon,
-    current: false,
+    current: "add-quiz",
   },
   {
-    name: "Question Set/Subject",
+    name: "Create Question",
+    href: pathName.questionsAdd.path,
+    icon: PlusIcon,
+    current: "add-question",
+  },
+  {
+    name: "All Quiz",
     href: pathName.quiz.path,
     icon: FolderIcon,
-    current: false,
+    current: "quiz",
   },
+
   {
     name: "All Questions",
     href: `${pathName.questions.path}?page=1`,
     icon: DocumentDuplicateIcon,
-    current: false,
+    current: "questions",
   },
   { name: "Publish test", href: "#", icon: CalendarIcon, current: false },
 ];
 
 export default function LeftSideBar({
   children,
-  userData,
 }: {
   children: React.ReactNode;
-  userData?: User;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const path = usePathname();
+  const pathItems = path.split("/");
+  const ses: { status: string; data?: User; update: () => void } = useSession();
+
+  const userData: User | null = ses.data || null;
 
   return (
     <>
@@ -158,10 +171,10 @@ export default function LeftSideBar({
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
+                        <Link
                           href={item.href}
                           className={classNames(
-                            item.current
+                            pathItems[pathItems.length - 1] === item.current
                               ? "bg-gray-50 text-indigo-600"
                               : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
@@ -177,7 +190,7 @@ export default function LeftSideBar({
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -189,12 +202,20 @@ export default function LeftSideBar({
                   >
                     <img
                       className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src={userData?.profile_pic!}
                       alt=""
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">
+                      {userData?.first_name || userData?.email}
+                    </span>
                   </a>
+                  <Button
+                    className="w-full m-1 rounded-none bg-red-700"
+                    onClick={() => signOut()}
+                  >
+                    Logout
+                  </Button>
                 </li>
               </ul>
             </nav>
