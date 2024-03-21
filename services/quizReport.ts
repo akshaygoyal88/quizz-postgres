@@ -2,16 +2,24 @@ import { db } from "@/db";
 import { ReportStatusE } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function getReportsBySubmittedBy(submittedBy: string) {
+export async function getQuizsByAttemptedByUser(submittedBy: string) {
   const reportRes = await db.userQuizReport.findMany({
     where: { submittedBy },
   });
   const quizzes = [];
+  const quizList = await db.quiz.findMany({});
   for (const report of reportRes) {
-    const quiz = await db.quiz.findMany({ where: { id: report.quizId } });
-    quizzes.push(quiz[0]);
+    const quiz = quizList.find(q => q.id === report.quizId)
+    quizzes.push({id: quiz?.id, name: quiz?.name, isDeleted: quiz?.isDeleted});
   }
-  return { reportRes, quizzes };
+  return { quizzes };
+}
+
+export async function getQuizReportOfUser({submittedBy, quizId}:{submittedBy: string, quizId: string}) {
+  return await db.userQuizReport.findFirst({
+    where: { submittedBy, quizId },
+  });
+  
 }
 
 export async function getReportByQuizIdAndSubmittedBy({

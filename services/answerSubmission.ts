@@ -114,34 +114,6 @@ export async function getUserQuizAllQuestionAnswers({
   });
 }
 
-// export async function saveResponseForQues({setId,
-//     submittedBy,
-//     questionId,status,
-//     isAnswered,
-//     ans_optionsId,
-//     ans_subjective,
-//     timeTaken,
-//     timeOver,}: UserQuizAnswers) {
-//         const answerRes = await db.userQuizAnswers.update({
-//             where: {
-//                 setId,
-//                 submittedBy,
-//                 questionId
-//             },
-//             data: {
-//                 status,
-//                 isAnswered,
-//                 ans_optionsId,
-//                 ans_subjective,
-//                 timeTaken,
-//                 timeOver,
-//             }
-//         });
-
-//         return answerRes;
-
-// }
-
 export async function quizInitializationForReport(
   quizId: string,
   submittedBy: string
@@ -192,7 +164,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     }
   }
 
-  const userReport = await db.UserQuizReport.findFirst({
+  const userReport = await db.userQuizReport.findFirst({
     where: { submittedBy, quizId },
   });
   const userAnswers = await db.userQuizAnswers.findMany({
@@ -212,7 +184,7 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
 
-  const quizReportRes: UserQuizReport = await db.UserQuizReport.update({
+  const quizReportRes: UserQuizReport = await db.userQuizReport.update({
     where: { id: userReport?.id },
     data: {
       status: QuizStatusTypeE.SUBMITTED,
@@ -230,3 +202,16 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
 
   return quizReportRes;
 }
+export function getUserQuiz({quizId,submittedBy}:{ quizId: string; submittedBy: string | null ; }) {
+  if(!submittedBy){
+    return {error: "Please login"};
+  }  
+  return db.userQuizAnswers.findMany({where: {quizId, submittedBy}, include:{
+      question: {
+        include:{
+          objective_options: true
+        }
+      }
+    }})
+}
+

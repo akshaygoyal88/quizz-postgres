@@ -4,14 +4,15 @@ import InputWithLabel from "./InputWithLabel";
 export interface InputItemTypes {
   type: string;
   name: string;
-  label: string;
-  id: string;
-  placeholder: string;
+  label?: string;
+  id?: string;
+  placeholder?: string;
   defaultValue?: string | undefined;
   otherText?: string | undefined;
   onChange?: (e: FormEvent) => void;
   value?: string;
   maxLength?: number;
+  disabled?: boolean;
 }
 
 export default function Form({
@@ -24,7 +25,6 @@ export default function Form({
   button,
   onSubmit,
   gridClassesForBtn,
-  otherInputs,
 }: {
   classes: string;
   action?: (formData: FormData) => void;
@@ -32,10 +32,9 @@ export default function Form({
   error: string | null;
   success?: string | null;
   button?: JSX.Element[];
-  inputsForForm: InputItemTypes[];
+  inputsForForm?: InputItemTypes[];
   onSubmit?: (e: FormEvent) => void;
   gridClassesForBtn?: string;
-  otherInputs?: JSX.Element[];
 }) {
   return (
     <form
@@ -44,10 +43,7 @@ export default function Form({
       method={method}
       onSubmit={onSubmit}
     >
-      {otherInputs?.map((i, index) => (
-        <React.Fragment key={index}>{i}</React.Fragment>
-      ))}
-      <FormInputs inputList={inputsForForm} />
+      {inputsForForm && <FormInputs inputList={inputsForForm} />}
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && <p className="text-green-500 text-sm">{success}</p>}
       <div
@@ -82,6 +78,7 @@ export function FormInputs({ inputList }: { inputList: InputItemTypes[] }) {
           onChange={inputContent.onChange}
           value={inputContent.value}
           maxLength={inputContent.maxLength}
+          disabled={inputContent.disabled}
         />
       ))}
     </>

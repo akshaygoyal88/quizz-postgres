@@ -8,7 +8,7 @@ import { Container } from "../Container";
 import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 import { Button } from "../Button";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import NotificationIcon from "../Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
@@ -145,7 +145,10 @@ export function Header({ userData }: { userData: UserDataType }) {
               )}
             </div>
             {userData && (
-              <Button href={`/${userData?.id}/reports`} color="blue">
+              <Button
+                href={`/${userData?.id}/reports/${undefined}`}
+                color="blue"
+              >
                 <span>See your reports</span>
               </Button>
             )}

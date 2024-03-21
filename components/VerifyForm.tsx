@@ -60,8 +60,12 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
       <Heading headingText="Verify your account" tag="h2" />
       {!user?.isVerified ? (
         <>
+          <div className="flex align-middle gap-4 mt-8 mb-4">
+            <strong>Email:</strong>
+            <p>{email}</p>
+          </div>
           <Form
-            classes="space-y-6 mt-8"
+            classes="space-y-6"
             error={error}
             success={success}
             inputsForForm={[
@@ -75,19 +79,18 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
                 maxLength: 4,
                 onChange: () => setError(null),
               },
+              {
+                type: "hidden",
+                name: "email",
+                id: "email",
+                value: email,
+              },
             ]}
             action={formAction}
             button={[
               <Button type="submit" className="flex w-full">
                 Verify
               </Button>,
-            ]}
-            otherInputs={[
-              <div className="flex align-middle gap-4">
-                <strong>Email:</strong>
-                <p>{email}</p>
-                <input type="hidden" name="email" value={email} />
-              </div>,
             ]}
           />
           {user && (

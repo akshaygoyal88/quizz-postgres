@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 
 export default function Textarea({
   label,
@@ -17,7 +17,7 @@ export default function Textarea({
   defaultValue?: string;
   label: string;
   value?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: FormEvent) => void;
 }) {
   return (
     <div>

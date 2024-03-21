@@ -12,6 +12,7 @@ import {
 } from "@prisma/client";
 import { Button } from "../../Button";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
+import { CandidateResponseTypes } from "@/types/types";
 
 export default function QuizQuesSummary({ reportId }: { reportId: string }) {
   const searchParams = useSearchParams();
@@ -120,40 +121,61 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
         </text>
       </span>
       <div className="overflow-x-auto">
-        <table className="table-auto min-w-full divide-y divide-gray-300">
-          <thead>
-            <tr>
-              <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                Question
-              </th>
-              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                Given Answer
-              </th>
-              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                Answer Status
-              </th>
-              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                Marks
-              </th>
-              <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                Time Taken
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {candidateResponse?.map((queRes: UserQuizAnswers) => (
-              <TableRow
-                key={queRes.id}
-                queRes={queRes}
-                marks={marks}
-                onMarksChange={handleMarksChange}
-                missingMark={missingMark}
-              />
-            ))}
-          </tbody>
-        </table>
+        <QuizQuestionReportTable
+          candidateResponse={candidateResponse}
+          missingMark={missingMark}
+          marks={marks}
+          handleMarksChange={handleMarksChange}
+        />
       </div>
     </div>
+  );
+}
+
+export function QuizQuestionReportTable({
+  candidateResponse,
+  missingMark,
+  marks,
+  handleMarksChange,
+}: {
+  candidateResponse: CandidateResponseTypes[];
+  missingMark?: string[];
+  marks?: { id: string; marks: number }[];
+  handleMarksChange?: (id: string, mark: number) => void;
+}) {
+  return (
+    <table className="table-auto min-w-full divide-y divide-gray-300">
+      <thead>
+        <tr>
+          <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+            Question
+          </th>
+          <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+            Given Answer
+          </th>
+          <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+            Answer Status
+          </th>
+          <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+            Marks
+          </th>
+          <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+            Time Taken
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {candidateResponse?.map((queRes: CandidateResponseTypes) => (
+          <TableRow
+            key={queRes.id}
+            queRes={queRes}
+            marks={marks}
+            onMarksChange={handleMarksChange}
+            missingMark={missingMark}
+          />
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -163,10 +185,10 @@ function TableRow({
   onMarksChange,
   missingMark,
 }: {
-  queRes: UserQuizAnswers;
-  marks: { id: string; marks: number }[];
-  onMarksChange: (id: string, mark: number) => void;
-  missingMark: string[];
+  queRes: CandidateResponseTypes;
+  marks?: { id: string; marks: number }[];
+  onMarksChange?: (id: string, mark: number) => void;
+  missingMark?: string[];
 }) {
   const findGivenAnsText = (id: string, opts: ObjectiveOptions[]) => {
     const givAns = opts.find((ans: ObjectiveOptions) => ans.id === id);
@@ -176,28 +198,28 @@ function TableRow({
   const handleMarksInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    queRes.question.type === QuestionType.SUBJECTIVE &&
+    queRes?.question?.type === QuestionType.SUBJECTIVE &&
       onMarksChange(queRes.id, parseFloat(event.target.value));
   };
 
   return (
     <tr key={queRes.id}>
       <td className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-        {HTMLReactParser(queRes.question.editorContent)}
+        {HTMLReactParser(queRes?.question?.editorContent!)}
       </td>
       <td className="px-3 py-4 text-sm text-gray-500">
-        {(queRes.question.type === QuestionType.SUBJECTIVE &&
+        {(queRes?.question?.type === QuestionType.SUBJECTIVE &&
           queRes.ans_subjective) ||
           (queRes.ans_optionsId &&
             HTMLReactParser(
               findGivenAnsText(
-                queRes.ans_optionsId,
-                queRes.question.objective_options
-              )
+                queRes?.ans_optionsId,
+                queRes?.question?.objective_options!
+              ) || ""
             ))}
       </td>
       <td className="px-3 py-4 text-sm text-gray-500">
-        {(queRes.question.type === QuestionType.SUBJECTIVE &&
+        {(queRes?.question?.type === QuestionType.SUBJECTIVE &&
           "Subjective Type") ||
           (queRes.isCorrect ? (
             <svg
@@ -230,19 +252,21 @@ function TableRow({
           ))}
       </td>
       <td className="px-3 py-4 text-sm text-gray-500">
-        <input
-          type="number"
-          className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
-            missingMark.includes(queRes.id) ? "border-red-600 border-3" : ""
-          }`}
-          value={marks[queRes.id]}
-          step="0.01"
-          min="0"
-          max="1"
-          onChange={(e) => {
-            handleMarksInputChange(e);
-          }}
-        />
+        {marks && (
+          <input
+            type="number"
+            className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
+              missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
+            }`}
+            value={marks[queRes?.id]}
+            step="0.01"
+            min="0"
+            max="1"
+            onChange={(e) => {
+              handleMarksInputChange(e);
+            }}
+          />
+        )}
       </td>
       <td className="px-3 py-4 text-sm text-gray-500">
         {queRes.timeTaken &&
