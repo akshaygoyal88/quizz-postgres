@@ -1,4 +1,4 @@
-import React, { FormEvent, JSXElementConstructor } from "react";
+import React, { Children, FormEvent, JSXElementConstructor } from "react";
 import InputWithLabel from "./InputWithLabel";
 
 export interface InputItemTypes {
@@ -25,6 +25,7 @@ export default function Form({
   button,
   onSubmit,
   gridClassesForBtn,
+  children,
 }: {
   classes: string;
   action?: (formData: FormData) => void;
@@ -35,6 +36,7 @@ export default function Form({
   inputsForForm?: InputItemTypes[];
   onSubmit?: (e: FormEvent) => void;
   gridClassesForBtn?: string;
+  children?: React.ReactNode;
 }) {
   return (
     <form
@@ -43,6 +45,7 @@ export default function Form({
       method={method}
       onSubmit={onSubmit}
     >
+      {children}
       {inputsForForm && <FormInputs inputList={inputsForForm} />}
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && <p className="text-green-500 text-sm">{success}</p>}

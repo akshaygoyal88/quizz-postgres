@@ -6,7 +6,6 @@ import {
   User,
   UserQuizAnswerStatus,
 } from "@prisma/client";
-import Textarea from "@/components/Shared/Textarea";
 import { classNames } from "@/utils/classNames";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,6 +18,7 @@ import { Button } from "@/components/Button";
 import HtmlParser from "@/components/Shared/HtmlParser";
 import RadioInput from "@/components/Shared/RadioInput";
 import HTMLReactParser from "html-react-parser";
+import InputWithLabel from "@/components/Shared/InputWithLabel";
 
 function TestLayout({
   allQuestions,
@@ -178,7 +178,8 @@ function CandidateQuizQuestion({
             )
           )
         ) : (
-          <Textarea
+          <InputWithLabel
+            type="textarea"
             id="answer"
             label="Type Answer"
             className="border-2 w-3/4 mt-4"

@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import pathName from "@/constants";
 import { classNames } from "@/utils/classNames";
+import { User } from "@prisma/client";
 
 const navigation = [
   {
@@ -54,8 +55,10 @@ const navigation = [
 
 export default function LeftSideBar({
   children,
+  userData,
 }: {
   children: React.ReactNode;
+  userData?: User;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -179,38 +182,6 @@ export default function LeftSideBar({
                     ))}
                   </ul>
                 </li>
-                {/* <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your teams
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.name}>
-                        <a
-                          href={team.href}
-                          className={classNames(
-                            team.current
-                              ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              team.current
-                                ? "text-indigo-600 border-indigo-600"
-                                : "text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600",
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white"
-                            )}
-                          >
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li> */}
                 <li className="-mx-6 mt-auto">
                   <a
                     href="#"
@@ -257,152 +228,5 @@ export default function LeftSideBar({
         </main>
       </div>
     </>
-    // <>
-    //   <div className="flex flex-col lg:flex-row">
-    //     <Transition.Root show={sidebarOpen} as={Fragment}>
-    //       {/* Sidebar for small screens */}
-    //       <Dialog
-    //         as="div"
-    //         className="fixed inset-0 overflow-hidden z-50 lg:hidden"
-    //         onClose={setSidebarOpen}
-    //       >
-    //         {/* Overlay */}
-    //         <Transition.Child
-    //           as={Fragment}
-    //           enter="transition-opacity ease-linear duration-300"
-    //           enterFrom="opacity-0"
-    //           enterTo="opacity-100"
-    //           leave="transition-opacity ease-linear duration-300"
-    //           leaveFrom="opacity-100"
-    //           leaveTo="opacity-0"
-    //         >
-    //           <Dialog.Overlay className="fixed inset-0 bg-gray-900/80" />
-    //         </Transition.Child>
-
-    //         {/* Sidebar Content */}
-    //         <Transition.Child
-    //           as={Fragment}
-    //           enter="transition ease-in-out duration-300 transform"
-    //           enterFrom="-translate-x-full"
-    //           enterTo="translate-x-0"
-    //           leave="transition ease-in-out duration-300 transform"
-    //           leaveFrom="translate-x-0"
-    //           leaveTo="-translate-x-full"
-    //         >
-    //           <div className="relative flex flex-1 max-w-xs w-full bg-white">
-    //             <button
-    //               type="button"
-    //               className="absolute top-0 right-0 -mr-12 mt-2 p-2"
-    //               onClick={() => setSidebarOpen(false)}
-    //             >
-    //               <span className="sr-only">Close sidebar</span>
-    //               <XMarkIcon
-    //                 className="h-6 w-6 text-gray-600"
-    //                 aria-hidden="true"
-    //               />
-    //             </button>
-
-    //             {/* Sidebar Navigation */}
-    //             <div className="flex flex-col w-1/5 h-full overflow-y-auto p-6">
-    //               <nav>
-    //                 <ul>
-    //                   {navigation.map((item) => (
-    //                     <li key={item.name}>
-    //                       <Link href={item.href}>
-    //                         <a
-    //                           className={classNames(
-    //                             item.current
-    //                               ? "bg-gray-100 text-indigo-600"
-    //                               : "text-gray-700 hover:text-indigo-600 hover:bg-gray-100",
-    //                             "group flex items-center gap-3 p-2 text-sm font-semibold rounded-md"
-    //                           )}
-    //                         >
-    //                           <item.icon
-    //                             className={classNames(
-    //                               item.current
-    //                                 ? "text-indigo-600"
-    //                                 : "text-gray-400 group-hover:text-indigo-600",
-    //                               "h-6 w-6 shrink-0"
-    //                             )}
-    //                             aria-hidden="true"
-    //                           />
-    //                           {item.name}
-    //                         </a>
-    //                       </Link>
-    //                     </li>
-    //                   ))}
-    //                 </ul>
-    //               </nav>
-    //             </div>
-    //           </div>
-    //         </Transition.Child>
-    //       </Dialog>
-    //     </Transition.Root>
-
-    //     {/* Static sidebar for desktop */}
-    //     <div className="hidden lg:flex lg:fixed lg:inset-y-0 lg:z-50">
-    //       <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-    //         <div className="flex h-16 shrink-0 items-center">
-    //           <img
-    //             className="h-8 w-auto"
-    //             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-    //             alt="Your Company"
-    //           />
-    //         </div>
-    //         <nav className="flex flex-1 flex-col">
-    //           <ul role="list" className="flex flex-1 flex-col gap-y-7">
-    //             <li>
-    //               <ul role="list" className="-mx-2 space-y-1">
-    //                 {navigation.map((item) => (
-    //                   <li key={item.name}>
-    //                     <a
-    //                       href={item.href}
-    //                       className={classNames(
-    //                         item.current
-    //                           ? "bg-gray-50 text-indigo-600"
-    //                           : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-    //                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-    //                       )}
-    //                     >
-    //                       <item.icon
-    //                         className={classNames(
-    //                           item.current
-    //                             ? "text-indigo-600"
-    //                             : "text-gray-400 group-hover:text-indigo-600",
-    //                           "h-6 w-6 shrink-0"
-    //                         )}
-    //                         aria-hidden="true"
-    //                       />
-    //                       {item.name}
-    //                     </a>
-    //                   </li>
-    //                 ))}
-    //               </ul>
-    //             </li>
-    //             <li className="-mx-6 mt-auto">
-    //               <a
-    //                 href="#"
-    //                 className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-    //               >
-    //                 <img
-    //                   className="h-8 w-8 rounded-full bg-gray-50"
-    //                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    //                   alt=""
-    //                 />
-    //                 <span className="sr-only">Your profile</span>
-    //                 <span aria-hidden="true">Tom Cook</span>
-    //               </a>
-    //             </li>
-    //           </ul>
-    //         </nav>
-    //       </div>
-    //     </div>
-
-    //     {/* Main Content */}
-    //     <main className="flex-1 flex-end overflow-y-auto w-4/5 pl-56">
-    //       <div className="">{children}</div>
-    //     </main>
-    //   </div>
-    // </>
   );
 }

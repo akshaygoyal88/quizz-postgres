@@ -1,4 +1,5 @@
 import { AnswerTypeE, ObjectiveOptions, Question, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus, UserQuizAnswers, UserQuizReport } from "@prisma/client";
+import { ChangeEvent } from "react";
 
 export type UserDataType = User & { Subscription: Subscription[] }
 
@@ -60,4 +61,26 @@ export interface CandidateResponseTypes extends UserQuizReport {
   isCorrect: any;
   timeTaken: string;
   question: QuestionsTypes;
+}
+
+export interface InputTypesProps {
+  type: string;
+  name: string;
+  label?: string;
+  id?: string;
+  placeholder?: string;
+  defaultValue?: string;
+  className?: string;
+  value?: string | number | undefined;
+  onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; // ChangeEvent accepts either HTMLInputElement or HTMLTextAreaElement
+  errors?: string;
+  maxLength?: number;
+  otherText?: string;
+  readOnly?: boolean;
+  disabled?: boolean;
+  min?: string | number;
+  impAsterisk?: string;
+  step?: string;
+  selecItems?: { value: string; title: string }[];
+  selectHeading?: string;
 }
