@@ -11,7 +11,7 @@ const CustomGrid: React.FC<CustomGridProps> = ({
   columns = 1,
   customClasses,
 }) => {
-  const gridClass = `grid grid-cols-1 md:grid-cols-${columns} gap-4 ${customClasses}`;
+  const gridClass = `grid grid-cols-2 md:grid-cols-${columns} gap-4 ${customClasses}`;
 
   return <div className={gridClass}>{children}</div>;
 };

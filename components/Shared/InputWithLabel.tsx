@@ -21,9 +21,11 @@ export default function InputWithLabel({
   step,
   selecItems,
   selectHeading,
+  columnClass,
+  accept,
 }: InputTypesProps) {
   return (
-    <div>
+    <div className={columnClass}>
       {label && (
         <label
           htmlFor={type}
@@ -34,7 +36,7 @@ export default function InputWithLabel({
           <p className="text-gray-600 text-xs">{otherText}</p>
         </label>
       )}
-      <div className="relative rounded-md shadow-sm">
+      <div className="">
         {type === "select" ? (
           <select
             id={id}
@@ -94,6 +96,8 @@ export default function InputWithLabel({
             min={min}
             max={maxLength}
             step="0.1"
+            accept={accept}
+            autoFocus={false}
           />
         )}
 

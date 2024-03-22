@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { db } from "../db";
 import { hash } from "bcrypt";
-import { UserOtpType, UserRole } from "@prisma/client";
+import { User, UserOtpType, UserRole } from "@prisma/client";
 import { generateUniqueAlphanumericOTP } from "@/utils/generateOtp";
 import sendEmail from "./sendEmail";
 import { createNotification } from "./notification";
@@ -244,16 +244,14 @@ export async function resendVerficationCode(reqData: User) {
 }
 
 export async function updateProfile(rawFormData: User) {
+  const {id, ...data} = rawFormData
+  if(!id) return {error:{id: "Id is required"}};
+
   let result;
-  const id = rawFormData.id;
-  delete rawFormData.id;
-  const res = await db.user.update({
+  result = await db.user.update({
     where: { id },
-    data: {
-      ...rawFormData,
-    },
+    data,
   });
-  result = res;
 
   if (
     result &&
@@ -263,13 +261,12 @@ export async function updateProfile(rawFormData: User) {
     result.city &&
     result.pincode
   ) {
-    const res = await db.user.update({
+    result = await db.user.update({
       where: { id },
       data: {
         isProfileComplete: true,
       },
     });
-    result = res;
   }
   return result;
 }

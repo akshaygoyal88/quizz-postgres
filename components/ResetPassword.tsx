@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { handleResetPassword } from "@/action/actionResetPassForm";
 import Heading from "./Shared/Heading";
-import Form from "./Shared/Form";
+import Form, { FormInputs } from "./Shared/Form";
 import { Button } from "./Button";
 import { handleChangePasswordForm } from "@/action/actionChangePasswordForm";
 
@@ -32,21 +32,24 @@ const ResetPassword = () => {
           error={error}
           success={success}
           action={formAction}
-          inputsForForm={[
-            {
-              type: "email",
-              id: "email",
-              name: "email",
-              label: "Email",
-              placeholder: "user@mail.com",
-            },
-          ]}
           button={[
             <Button type="submit" className="mt-8">
               Send Reset Link
             </Button>,
           ]}
-        />
+        >
+          <FormInputs
+            inputList={[
+              {
+                type: "email",
+                id: "email",
+                name: "email",
+                label: "Email",
+                placeholder: "user@mail.com",
+              },
+            ]}
+          />
+        </Form>
       )}
     </>
   );
@@ -81,25 +84,28 @@ export const ChangePassword = ({
         <Form
           classes="my-10 space-y-4"
           error={errorMessage}
-          inputsForForm={[
-            {
-              type: "password",
-              id: "newPassword",
-              name: "newPassword",
-              placeholder: "New Password",
-              label: "New Password",
-            },
-            {
-              type: "password",
-              id: "confirmPassword",
-              name: "confirmPassword",
-              placeholder: "Confirm Password",
-              label: "confirmPassword",
-            },
-          ]}
           action={formAction}
           button={[<Button type="submit">Submit</Button>]}
-        />
+        >
+          <FormInputs
+            inputList={[
+              {
+                type: "password",
+                id: "newPassword",
+                name: "newPassword",
+                placeholder: "New Password",
+                label: "New Password",
+              },
+              {
+                type: "password",
+                id: "confirmPassword",
+                name: "confirmPassword",
+                placeholder: "Confirm Password",
+                label: "confirmPassword",
+              },
+            ]}
+          />
+        </Form>
       ) : (
         <span className=" text-green-500 flex flex-col mt-10 items-center">
           {successMessage}

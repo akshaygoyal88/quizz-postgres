@@ -6,7 +6,7 @@ import { handleSubmitVerifyForm } from "@/action/actionVerifyForm";
 import { signIn } from "next-auth/react";
 import { User } from "@prisma/client";
 import Heading from "./Shared/Heading";
-import Form from "./Shared/Form";
+import Form, { FormInputs } from "./Shared/Form";
 import { Button } from "./Button";
 
 interface VerifyFormProps {
@@ -68,31 +68,34 @@ export default function VerifyForm({ email, user }: VerifyFormProps) {
             classes="space-y-6"
             error={error}
             success={success}
-            inputsForForm={[
-              {
-                type: "text",
-                name: "verificationCode",
-                label: "Verification Code",
-                id: "verificationCode",
-                placeholder: "****",
-                defaultValue: undefined,
-                maxLength: 4,
-                onChange: () => setError(null),
-              },
-              {
-                type: "hidden",
-                name: "email",
-                id: "email",
-                value: email,
-              },
-            ]}
             action={formAction}
             button={[
               <Button type="submit" className="flex w-full">
                 Verify
               </Button>,
             ]}
-          />
+          >
+            <FormInputs
+              inputList={[
+                {
+                  type: "text",
+                  name: "verificationCode",
+                  label: "Verification Code",
+                  id: "verificationCode",
+                  placeholder: "****",
+                  defaultValue: undefined,
+                  maxLength: 4,
+                  onChange: () => setError(null),
+                },
+                {
+                  type: "hidden",
+                  name: "email",
+                  id: "email",
+                  value: email,
+                },
+              ]}
+            />
+          </Form>
           {user && (
             <ResendLink
               user={user}

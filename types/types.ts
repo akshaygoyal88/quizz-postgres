@@ -67,7 +67,7 @@ export interface CandidateResponseTypes extends UserQuizReport {
 
 export interface InputTypesProps {
   type: string;
-  name: string;
+  name?: string;
   label?: string;
   id?: string;
   placeholder?: string;
@@ -85,4 +85,6 @@ export interface InputTypesProps {
   step?: string;
   selecItems?: { value: string; title: string }[];
   selectHeading?: string;
+  columnClass?: string;
+  accept?: string
 }

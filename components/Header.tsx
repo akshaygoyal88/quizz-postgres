@@ -12,6 +12,7 @@ import NotificationIcon from "./Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { UserDataType } from "@/types/types";
+import logo from "../images/logos/codelogo.png";
 
 function MobileNavLink({
   href,
@@ -114,8 +115,12 @@ export function Header({ userData }: { userData: UserDataType }) {
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Link href="/" aria-label="Home">
-              {/* <Logo className="h-10 w-auto" /> */}
+            <Link className="w-1/6" href="/" aria-label="Home">
+              <img
+                src="https://codecaffiene.com/wp-content/uploads/2023/02/codecaffiene-logo.png"
+                alt="brand"
+                className="w-full"
+              />
             </Link>
 
             <div className="hidden md:flex md:gap-x-6">

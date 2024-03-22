@@ -20,23 +20,21 @@ export default function Form({
   action,
   method,
   error,
-  inputsForForm,
   success,
   button,
   onSubmit,
   gridClassesForBtn,
   children,
 }: {
-  classes: string;
-  action?: (formData: FormData) => void;
+  classes?: string;
+  action: (formData: FormData) => void;
   method?: string;
-  error: string | null;
+  error?: string | null;
   success?: string | null;
   button?: JSX.Element[];
-  inputsForForm?: InputItemTypes[];
   onSubmit?: (e: FormEvent) => void;
   gridClassesForBtn?: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <form
@@ -46,9 +44,8 @@ export default function Form({
       onSubmit={onSubmit}
     >
       {children}
-      {inputsForForm && <FormInputs inputList={inputsForForm} />}
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      {success && <p className="text-green-500 text-sm">{success}</p>}
+      {error && <p className="text-red-500 text-sm p-2">{error}</p>}
+      {success && <p className="text-green-500 text-sm p-2">{success}</p>}
       <div
         className={
           gridClassesForBtn

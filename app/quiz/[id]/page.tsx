@@ -7,7 +7,6 @@ import { QuizDetailType, UserDataType } from "@/types/types";
 import { Quiz, Subscription, User } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function page({ params }: { params: Params }) {

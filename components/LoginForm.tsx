@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "./Button";
 import Heading from "./Shared/Heading";
-import Form from "./Shared/Form";
+import Form, { FormInputs } from "./Shared/Form";
 import LinksList from "./Shared/LinksList";
 
 export default function LoginForm({ className }: { className?: string }) {
@@ -77,16 +77,18 @@ export default function LoginForm({ className }: { className?: string }) {
     <>
       <Heading headingText="Sign in to your account" tag="h2" />
       <Form
+        action={() => {}}
         classes="mt-10 grid grid-cols-1 gap-y-8"
         error={error}
-        inputsForForm={inputList}
         onSubmit={handleFormSubmit}
         button={[
           <Button type="submit" className="flex w-full">
             Sign in
           </Button>,
         ]}
-      />
+      >
+        <FormInputs inputList={inputList} />
+      </Form>
       <LinksList
         linksList={[
           {

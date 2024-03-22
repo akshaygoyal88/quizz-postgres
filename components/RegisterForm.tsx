@@ -6,7 +6,7 @@ import { User, UserRole } from "@prisma/client";
 import { Button } from "./Button";
 import Heading from "./Shared/Heading";
 import { handleRegisterForm } from "@/action/actionRegisterForm";
-import Form from "./Shared/Form";
+import Form, { FormInputs } from "./Shared/Form";
 import LinksList from "./Shared/LinksList";
 
 export default function RegisterForm() {
@@ -79,7 +79,6 @@ function RegistrationForm() {
     <Form
       classes="mt-6 grid grid-cols-1 gap-y-8"
       action={formAction}
-      inputsForForm={inputList}
       button={[
         <Button
           type="submit"
@@ -98,6 +97,8 @@ function RegistrationForm() {
       ]}
       error={error}
       gridClassesForBtn="grid gap-4 grid-cols-2 sm:grid-cols-2"
-    />
+    >
+      <FormInputs inputList={inputList} />
+    </Form>
   );
 }
