@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Container } from "./Container";
 import { Logo } from "./NavHeader/Logo";
-import { NavLink } from "./NavHeader/NavLink";
+import { NavLink } from "./NavLink";
 
 export function Footer() {
   return (

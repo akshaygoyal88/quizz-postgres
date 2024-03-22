@@ -15,7 +15,6 @@ import ShadowSection from "@/components/Shared/ShadowSection";
 import { QuesType, QuestionsTypes, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
 import { Button } from "@/components/Button";
-import HtmlParser from "@/components/Shared/HtmlParser";
 import RadioInput from "@/components/Shared/RadioInput";
 import HTMLReactParser from "html-react-parser";
 import InputWithLabel from "@/components/Shared/InputWithLabel";
@@ -164,7 +163,7 @@ function CandidateQuizQuestion({
     >
       <form action={formAction} className="p-6">
         <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
-        <HtmlParser content={question?.editorContent || ""} />
+        {HTMLReactParser(question?.editorContent || "")}
         {question?.type === QuestionType.OBJECTIVE ? (
           question?.objective_options?.map(
             (option: ObjectiveOptions, index: number) => (

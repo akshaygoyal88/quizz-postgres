@@ -24,7 +24,6 @@ export default async function page({ params }: Params) {
     submittedBy: userId,
     quizId: quizId,
   });
-  console.log(candidateResponse);
   return (
     <FullWidthLayout>
       <QuizReport

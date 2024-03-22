@@ -4,12 +4,11 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { Popover, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { Container } from "../Container";
-import { Logo } from "./Logo";
+import { Container } from "./Container";
 import { NavLink } from "./NavLink";
-import { Button } from "../Button";
+import { Button } from "./Button";
 import { signOut } from "next-auth/react";
-import NotificationIcon from "../Shared/NotificationIcon";
+import NotificationIcon from "./Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { UserDataType } from "@/types/types";
@@ -116,7 +115,7 @@ export function Header({ userData }: { userData: UserDataType }) {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Link href="/" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              {/* <Logo className="h-10 w-auto" /> */}
             </Link>
 
             <div className="hidden md:flex md:gap-x-6">

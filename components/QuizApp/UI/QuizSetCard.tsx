@@ -8,6 +8,8 @@ import pathName from "@/constants";
 import { QuizDetail, UserDataType } from "@/types/types";
 import Modal from "@/components/Shared/Modal";
 import { Subscription } from "@prisma/client";
+import { Button } from "@/components/Button";
+import { formattedDate } from "@/utils/formattedDate";
 
 interface QuizSetCardProps {
   quiz: QuizDetail;
@@ -26,34 +28,12 @@ interface SubscriptionButtonsProps {
 
 const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
   const router = useRouter();
-  const [isUserSubscribed, setIsUserSubscribed] = useState<boolean>(false);
-  const [subscribedSuccess, setSubscribedSuccess] = useState<string | null>(
-    null
-  );
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const formattedDate = quiz.createdAt.toLocaleString("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  useEffect(() => {
-    if (userData) {
-      const alreadySubscribed = userData?.Subscription.find(
-        (i: Subscription) => i.quizId === quiz.id
-      );
-      if (alreadySubscribed) setIsUserSubscribed(true);
-    }
-  }, [userData]);
-
-  const handleQuickStart = async () => {
-    router.push(`/quiz/${quiz.id}`);
-  };
-
+  const isUserSubscribed =
+    userData &&
+    userData.Subscription.find((i: Subscription) => i.quizId === quiz.id)
+      ? true
+      : false;
   const handleSubscribeConfirm = async () => {
     const { data, error, isLoading } = await fetchData({
       url: `${pathName.subscriptionApiRoute.path}`,
@@ -61,13 +41,8 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
       body: { quizId: quiz.id, candidateId: userData?.id },
     });
     if (data && !data.error) {
-      setSubscribedSuccess("Successfully taken subscription.");
       router.refresh();
     }
-  };
-
-  const handleSubscribe = () => {
-    setModalOpen(true);
   };
 
   return (
@@ -75,17 +50,24 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
       key={quiz.id}
       className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow-lg"
     >
-      <Link
-        className="flex flex-1 flex-col p-8"
-        href={`${pathName.quizRoute.path}/${quiz.id}`}
-      >
-        <QuizInformation quiz={quiz} formattedDate={formattedDate} />
+      <Link href={`${pathName.quizRoute.path}/${quiz.id}`}>
+        <QuizInformation
+          quiz={quiz}
+          formattedDate={formattedDate(quiz.createdAt)}
+        />
       </Link>
-      <SubscriptionButtons
-        isUserSubscribed={isUserSubscribed}
-        handleQuickStart={handleQuickStart}
-        handleSubscribe={handleSubscribe}
-      />
+      {isUserSubscribed ? (
+        <Button
+          variant="quizCard"
+          onClick={() => router.push(`/quiz/${quiz.id}`)}
+        >
+          Quick Start
+        </Button>
+      ) : (
+        <Button variant="quizCard" onClick={() => setModalOpen(true)}>
+          Subscribe Now
+        </Button>
+      )}
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -104,7 +86,7 @@ const QuizInformation: React.FC<QuizInformationProps> = ({
   formattedDate,
 }) => {
   return (
-    <>
+    <div className="flex flex-1 flex-col p-8">
       <img
         className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
         src={`https://source.unsplash.com/random/200x200?sig=${quiz.name}`}
@@ -125,32 +107,6 @@ const QuizInformation: React.FC<QuizInformationProps> = ({
       </dl>
       <p className="text-s text-gray-500">Created on {formattedDate}</p>
       <p className="text-s text-gray-500">Number of Questions: 0</p>
-    </>
-  );
-};
-
-const SubscriptionButtons: React.FC<SubscriptionButtonsProps> = ({
-  isUserSubscribed,
-  handleQuickStart,
-  handleSubscribe,
-}) => {
-  return (
-    <div>
-      {isUserSubscribed ? (
-        <button
-          onClick={handleQuickStart}
-          className="relative inline-flex flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-        >
-          Quick Start
-        </button>
-      ) : (
-        <button
-          onClick={handleSubscribe}
-          className="relative inline-flex flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-        >
-          Subscribe Now
-        </button>
-      )}
     </div>
   );
 };

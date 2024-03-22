@@ -6,7 +6,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import PhoneInput, { parsePhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
 import pathName from "@/constants";
 import { useSession } from "next-auth/react";
 import { useFetch } from "@/hooks/useFetch";

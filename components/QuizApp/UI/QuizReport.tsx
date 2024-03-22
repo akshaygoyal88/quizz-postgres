@@ -9,12 +9,7 @@ import { Button } from "@/components/Button";
 import Heading from "@/components/Shared/Heading";
 import { Container, FormContainer } from "@/components/Container";
 import { CandidateResponseTypes } from "@/types/types";
-
-interface QuizQuestion {
-  question: string;
-  answer: string;
-  correct: boolean;
-}
+import { formattedDate } from "@/utils/formattedDate";
 
 const QuizReport = ({
   userId,
@@ -41,17 +36,6 @@ const QuizReport = ({
     router.push(`/${userId}/reports/${id}`);
   };
 
-  const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
   return (
     <>
       <Heading headingText="Quiz Report" tag="h1" />
@@ -74,10 +58,10 @@ const QuizReport = ({
                 reportElementList={[
                   { Attempts: "1" },
                   {
-                    "Start at": formatDate(dataOfSelectedQuiz?.startedAt!),
+                    "Start at": formattedDate(dataOfSelectedQuiz?.startedAt!),
                   },
                   {
-                    "End at": formatDate(dataOfSelectedQuiz?.endedAt!),
+                    "End at": formattedDate(dataOfSelectedQuiz?.endedAt!),
                   },
                   { Marks: `${dataOfSelectedQuiz?.totalMarks}` },
                 ]}

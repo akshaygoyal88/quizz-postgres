@@ -4,8 +4,13 @@ import { useSession } from "next-auth/react";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import UserNotificationDropdown from "../UserNotificationDropdown";
+import { UserNotification } from "@prisma/client";
 
-const NotificationIcon: React.FC = () => {
+const NotificationIcon: React.FC = ({
+  notifications,
+}: {
+  notifications: UserNotification[];
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [actionTakenValue, setActionTakenValue] = useState(0);
   const ses = useSession();

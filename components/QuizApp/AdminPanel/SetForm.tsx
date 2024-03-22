@@ -4,7 +4,7 @@ import { handleQuestionSetSubmit } from "@/action/actionSetForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
-import { QuestionSet, User } from "@prisma/client";
+import { Quiz, User } from "@prisma/client";
 import TinyMCEEditor from "../UI/TinyMCEEditor";
 import { Button } from "../../Button";
 
@@ -18,7 +18,7 @@ export default function SetForm({
   session: User;
   action: QuestionSetSubmitE;
   addSetSuccessMessage?: string;
-  initialFormData?: QuestionSet;
+  initialFormData?: Quiz;
 }) {
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
