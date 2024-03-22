@@ -20,12 +20,6 @@ interface QuizInformationProps {
   formattedDate: string;
 }
 
-interface SubscriptionButtonsProps {
-  isUserSubscribed: boolean;
-  handleQuickStart: () => void;
-  handleSubscribe: () => void;
-}
-
 const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState<boolean>(false);

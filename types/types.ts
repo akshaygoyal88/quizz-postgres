@@ -61,6 +61,8 @@ export interface CandidateResponseTypes extends UserQuizReport {
   isCorrect: any;
   timeTaken: string;
   question: QuestionsTypes;
+  objective_options: ObjectiveOptions[];
+
 }
 
 export interface InputTypesProps {

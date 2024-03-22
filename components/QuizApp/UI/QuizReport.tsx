@@ -2,14 +2,20 @@
 
 import React from "react";
 import Lable from "@/components/Shared/Lable";
-import { Question, ReportStatusE, UserQuizReport } from "@prisma/client";
+import {
+  ObjectiveOptions,
+  QuestionType,
+  ReportStatusE,
+  UserQuizReport,
+} from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { QuizQuestionReportTable } from "../AdminPanel/QuizQuesSummary";
 import { Button } from "@/components/Button";
 import Heading from "@/components/Shared/Heading";
-import { Container, FormContainer } from "@/components/Container";
+import { Container } from "@/components/Container";
 import { CandidateResponseTypes } from "@/types/types";
 import { formattedDate } from "@/utils/formattedDate";
+import { Table } from "@/components/Shared/Table";
+import HTMLReactParser from "html-react-parser";
 
 const QuizReport = ({
   userId,
@@ -33,8 +39,76 @@ const QuizReport = ({
   const router = useRouter();
 
   const handleSelectQuiz = (id: string) => {
-    router.push(`/${userId}/reports/${id}`);
+    router.push(`/${userId}/reports/${id || undefined}`);
   };
+
+  const findGivenAnsText = (id: string, opts: ObjectiveOptions[]) => {
+    const givAns = opts.find((ans: ObjectiveOptions) => ans.id === id);
+    return givAns?.text;
+  };
+
+  const tableRows = candidateResponse.map((queRes) => [
+    HTMLReactParser(queRes?.question?.editorContent!),
+    (queRes?.question?.type === QuestionType.SUBJECTIVE &&
+      queRes.ans_subjective) ||
+      (queRes.ans_optionsId &&
+        HTMLReactParser(
+          findGivenAnsText(
+            queRes?.ans_optionsId,
+            queRes?.question?.objective_options!
+          ) || ""
+        )),
+    (queRes?.question?.type === QuestionType.SUBJECTIVE && "Subjective Type") ||
+      (queRes.isCorrect ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-6 h-6 text-green-600"
+        >
+          <path
+            fillRule="evenodd"
+            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : queRes.ans_optionsId ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-6 h-6 text-red-600"
+        >
+          <path
+            fillRule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        "Skipped"
+      )),
+    <input
+      type="number"
+      className={
+        `w-1/2 text-center border-2 border-gray-400 rounded pl-1 py-1 text-black border-3`
+        //  ${
+        //   // missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
+        // }
+      }
+      value={1}
+      step="0.01"
+      min="0"
+      max="1"
+      disabled
+    />,
+    <>
+      {queRes.timeTaken &&
+        (Number(queRes.timeTaken) / 60 < 1
+          ? queRes.timeTaken + " sec"
+          : Number(queRes.timeTaken) / 60 + " min")}
+    </>,
+  ]);
 
   return (
     <>
@@ -66,7 +140,16 @@ const QuizReport = ({
                   { Marks: `${dataOfSelectedQuiz?.totalMarks}` },
                 ]}
               />
-              <QuizQuestionReportTable candidateResponse={candidateResponse} />
+              <Table
+                headers={[
+                  "Questions",
+                  "Given Answer",
+                  "Answer status",
+                  "Marks",
+                  "Time Taken",
+                ]}
+                rows={tableRows}
+              />
               <Button>Go to Home Page</Button>
             </>
           )}

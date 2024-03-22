@@ -33,7 +33,6 @@ interface FormErrors {
   country?: string;
   state?: string;
   city?: string;
-  // Add other error fields as needed
 }
 
 export default function Profile({ email }: UserEmail) {

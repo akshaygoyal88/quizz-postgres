@@ -1,5 +1,4 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
-import QuizSets from "@/components/QuizApp/UI/QuizList";
 import QuizSetCard from "@/components/QuizApp/UI/QuizSetCard";
 import Heading from "@/components/Shared/Heading";
 import { getQuestionSets } from "@/services/questionSet";
