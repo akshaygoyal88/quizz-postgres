@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 interface PaginationProps {
   page: number;
@@ -92,7 +92,7 @@ const Pagination: React.FC<PaginationProps> = ({
               }
             >
               <span className="sr-only">Previous</span>
-              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              <FaChevronLeft className="h-5 w-5" aria-hidden="true" />
             </button>
             {Array.from({ length: totalpage }).map((_, index) => (
               <button
@@ -118,7 +118,7 @@ const Pagination: React.FC<PaginationProps> = ({
               }}
             >
               <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+              <FaChevronRight className="h-5 w-5" aria-hidden="true" />
             </button>
           </nav>
         </div>

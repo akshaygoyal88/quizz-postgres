@@ -2,16 +2,12 @@
 
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  XMarkIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { FaBars } from "react-icons/fa";
+import { HiOutlineDocumentDuplicate } from "react-icons/hi2";
+
+import { CiCalendar } from "react-icons/ci";
+import { HiOutlineChartPie } from "react-icons/hi2";
+import { IoHomeOutline } from "react-icons/io5";
 import Link from "next/link";
 import pathName from "@/constants";
 import { classNames } from "@/utils/classNames";
@@ -19,48 +15,50 @@ import { User } from "@prisma/client";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../Button";
-import { Session } from "inspector";
+import { FaRegFolderClosed } from "react-icons/fa6";
+import { GoPlus } from "react-icons/go";
+import { FaXmark } from "react-icons/fa6";
 
 const navigation = [
   {
     name: "Dashboard",
     href: pathName.dashboard.path,
-    icon: HomeIcon,
+    icon: IoHomeOutline,
     current: "dashboard",
   },
   {
     name: "Reports",
     href: pathName.adminReportsRoute.path,
-    icon: ChartPieIcon,
+    icon: HiOutlineChartPie,
     current: "reports",
   },
   // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
     name: "Create Quiz",
     href: pathName.quizAdd.path,
-    icon: PlusIcon,
+    icon: GoPlus,
     current: "add-quiz",
   },
   {
     name: "Create Question",
     href: pathName.questionsAdd.path,
-    icon: PlusIcon,
+    icon: GoPlus,
     current: "add-question",
   },
   {
     name: "All Quiz",
     href: pathName.quiz.path,
-    icon: FolderIcon,
+    icon: FaRegFolderClosed,
     current: "quiz",
   },
 
   {
     name: "All Questions",
     href: `${pathName.questions.path}?page=1`,
-    icon: DocumentDuplicateIcon,
+    icon: HiOutlineDocumentDuplicate,
     current: "questions",
   },
-  { name: "Publish test", href: "#", icon: CalendarIcon, current: false },
+  { name: "Publish test", href: "#", icon: CiCalendar, current: false },
 ];
 
 export default function LeftSideBar({
@@ -112,7 +110,7 @@ export default function LeftSideBar({
                   onClick={() => setSidebarOpen(false)}
                 >
                   <span className="sr-only">Close sidebar</span>
-                  <XMarkIcon
+                  <FaXmark
                     className="h-6 w-6 text-gray-600"
                     aria-hidden="true"
                   />
@@ -229,7 +227,7 @@ export default function LeftSideBar({
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            <FaBars />
           </button>
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Dashboard

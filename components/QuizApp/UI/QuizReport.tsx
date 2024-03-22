@@ -88,20 +88,7 @@ const QuizReport = ({
       ) : (
         "Skipped"
       )),
-    <input
-      type="number"
-      className={
-        `w-1/2 text-center border-2 border-gray-400 rounded pl-1 py-1 text-black border-3`
-        //  ${
-        //   // missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
-        // }
-      }
-      value={1}
-      step="0.01"
-      min="0"
-      max="1"
-      disabled
-    />,
+    <>-</>,
     <>
       {queRes.timeTaken &&
         (Number(queRes.timeTaken) / 60 < 1
