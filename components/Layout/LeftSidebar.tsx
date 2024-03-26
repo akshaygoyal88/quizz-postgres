@@ -4,16 +4,14 @@ import { Fragment, createContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi2";
-
 import { CiCalendar } from "react-icons/ci";
 import { HiOutlineChartPie } from "react-icons/hi2";
 import { IoHomeOutline } from "react-icons/io5";
 import Link from "next/link";
 import pathName from "@/constants";
 import { classNames } from "@/utils/classNames";
-import { User } from "@prisma/client";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Button } from "../Button";
 import { FaRegFolderClosed } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";

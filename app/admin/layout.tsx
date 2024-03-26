@@ -1,6 +1,9 @@
-import React, { ReactNode } from "react";
-import LeftSideBar from "@/components/Layout/LeftSidebar";
+import { ReactNode } from "react";
 import { getSessionUser } from "@/utils/getSessionUser";
+import { redirect } from "next/navigation";
+
+import pathName from "@/constants";
+import LeftSideBar from "@/components/Layout/LeftSidebar";
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 
 export default async function adminLayout({
@@ -10,7 +13,7 @@ export default async function adminLayout({
 }) {
   const userData = await getSessionUser();
   if (!userData) {
-    return <>Please Login</>;
+    redirect(pathName.login.path);
   }
   return (
     <LeftSideBar userData={userData}>

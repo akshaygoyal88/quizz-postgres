@@ -17,7 +17,6 @@ export enum FetchMethodE {
     if (body) {
       requestOptions.body = JSON.stringify(body);
     }
-    console.log(requestOptions)
     try {
       const response = await fetch(url, requestOptions);
       if (!response.ok) {

@@ -6,23 +6,15 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "0", 10);
   const pageSize = parseInt(url.searchParams.get("pageSize") || "0", 10);
-  const createdById = url.searchParams.get("createdById");
+  const createdById = url.searchParams.get("createdById")!;
 
   try {
     if (page>0 && pageSize>0) {
-      const totalRows = await db.question.count({
-        where: {
-          isDeleted: false,
-          createdById          
-        },
-      });
-
-      const totalPages = Math.ceil(totalRows / pageSize);
 
       const skip = (page - 1) * pageSize;
-      const questions = await getAllQuestions({skip, pageSize, createdById})
+      const res = await getAllQuestions({skip, pageSize, createdById})
       return new Response(
-        JSON.stringify({ questions, totalPages, totalRows }),
+        JSON.stringify(res),
         {
           status: 200,
           headers: {
@@ -56,8 +48,7 @@ export async function POST(req: any, res: any) {
       option.isCorrect == true && correctAnswer.push(i)});
 
     const options =  objective_options?.map((opt: { text: any; })=> opt.text);
-
-    const setId = Quiz[0].setId;
+ 
 
     const addQuestion = await createQuestion(
     {editorContent,
@@ -67,9 +58,8 @@ export async function POST(req: any, res: any) {
       solution,
       timer,
       createdById,
-      setId
     })
-  
+  console.log(addQuestion)
     return NextResponse.json(addQuestion);
   } catch (error) {
     console.error(error);

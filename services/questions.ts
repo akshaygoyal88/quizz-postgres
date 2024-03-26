@@ -11,7 +11,16 @@ export async function getAllQuestions({
   pageSize: number;
   createdById: string;
 }) {
-  return await db.question.findMany({
+  const totalRows = await db.question.count({
+    where: {
+      isDeleted: false,
+      createdById          
+    },
+  });
+
+  const totalPages = Math.ceil(totalRows / pageSize);
+
+  const questions =  await db.question.findMany({
     where: {
       isDeleted: false,
       createdById,
@@ -23,6 +32,7 @@ export async function getAllQuestions({
     skip,
     take: pageSize,
   });
+  return { questions, totalPages, totalRows }
 }
 
 export enum QuestionSubmitE {

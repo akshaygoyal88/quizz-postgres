@@ -29,7 +29,10 @@ export type QuestionsTypes =
     timer: number;
     answer_type: AnswerTypeE | null;
     status: UserQuizAnswerStatus;
-    editorContent: string | null; 
+    editorContent: string | null;
+    createdBy?: User;
+    createdAt?: Date;
+    updatedAt?: Date;
   })
 | ({
     objective_options: {
@@ -45,7 +48,10 @@ export type QuestionsTypes =
     timer: number;
     answer_type: AnswerTypeE | null;
     status?: UserQuizAnswerStatus;
-    editorContent: string | null; 
+    editorContent: string | null;
+    createdBy?: User;
+    createdAt?: Date;
+    updatedAt?: Date;  
   })
 | null;
 
