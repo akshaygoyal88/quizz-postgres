@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, createContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi2";
@@ -18,6 +18,7 @@ import { Button } from "../Button";
 import { FaRegFolderClosed } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
 import { FaXmark } from "react-icons/fa6";
+import { UserDataType } from "@/types/types";
 
 const navigation = [
   {
@@ -32,7 +33,6 @@ const navigation = [
     icon: HiOutlineChartPie,
     current: "reports",
   },
-  // { name: "Team", href: "#", icon: UsersIcon, current: false },
   {
     name: "Create Quiz",
     href: pathName.quizAdd.path,
@@ -61,21 +61,22 @@ const navigation = [
   { name: "Publish test", href: "#", icon: CiCalendar, current: false },
 ];
 
+export const UserContext = createContext<UserDataType | null>(null);
+
 export default function LeftSideBar({
   children,
+  userData,
 }: {
   children: React.ReactNode;
+  userData: UserDataType;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const path = usePathname();
   const pathItems = path.split("/");
-  const ses: { status: string; data?: User; update: () => void } = useSession();
-
-  const userData: User | null = ses.data || null;
 
   return (
-    <>
-      <div>
+    <UserContext.Provider value={userData}>
+      <>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -242,10 +243,10 @@ export default function LeftSideBar({
           </a>
         </div>
 
-        <main className="flex-1 flex-end overflow-y-auto lg:pl-56">
+        <main className="flex-1 flex-end overflow-y-auto lg:pl-40">
           <div className="">{children}</div>
         </main>
-      </div>
-    </>
+      </>
+    </UserContext.Provider>
   );
 }

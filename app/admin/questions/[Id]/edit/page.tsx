@@ -6,9 +6,5 @@ import React from "react";
 
 export default async function QuesEdit({ params }: Params) {
   await isUnauthorised("/signin");
-  return (
-    <LeftSideBar>
-      <EditQuesForm quesId={params.Id} />
-    </LeftSideBar>
-  );
+  return <EditQuesForm quesId={params.Id} />;
 }

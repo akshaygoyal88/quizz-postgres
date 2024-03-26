@@ -132,118 +132,116 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setDesEditorContent(content);
   };
   return (
-    <div className="border rounded-lg shadow-lg">
-      <form action={formAction} className="m-4">
-        <div className="flex flex-wrap justify-between items-center lg:flex-row">
-          <h1 className="text-lg font-semibold">{headingText}</h1>
-          <Button color="blue">{buttonText}</Button>
-        </div>
-        {successMessage && (
-          <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
-        )}
-        <div className="text-red-500 mb-2">{error}</div>
-        <input type="hidden" name="createdById" value={session?.data?.id} />
-        {action == QuestionSubmitE.EDIT && (
-          <input type="hidden" name="id" value={quesId} />
-        )}
-        <div className="mb-4 bg-gray-100 p-3 rounded-md">
-          <Lable labelText="Question:" htmlFor="ques" />
-          <TinyMCEEditor
-            editorsContent={editorsContent}
-            handleEditorChange={handleEditorChange}
-            imagesList={imagesList}
-            idx={"ques"}
-          />
-          <div className="">
-            <div className="flex items-center gap-5">
-              <Lable labelText="Question Type:" htmlFor="questionType" />
-              <div>
-                <select
-                  className="w-48 m-2 block rounded-md border-0 py-2 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={questionType}
-                  name="questionType"
-                  onChange={handleRadioChange}
-                >
-                  <option value={QuestionType.OBJECTIVE}>Objective</option>
-                  <option value={QuestionType.SUBJECTIVE}>Subjective</option>
-                </select>
-              </div>
+    <form action={formAction} className="m-4">
+      <div className="flex flex-wrap justify-between items-center lg:flex-row">
+        <h1 className="text-lg font-semibold">{headingText}</h1>
+        <Button color="blue">{buttonText}</Button>
+      </div>
+      {successMessage && (
+        <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
+      )}
+      <div className="text-red-500 mb-2">{error}</div>
+      <input type="hidden" name="createdById" value={session?.data?.id} />
+      {action == QuestionSubmitE.EDIT && (
+        <input type="hidden" name="id" value={quesId} />
+      )}
+      <div className="mb-4 bg-gray-100 p-3 rounded-md">
+        <Lable labelText="Question:" htmlFor="ques" />
+        <TinyMCEEditor
+          editorsContent={editorsContent}
+          handleEditorChange={handleEditorChange}
+          imagesList={imagesList}
+          idx={"ques"}
+        />
+        <div className="">
+          <div className="flex items-center gap-5">
+            <Lable labelText="Question Type:" htmlFor="questionType" />
+            <div>
+              <select
+                className="w-48 m-2 block rounded-md border-0 py-2 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                defaultValue={questionType}
+                name="questionType"
+                onChange={handleRadioChange}
+              >
+                <option value={QuestionType.OBJECTIVE}>Objective</option>
+                <option value={QuestionType.SUBJECTIVE}>Subjective</option>
+              </select>
             </div>
-            <div className="flex items-center gap-4">
-              <Lable labelText="Timer (in secs):" htmlFor="timer" />
-              <input
-                type="number"
-                className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                defaultValue={timer}
-                name="timer"
-              />
-            </div>
-            <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
           </div>
-          {questionType === QuestionType.OBJECTIVE && (
-            <div className="my-4 flex gap-4">
-              <Lable
-                labelText="Is this question has multiple correct answers?"
-                htmlFor="answer_type"
-              />
-              <RadioInput
-                id="SingleCorrect"
-                value={AnswerTypeE.SINGLECHOICE}
-                checked={objAnsType === AnswerTypeE.SINGLECHOICE}
-                handleAnyTypeRadioChange={handleAnyTypeRadioChange}
-                name="answer_type"
-                htmlFor="SingleCorrect"
-                label="No"
-              />
-              <RadioInput
-                id="MultipleCorrect"
-                value={AnswerTypeE.MULTIPLECHOICE}
-                checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
-                handleAnyTypeRadioChange={handleAnyTypeRadioChange}
-                name="answer_type"
-                htmlFor="MultipleCorrect"
-                label="Yes"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            <Lable labelText="Timer (in secs):" htmlFor="timer" />
+            <input
+              type="number"
+              className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              defaultValue={timer}
+              name="timer"
+            />
+          </div>
+          <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
         </div>
         {questionType === QuestionType.OBJECTIVE && (
-          <div className="mb-4">
-            <div className="my-3 text-right">
-              <div className="text-red-500 mb-2">{validationError}</div>
-              <span
-                className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
-                onClick={handleOptionIncrease}
-              >
-                Add more options+
-              </span>
-            </div>
-            {options.map((option, index) => (
-              <OptionCard
-                option={option}
-                index={index}
-                correctAnswerIndex={correctAnswerIndex}
-                handleCorrectOptionChange={handleCorrectOptionChange}
-                handleOptionRemove={handleOptionRemove}
-                imagesList={imagesList}
-                savedOptions={savedOptions}
-                buttonText={buttonText}
-                handleOptionTextChange={handleOptionTextChange}
-              />
-            ))}
+          <div className="my-4 flex gap-4">
+            <Lable
+              labelText="Is this question has multiple correct answers?"
+              htmlFor="answer_type"
+            />
+            <RadioInput
+              id="SingleCorrect"
+              value={AnswerTypeE.SINGLECHOICE}
+              checked={objAnsType === AnswerTypeE.SINGLECHOICE}
+              handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+              name="answer_type"
+              htmlFor="SingleCorrect"
+              label="No"
+            />
+            <RadioInput
+              id="MultipleCorrect"
+              value={AnswerTypeE.MULTIPLECHOICE}
+              checked={objAnsType === AnswerTypeE.MULTIPLECHOICE}
+              handleAnyTypeRadioChange={handleAnyTypeRadioChange}
+              name="answer_type"
+              htmlFor="MultipleCorrect"
+              label="Yes"
+            />
           </div>
         )}
-        <div className="mt-4 p-3 bg-cyan-100 rounded-md">
-          <Lable labelText="Solution:" />
-          <TinyMCEEditor
-            editorsContent={description}
-            handleEditorChange={handleDesChange}
-            imagesList={imagesList}
-            idx={"sol"}
-          />
+      </div>
+      {questionType === QuestionType.OBJECTIVE && (
+        <div className="mb-4">
+          <div className="my-3 text-right">
+            <div className="text-red-500 mb-2">{validationError}</div>
+            <span
+              className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
+              onClick={handleOptionIncrease}
+            >
+              Add more options+
+            </span>
+          </div>
+          {options.map((option, index) => (
+            <OptionCard
+              option={option}
+              index={index}
+              correctAnswerIndex={correctAnswerIndex}
+              handleCorrectOptionChange={handleCorrectOptionChange}
+              handleOptionRemove={handleOptionRemove}
+              imagesList={imagesList}
+              savedOptions={savedOptions}
+              buttonText={buttonText}
+              handleOptionTextChange={handleOptionTextChange}
+            />
+          ))}
         </div>
-      </form>
-    </div>
+      )}
+      <div className="mt-4 p-3 bg-cyan-100 rounded-md">
+        <Lable labelText="Solution:" />
+        <TinyMCEEditor
+          editorsContent={description}
+          handleEditorChange={handleDesChange}
+          imagesList={imagesList}
+          idx={"sol"}
+        />
+      </div>
+    </form>
   );
 };
 

@@ -5,9 +5,5 @@ import React from "react";
 
 export default async function page() {
   await isUnauthorised("/signin");
-  return (
-    <LeftSideBar>
-      <AdminReportPage />
-    </LeftSideBar>
-  );
+  return <AdminReportPage />;
 }

@@ -7,9 +7,5 @@ import React from "react";
 export default async function page({ params }: Params) {
   await isUnauthorised("/signin");
   const reportId = params.id;
-  return (
-    <LeftSideBar>
-      <QuizQuesSummary reportId={reportId} />
-    </LeftSideBar>
-  );
+  return <QuizQuesSummary reportId={reportId} />;
 }

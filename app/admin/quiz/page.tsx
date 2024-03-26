@@ -7,9 +7,5 @@ import React from "react";
 
 export default async function User() {
   await isUnauthorised("/signin");
-  return (
-    <LeftSideBar>
-      <QuizListUI />
-    </LeftSideBar>
-  );
+  return <QuizListUI />;
 }
