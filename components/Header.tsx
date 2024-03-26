@@ -141,7 +141,7 @@ export function Header({ userData }: { userData: UserDataType }) {
                 </Button>
               ) : (
                 <div className="flex items-end gap-5">
-                  <NotificationIcon />
+                  <NotificationIcon userData={userData} />
                   <Button className="bg-red-700" onClick={() => signOut()}>
                     Logout
                   </Button>
