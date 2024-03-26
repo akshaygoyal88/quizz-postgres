@@ -27,7 +27,7 @@ const navigation = [
   },
   {
     name: "Reports",
-    href: pathName.adminReportsRoute.path,
+    href: `${pathName.adminReportsRoute.path}/${undefined}`,
     icon: HiOutlineChartPie,
     current: "reports",
   },

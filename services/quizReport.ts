@@ -41,7 +41,16 @@ export async function getReportsByQuizId({
   pageSize: number;
   quizId: string;
 }) {
-  const quizResByUser = db.userQuizReport.findMany({
+
+  const totalRows = await db.userQuizReport.count({
+    where: {
+      quizId          
+    },
+  });
+
+  const totalPages = Math.ceil(totalRows / pageSize);
+
+  const quizResByUser = await db.userQuizReport.findMany({
     where: {
       quizId,
     },
@@ -51,7 +60,7 @@ export async function getReportsByQuizId({
     skip,
     take: pageSize,
   });
-  return quizResByUser;
+  return {quizResByUser, totalPages, totalRows};
 }
 
 export async function markSubmitByAdmin({

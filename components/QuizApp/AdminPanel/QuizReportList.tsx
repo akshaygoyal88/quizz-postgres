@@ -1,11 +1,12 @@
 import pathName from "@/constants";
-import { ReportStatusE, UserQuizReport } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { classNames } from "@/utils/classNames";
+import { UserQuizReportTypes } from "@/types/types";
+import { formattedDate } from "@/utils/formattedDate";
 
 const statuses = {
   GENERATED: "text-green-700 bg-green-50 ring-green-600/20",
@@ -16,7 +17,7 @@ const statuses = {
 const QuizReportList = ({
   quizResByUser,
 }: {
-  quizResByUser: UserQuizReport[];
+  quizResByUser: UserQuizReportTypes[];
 }) => {
   return (
     <ul role="list" className="divide-y divide-gray-100">
@@ -27,7 +28,7 @@ const QuizReportList = ({
         >
           <div className="flex gap-5 items-center">
             <img
-              src={quiz.user.profile_pic}
+              src={quiz.user.profile_pic!}
               className="rounded-3xl w-10 h-10"
             />
             <div className="min-w-0">
@@ -37,7 +38,7 @@ const QuizReportList = ({
                 </p>
                 <p
                   className={classNames(
-                    statuses[quiz.reportStatus],
+                    statuses[quiz?.reportStatus],
                     "rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                   )}
                 >
@@ -47,8 +48,8 @@ const QuizReportList = ({
               <div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
                 <p className="whitespace-nowrap">
                   Started At{" "}
-                  <time dateTime={quiz.startedAt}>
-                    {new Date(quiz.startedAt).toLocaleString()}
+                  <time dateTime={`${quiz.startedAt}`}>
+                    {formattedDate(quiz.startedAt)}
                   </time>
                 </p>
                 <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
@@ -56,10 +57,8 @@ const QuizReportList = ({
                 </svg>
                 <p className="whitespace-nowrap">
                   End At{" "}
-                  <time dateTime={quiz.startedAt}>
-                    {quiz.endedAt
-                      ? new Date(quiz.endedAt).toLocaleString()
-                      : "N/A"}
+                  <time dateTime={`${quiz.startedAt}`}>
+                    {quiz.endedAt ? formattedDate(quiz.endedAt) : "N/A"}
                   </time>
                 </p>
                 <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
@@ -74,7 +73,7 @@ const QuizReportList = ({
           </div>
           <div className="flex flex-none items-center gap-x-4">
             <Link
-              href={`${pathName.adminReportsRoute.path}/${quiz.id}?quizId=${quiz.quizId}&submittedBy=${quiz.submittedBy}&reportStatus=${quiz.reportStatus}`}
+              href={`${pathName.adminReportsRoute.path}/${quiz.quizId}/${quiz.id}?quizId=${quiz.quizId}&submittedBy=${quiz.submittedBy}&reportStatus=${quiz.reportStatus}`}
               className="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block"
             >
               View <span className="sr-only">, {quiz.name}</span>

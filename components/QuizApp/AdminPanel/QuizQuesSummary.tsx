@@ -4,17 +4,18 @@ import { useSearchParams } from "next/navigation";
 import HTMLReactParser from "html-react-parser";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
-import {
-  ObjectiveOptions,
-  QuestionType,
-  ReportStatusE,
-  UserQuizAnswers,
-} from "@prisma/client";
+import { ObjectiveOptions, QuestionType, ReportStatusE } from "@prisma/client";
 import { Button } from "../../Button";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { CandidateResponseTypes } from "@/types/types";
 
-export default function QuizQuesSummary({ reportId }: { reportId: string }) {
+export default function QuizQuesSummary({
+  reportId,
+  candidateResponse,
+}: {
+  reportId: string;
+  candidateResponse: CandidateResponseTypes;
+}) {
   const searchParams = useSearchParams();
   const quizId = searchParams.get("quizId");
   const submittedBy = searchParams.get("submittedBy");
@@ -23,18 +24,6 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
   const [missingMark, setMissingMark] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSucessMessage] = useState<string | null>(null);
-
-  // const {
-  //   data: oridinalQueAndAns,
-  //   error: oridinalQueAndAnsError,
-  //   isLoading,
-  // } = useFetch({
-  //   url: `${pathName.testSetApis.path}/${quizId}`,
-  // });
-
-  const { data: candidateResponse, error: candidateResponseError } = useFetch({
-    url: `${pathName.userQuizResponseApiRoute.path}/${quizId}?submittedBy=${submittedBy}`,
-  });
 
   useEffect(() => {
     if (candidateResponse?.length > 0) {
@@ -66,15 +55,6 @@ export default function QuizQuesSummary({ reportId }: { reportId: string }) {
 
   const handleSave = async () => {
     setErrorMessage(null);
-    // for (const [id, mark] of Object.entries(marks)) {
-    //   if (!missingMark.includes(id) && mark === false) {
-    //     setErrorMessage("Please check missing field");
-    //     setMissingMark((prev) => [...prev, id]);
-    //   }
-    // }
-    // if (missingMark.length > 0) {
-    //   return;
-    // }
     const {
       data: markSaveRes,
       error: markSaveError,

@@ -20,9 +20,9 @@ export async function GET(req: Request, {params}: {params:string}) {
           const totalPages = Math.ceil(totalRows / pageSize);
     
           const skip = (page - 1) * pageSize;
-          const quizResByUser = await QuizReportsService.getReportsByQuizId({skip, pageSize, quizId});
+          const result = await QuizReportsService.getReportsByQuizId({skip, pageSize, quizId});
           return new Response(
-            JSON.stringify({ quizResByUser, totalPages, totalRows }),
+            JSON.stringify(result),
             {
               status: 200,
               headers: {

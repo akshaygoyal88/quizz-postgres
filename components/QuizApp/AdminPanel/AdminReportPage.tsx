@@ -1,77 +1,49 @@
 "use client";
-import React, { useState } from "react";
+
+import React from "react";
 import Pagination from "../../Shared/Pagination";
 import Lable from "../../Shared/Lable";
-import { Quiz } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { Quiz, UserQuizReport } from "@prisma/client";
 import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
 import QuizReportList from "./QuizReportList";
+import { QuizDetail, UserQuizReportTypes } from "@/types/types";
+import { useRouter } from "next/navigation";
 
-export default function AdminReportPage() {
-  const ses = useSession();
-  const [page, setPage] = useState(1);
-  const [time, setTime] = useState<Number>(Date.now());
-  const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
-  const {
-    data: quizData,
-    error: quizError,
-    isLoading: quizLoading,
-  } = useFetch({
-    url: `${pathName.questionSetApi.path}?createdById=${
-      ses.status !== "loading" && ses?.data?.id
-    }`,
-  });
+export default function AdminReportPage({
+  quizData,
+  quizId,
+  quizReportData,
+  totalPages,
+  totalRows,
+}: {
+  quizData: QuizDetail[];
+  quizId: string | undefined;
+  quizReportData: UserQuizReportTypes[];
+  totalPages: number;
+  totalRows: number;
+}) {
+  const router = useRouter();
 
   const handleSelectQuiz = (id: string) => {
-    setSelectedQuiz(id);
+    router.push(`${pathName.adminReportsRoute.path}/${id || undefined}`);
   };
-
-  const {
-    data: quizReportData,
-    error: quizReportError,
-    isLoading: quizReportLoading,
-  } = useFetch({
-    url: `${pathName.adminReportApiRoute.path}/${selectedQuiz}?page=${page}&pageSize=3&time=${time}`,
-  });
-
-  const paginate = (pageNumber: React.SetStateAction<number>) => {
-    if (
-      Number(pageNumber) > 0 &&
-      Number(pageNumber) <= quizReportData?.totalPages
-    ) {
-      setPage(pageNumber);
-    }
-  };
-
-  console.log(quizReportData);
 
   return (
     <div className="sm:px-6">
       <SelectQuiz
-        defaultValue={""}
+        defaultValue={quizId}
         quizzes={quizData}
         handleSelectQuiz={handleSelectQuiz}
       />
-      {!selectedQuiz ? (
+      {quizId === "undefined" ? (
         <div className="flex flex-col items-center">
           Please select quiz to see report.
         </div>
       ) : (
-        <div>
-          <QuizReportList
-            quizResByUser={quizReportData?.quizResByUser}
-            quizData={quizData}
-          />
-          <Pagination
-            page={page}
-            totalpage={quizReportData?.totalPages || 0}
-            paginate={paginate}
-            totalRows={quizReportData?.totalRows || 0}
-            pageSize={3}
-            urlInitialization={selectedQuiz}
-          />
-        </div>
+        <>
+          <QuizReportList quizResByUser={quizReportData} />
+          <Pagination totalpage={totalPages || 0} totalRows={totalRows || 0} />
+        </>
       )}
     </div>
   );
@@ -82,7 +54,7 @@ function SelectQuiz({
   quizzes,
   handleSelectQuiz,
 }: {
-  defaultValue: string;
+  defaultValue?: string;
   quizzes: Quiz[];
   handleSelectQuiz: (id: string) => void;
 }) {
