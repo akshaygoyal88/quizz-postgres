@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AnswerTypeE, QuestionSet, QuestionType } from "@prisma/client";
+import { AnswerTypeE, QuestionType, Quiz } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
 import { useSession } from "next-auth/react";
@@ -8,18 +8,18 @@ import SimpleToggle from "../../Shared/SimpleToggle";
 import { Button } from "../../Button";
 import RadioInput from "../../Shared/RadioInput";
 import Lable from "../../Shared/Lable";
+import { imageS3 } from "@/types/types";
 
 interface QuestionFormProps {
-  question: string;
   options: string[];
   correctAnswerIndex: number | null;
   validationError: string;
   questionType: QuestionType;
   description: string;
-  defaultQuestionSet?: QuestionSet | null;
+  defaultQuestionSet?: Quiz | null;
   timer: string;
   successMessage: string;
-  data: QuestionSet[] | null;
+  quizzes: Quiz[] | null;
   buttonText: string;
   headingText: string;
   handleRadioChange: (event: { target: { value: string } }) => void;
@@ -40,7 +40,6 @@ interface QuestionFormProps {
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
-  question,
   options,
   correctAnswerIndex,
   validationError,
@@ -48,7 +47,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   description,
   defaultQuestionSet,
   timer,
-  data,
+  quizzes,
   buttonText,
   headingText,
   handleRadioChange,
@@ -68,7 +67,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [editorContent, setEditorContent] = useState<string | null>(null);
   const [savedOptions, setSavedOptions] = useState<string[]>([]);
   const [desEditorContent, setDesEditorContent] = useState<string | null>(null);
-  const [imagesList, setImagesList] = useState([]);
+  const [imagesList, setImagesList] = useState<imageS3[] | null>(null);
 
   useEffect(() => {
     fetchImagesFromS3();
@@ -161,7 +160,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 className="w-48 m-2 block rounded-md border-0 py-2 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 defaultValue={questionType}
                 name="questionType"
-                onChange={handleRadioChange}
+                // onChange={handleRadioChange}
               >
                 <option value={QuestionType.OBJECTIVE}>Objective</option>
                 <option value={QuestionType.SUBJECTIVE}>Subjective</option>
@@ -177,7 +176,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               name="timer"
             />
           </div>
-          <SelectSet defaultValue={defaultQuestionSet?.name} data={data} />
+          <SelectSet
+            defaultValue={defaultQuestionSet?.name}
+            quizzes={quizzes}
+          />
         </div>
         {questionType === QuestionType.OBJECTIVE && (
           <div className="my-4 flex gap-4">
@@ -249,10 +251,10 @@ export default QuestionForm;
 
 function SelectSet({
   defaultValue,
-  data,
+  quizzes,
 }: {
-  defaultValue: string;
-  data: QuestionSet[];
+  defaultValue?: string;
+  quizzes: Quiz[] | null;
 }) {
   return (
     <div className="mb-4 flex items-center gap-4">
@@ -263,11 +265,11 @@ function SelectSet({
         name="quizId"
       >
         <option value="">Select Quiz</option>
-        {data &&
-          data.map((queSet: QuestionSet) =>
-            !queSet.isDeleted ? (
-              <option key={queSet.id} value={queSet.id}>
-                {queSet.name}
+        {quizzes &&
+          quizzes.map((quiz: Quiz) =>
+            !quiz.isDeleted ? (
+              <option key={quiz.id} value={quiz.id}>
+                {quiz.name}
               </option>
             ) : null
           )}
@@ -288,11 +290,11 @@ function OptionCard({
   handleOptionTextChange,
 }: {
   option?: string;
-  index?: number;
-  correctAnswerIndex?: number | null;
-  handleCorrectOptionChange: (index) => void;
-  handleOptionRemove: (index) => void;
-  imagesList?: [];
+  index: number;
+  correctAnswerIndex?: string | null;
+  handleCorrectOptionChange: (index: number) => void;
+  handleOptionRemove: (index: number) => void;
+  imagesList?: imageS3[] | null;
   savedOptions?: string[];
   buttonText: string;
   handleOptionTextChange: () => void;
@@ -304,7 +306,7 @@ function OptionCard({
         <span className="flex items-center gap-5 py-2">
           <label>Is correct</label>
           <SimpleToggle
-            checked={correctAnswerIndex?.includes(index)}
+            checked={correctAnswerIndex?.includes(`${index}`)!}
             onChange={() => handleCorrectOptionChange(index)}
           />
         </span>

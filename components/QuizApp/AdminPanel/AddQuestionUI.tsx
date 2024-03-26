@@ -1,15 +1,18 @@
 "use client";
 
-import React, { FormEvent, useEffect, useState } from "react";
-import { useFetch } from "@/hooks/useFetch";
-import pathName from "@/constants";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
+import React, { useState } from "react";
 import QuestionForm from "./QuestionForm";
-import { useSession } from "next-auth/react";
-import { AnswerTypeE, QuestionType } from "@prisma/client";
+import { AnswerTypeE, QuestionType, Quiz, User } from "@prisma/client";
 import { QuestionSubmitE } from "@/services/questions";
+import { UserDataType } from "@/types/types";
 
-function AddQuestionUI() {
+function AddQuestionUI({
+  userData,
+  quizzes,
+}: {
+  userData: UserDataType;
+  quizzes: Quiz[];
+}) {
   const [question, setQuestion] = useState<string>("");
   const [options, setOptions] = useState([]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number[]>([]);
@@ -22,12 +25,6 @@ function AddQuestionUI() {
   const [objAnsType, setObjAnsType] = useState<AnswerTypeE>(
     AnswerTypeE.SINGLECHOICE
   );
-  const ses = useSession();
-  const { data, error, isLoading } = useFetch({
-    url: `${pathName.questionSetApi.path}?createdById=${
-      ses.status !== "loading" && ses?.data?.id
-    }`,
-  });
 
   const handleRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -100,7 +97,6 @@ function AddQuestionUI() {
 
   const handletQuesSetChange = (quesSetId: string) => {
     setValidationError("");
-    // setQuestionSet(set);
     setSetId(quesSetId);
   };
   const handletQueChange = (que: string) => {
@@ -122,7 +118,7 @@ function AddQuestionUI() {
       description={description}
       timer={timer}
       successMessage={successMessage}
-      data={data}
+      quizzes={quizzes}
       headingText="Add Questions"
       buttonText="Save"
       handleRadioChange={handleRadioChange}

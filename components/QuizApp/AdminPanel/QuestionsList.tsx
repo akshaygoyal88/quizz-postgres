@@ -27,7 +27,7 @@ export default function QuestionsList({
   const router = useRouter();
 
   return (
-    <div className="">
+    <>
       {quesData && quesData.length > 0 && (
         <div className="p-1 flex justify-evenly">
           <Button href={`${pathName.questionsAdd.path}`} color="slate">
@@ -51,7 +51,7 @@ export default function QuestionsList({
       {quesData && quesData.length > 0 && (
         <Pagination totalpage={totalPages || 0} totalRows={totalRows || 0} />
       )}
-    </div>
+    </>
   );
 }
 

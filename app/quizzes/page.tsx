@@ -1,7 +1,7 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import QuizSetCard from "@/components/QuizApp/UI/QuizSetCard";
 import Heading from "@/components/Shared/Heading";
-import { getQuestionSets } from "@/services/questionSet";
+import { getQuizzesByCreatedBy } from "@/services/questionSet";
 import { QuizDetail } from "@/types/types";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { Subscription } from "@prisma/client";
@@ -10,12 +10,7 @@ import { getServerSession } from "next-auth";
 export default async function Quizzes() {
   const userData = await getSessionUser();
 
-  const allQuizzes = await getQuestionSets();
-  // if (userData) {
-  //   const alreadySubscribed = userData?.Subscription.find(
-  //     (i: Subscription) => i.quizId === quiz.id
-  //   );
-  // }
+  const allQuizzes = await getQuizzesByCreatedBy();
 
   return (
     <FullWidthLayout>

@@ -1,8 +1,7 @@
 import { db } from "@/db";
 import { Quiz } from "@prisma/client";
-import { NextResponse } from "next/server";
 
-export async function getAllQuestionsSet({
+export async function getQuizzesWithPaginationByCreatedBy({
   skip,
   pageSize,
   createdById,
@@ -11,7 +10,14 @@ export async function getAllQuestionsSet({
   pageSize: number;
   createdById: string;
 }) {
-  return await db.quiz.findMany({
+  const totalRows = await db.quiz.count({
+    where: {
+      isDeleted: false,
+      createdById
+    },
+  });
+  const totalPages = Math.ceil(totalRows / pageSize);
+  const quizzes = await db.quiz.findMany({
     where: {
       isDeleted: false,
       createdById,
@@ -22,8 +28,9 @@ export async function getAllQuestionsSet({
     skip,
     take: pageSize,
   });
+  return {quizzes, totalRows, totalPages}
 }
-export async function getQuestionSets(createdById?: string) {
+export async function getQuizzesByCreatedBy(createdById?: string) {
   return await db.quiz.findMany({
     where: {
       createdById,

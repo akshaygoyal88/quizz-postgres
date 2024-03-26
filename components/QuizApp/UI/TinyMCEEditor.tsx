@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { imageS3 } from "@/types/types";
 
 interface TinyMCEEditorProps {
   initialValue?: string;
   handleEditorChange: (content: string, index?: number, editor?: any) => void;
-  imagesList?: string[];
+  imagesList?: imageS3[] | null;
   editorsContent?: string | null;
   idx?: string;
   index?: number;

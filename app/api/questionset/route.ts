@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { createQuestionSet, getAllQuestionsSet, getQuestionSets } from "@/services/questionSet";
+import { createQuestionSet, getQuizzesWithPaginationByCreatedBy, getQuizzesByCreatedBy } from "@/services/questionSet";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -19,10 +19,10 @@ export async function GET(req: Request) {
       });
       const totalPages = Math.ceil(totalRows / pageSize);
       const skip = (page - 1) * pageSize;
-      const questionSets = await getAllQuestionsSet({skip, pageSize, createdById})
+      const result = await getQuizzesWithPaginationByCreatedBy({ skip, pageSize, createdById})
 
       return new Response(
-        JSON.stringify({ questionSets, totalPages, totalRows }),
+        JSON.stringify(result),
         {
           status: 200,
           headers: {
@@ -31,8 +31,8 @@ export async function GET(req: Request) {
         }
       );
     } else {
-      console.log(createdById, "getQuestionSetsgetQuestionSets")
-      const allQuestionSets =  createdById ? await getQuestionSets(createdById) : await getQuestionSets()
+
+      const allQuestionSets =  createdById ? await getQuizzesByCreatedBy(createdById) : await getQuizzesByCreatedBy()
       return NextResponse.json(allQuestionSets);
     }
   } catch (error) {

@@ -7,7 +7,7 @@ export interface QuizDetail extends Quiz {
   createdBy: User;
 }
 
-export type QuizDetailType = QuizDetail | { error: string };
+export type QuizDetailType = QuizDetail | { error?: string };
 
 
 
@@ -93,4 +93,9 @@ export interface InputTypesProps {
   selectHeading?: string;
   columnClass?: string;
   accept?: string
+}
+
+export interface imageS3 {
+  title: string;
+  value: string;
 }
