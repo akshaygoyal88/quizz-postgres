@@ -11,7 +11,7 @@ import { useState } from "react";
 import Modal from "@/components/Shared/Modal";
 import { formattedDate } from "@/utils/formattedDate";
 import { Table } from "@/components/Shared/Table";
-import { Button } from "@/components/Button";
+import { Button } from "@/components/Shared/Button";
 
 export default function QuizList({
   quizzes,

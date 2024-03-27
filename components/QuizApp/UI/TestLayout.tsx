@@ -14,10 +14,10 @@ import List from "@/components/Shared/List";
 import ShadowSection from "@/components/Shared/ShadowSection";
 import { QuesType, QuestionsTypes, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
-import { Button } from "@/components/Button";
 import RadioInput from "@/components/Shared/RadioInput";
 import HTMLReactParser from "html-react-parser";
 import InputWithLabel from "@/components/Shared/InputWithLabel";
+import { Button } from "@/components/Shared/Button";
 
 function TestLayout({
   allQuestions,

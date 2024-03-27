@@ -9,13 +9,13 @@ import {
   UserQuizReport,
 } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/Button";
 import Heading from "@/components/Shared/Heading";
 import { Container } from "@/components/Container";
 import { CandidateResponseTypes } from "@/types/types";
 import { formattedDate } from "@/utils/formattedDate";
 import { Table } from "@/components/Shared/Table";
 import HTMLReactParser from "html-react-parser";
+import { Button } from "@/components/Shared/Button";
 
 const QuizReport = ({
   userId,

@@ -8,8 +8,8 @@ import pathName from "@/constants";
 import { QuizDetail, UserDataType } from "@/types/types";
 import Modal from "@/components/Shared/Modal";
 import { Subscription } from "@prisma/client";
-import { Button } from "@/components/Button";
 import { formattedDate } from "@/utils/formattedDate";
+import { Button } from "@/components/Shared/Button";
 
 interface QuizSetCardProps {
   quiz: QuizDetail;
