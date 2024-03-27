@@ -142,3 +142,12 @@ export async function getUserQuizQuestionsAnswers({ quizId, userId }: { quizId:s
   }
   return final;
 }
+
+export async function getQuizByQuizId(id: string){
+  if(!id){
+    return {error: "Quiz id is missing."}
+  }
+  return await db.quiz.findUnique({
+    where: { id },
+  });
+}
