@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { UserNotification } from "@prisma/client";
@@ -8,11 +7,7 @@ import { fetchData, FetchMethodE } from "@/utils/fetch";
 import { UserDataType } from "@/types/types";
 import { FaBell, FaRegBell } from "react-icons/fa";
 
-const NotificationIcon: React.FC = ({
-  userData,
-}: {
-  userData: UserDataType;
-}) => {
+const NotificationIcon = ({ userData }: { userData: UserDataType }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [actionTakenValue, setActionTakenValue] = useState(0);
   const {
