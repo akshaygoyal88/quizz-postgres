@@ -1,44 +1,40 @@
 "use client";
 
-import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { SubscriptionTypes } from "@/types/types";
+import Heading from "@/components/Shared/Heading";
 
-const SubscribersList = ({ quizId }: { quizId: string }) => {
-  const [selectedSubscribers, setSelectedSubscribers] = useState<any[]>([]);
+const SubscribersList = ({
+  listOfSubscribers,
+  quizName,
+}: {
+  listOfSubscribers: SubscriptionTypes[] | { error: string };
+  quizName?: string;
+}) => {
+  const [selectedSubscribers, setSelectedSubscribers] = useState<
+    SubscriptionTypes[]
+  >([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [quizName, setQuizName] = useState("");
-
-  const {
-    data: listOfSubscribers,
-    error: listOfSubscribersError,
-    isLoading: listOfSubscribersLoading,
-  } = useFetch({
-    url: `${pathName.subscriptionApiRoute.path}/${quizId}`,
-  });
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    setQuizName(urlParams.get("quizName") || "Quiz Name");
-  }, []);
 
   useEffect(() => {
     if (
-      !listOfSubscribers?.error &&
+      !("error" in listOfSubscribers) &&
       selectedSubscribers.length === listOfSubscribers?.length
     ) {
       setSelectAll(true);
     } else {
       setSelectAll(false);
     }
-  }, [selectedSubscribers]);
+  }, [listOfSubscribers, selectedSubscribers]);
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedSubscribers([]);
     } else {
-      setSelectedSubscribers(listOfSubscribers);
+      setSelectedSubscribers(
+        "error" in listOfSubscribers ? [] : listOfSubscribers
+      );
     }
     setSelectAll(!selectAll);
   };
@@ -50,7 +46,9 @@ const SubscribersList = ({ quizId }: { quizId: string }) => {
     if (index === -1) {
       setSelectedSubscribers([
         ...selectedSubscribers,
-        listOfSubscribers.find((subscriber) => subscriber.id === subscriberId),
+        listOfSubscribers.find(
+          (subscriber: { id: string }) => subscriber.id === subscriberId
+        ),
       ]);
     } else {
       setSelectedSubscribers([
@@ -60,9 +58,9 @@ const SubscribersList = ({ quizId }: { quizId: string }) => {
     }
   };
 
-  return listOfSubscribers ? (
+  return !("error" in listOfSubscribers) ? (
     <div className="sm:px-6">
-      <h2 className="text-xl font-bold mb-4">Subscriber for {quizName}</h2>
+      <Heading headingText={`Subscriber for ${quizName}`} tag={"h2"} />
       <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="text-white bg-gray-800">
           <tr>

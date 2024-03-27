@@ -1,6 +1,20 @@
 import SubscribersList from "@/components/QuizApp/AdminPanel/SubscribersList";
+import { getSubscribersByQuizId } from "@/services/quiz";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
-export default function page({ params }: { params: Params }) {
-  return <SubscribersList quizId={params.id} />;
+export default async function page({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: { quizName?: string };
+}) {
+  const list = await getSubscribersByQuizId(params.id);
+
+  return (
+    <SubscribersList
+      listOfSubscribers={list}
+      quizName={searchParams.quizName}
+    />
+  );
 }

@@ -115,3 +115,7 @@ export interface UserQuizReportTypes extends UserQuizReport {
   name: ReactNode;
   user: User;
 }
+
+export interface SubscriptionTypes extends Subscription{
+  user: User
+}
