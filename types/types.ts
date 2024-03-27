@@ -1,5 +1,5 @@
 import { AnswerTypeE, ObjectiveOptions, Question, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus, UserQuizAnswers, UserQuizReport } from "@prisma/client";
-import { ChangeEvent } from "react";
+import { ChangeEvent, ReactNode } from "react";
 
 export type UserDataType = User & { Subscription: Subscription[] }
 
@@ -62,6 +62,7 @@ export interface UserQuizAnsType extends UserQuizAnswers {
 
 
 export interface CandidateResponseTypes extends UserQuizReport {
+  marks: any;
   ans_subjective: string | null;
   ans_optionsId: string;
   isCorrect: any;
@@ -98,4 +99,9 @@ export interface InputTypesProps {
 export interface imageS3 {
   title: string;
   value: string;
+}
+
+export interface UserQuizReportTypes extends UserQuizReport{
+  name: ReactNode;
+  user: User
 }

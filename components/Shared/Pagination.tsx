@@ -24,14 +24,6 @@ const Pagination: React.FC<PaginationProps> = ({
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  useEffect(() => {
-    if (urlInitialization) {
-      const params = new URLSearchParams(searchParams);
-      params.set("page", "1");
-      router.push(`${pathname}?${params.toString()}`);
-    }
-  }, [urlInitialization]);
-
   const createPageURL = (pageNumber: number) => {
     if (pageNumber <= totalpage && pageNumber > 0) {
       const params = new URLSearchParams(searchParams);
