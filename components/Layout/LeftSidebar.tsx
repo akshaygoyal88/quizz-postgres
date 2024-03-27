@@ -12,7 +12,7 @@ import pathName from "@/constants";
 import { classNames } from "@/utils/classNames";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Button } from "../Button";
+import { Button } from "../Shared/Button";
 import { FaRegFolderClosed } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
 import { FaXmark } from "react-icons/fa6";

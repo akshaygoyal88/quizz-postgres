@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { Container } from "./Container";
 import { NavLink } from "./NavLink";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 import { signOut } from "next-auth/react";
 import NotificationIcon from "./Shared/NotificationIcon";
 import { usePathname } from "next/navigation";

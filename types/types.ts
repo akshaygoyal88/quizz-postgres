@@ -1,7 +1,18 @@
-import { AnswerTypeE, ObjectiveOptions, Question, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus, UserQuizAnswers, UserQuizReport } from "@prisma/client";
+import {
+  AnswerTypeE,
+  ObjectiveOptions,
+  Question,
+  QuestionType,
+  Quiz,
+  Subscription,
+  User,
+  UserQuizAnswerStatus,
+  UserQuizAnswers,
+  UserQuizReport,
+} from "@prisma/client";
 import { ChangeEvent, ReactNode } from "react";
 
-export type UserDataType = User & { Subscription: Subscription[] }
+export type UserDataType = User & { Subscription: Subscription[] };
 
 export interface QuizDetail extends Quiz {
   createdBy: User;
@@ -9,57 +20,55 @@ export interface QuizDetail extends Quiz {
 
 export type QuizDetailType = QuizDetail | { error?: string };
 
-
-
 export interface QuesType extends Question {
   objective_options?: ObjectiveOptions[];
 }
 export type QuestionsTypes =
-| ({
-    objective_options?: {
+  | ({
+      objective_options?: {
+        id: string;
+        text: string;
+        isCorrect: boolean;
+        questionId: string;
+      }[];
+    } & {
       id: string;
-      text: string;
-      isCorrect: boolean;
-      questionId: string;
-    }[];
-  } & {
-    id: string;
-    question_text: string | null;
-    type: QuestionType;
-    timer: number;
-    answer_type: AnswerTypeE | null;
-    status: UserQuizAnswerStatus;
-    editorContent: string | null;
-    createdBy?: User;
-    createdAt?: Date;
-    updatedAt?: Date;
-  })
-| ({
-    objective_options: {
+      question_text: string | null;
+      type: QuestionType;
+      timer: number;
+      answer_type: AnswerTypeE | null;
+      status: UserQuizAnswerStatus;
+      editorContent: string | null;
+      createdBy?: User;
+      createdAt?: Date;
+      updatedAt?: Date;
+      solution?: string;
+    })
+  | ({
+      objective_options: {
+        id: string;
+        text: string;
+        isCorrect: boolean;
+        questionId: string;
+      }[];
+    } & {
       id: string;
-      text: string;
-      isCorrect: boolean;
-      questionId: string;
-    }[];
-  } & {
-    id: string;
-    question_text: string | null;
-    type: QuestionType;
-    timer: number;
-    answer_type: AnswerTypeE | null;
-    status?: UserQuizAnswerStatus;
-    editorContent: string | null;
-    createdBy?: User;
-    createdAt?: Date;
-    updatedAt?: Date;  
-  })
-| null;
-
+      question_text: string | null;
+      type: QuestionType;
+      timer: number;
+      answer_type: AnswerTypeE | null;
+      status?: UserQuizAnswerStatus;
+      editorContent: string | null;
+      createdBy?: User;
+      createdAt?: Date;
+      updatedAt?: Date;
+      solution?: string;
+    })
+  | null;
 
 export interface UserQuizAnsType extends UserQuizAnswers {
   question: QuesType | null;
 }
-
 
 export interface CandidateResponseTypes extends UserQuizReport {
   marks: any;
@@ -69,7 +78,6 @@ export interface CandidateResponseTypes extends UserQuizReport {
   timeTaken: string;
   question: QuestionsTypes;
   objective_options: ObjectiveOptions[];
-
 }
 
 export interface InputTypesProps {
@@ -81,7 +89,9 @@ export interface InputTypesProps {
   defaultValue?: string;
   className?: string;
   value?: string | number | undefined;
-  onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; // ChangeEvent accepts either HTMLInputElement or HTMLTextAreaElement
+  onChange?: (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void; // ChangeEvent accepts either HTMLInputElement or HTMLTextAreaElement
   errors?: string;
   maxLength?: number;
   otherText?: string;
@@ -93,7 +103,7 @@ export interface InputTypesProps {
   selecItems?: { value: string; title: string }[];
   selectHeading?: string;
   columnClass?: string;
-  accept?: string
+  accept?: string;
 }
 
 export interface imageS3 {
@@ -101,7 +111,7 @@ export interface imageS3 {
   value: string;
 }
 
-export interface UserQuizReportTypes extends UserQuizReport{
+export interface UserQuizReportTypes extends UserQuizReport {
   name: ReactNode;
-  user: User
+  user: User;
 }

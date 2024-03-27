@@ -1,18 +1,14 @@
 import { db } from "@/db";
+import { getQuestionByQuestionId } from "@/services/questions";
 import { QuestionType } from "@prisma/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, {params}: {params:string}) {
+export async function GET(req: Request, {params}: {params:Params}) {
   let err;
   try {
     const id = params.id
-    const isAvailable = await db.question.findUnique({
-      where: { id },
-      include: {
-        objective_options: true,
-      },
-    });
-
+    const isAvailable = await getQuestionByQuestionId(id)
     if (isAvailable) {
       return NextResponse.json(isAvailable);
     } else {

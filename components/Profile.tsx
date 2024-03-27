@@ -10,7 +10,7 @@ import { UserDataType } from "@/types/types";
 import Form from "./Shared/Form";
 import Heading from "./Shared/Heading";
 import CustomImage from "./Shared/CustomImage";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 import CustomGrid from "./Shared/CustomGrid";
 
 export interface FormErrors {

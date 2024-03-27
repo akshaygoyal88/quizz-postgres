@@ -7,7 +7,7 @@ import logoStaticKit from "@/images/logos/statickit.svg";
 import logoTransistor from "@/images/logos/transistor.svg";
 import logoTuple from "@/images/logos/tuple.svg";
 import { Container } from "./Container";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 
 export function Hero() {
   return (

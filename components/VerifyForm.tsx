@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { User } from "@prisma/client";
 import Heading from "./Shared/Heading";
 import Form, { FormInputs } from "./Shared/Form";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 
 interface VerifyFormProps {
   email: string;

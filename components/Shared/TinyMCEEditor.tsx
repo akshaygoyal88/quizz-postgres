@@ -5,7 +5,11 @@ import { imageS3 } from "@/types/types";
 
 interface TinyMCEEditorProps {
   initialValue?: string;
-  handleEditorChange: (content: string, index?: number, editor?: any) => void;
+  handleEditorChange: (
+    content: string,
+    index?: number,
+    editor?: string
+  ) => void;
   imagesList?: imageS3[] | null;
   editorsContent?: string | null;
   idx?: string;
@@ -24,7 +28,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
   const [editorVal, setEditorVal] = useState<string>("");
 
   const handleOnChange = (content: string, editor: any) => {
-    console.log(index);
     handleEditorChange(content, index, editor);
   };
 
@@ -133,6 +136,7 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       setEditorVal(editorsContent);
     }
   }, [editorsContent]);
+
   return (
     <Editor
       key={`editor_${idx}_${forceRender}`}

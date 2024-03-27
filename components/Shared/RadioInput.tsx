@@ -12,7 +12,9 @@ export default function RadioInput({
   id: string;
   value: string;
   checked: boolean;
-  handleAnyTypeRadioChange: () => void;
+  handleAnyTypeRadioChange: (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => void;
   label: string | JSX.Element | JSX.Element[];
   name: string;
   htmlFor: string;

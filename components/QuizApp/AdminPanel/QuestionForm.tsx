@@ -1,104 +1,138 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { AnswerTypeE, QuestionType, Quiz } from "@prisma/client";
 import { handleQuestionSubmit } from "@/action/actionsQuesForm";
 import { QuestionSubmitE } from "@/services/questions";
-import { useSession } from "next-auth/react";
-import TinyMCEEditor from "../UI/TinyMCEEditor";
+import TinyMCEEditor from "../../Shared/TinyMCEEditor";
 import SimpleToggle from "../../Shared/SimpleToggle";
-import { Button } from "../../Button";
+import { Button } from "../../Shared/Button";
 import RadioInput from "../../Shared/RadioInput";
 import Lable from "../../Shared/Lable";
-import { imageS3 } from "@/types/types";
+import { QuestionsTypes, UserDataType, imageS3 } from "@/types/types";
+import Form from "@/components/Shared/Form";
+import Heading from "@/components/Shared/Heading";
 
 interface QuestionFormProps {
-  options: string[];
-  correctAnswerIndex: number | null;
-  validationError: string;
-  questionType: QuestionType;
-  description: string;
   defaultQuestionSet?: Quiz | null;
-  timer: string;
-  successMessage: string;
   quizzes: Quiz[] | null;
   buttonText: string;
   headingText: string;
-  handleRadioChange: (event: { target: { value: string } }) => void;
-  handleOptionTextChange: (index: number, option: string) => void;
-  handleDescriptionChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleCorrectOptionChange: (index: number) => void;
-  handleSaveQuestion: () => void;
-  handletQuesSetChange: (value: string) => void;
-  handletQueChange: (value: string) => void;
-  handletTimerChange: (value: string) => void;
   action: QuestionSubmitE;
   quesId?: string;
   editorsContent?: string;
-  handleOptionIncrease: () => void;
-  handleOptionRemove: () => void;
-  handleAnyTypeRadioChange: (event: { target: { value: string } }) => void;
   objAnsType: AnswerTypeE;
+  imagesList: imageS3[] | null;
+  userData: UserDataType;
+  editQuestionData?: QuestionsTypes;
+  editQuesOptions?: string[];
+  correctAnsList?: string[];
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
-  options,
-  correctAnswerIndex,
-  validationError,
-  questionType,
-  description,
   defaultQuestionSet,
-  timer,
   quizzes,
   buttonText,
   headingText,
-  handleRadioChange,
-  handleCorrectOptionChange,
   action,
   quesId,
   editorsContent,
-  handleOptionIncrease,
-  handleOptionTextChange,
-  handleOptionRemove,
-  handleAnyTypeRadioChange,
-  objAnsType,
+  imagesList,
+  userData,
+  editQuestionData,
+  editQuesOptions,
+  correctAnsList,
 }) => {
-  const session = useSession();
+  const [options, setOptions] = useState<(string | null)[]>(
+    editQuesOptions || [""]
+  );
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<string[]>(
+    correctAnsList || []
+  );
+  const [validationError, setValidationError] = useState<string>("");
+  const [questionType, setQuestionType] = useState<string>(
+    editQuestionData?.type || QuestionType.OBJECTIVE
+  );
+  const [objAnsType, setObjAnsType] = useState<string>(
+    editQuestionData?.answer_type || AnswerTypeE.SINGLECHOICE
+  );
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [editorContent, setEditorContent] = useState<string | null>(null);
-  const [savedOptions, setSavedOptions] = useState<string[]>([]);
+  const [savedOptions, setSavedOptions] = useState<(string | null)[]>([]);
   const [desEditorContent, setDesEditorContent] = useState<string | null>(null);
-  const [imagesList, setImagesList] = useState<imageS3[] | null>(null);
 
-  useEffect(() => {
-    fetchImagesFromS3();
-  }, []);
-
-  const fetchImagesFromS3 = async () => {
-    try {
-      const response = await fetch("/api/fetchImages");
-      if (!response.ok) {
-        throw new Error("Failed to fetch images from S3");
-      }
-      const imageList = await response.json();
-
-      setImagesList(imageList);
-    } catch (error) {
-      setError(error);
-      console.error("Error fetching images from S3:", error);
+  const handleAnyTypeRadioChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    if (
+      objAnsType === AnswerTypeE.MULTIPLECHOICE &&
+      correctAnswerIndex.length > 1
+    ) {
+      setValidationError("Please select only one option for single choice");
+      setTimeout(() => {
+        setValidationError("");
+      }, 8000);
+      return;
     }
+    setObjAnsType(event.target.value);
+  };
+  const handleCorrectOptionChange = (index: number) => {
+    const idxStr = index.toString();
+    if (
+      (objAnsType === AnswerTypeE.MULTIPLECHOICE ||
+        correctAnswerIndex.length == 0) &&
+      !correctAnswerIndex.includes(idxStr)
+    ) {
+      setCorrectAnswerIndex([...correctAnswerIndex, idxStr]);
+    } else if (
+      objAnsType === AnswerTypeE.SINGLECHOICE &&
+      correctAnswerIndex.length === 0
+    ) {
+      setCorrectAnswerIndex([idxStr]);
+    } else {
+      const updated = correctAnswerIndex.filter((i) => i !== idxStr);
+      setCorrectAnswerIndex(updated);
+    }
+    setTimeout(() => {
+      setValidationError("");
+    }, 10000);
+  };
+
+  const handleOptionTextChange = (
+    content: string,
+    index?: number,
+    editor?: string
+  ) => {
+    error && setValidationError("");
+    const newOptions = [...options];
+    newOptions[index!] = content;
+    setOptions(newOptions);
+  };
+
+  const handleOptionIncrease = () => {
+    setOptions([...options, null]);
+  };
+
+  const handleOptionRemove = (index: number) => {
+    const updatedOptions = options.filter((_, i) => i !== index);
+    setOptions(updatedOptions);
   };
 
   const formAction = async (formData: FormData) => {
     setError(null);
     formData.append("editorContent", editorContent as string);
-    correctAnswerIndex?.forEach((ele: Number) =>
+    formData.append("createdById", userData.id as string);
+    action == QuestionSubmitE.EDIT && formData.append("id", quesId as string);
+
+    correctAnswerIndex?.forEach((ele: string) =>
       formData.append(`correctAnswer_${ele}`, ele as string)
     );
     if (desEditorContent) {
       formData.append("solution", desEditorContent as string);
     }
     options.forEach((option, i) =>
-      formData.append(`questionOptions_${i}`, option)
+      formData.append(`questionOptions_${i}`, option!)
     );
 
     const res = await handleQuestionSubmit(formData, action);
@@ -119,35 +153,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       setSavedOptions([...options]);
     }
   }, [options.length]);
-  useEffect(() => {
-    if (buttonText == "Save") {
-      handleOptionIncrease();
-    }
-  }, []);
   const handleEditorChange = (content: string, editor: any) => {
     setEditorContent(content);
   };
   const handleDesChange = (content: string, editor: any) => {
     setDesEditorContent(content);
   };
+  console.log(editorsContent);
   return (
-    <form action={formAction} className="m-4">
-      <div className="flex flex-wrap justify-between items-center lg:flex-row">
-        <h1 className="text-lg font-semibold">{headingText}</h1>
+    <Form action={formAction} error={error} success={successMessage}>
+      <div className="flex flex-wrap justify-between items-center mb-2 lg:flex-row">
+        <Heading headingText={headingText} tag={"h2"} />
         <Button color="blue">{buttonText}</Button>
       </div>
-      {successMessage && (
-        <p className="bg-green-500 py-2 px-4 m-2">{successMessage}</p>
-      )}
-      <div className="text-red-500 mb-2">{error}</div>
-      <input type="hidden" name="createdById" value={session?.data?.id} />
-      {action == QuestionSubmitE.EDIT && (
-        <input type="hidden" name="id" value={quesId} />
-      )}
       <div className="mb-4 bg-gray-100 p-3 rounded-md">
         <Lable labelText="Question:" htmlFor="ques" />
         <TinyMCEEditor
-          editorsContent={editorsContent}
+          editorsContent={editQuestionData?.editorContent}
           handleEditorChange={handleEditorChange}
           imagesList={imagesList}
           idx={"ques"}
@@ -160,7 +182,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 className="w-48 m-2 block rounded-md border-0 py-2 pl-0.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 defaultValue={questionType}
                 name="questionType"
-                // onChange={handleRadioChange}
+                onChange={(e) => setQuestionType(e.target.value)}
               >
                 <option value={QuestionType.OBJECTIVE}>Objective</option>
                 <option value={QuestionType.SUBJECTIVE}>Subjective</option>
@@ -172,7 +194,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             <input
               type="number"
               className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={timer}
+              defaultValue={0}
               name="timer"
             />
           </div>
@@ -237,13 +259,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       <div className="mt-4 p-3 bg-cyan-100 rounded-md">
         <Lable labelText="Solution:" />
         <TinyMCEEditor
-          editorsContent={description}
+          editorsContent={editQuestionData?.solution}
           handleEditorChange={handleDesChange}
           imagesList={imagesList}
           idx={"sol"}
         />
       </div>
-    </form>
+    </Form>
   );
 };
 
@@ -289,15 +311,19 @@ function OptionCard({
   buttonText,
   handleOptionTextChange,
 }: {
-  option?: string;
+  option?: string | null;
   index: number;
-  correctAnswerIndex?: string | null;
+  correctAnswerIndex?: string[];
   handleCorrectOptionChange: (index: number) => void;
   handleOptionRemove: (index: number) => void;
   imagesList?: imageS3[] | null;
-  savedOptions?: string[];
+  savedOptions?: (string | null)[];
   buttonText: string;
-  handleOptionTextChange: () => void;
+  handleOptionTextChange: (
+    content: string,
+    index?: number,
+    editor?: string
+  ) => void;
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
@@ -320,7 +346,7 @@ function OptionCard({
       <div className="">
         <TinyMCEEditor
           imagesList={imagesList}
-          editorsContent={savedOptions[index]}
+          editorsContent={savedOptions![index]}
           index={index}
           idx={index + buttonText}
           handleEditorChange={handleOptionTextChange}

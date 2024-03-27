@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import HTMLReactParser from "html-react-parser";
 import pathName from "@/constants";
 import { ObjectiveOptions, QuestionType, ReportStatusE } from "@prisma/client";
-import { Button } from "../../Button";
+import { Button } from "../../Shared/Button";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { CandidateResponseTypes } from "@/types/types";
 import { Table } from "@/components/Shared/Table";

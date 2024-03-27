@@ -4,7 +4,7 @@ import { useState } from "react";
 import { handleResetPassword } from "@/action/actionResetPassForm";
 import Heading from "./Shared/Heading";
 import Form, { FormInputs } from "./Shared/Form";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 import { handleChangePasswordForm } from "@/action/actionChangePasswordForm";
 
 const ResetPassword = () => {

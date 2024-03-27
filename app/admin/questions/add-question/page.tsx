@@ -1,11 +1,26 @@
-import AddQuestionUI from "@/components/QuizApp/AdminPanel/AddQuestionUI";
+import { Container } from "@/components/Container";
+import QuestionForm from "@/components/QuizApp/AdminPanel/QuestionForm";
 import { getQuizzesByCreatedBy } from "@/services/questionSet";
+import { QuestionSubmitE } from "@/services/questions";
+import { getImages } from "@/services/s3";
 import { getSessionUser } from "@/utils/getSessionUser";
-import { isUnauthorised } from "@/utils/isUnauthorised";
 import React from "react";
 
 export default async function QuestionsAdd() {
   const userData = await getSessionUser();
   const quizzes = await getQuizzesByCreatedBy();
-  return <AddQuestionUI userData={userData!} quizzes={quizzes} />;
+  const imagesList = await getImages();
+  return (
+    <Container>
+      <QuestionForm
+        quizzes={quizzes}
+        headingText="Add Questions"
+        buttonText="Save"
+        action={QuestionSubmitE.ADD}
+        objAnsType={"SINGLECHOICE"}
+        imagesList={imagesList}
+        userData={userData}
+      />
+    </Container>
+  );
 }

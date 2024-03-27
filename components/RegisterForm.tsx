@@ -3,7 +3,7 @@
 import React, { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, UserRole } from "@prisma/client";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 import Heading from "./Shared/Heading";
 import { handleRegisterForm } from "@/action/actionRegisterForm";
 import Form, { FormInputs } from "./Shared/Form";

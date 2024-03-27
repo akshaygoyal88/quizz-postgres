@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Button } from "./Button";
+import { Button } from "./Shared/Button";
 import Heading from "./Shared/Heading";
 import Form, { FormInputs } from "./Shared/Form";
 import LinksList from "./Shared/LinksList";
