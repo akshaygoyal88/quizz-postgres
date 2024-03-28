@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { imageS3 } from "@/types/types";
 
@@ -24,60 +24,13 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
   idx,
   index,
 }) => {
-  const [forceRender, setForceRender] = useState(false);
+  // const [forceRender, setForceRender] = useState(false);
+  const editorId = useId();
   const [editorVal, setEditorVal] = useState<string>("");
 
   const handleOnChange = (content: string, editor: any) => {
     handleEditorChange(content, index, editor);
   };
-
-  // const handleImageUpload = (
-  //   blobInfo: { blob: () => Blob; filename: () => string | undefined },
-  //   progress: (arg0: number) => void
-  // ) =>
-  //   new Promise((resolve, reject) => {
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.withCredentials = false;
-  //     xhr.open("POST", "/api/upload-image");
-
-  //     xhr.upload.onprogress = (e) => {
-  //       progress((e.loaded / e.total) * 100);
-  //     };
-
-  //     xhr.onload = () => {
-  //       if (xhr.status === 403) {
-  //         reject({ message: "HTTP Error: " + xhr.status, remove: true });
-  //         return;
-  //       }
-
-  //       if (xhr.status < 200 || xhr.status >= 300) {
-  //         reject("HTTP Error: " + xhr.status);
-  //         return;
-  //       }
-
-  //       const json = JSON.parse(xhr.responseText);
-  //       console.log(json, "jsonjson");
-
-  //       if (!json || typeof json.url != "string") {
-  //         reject("Invalid JSON: " + xhr.responseText);
-  //         return;
-  //       }
-
-  //       resolve(json.url);
-  //     };
-
-  //     xhr.onerror = () => {
-  //       reject(
-  //         "Image upload failed due to a XHR Transport error. Code: " +
-  //           xhr.status
-  //       );
-  //     };
-
-  //     const formData = new FormData();
-  //     formData.append("file", blobInfo.blob(), blobInfo.filename());
-
-  //     xhr.send(formData);
-  //   });
 
   const handleImageUpload = (
     blobInfo: { blob: () => Blob; filename: () => string | undefined },
@@ -128,9 +81,10 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
     });
   };
 
-  useEffect(() => {
-    setForceRender((prev) => !prev);
-  }, [imagesList]);
+  // useEffect(() => {
+  //   setForceRender((prev) => !prev);
+  // }, [imagesList]);
+
   useEffect(() => {
     if (editorsContent) {
       setEditorVal(editorsContent);
@@ -139,7 +93,7 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
 
   return (
     <Editor
-      key={`editor_${idx}_${forceRender}`}
+      key={`editor_${editorId}`}
       apiKey="9iy1f4gyicomt4zn9qfm8rtwtg9zfd1mdhrddt5894jbv5a8"
       initialValue={editorVal}
       init={{

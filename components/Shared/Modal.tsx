@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { IoMdClose } from "react-icons/io";
 
 const Modal = ({
   isOpen,
@@ -30,7 +31,7 @@ const Modal = ({
     >
       <div
         ref={modalRef}
-        className="bg-white p-8 rounded-md shadow-lg max-w-md w-full transform transition-transform ease-in-out duration-300"
+        className="bg-white p-4 rounded-md shadow-lg max-w-md w-full transform transition-transform ease-in-out duration-300"
       >
         <div className="flex items-center justify-between mb-4">
           <p className="text-2xl font-semibold text-red-600">{title}</p>
@@ -38,24 +39,11 @@ const Modal = ({
             className="text-gray-600 hover:text-gray-800 focus:outline-none"
             onClick={onClose}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <IoMdClose className="h-6 w-6" />
           </button>
         </div>
-        <p className="text-gray-700 mb-6">{description}</p>
-        <div className="flex justify-end space-x-4">
+        <p className="px-4 text-gray-700 mb-6">{description}</p>
+        <div className="flex p-4 justify-end space-x-4">
           <button
             className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 focus:outline-none"
             onClick={() => {

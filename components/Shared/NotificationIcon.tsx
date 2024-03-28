@@ -1,24 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import { useFetch } from "@/hooks/useFetch";
 import pathName from "@/constants";
 import { UserNotification } from "@prisma/client";
 import { fetchData, FetchMethodE } from "@/utils/fetch";
 import { UserDataType } from "@/types/types";
 import { FaBell, FaRegBell } from "react-icons/fa";
+import { IoMdCloseCircle } from "react-icons/io";
 
-const NotificationIcon = ({ userData }: { userData: UserDataType }) => {
+const NotificationIcon = ({
+  userData,
+  notificationData,
+}: {
+  userData: UserDataType;
+  notificationData: UserNotification[];
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [actionTakenValue, setActionTakenValue] = useState(0);
-  const {
-    data: notificationData,
-    error: notificationErr,
-    isLoading: notificationLoading,
-  } = useFetch({
-    url: `${pathName.notificationApi.path}/${userData.id}?${actionTakenValue}`,
-  });
+
   const unReadNotification = notificationData?.find(
-    (notification: { isRead: boolean }) => !notification.isRead
+    (notification) => !notification.isRead
   );
 
   const handleIconClick = () => {
@@ -75,14 +75,9 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   userData,
 }) => {
   const [showAll, setShowAll] = useState(false);
-  const {
-    data: isProfileComplete,
-    error: proComError,
-    isLoading: proIsLoading,
-  } = useFetch({ url: `/api/getProfileCompleted/${userData.id}` });
 
   const handleClearAll = async () => {
-    if (userData && isProfileComplete) {
+    if (userData && userData.isProfileComplete) {
       const {
         data: dltRes,
         error: dltErr,
@@ -98,7 +93,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const handleClickRead = async (notification: UserNotification) => {
     if (
       userData &&
-      !isProfileComplete &&
+      !userData.isProfileComplete &&
       notification?.message?.includes("Profile not completed")
     ) {
       return;
@@ -114,7 +109,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
     actionTaken();
   };
 
-  const formatDate = (timestamp: number) => {
+  const formatDate = (timestamp: Date) => {
     const date = new Date(timestamp);
     const now = new Date();
 
@@ -134,7 +129,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const handleClearNotification = async (notification: UserNotification) => {
     if (
       userData &&
-      !isProfileComplete &&
+      !userData.isProfileComplete &&
       notification?.message?.includes("Profile not completed")
     ) {
       return;
@@ -147,7 +142,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
   };
 
   const sortedNotifications = [...notificationData].sort(
-    (a, b) => b.time - a.time
+    (a, b) => b.time.getTime() - a.time.getTime()
   );
 
   const renderNotifications = showAll
@@ -181,21 +176,7 @@ const UserNotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     className="rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none"
                     onClick={() => handleClearNotification(notification)}
                   >
-                    {/* <XIcon className="h-4 w-4" /> */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-6 h-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                      />
-                    </svg>
+                    <IoMdCloseCircle className="w-6 h-6" />
                   </button>
                 )}
               </div>

@@ -162,3 +162,13 @@ export async function getQuestionByQuestionId(id: string){
     },
   });
 }
+
+
+export async function getQuestionByIds(ids: string[]){
+  if(ids.length <= 0){
+    return {error: "Question ID not provided."}
+  }
+  return await db.question.findMany({where: {id: {in: ids}}, include: {
+    objective_options: true,
+  }});
+}

@@ -17,6 +17,8 @@ import { FaRegFolderClosed } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
 import { FaXmark } from "react-icons/fa6";
 import { UserDataType } from "@/types/types";
+import { MdQuiz } from "react-icons/md";
+import { LuFileQuestion } from "react-icons/lu";
 
 const navigation = [
   {
@@ -32,31 +34,46 @@ const navigation = [
     current: "reports",
   },
   {
-    name: "Create Quiz",
-    href: pathName.quizAdd.path,
-    icon: GoPlus,
-    current: "add-quiz",
-  },
-  {
-    name: "Create Question",
-    href: pathName.questionsAdd.path,
-    icon: GoPlus,
-    current: "add-question",
-  },
-  {
-    name: "All Quiz",
+    name: "Quiz",
     href: pathName.quiz.path,
-    icon: FaRegFolderClosed,
+    icon: MdQuiz,
     current: "quiz",
+    subItems: [
+      {
+        name: "All Quiz",
+        href: pathName.quiz.path,
+        icon: FaRegFolderClosed,
+        current: "quiz",
+      },
+      {
+        name: "Create Quiz",
+        href: pathName.quizAdd.path,
+        icon: GoPlus,
+        current: "add-quiz",
+      },
+    ],
   },
 
   {
-    name: "All Questions",
+    name: "Question",
     href: `${pathName.questions.path}?page=1`,
-    icon: HiOutlineDocumentDuplicate,
+    icon: LuFileQuestion,
     current: "questions",
+    subItems: [
+      {
+        name: "All Questions",
+        href: `${pathName.questions.path}?page=1`,
+        icon: HiOutlineDocumentDuplicate,
+        current: "questions",
+      },
+      {
+        name: "Create Question",
+        href: pathName.questionsAdd.path,
+        icon: GoPlus,
+        current: "add-question",
+      },
+    ],
   },
-  { name: "Publish test", href: "#", icon: CiCalendar, current: false },
 ];
 
 export const UserContext = createContext<UserDataType | null>(null);
@@ -142,6 +159,33 @@ export default function LeftSideBar({
                             />
                             {item.name}
                           </Link>
+                          <ul className="pl-4">
+                            {item.subItems &&
+                              item.subItems.map((sub) => (
+                                <li key={sub.name}>
+                                  <Link
+                                    href={sub.href}
+                                    className={classNames(
+                                      sub.current
+                                        ? "bg-gray-100 text-indigo-600"
+                                        : "text-gray-700 hover:text-indigo-600 hover:bg-gray-100",
+                                      "group flex items-center gap-3 p-2 text-sm font-semibold rounded-md"
+                                    )}
+                                  >
+                                    <sub.icon
+                                      className={classNames(
+                                        sub.current
+                                          ? "text-indigo-600"
+                                          : "text-gray-400 group-hover:text-indigo-600",
+                                        "h-6 w-6 shrink-0"
+                                      )}
+                                      aria-hidden="true"
+                                    />
+                                    {sub.name}
+                                  </Link>
+                                </li>
+                              ))}
+                          </ul>
                         </li>
                       ))}
                     </ul>
@@ -188,6 +232,35 @@ export default function LeftSideBar({
                           />
                           {item.name}
                         </Link>
+                        {item.subItems && (
+                          <ul role="list" className="ml-4 space-y-1">
+                            {item.subItems.map((sub) => (
+                              <li key={sub.name}>
+                                <Link
+                                  href={sub.href}
+                                  className={classNames(
+                                    pathItems[pathItems.length - 1] ===
+                                      sub.current
+                                      ? "bg-gray-50 text-indigo-600"
+                                      : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                  )}
+                                >
+                                  <sub.icon
+                                    className={classNames(
+                                      sub.current
+                                        ? "text-indigo-600"
+                                        : "text-gray-400 group-hover:text-indigo-600",
+                                      "h-6 w-6 shrink-0"
+                                    )}
+                                    aria-hidden="true"
+                                  />
+                                  {sub.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                     ))}
                   </ul>

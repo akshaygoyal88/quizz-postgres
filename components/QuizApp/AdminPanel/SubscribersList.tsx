@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { SubscriptionTypes } from "@/types/types";
 import Heading from "@/components/Shared/Heading";
+import { Table } from "@/components/Shared/Table";
 
 const SubscribersList = ({
   listOfSubscribers,
@@ -58,10 +59,48 @@ const SubscribersList = ({
     }
   };
 
+  const tableRows = !("error" in listOfSubscribers)
+    ? listOfSubscribers.map((subscriber: SubscriptionTypes) => [
+        <>
+          <input
+            type="checkbox"
+            checked={
+              selectedSubscribers.findIndex((s) => s.id === subscriber.id) !==
+              -1
+            }
+            onChange={() => handleSubscriberSelection(subscriber.id)}
+          />
+        </>,
+        <>{`${subscriber.user.first_name} ${subscriber.user.last_name}`}</>,
+        <>{format(new Date(subscriber.startedAt), "MM/dd/yyyy HH:mm:ss")}</>,
+        <>
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            //   onClick={() => approveSubscriber(subscriber.id)}
+          >
+            Approve
+          </button>
+        </>,
+      ])
+    : [];
+
   return !("error" in listOfSubscribers) ? (
     <div className="sm:px-6">
       <Heading headingText={`Subscriber for ${quizName}`} tag={"h2"} />
-      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <Table
+        headers={[
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />,
+          "Candidate Name",
+          "Subscription Date and Time",
+          "Approve",
+        ]}
+        rows={tableRows}
+      />
+      {/* <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="text-white bg-gray-800">
           <tr>
             <th className="py-3 px-4 text-left">
@@ -113,7 +152,7 @@ const SubscribersList = ({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   ) : null;
 };

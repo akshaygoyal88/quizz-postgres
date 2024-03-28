@@ -10,7 +10,7 @@ import { Button } from "./Shared/Button";
 import { signOut } from "next-auth/react";
 import NotificationIcon from "./Shared/NotificationIcon";
 import { usePathname } from "next/navigation";
-import { UserRole } from "@prisma/client";
+import { UserNotification, UserRole } from "@prisma/client";
 import { UserDataType } from "@/types/types";
 import logo from "../images/logos/codelogo.png";
 
@@ -101,7 +101,13 @@ function MobileNavigation() {
   );
 }
 
-export function Header({ userData }: { userData: UserDataType }) {
+export function Header({
+  userData,
+  notificationData,
+}: {
+  userData: UserDataType;
+  notificationData: UserNotification[];
+}) {
   const path = usePathname();
 
   if (
@@ -141,7 +147,10 @@ export function Header({ userData }: { userData: UserDataType }) {
                 </Button>
               ) : (
                 <div className="flex items-end gap-5">
-                  <NotificationIcon userData={userData} />
+                  <NotificationIcon
+                    userData={userData}
+                    notificationData={notificationData}
+                  />
                   <Button className="bg-red-700" onClick={() => signOut()}>
                     Logout
                   </Button>

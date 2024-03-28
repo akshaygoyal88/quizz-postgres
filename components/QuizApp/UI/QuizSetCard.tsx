@@ -29,13 +29,17 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
       ? true
       : false;
   const handleSubscribeConfirm = async () => {
-    const { data, error, isLoading } = await fetchData({
-      url: `${pathName.subscriptionApiRoute.path}`,
-      method: FetchMethodE.POST,
-      body: { quizId: quiz.id, candidateId: userData?.id },
-    });
-    if (data && !data.error) {
-      router.refresh();
+    if (userData) {
+      const { data, error, isLoading } = await fetchData({
+        url: `${pathName.subscriptionApiRoute.path}`,
+        method: FetchMethodE.POST,
+        body: { quizId: quiz.id, candidateId: userData?.id },
+      });
+      if (data && !data.error) {
+        router.refresh();
+      }
+    } else {
+      router.push(pathName.login.path);
     }
   };
 
@@ -58,7 +62,12 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           Quick Start
         </Button>
       ) : (
-        <Button variant="quizCard" onClick={() => setModalOpen(true)}>
+        <Button
+          variant="quizCard"
+          onClick={() => {
+            userData ? setModalOpen(true) : router.push(pathName.login.path);
+          }}
+        >
           Subscribe Now
         </Button>
       )}

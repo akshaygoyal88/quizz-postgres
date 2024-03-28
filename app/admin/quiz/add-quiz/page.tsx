@@ -1,3 +1,4 @@
+import { Container } from "@/components/Container";
 import QuizForm from "@/components/QuizApp/AdminPanel/QuizForm";
 import { QuestionSetSubmitE } from "@/services/questionSet";
 import { getImages } from "@/services/s3";
@@ -8,10 +9,12 @@ export default async function CreateSet() {
   const userData = await getSessionUser();
   const imagesList = await getImages();
   return (
-    <QuizForm
-      action={QuestionSetSubmitE.CREATE}
-      userData={userData!}
-      imagesList={imagesList!}
-    />
+    <Container>
+      <QuizForm
+        action={QuestionSetSubmitE.CREATE}
+        userData={userData!}
+        imagesList={imagesList!}
+      />
+    </Container>
   );
 }

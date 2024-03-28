@@ -20,10 +20,12 @@ export async function createNotification(reqData: {userId:string, message: strin
 }
 
 export async function getNotifications(userId: string) {
+    if(!userId){
+        return {error: "User Id missing."}
+    }
     const res =  await db.userNotification.findMany({
         where: {userId}
     })
-
     return res;
 }
 

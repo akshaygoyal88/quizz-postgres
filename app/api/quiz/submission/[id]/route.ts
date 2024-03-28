@@ -22,7 +22,6 @@ export async function PUT(req: Request, { params }: { params: Params }) {
       const sendRes = await saveResponseForQues({
         id,
         reqData: {
-          isAnswered: false,
           status: UserQuizAnswerStatus.SKIPPED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,
@@ -37,7 +36,6 @@ export async function PUT(req: Request, { params }: { params: Params }) {
       const sendRes = await saveResponseForQues({
         id,
         reqData: {
-          isAnswered: false,
           status: UserQuizAnswerStatus.SKIPPED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,
@@ -51,7 +49,6 @@ export async function PUT(req: Request, { params }: { params: Params }) {
         reqData: {
           ans_optionsId: reqDetail.ans_optionsId,
           ans_subjective: reqDetail.ans_subjective,
-          isAnswered: true,
           status: UserQuizAnswerStatus.ATTEMPTED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,

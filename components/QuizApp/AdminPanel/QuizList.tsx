@@ -12,6 +12,9 @@ import Modal from "@/components/Shared/Modal";
 import { formattedDate } from "@/utils/formattedDate";
 import { Table } from "@/components/Shared/Table";
 import { Button } from "@/components/Shared/Button";
+import Link from "next/link";
+import { FaEdit, FaUsers } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 export default function QuizList({
   quizzes,
@@ -94,9 +97,7 @@ function QuizTable({
           "Created By",
           "Created on",
           "Last Modified on",
-          "Subscribed",
-          "Edit",
-          "Delete",
+          "Action",
         ]}
         rows={quizzes.map((quiz) => [
           quiz.name,
@@ -104,27 +105,32 @@ function QuizTable({
           quiz.createdBy.first_name,
           formattedDate(quiz.createdAt),
           formattedDate(quiz.updatedAt),
-          <a
-            href={`quiz/subscriber/${quiz.id}?quizName=${quiz.name}`}
-            className="text-orange-500 hover:text-orange-900"
-          >
-            View Subscribers
-          </a>,
-          <a
-            href={`/admin/quiz/${quiz.id}/edit`}
-            className="text-indigo-600 hover:text-indigo-900"
-          >
-            Edit
-          </a>,
-          <a
-            onClick={() => {
-              setIsDeleteModalOpen(true);
-              setSelectedQuestionId(quiz.id);
-            }}
-            className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
-          >
-            Delete
-          </a>,
+          <span className="flex justify-between items-center gap-2">
+            <Link
+              title="view subscriber"
+              href={`quiz/subscriber/${quiz.id}?quizName=${quiz.name}`}
+              className="text-orange-500 hover:text-orange-900"
+            >
+              <FaUsers className="h-6 w-6" />
+            </Link>
+            <Link
+              title="edit"
+              href={`/admin/quiz/${quiz.id}/edit`}
+              className="text-indigo-600 hover:text-indigo-900"
+            >
+              <FaEdit className="h-6 w-6" />
+            </Link>
+            <a
+              title="delete"
+              onClick={() => {
+                setIsDeleteModalOpen(true);
+                setSelectedQuestionId(quiz.id);
+              }}
+              className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
+            >
+              <MdDelete className="h-6 w-6" />
+            </a>
+          </span>,
         ])}
       />
       <Modal

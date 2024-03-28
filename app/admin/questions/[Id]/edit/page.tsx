@@ -15,7 +15,7 @@ export default async function QuesEdit({ params }: { params: Params }) {
   const questionData = await getQuestionByQuestionId(params.Id);
   let options: string[] = [];
   let correctAnsList: string[] = [];
-  console.log(questionData);
+
   if (questionData?.type === QuestionType.OBJECTIVE) {
     questionData.objective_options.forEach(
       (ele: ObjectiveOptions, index: number) => {

@@ -1,3 +1,4 @@
+import { Container } from "@/components/Container";
 import LeftSideBar from "@/components/Layout/LeftSidebar";
 import EditSetForm from "@/components/QuizApp/AdminPanel/EditSetForm";
 import QuizForm from "@/components/QuizApp/AdminPanel/QuizForm";
@@ -25,12 +26,14 @@ export default async function EditSet({
     searchParams?.msg === "1" ? "Successfully added" : null;
 
   return (
-    <QuizForm
-      userData={userData!}
-      action={QuestionSetSubmitE.EDIT}
-      imagesList={imagesList}
-      initialFormData={quizDetails}
-      addSetSuccessMessage={addSetSuccessMessage}
-    />
+    <Container>
+      <QuizForm
+        userData={userData!}
+        action={QuestionSetSubmitE.EDIT}
+        imagesList={imagesList}
+        initialFormData={quizDetails}
+        addSetSuccessMessage={addSetSuccessMessage}
+      />
+    </Container>
   );
 }

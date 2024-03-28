@@ -159,7 +159,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const handleDesChange = (content: string, editor: any) => {
     setDesEditorContent(content);
   };
-  console.log(editorsContent);
+
   return (
     <Form action={formAction} error={error} success={successMessage}>
       <div className="flex flex-wrap justify-between items-center mb-2 lg:flex-row">
@@ -243,7 +243,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           </div>
           {options.map((option, index) => (
             <OptionCard
-              option={option}
               index={index}
               correctAnswerIndex={correctAnswerIndex}
               handleCorrectOptionChange={handleCorrectOptionChange}
@@ -301,7 +300,6 @@ function SelectSet({
 }
 
 function OptionCard({
-  option,
   index,
   correctAnswerIndex,
   handleCorrectOptionChange,
@@ -311,7 +309,6 @@ function OptionCard({
   buttonText,
   handleOptionTextChange,
 }: {
-  option?: string | null;
   index: number;
   correctAnswerIndex?: string[];
   handleCorrectOptionChange: (index: number) => void;

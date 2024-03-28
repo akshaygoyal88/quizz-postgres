@@ -69,63 +69,61 @@ export default function QuizForm({
     setEditorContent(content);
   };
   return (
-    <Container>
-      <Form
-        action={formAction}
-        success={successMessage || addSetSuccessMessage}
-        error={error}
-      >
-        <div className="flex flex-wrap justify-between items-center lg:flex-row">
-          <Heading
-            headingText={action === "create" ? "Create Quiz" : "Edit Quiz"}
-            tag="h1"
-          />
-          <Button color="blue">{action}</Button>
-        </div>
-        <InputWithLabel
-          type="text"
-          id="name"
-          name="name"
-          label="Name:"
-          className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
-          defaultValue={initialFormData?.name}
+    <Form
+      action={formAction}
+      success={successMessage || addSetSuccessMessage}
+      error={error}
+    >
+      <div className="flex flex-wrap justify-between items-center lg:flex-row">
+        <Heading
+          headingText={action === "create" ? "Create Quiz" : "Edit Quiz"}
+          tag="h1"
         />
-        <div className="flex flex-col justify-between">
-          <label className="block text-sm font-medium leading-6 text-gray-900">
-            Status:
-          </label>
-          <select
-            defaultValue={initialFormData?.status!}
-            name="status"
-            className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white"
-          >
-            <option value="Publish">Publish</option>
-            <option value="Draft">Draft</option>
-            <option value="Archived">Archived</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium leading-6 text-gray-900">
-            Description:
-          </label>
-          <TinyMCEEditor
-            editorsContent={initialFormData?.description}
-            handleEditorChange={handleEditorChange}
-            imagesList={imagesList}
-            idx="quesset"
-          />
-        </div>
-        <InputWithLabel
-          type="number"
-          id="price"
-          name="price"
-          label="Price:"
-          className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
-          step="0.1"
-          value={undefined}
-          defaultValue={`${initialFormData?.price}`}
+        <Button color="blue">{action}</Button>
+      </div>
+      <InputWithLabel
+        type="text"
+        id="name"
+        name="name"
+        label="Name:"
+        className="block w-full rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6"
+        defaultValue={initialFormData?.name}
+      />
+      <div className="flex flex-col justify-between">
+        <label className="block text-sm font-medium leading-6 text-gray-900">
+          Status:
+        </label>
+        <select
+          defaultValue={initialFormData?.status!}
+          name="status"
+          className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white"
+        >
+          <option value="Publish">Publish</option>
+          <option value="Draft">Draft</option>
+          <option value="Archived">Archived</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium leading-6 text-gray-900">
+          Description:
+        </label>
+        <TinyMCEEditor
+          editorsContent={initialFormData?.description}
+          handleEditorChange={handleEditorChange}
+          imagesList={imagesList}
+          idx="quesset"
         />
-      </Form>
-    </Container>
+      </div>
+      <InputWithLabel
+        type="number"
+        id="price"
+        name="price"
+        label="Price:"
+        className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
+        step="0.1"
+        value={undefined}
+        defaultValue={`${initialFormData?.price}`}
+      />
+    </Form>
   );
 }

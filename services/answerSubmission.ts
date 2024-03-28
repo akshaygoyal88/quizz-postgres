@@ -7,8 +7,10 @@ import {
   UserQuizAnswers,
   UserQuizStatusE,
   UserQuizReport,
+  Question,
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
+import { getQuestionByIds } from "./questions";
 
 export async function userQuizQuestionInitilization(reqData: {quizId: string, questionId: string, submittedBy: string}) {
   if(!reqData.submittedBy) {
@@ -178,8 +180,8 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
   const timeTaken = (Date.now() - userReport.startedAt) / 1000;
 
   userAnswers.forEach((ans) => {
-    correctAnswers += ans.isAnswered && ans.isCorrect ? 1 : 0;
-    wrongAnswers += ans.isAnswered && !ans.isCorrect ? 1 : 0;
+    correctAnswers += ans.status === UserQuizAnswerStatus.ATTEMPTED && ans.isCorrect ? 1 : 0;
+    wrongAnswers += ans.status === UserQuizAnswerStatus.ATTEMPTED && !ans.isCorrect ? 1 : 0;
     notAttempted += ans.status === UserQuizAnswerStatus.NOT_ATTEMPTED ? 1 : 0;
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
@@ -202,16 +204,18 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
 
   return quizReportRes;
 }
-export function getUserQuiz({quizId,submittedBy}:{ quizId: string; submittedBy: string | null ; }) {
+export async function getUserQuiz({quizId,submittedBy}:{ quizId: string; submittedBy: string | null ; }) {
   if(!submittedBy){
     return {error: "Please login"};
   }  
-  return db.userQuizAnswers.findMany({where: {quizId, submittedBy}, include:{
-      question: {
-        include:{
-          objective_options: true
-        }
-      }
-    }})
+  const userQuizReport = await db.userQuizAnswers.findMany({where: {quizId, submittedBy}});
+  const allQuizquestionIds = userQuizReport.map((userQuizReport) => userQuizReport.questionId);
+
+  const selectedQuestios = await getQuestionByIds(allQuizquestionIds) as Question[];
+
+  return userQuizReport.map((report) => {
+    const question = selectedQuestios.find(question => report.questionId === question.id);
+    return {...report, question }
+  });
 }
 

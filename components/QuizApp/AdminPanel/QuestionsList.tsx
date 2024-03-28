@@ -3,7 +3,6 @@
 import React from "react";
 import Pagination from "../../Shared/Pagination";
 import EmptyState from "../../Shared/EmptyState";
-import { Button } from "@/components/Button";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
@@ -14,6 +13,11 @@ import { QuestionsTypes } from "@/types/types";
 import { Table } from "@/components/Shared/Table";
 import { formattedDate } from "@/utils/formattedDate";
 import Heading from "@/components/Shared/Heading";
+import { Button } from "@/components/Shared/Button";
+import { FaEdit } from "react-icons/fa";
+import Link from "next/link";
+import { MdDelete } from "react-icons/md";
+import { IoDuplicate } from "react-icons/io5";
 
 export default function QuestionsList({
   quesData,
@@ -102,42 +106,41 @@ function QuestionsTable({
         que?.editorContent?.replace(/<img[^>]*>/g, "").trim() || ""
       )}
     </>,
-    <>Question set name??</>,
     <>{que?.type}</>,
     <>{que?.createdBy?.first_name || que?.createdBy?.email}</>,
     <>{formattedDate(que?.createdAt!)}</>,
     <>{formattedDate(que?.updatedAt!)}</>,
     <>{que?.timer}</>,
-    <>
+
+    <span className="flex justify-between items-center gap-2">
       <a
+        title="duplicate"
         onClick={() => {
           setIsDuplicateModalOpen(true);
           setSelectedQuestionId(que?.id!);
         }}
         className="text-orange-600 hover:text-orange-900 hover:cursor-pointer"
       >
-        Duplicate
+        <IoDuplicate className="h-6 w-6" />
       </a>
-    </>,
-    <>
-      <a
+      <Link
+        title="edit"
         href={`/admin/questions/${que?.id!}/edit`}
         className="text-indigo-600 hover:text-indigo-900"
       >
-        Edit
-      </a>
-    </>,
-    <>
+        <FaEdit className="h-6 w-6" />
+      </Link>
       <a
+        title="delete"
         onClick={() => {
           setIsDeleteModalOpen(true);
           setSelectedQuestionId(que?.id!);
         }}
         className="text-red-600 hover:text-indigo-900 hover:cursor-pointer"
       >
-        Delete
+        <MdDelete className="h-6 w-6" />
       </a>
-    </>,
+    </span>,
   ]);
 
   return (
@@ -151,12 +154,12 @@ function QuestionsTable({
       <Table
         headers={[
           "Question",
-          "Set",
           "Type",
           "Created By",
           "Created on",
           "Last Modified on",
           "Timer(in secs)",
+          "Action",
         ]}
         rows={tableRows}
       />

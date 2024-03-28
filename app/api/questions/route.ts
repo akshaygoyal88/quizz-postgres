@@ -31,7 +31,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: any, res: any) {
+export async function POST(req: Request, res: any) {
   try {
     const {
       editorContent,
@@ -44,10 +44,10 @@ export async function POST(req: any, res: any) {
     } = await req.json();
     const correctAnswer: Number[] = []
     
-    objective_options?.forEach((option: { isCorrect: any; }, i: Number) => {
+    objective_options?.forEach((option: { isCorrect: boolean; }, i: number) => {
       option.isCorrect == true && correctAnswer.push(i)});
 
-    const options =  objective_options?.map((opt: { text: any; })=> opt.text);
+    const options =  objective_options?.map((opt: { text: string; })=> opt.text);
  
 
     const addQuestion = await createQuestion(
@@ -58,6 +58,7 @@ export async function POST(req: any, res: any) {
       solution,
       timer,
       createdById,
+      quizId: "duplicate"
     })
   console.log(addQuestion)
     return NextResponse.json(addQuestion);

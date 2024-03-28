@@ -1,22 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface TableRows {}
 
 interface TableProps {
-  headers: string[];
+  headers: (string | React.ReactNode)[];
   rows: React.ReactNode[][];
 }
 
 export function Table({ headers, rows }: TableProps) {
   return (
-    <table className="table-auto min-w-full divide-y divide-gray-300">
-      <thead>
+    <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <thead className="text-white bg-gray-800">
         <tr>
           {headers.map((header, index) => (
-            <th
-              key={header + index}
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-            >
+            <th key={header + index} className="py-3 px-4 text-left">
               {header}
             </th>
           ))}
@@ -26,10 +23,7 @@ export function Table({ headers, rows }: TableProps) {
         {rows.map((row, rowIndex) => (
           <tr key={rowIndex}>
             {row.map((cell, cellIndex) => (
-              <td
-                className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"
-                key={cellIndex}
-              >
+              <td className="py-3 px-4" key={cellIndex}>
                 {cell}
               </td>
             ))}
