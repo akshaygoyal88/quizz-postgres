@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { AnswerTypeE, ObjectiveOptions, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus } from "@prisma/client";
 import { createNotification } from "./notification";
 import { getUserById } from "./user";
-import { getUserQuizAllQuestionAnswers } from "./answerSubmission";
+import { getUserQuiz } from "./answerSubmission";
 
 export async function getQuizQuestions({ quizId }: { quizId: string }) {
   return await db.quizQuestions.findMany({
@@ -131,7 +131,7 @@ export async function getQuizQuestionByID({ quizId, questionId }: { quizId: stri
 export async function getUserQuizQuestionsAnswers({ quizId, userId }: { quizId:string, userId:string}){
   const allQuestions = await getQuizQuestions({quizId});
   const questions = allQuestions.map(q => q.question);
-  const allUserQuestionAnswer = await getUserQuizAllQuestionAnswers({userId, quizId});
+  const allUserQuestionAnswer = await getUserQuiz({quizId,submittedBy:userId});
   let final = [...questions];
   for (let i = 0; i<final.length; i++) {
     for (const u of allUserQuestionAnswer) {

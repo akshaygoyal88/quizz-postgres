@@ -60,21 +60,16 @@ export async function getUserQuizQuestion({
   submittedBy: string;
   questionId: string;
 }) {
-  return await db.userQuizAnswers.findFirst({
+  const userQuizQuestion =  await db.userQuizAnswers.findFirst({
     where: {
       quizId,
       submittedBy,
       questionId,
     },
-    include:{
-      question: {
-        include: {
-          objective_options: true
-        }
-      }
     
-    }
   });
+  const question = await getQuestionByIds([questionId]) as Question[];
+  return {...userQuizQuestion, question: question[0]}
 }
 
 export async function saveResponseForQues(reqData: UserQuizAnswers) {
@@ -101,19 +96,9 @@ export async function getUserQuizAllQuestionAnswers({
   quizId: string;
   userId: string;
 }) {
-  return await db.userQuizAnswers.findMany({
-    where: {
-      quizId,
-      submittedBy: userId,
-    },
-    include: {
-      question: {
-        include: {
-          objective_options: true,
-        },
-      },
-    }
-  });
+  
+  return await getUserQuiz({quizId,submittedBy:userId})
+ 
 }
 
 export async function quizInitializationForReport(
@@ -212,7 +197,6 @@ export async function getUserQuiz({quizId,submittedBy}:{ quizId: string; submitt
   const allQuizquestionIds = userQuizReport.map((userQuizReport) => userQuizReport.questionId);
 
   const selectedQuestios = await getQuestionByIds(allQuizquestionIds) as Question[];
-
   return userQuizReport.map((report) => {
     const question = selectedQuestios.find(question => report.questionId === question.id);
     return {...report, question }

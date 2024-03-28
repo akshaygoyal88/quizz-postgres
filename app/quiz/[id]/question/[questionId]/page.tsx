@@ -23,6 +23,7 @@ export default async function page({ params }: { params: Params }) {
     quizId,
     questionId,
   });
+  console.log(userQuizQuestionWithAnswer, "dfcsdfdsfdsfdsfdsfdsfsd");
   if ("error" in userQuizQuestionWithAnswer) {
     return <>ERROR COMPONENT</>;
   } else {
