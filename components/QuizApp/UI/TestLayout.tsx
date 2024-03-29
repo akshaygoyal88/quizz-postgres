@@ -19,6 +19,8 @@ import InputWithLabel from "@/components/Shared/InputWithLabel";
 import { Button } from "@/components/Shared/Button";
 import Form from "@/components/Shared/Form";
 import Checkbox from "@/components/Shared/Checkbox";
+import { fetchData, FetchMethodE } from "@/utils/fetch";
+import pathName from "@/constants";
 
 function TestLayout({
   allQuestions,
@@ -42,19 +44,21 @@ function TestLayout({
   };
 
   const handleFinalSubmitTest = async () => {
-    // const {
-    //   data: finalSubRes,
-    //   error: finalSubError,
-    //   isLoading: finalSubLoading,
-    // } = await fetchData({
-    //   url: `${pathName.finalSubmissionApiRoute.path}`,
-    //   method: FetchMethodE.POST,
-    //   body: {
-    //     questions: allQuizQuestions,
-    //     quizId,
-    //     submittedBy: userData?.id,
-    //   },
-    // });
+    const {
+      data: finalSubRes,
+      error: finalSubError,
+      isLoading: finalSubLoading,
+    } = await fetchData({
+      url: `${pathName.finalSubmissionApiRoute.path}`,
+      method: FetchMethodE.POST,
+      body: {
+        quizId,
+        submittedBy: userData?.id,
+      },
+    });
+    if (!finalSubRes?.error) {
+      alert("Test submitted successfully");
+    }
   };
 
   return (
