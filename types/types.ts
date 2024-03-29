@@ -21,6 +21,7 @@ export interface QuizDetail extends Quiz {
 export type QuizDetailType = QuizDetail | { error?: string };
 
 export interface QuesType extends Question {
+  timer: number;
   objective_options?: ObjectiveOptions[];
 }
 export type QuestionsTypes =
@@ -67,6 +68,10 @@ export type QuestionsTypes =
   | null;
 
 export interface UserQuizAnsType extends UserQuizAnswers {
+  id: string;
+  ans_subjective: string;
+  ans_optionsId: string;
+  timeTaken: number;
   question: QuesType | null;
 }
 
@@ -116,6 +121,6 @@ export interface UserQuizReportTypes extends UserQuizReport {
   user: User;
 }
 
-export interface SubscriptionTypes extends Subscription{
-  user: User
+export interface SubscriptionTypes extends Subscription {
+  user: User;
 }
