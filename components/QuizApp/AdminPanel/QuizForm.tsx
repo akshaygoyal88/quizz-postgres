@@ -79,7 +79,9 @@ export default function QuizForm({
           headingText={action === "create" ? "Create Quiz" : "Edit Quiz"}
           tag="h1"
         />
-        <Button color="blue">{action}</Button>
+        <Button color="blue">
+          {action === QuestionSetSubmitE.CREATE ? "Create" : "Update"}
+        </Button>
       </div>
       <InputWithLabel
         type="text"

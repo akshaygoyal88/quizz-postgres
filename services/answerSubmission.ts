@@ -12,11 +12,15 @@ import {
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 import { getQuestionByIds } from "./questions";
 
-export async function userQuizQuestionInitilization(reqData: {quizId: string, questionId: string, submittedBy: string}) {
-  if(!reqData.submittedBy) {
-    return {error: "Submitted by is missing"}
+export async function userQuizQuestionInitilization(reqData: {
+  quizId: string;
+  questionId: string;
+  submittedBy: string;
+}) {
+  if (!reqData.submittedBy) {
+    return { error: "Submitted by is missing" };
   }
-  
+
   await db.userQuizAnswers.updateMany({
     where: {
       quizId: reqData.quizId,
@@ -26,29 +30,24 @@ export async function userQuizQuestionInitilization(reqData: {quizId: string, qu
   });
 
   const alreadyExists = await getUserQuizQuestion({
-    quizId : reqData.quizId,
-    submittedBy:reqData.submittedBy, 
-    questionId:reqData.questionId
+    quizId: reqData.quizId,
+    submittedBy: reqData.submittedBy,
+    questionId: reqData.questionId,
   });
 
-  if(alreadyExists){
+  if (alreadyExists) {
     return alreadyExists;
-  } else{
-    return await db.userQuizAnswers.create({
+  } else {
+    const createResForQues = await db.userQuizAnswers.create({
       data: {
         ...reqData,
         isCurrent: true,
       },
-      include:{
-        question: {
-          include: {
-            objective_options: true
-          }
-        }
-      
-      }
     });
-  } 
+    console.log(createResForQues, "getQuestionByIds");
+    const question = await getQuestionByIds([createResForQues.questionId]);
+    return { ...createResForQues, question: question[0] };
+  }
 }
 
 export async function getUserQuizQuestion({
@@ -60,22 +59,32 @@ export async function getUserQuizQuestion({
   submittedBy: string;
   questionId: string;
 }) {
-  const userQuizQuestion =  await db.userQuizAnswers.findFirst({
+  const userQuizQuestion = await db.userQuizAnswers.findFirst({
     where: {
       quizId,
       submittedBy,
       questionId,
     },
-    
   });
-  const question = await getQuestionByIds([questionId]) as Question[];
-  return {...userQuizQuestion, question: question[0]}
+  if (!userQuizQuestion) {
+    return null;
+  }
+  const question = (await getQuestionByIds([questionId])) as Question[];
+  return { ...userQuizQuestion, question: question[0] };
 }
 
 export async function saveResponseForQues(reqData: UserQuizAnswers) {
-  const {id, status, timeTaken: timeTakenStr, timeOver: timeOverStr, ans_optionsId, ans_subjective} = reqData;
+  console.log(reqData, "reqDatauser@yopmail.com");
+  const {
+    id,
+    status,
+    timeTaken: timeTakenStr,
+    timeOver: timeOverStr,
+    ans_optionsId,
+    ans_subjective,
+  } = reqData;
   const timeTaken = parseInt(timeTakenStr);
-  const timeOver = timeOverStr === "1" ? true : false
+  const timeOver = timeOverStr === "1" ? true : false;
 
   return await db.userQuizAnswers.update({
     where: { id },
@@ -84,7 +93,7 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
       timeTaken,
       timeOver,
       ans_optionsId,
-      ans_subjective
+      ans_subjective,
     },
   });
 }
@@ -96,9 +105,7 @@ export async function getUserQuizAllQuestionAnswers({
   quizId: string;
   userId: string;
 }) {
-  
-  return await getUserQuiz({quizId,submittedBy:userId})
- 
+  return await getUserQuiz({ quizId, submittedBy: userId });
 }
 
 export async function quizInitializationForReport(
@@ -165,8 +172,10 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
   const timeTaken = (Date.now() - userReport.startedAt) / 1000;
 
   userAnswers.forEach((ans) => {
-    correctAnswers += ans.status === UserQuizAnswerStatus.ATTEMPTED && ans.isCorrect ? 1 : 0;
-    wrongAnswers += ans.status === UserQuizAnswerStatus.ATTEMPTED && !ans.isCorrect ? 1 : 0;
+    correctAnswers +=
+      ans.status === UserQuizAnswerStatus.ATTEMPTED && ans.isCorrect ? 1 : 0;
+    wrongAnswers +=
+      ans.status === UserQuizAnswerStatus.ATTEMPTED && !ans.isCorrect ? 1 : 0;
     notAttempted += ans.status === UserQuizAnswerStatus.NOT_ATTEMPTED ? 1 : 0;
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
@@ -189,17 +198,30 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
 
   return quizReportRes;
 }
-export async function getUserQuiz({quizId,submittedBy}:{ quizId: string; submittedBy: string | null ; }) {
-  if(!submittedBy){
-    return {error: "Please login"};
-  }  
-  const userQuizReport = await db.userQuizAnswers.findMany({where: {quizId, submittedBy}});
-  const allQuizquestionIds = userQuizReport.map((userQuizReport) => userQuizReport.questionId);
+export async function getUserQuiz({
+  quizId,
+  submittedBy,
+}: {
+  quizId: string;
+  submittedBy: string | null;
+}) {
+  if (!submittedBy) {
+    return { error: "Please login" };
+  }
+  const userQuizReport = await db.userQuizAnswers.findMany({
+    where: { quizId, submittedBy },
+  });
+  const allQuizquestionIds = userQuizReport.map(
+    (userQuizReport: { questionId: string }) => userQuizReport.questionId
+  );
 
-  const selectedQuestios = await getQuestionByIds(allQuizquestionIds) as Question[];
-  return userQuizReport.map((report) => {
-    const question = selectedQuestios.find(question => report.questionId === question.id);
-    return {...report, question }
+  const selectedQuestios = (await getQuestionByIds(
+    allQuizquestionIds
+  )) as Question[];
+  return userQuizReport.map((report: { questionId: string }) => {
+    const question = selectedQuestios.find(
+      (question) => report.questionId === question.id
+    );
+    return { ...report, question };
   });
 }
-

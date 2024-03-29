@@ -95,7 +95,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
           type="text"
           name="first_name"
           id="first-name"
-          defaultValue={`${userData?.first_name}`}
+          defaultValue={`${userData?.first_name || ""}`}
           columnClass="sm:col-span-3"
           className="block w-full  rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         />
@@ -105,7 +105,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
           type="text"
           name="last_name"
           id="last-name"
-          defaultValue={`${userData?.last_name}`}
+          defaultValue={`${userData?.last_name || ""}`}
           columnClass="sm:col-span-3"
           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         />
@@ -191,7 +191,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
           type="text"
           name="city"
           id="city"
-          defaultValue={`${userData?.city}`}
+          defaultValue={`${userData?.city || ""}`}
           errors={error.city}
           impAsterisk="*"
           columnClass="sm:col-span-3 sm:col-start-1"
@@ -204,7 +204,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
           name="pincode"
           id="postal-code"
           // onChange={pincodeChange}
-          defaultValue={`${userData?.pincode}`}
+          defaultValue={`${userData?.pincode || ""}`}
           errors={error.pincode}
           columnClass="sm:col-span-3"
           impAsterisk="*"
@@ -216,7 +216,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
           type="text"
           name="address"
           id="street-address"
-          defaultValue={`${userData?.address}`}
+          defaultValue={`${userData?.address || ""}`}
           columnClass="col-span-full"
           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
         />

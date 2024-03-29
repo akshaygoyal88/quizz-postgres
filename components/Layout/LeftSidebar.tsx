@@ -53,7 +53,6 @@ const navigation = [
       },
     ],
   },
-
   {
     name: "Question",
     href: `${pathName.questions.path}?page=1`,
@@ -266,8 +265,9 @@ export default function LeftSideBar({
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto">
-                  <a
-                    href="#"
+                  <Link
+                    title="Check your profile"
+                    href={`/${userData.id}/profile`}
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
                     <img
@@ -279,7 +279,7 @@ export default function LeftSideBar({
                     <span aria-hidden="true">
                       {userData?.first_name || userData?.email}
                     </span>
-                  </a>
+                  </Link>
                   <Button
                     className="w-full m-1 rounded-none bg-red-700"
                     onClick={() => signOut()}

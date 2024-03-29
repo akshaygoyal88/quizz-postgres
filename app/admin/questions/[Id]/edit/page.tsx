@@ -32,7 +32,7 @@ export default async function QuesEdit({ params }: { params: Params }) {
       <QuestionForm
         quizzes={quizzes}
         headingText="Edit Questions"
-        buttonText="Edit"
+        buttonText="Update"
         action={QuestionSubmitE.EDIT}
         imagesList={imagesList}
         userData={userData}
