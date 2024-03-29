@@ -17,14 +17,12 @@ interface TinyMCEEditorProps {
 }
 
 const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
-  initialValue,
   handleEditorChange,
   imagesList,
   editorsContent,
   idx,
   index,
 }) => {
-  // const [forceRender, setForceRender] = useState(false);
   const editorId = useId();
   const [editorVal, setEditorVal] = useState<string>("");
 
@@ -57,7 +55,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
         }
 
         const json = JSON.parse(xhr.responseText);
-        console.log(json, "jsonjson");
 
         if (!json || typeof json.url !== "string") {
           reject("Invalid JSON: " + xhr.responseText);
@@ -80,10 +77,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       xhr.send(formData);
     });
   };
-
-  // useEffect(() => {
-  //   setForceRender((prev) => !prev);
-  // }, [imagesList]);
 
   useEffect(() => {
     if (editorsContent) {

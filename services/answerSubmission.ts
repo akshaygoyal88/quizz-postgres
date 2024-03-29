@@ -44,7 +44,6 @@ export async function userQuizQuestionInitilization(reqData: {
         isCurrent: true,
       },
     });
-    console.log(createResForQues, "getQuestionByIds");
     const question = await getQuestionByIds([createResForQues.questionId]);
     return { ...createResForQues, question: question[0] };
   }
@@ -74,7 +73,6 @@ export async function getUserQuizQuestion({
 }
 
 export async function saveResponseForQues(reqData: UserQuizAnswers) {
-  console.log(reqData, "reqDatauser@yopmail.com");
   const {
     id,
     status,

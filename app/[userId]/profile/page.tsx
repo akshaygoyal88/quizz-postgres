@@ -1,5 +1,4 @@
 import Profile from "@/components/Profile";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";

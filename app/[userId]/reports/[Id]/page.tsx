@@ -13,7 +13,6 @@ import React from "react";
 
 export default async function page({ params }: Params) {
   const userData = await getSessionUser();
-  console.log(userData);
   if (!userData) {
     redirect(pathName.login.path);
   }

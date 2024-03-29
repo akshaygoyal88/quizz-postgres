@@ -45,7 +45,6 @@ export async function updateNotification({reqData,notificationId}: {reqData:User
 }
 
 export async function deleteNotification(notificationId: string) {
-    console.log(notificationId)
     return await db.userNotification.delete({
         where: {id:notificationId}
     })

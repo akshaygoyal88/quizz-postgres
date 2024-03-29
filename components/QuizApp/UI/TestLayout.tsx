@@ -94,7 +94,6 @@ function CandidateQuizQuestion({
   quizId: string | boolean;
   prevId?: string | boolean;
 }) {
-  console.log(userQuizQuestionWithAnswer);
   const question: QuesType | null = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
   const [timer, setTimer] = useState<number>(
