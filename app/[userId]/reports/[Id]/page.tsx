@@ -1,14 +1,22 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import QuizReport from "@/components/QuizApp/UI/QuizReport";
+import pathName from "@/constants";
+import { redirect } from "@/node_modules/next/navigation";
 import { getUserQuiz } from "@/services/answerSubmission";
 import {
   getQuizReportOfUser,
   getQuizsByAttemptedByUser,
 } from "@/services/quizReport";
+import { getSessionUser } from "@/utils/getSessionUser";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React from "react";
 
 export default async function page({ params }: Params) {
+  const userData = await getSessionUser();
+  console.log(userData);
+  if (!userData) {
+    redirect(pathName.login.path);
+  }
   const userId = params.userId;
   const quizId = params.Id;
 
