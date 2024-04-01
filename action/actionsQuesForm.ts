@@ -7,23 +7,26 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
+  console.log(rawFormData, "cdcdscsdcsdcsdcsdc");
 
   const optionsArray = [];
-  for (let key in rawFormData) {
-    if (key.includes("questionOptions_")) {
-      optionsArray.push(rawFormData[key]);
-    }
-  }
-
+  const quizIds = [];
   const correctAnswer = [];
   for (let key in rawFormData) {
     if(key.includes("correctAnswer_")){
       correctAnswer.push(Number(rawFormData[key]))
     }
+    if (key.includes("questionOptions_")) {
+      optionsArray.push(rawFormData[key]);
+    }
+    if (key.includes("quizId_")) {
+      quizIds.push(rawFormData[key]);
+    }
   }
 
   const reqData = {
-    quizId: rawFormData.quizId,
+    id:rawFormData.id,
+    quizIds: quizIds,
     type: rawFormData.questionType,
     options: optionsArray,
     questionType: rawFormData.questionType,
@@ -34,12 +37,13 @@ export async function handleQuestionSubmit(
     editorContent: rawFormData.editorContent,
     answer_type: rawFormData.answer_type,
   };
+  console.log(reqData,"answer_typequizId")
   switch (action) {
     case QuestionSubmitE.ADD:
     return await createQuestion(reqData);
 
     case QuestionSubmitE.EDIT:
-    return await editQuestions({id: rawFormData.id, reqData});
+    return await editQuestions(reqData);
 
     default:
       return { error: "Invalid action" };
