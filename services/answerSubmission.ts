@@ -82,9 +82,8 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
     ans_optionsId,
     ans_subjective,
   } = reqData;
-  const timeTaken = parseInt(timeTakenStr);
+  const timeTaken = parseInt(`${timeTakenStr}`);
   const timeOver = timeOverStr === "1" ? true : false;
-  console.log(status, "fjsdkjcnsdckjdsnsdnjd");
 
   return await db.userQuizAnswers.update({
     where: { id },
@@ -92,7 +91,7 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
       status,
       timeTaken,
       timeOver,
-      ans_optionsId: ans_optionsId ? ans_optionsId : null,
+      ans_optionsId,
       ans_subjective,
     },
   });

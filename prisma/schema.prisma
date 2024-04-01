@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -140,7 +140,7 @@ model UserQuizAnswers {
   // isAnswered      Boolean?              @default(false)
   status          UserQuizAnswerStatus? @default(NOT_ATTEMPTED)
   // TODO: make it array becuase of multiple answeres
-  ans_optionsId   String?
+  ans_optionsId   String[]
   ans_subjective  String?
   timeTaken       Int?
   timeOver        Boolean?              @default(false)

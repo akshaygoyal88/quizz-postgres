@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
+  AnswerTypeE,
   ObjectiveOptions,
   QuestionType,
   User,
@@ -106,10 +107,10 @@ function CandidateQuizQuestion({
       ? question?.timer - (userQuizQuestionWithAnswer?.timeTaken || 0)
       : question?.timer) || 0
   );
-  const [answer, setAnswer] = useState<string | null>(
-    userQuizQuestionWithAnswer.ans_optionsId ||
-      userQuizQuestionWithAnswer.ans_subjective ||
-      null
+  const [answer, setAnswer] = useState<string[] | string>(
+    question?.type === QuestionType.OBJECTIVE
+      ? userQuizQuestionWithAnswer.ans_optionsId || []
+      : userQuizQuestionWithAnswer.ans_subjective || ""
   );
   const [markReview, setMarkReview] = useState<boolean>(false);
   const [isDisabledCheck, setIsDisabledCheck] = useState<boolean>(
@@ -140,8 +141,19 @@ function CandidateQuizQuestion({
     // if (!isDisabledCheck) {
     //   setIsDisabledCheck(true);
     // }
-    if (answer === str) {
-      setAnswer(null);
+    if (question?.type === QuestionType.OBJECTIVE) {
+      if (question?.answer_type === AnswerTypeE.MULTIPLECHOICE) {
+        if (Array.isArray(answer)) {
+          if (!answer.includes(str)) {
+            setAnswer([...answer, str]);
+          } else {
+            const ansFilter = answer.filter((ans) => ans !== str);
+            setAnswer([...ansFilter]);
+          }
+        }
+      } else {
+        answer.length == 0 ? setAnswer([str]) : setAnswer([]);
+      }
     } else {
       setAnswer(str);
     }
@@ -155,6 +167,11 @@ function CandidateQuizQuestion({
     formData.append("id", userQuizQuestionWithAnswer.id);
     timeTaken && formData.append("timeTaken", timeTaken.toString());
     formData.append("timeOver", timeOver ? "1" : "0");
+    if (Array.isArray(answer)) {
+      for (let ans of answer) {
+        formData.append(`ans_optionsId_${ans}`, ans);
+      }
+    }
 
     const res = await handleAnsSubmission(formData);
     if (res) {
@@ -162,7 +179,6 @@ function CandidateQuizQuestion({
       handleNextQuestion();
     }
   };
-
   return (
     <ShadowSection
       classForSec="border-2 grid grid-cols-1 gap-4 lg:col-span-2 p-6"
@@ -171,16 +187,17 @@ function CandidateQuizQuestion({
       <Form action={formAction}>
         <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
         {HTMLReactParser(question?.editorContent || "")}
-        {question?.type === QuestionType.OBJECTIVE ? (
+        {question?.type === QuestionType.OBJECTIVE && Array.isArray(answer) ? (
           question?.objective_options?.map(
             (option: ObjectiveOptions, index: number) => (
               <OptionContainer
                 index={index}
                 option={option}
                 handleAnsOptInput={handleAnsOptInput}
-                alreadyAnswered={
-                  userQuizQuestionWithAnswer.ans_optionsId || null
-                }
+                // alreadyAnswered={
+                //   userQuizQuestionWithAnswer.ans_optionsId.length > 0 || null
+                // }
+                answerType={question.answer_type!}
                 isDisabledCheck={isDisabledCheck}
                 answer={answer}
               />
@@ -192,7 +209,7 @@ function CandidateQuizQuestion({
             id="answer"
             label="Type Answer"
             className="border-2 w-3/4 mt-4"
-            value={answer === null ? "" : answer}
+            value={answer !== null && typeof answer === "string" ? answer : ""}
             onChange={(e) => setAnswer(e.target.value)}
             name="ans_subjective"
           />
@@ -326,18 +343,19 @@ const OptionContainer = ({
   index,
   option,
   handleAnsOptInput,
-  alreadyAnswered,
+  // alreadyAnswered,
   isDisabledCheck,
   answer,
+  answerType,
 }: {
   index: number;
   option: ObjectiveOptions;
   handleAnsOptInput: (id: string) => void;
-  alreadyAnswered: string | null;
+  // alreadyAnswered: string | null;
   isDisabledCheck: boolean;
-  answer: string | null;
+  answer: string[] | null;
+  answerType?: AnswerTypeE;
 }) => {
-  console.log(answer);
   return (
     <div key={option.id} className="p-4 flex items-center">
       {/* <RadioInput
@@ -352,12 +370,16 @@ const OptionContainer = ({
       <Checkbox
         id={option.id}
         value={option.id}
-        checked={answer === option.id}
+        checked={answer?.includes(option.id) || false}
         onChange={() => handleAnsOptInput(option.id)}
         label={HTMLReactParser(option.text) || ""}
-        name="ans_optionsId"
+        // name="ans_optionsId[]"
         type="checkbox"
-        isDisabled={answer !== null ? answer !== option.id : false}
+        isDisabled={
+          answerType === AnswerTypeE.MULTIPLECHOICE
+            ? false
+            : answer?.length! > 0 && !answer?.includes(option.id)
+        }
       />
     </div>
   );

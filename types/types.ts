@@ -68,10 +68,6 @@ export type QuestionsTypes =
   | null;
 
 export interface UserQuizAnsType extends UserQuizAnswers {
-  id: string;
-  ans_subjective: string;
-  ans_optionsId: string;
-  timeTaken: number;
   question: QuesType | null;
 }
 
