@@ -150,7 +150,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
   const formAction = async (formData: FormData) => {
     setError(null);
-    formData.append("editorContent", editorContent as string);
+    if (editorContent) {
+      formData.append("editorContent", editorContent as string);
+    }
     formData.append("createdById", userData.id as string);
     action == QuestionSubmitE.EDIT && formData.append("id", quesId as string);
 

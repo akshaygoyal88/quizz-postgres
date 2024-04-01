@@ -1,13 +1,13 @@
 "use server";
 
 import { QuestionSubmitE, createQuestion, editQuestions } from "@/services/questions";
+import { QuestionType } from "@prisma/client";
 
 export async function handleQuestionSubmit(
   formData: FormData,
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
-  console.log(rawFormData, "cdcdscsdcsdcsdcsdc");
 
   const optionsArray = [];
   const quizIds = [];
@@ -37,7 +37,6 @@ export async function handleQuestionSubmit(
     editorContent: rawFormData.editorContent,
     answer_type: rawFormData.answer_type,
   };
-  console.log(reqData,"answer_typequizId")
   switch (action) {
     case QuestionSubmitE.ADD:
     return await createQuestion(reqData);

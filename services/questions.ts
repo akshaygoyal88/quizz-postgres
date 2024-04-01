@@ -54,9 +54,14 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
     answer_type
   } = reqData;
   
-
+  if(!editorContent){
+    return {error: "Please enter question."}
+  }
   if (quizIds.length === 0) {
     return { error: "Please provide Quiz." };
+  }
+  if(type === QuestionType.OBJECTIVE && options.length==0){
+    return {error: "Please enter couple of option"}
   }
   const addQuestion = await db.question.create({
     data: {

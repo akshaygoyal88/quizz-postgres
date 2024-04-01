@@ -71,6 +71,7 @@ function TestLayout({
             userQuizQuestionWithAnswer={userQuizQuestionWithAnswer}
             prevId={prevId}
             quizId={quizId}
+            nextId={nextId}
           />
           <CandidateQuestionStatus
             handleFinalSubmitTest={handleFinalSubmitTest}
@@ -94,11 +95,13 @@ function CandidateQuizQuestion({
   handleNextQuestion,
   quizId,
   prevId,
+  nextId,
 }: {
   userQuizQuestionWithAnswer: UserQuizAnsType;
   handleNextQuestion: () => void;
   quizId: string | boolean;
   prevId?: string | boolean;
+  nextId?: string | boolean;
 }) {
   const question: QuesType | null = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
@@ -217,6 +220,7 @@ function CandidateQuizQuestion({
         <ButtonForQuesAction
           prevId={prevId}
           quizId={quizId}
+          nextId={nextId}
           setMarkReview={setMarkReview}
         />
       </Form>
@@ -303,15 +307,17 @@ const QuestionListWithNumber = ({
 
 const ButtonForQuesAction = ({
   prevId,
+  nextId,
   quizId,
   setMarkReview,
 }: {
   prevId?: string | boolean;
+  nextId?: string | boolean;
   quizId: string | boolean;
   setMarkReview: (value: boolean) => void;
 }) => {
   return (
-    <div className={`m-2 flex ${prevId ? "justify-between" : "justify-end"}`}>
+    <div className={`m-2 flex justify-end`}>
       {/* <button
         onClick={() => {
           setMarkReview(true);
@@ -329,6 +335,15 @@ const ButtonForQuesAction = ({
           Previous
         </Link>
       )}
+      {nextId && (
+        <Link
+          href={`/quiz/${quizId}/question/${nextId}`}
+          className="mr-4 px-4 py-2 bg-blue-500 rounded-md"
+        >
+          Next
+        </Link>
+      )}
+
       <button
         className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
         type="submit"
