@@ -4,7 +4,6 @@ import { Fragment, createContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi2";
-import { CiCalendar } from "react-icons/ci";
 import { HiOutlineChartPie } from "react-icons/hi2";
 import { IoHomeOutline } from "react-icons/io5";
 import Link from "next/link";
@@ -277,7 +276,7 @@ export default function LeftSideBar({
                     />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">
-                      {userData?.first_name || userData?.email}
+                      {userData?.first_name || userData?.email?.split("@")[0]}
                     </span>
                   </Link>
                   <Button

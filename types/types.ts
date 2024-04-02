@@ -92,7 +92,7 @@ export interface InputTypesProps {
   value?: string | number | undefined;
   onChange?: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void; // ChangeEvent accepts either HTMLInputElement or HTMLTextAreaElement
+  ) => void;
   errors?: string;
   maxLength?: number;
   otherText?: string;

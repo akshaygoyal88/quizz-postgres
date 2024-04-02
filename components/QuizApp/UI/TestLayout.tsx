@@ -45,21 +45,21 @@ function TestLayout({
   };
 
   const handleFinalSubmitTest = async () => {
-    const {
-      data: finalSubRes,
-      error: finalSubError,
-      isLoading: finalSubLoading,
-    } = await fetchData({
-      url: `${pathName.finalSubmissionApiRoute.path}`,
-      method: FetchMethodE.POST,
-      body: {
-        quizId,
-        submittedBy: userData?.id,
-      },
-    });
-    if (!finalSubRes?.error) {
-      alert("Test submitted successfully");
-    }
+    // const {
+    //   data: finalSubRes,
+    //   error: finalSubError,
+    //   isLoading: finalSubLoading,
+    // } = await fetchData({
+    //   url: `${pathName.finalSubmissionApiRoute.path}`,
+    //   method: FetchMethodE.POST,
+    //   body: {
+    //     quizId,
+    //     submittedBy: userData?.id,
+    //   },
+    // });
+    // if (!finalSubRes?.error) {
+    alert("Test submitted successfully. Api execution required.");
+    // }
   };
 
   return (
@@ -141,9 +141,6 @@ function CandidateQuizQuestion({
   // }, [timer]);
 
   const handleAnsOptInput = (str: string) => {
-    // if (!isDisabledCheck) {
-    //   setIsDisabledCheck(true);
-    // }
     if (question?.type === QuestionType.OBJECTIVE) {
       if (question?.answer_type === AnswerTypeE.MULTIPLECHOICE) {
         if (Array.isArray(answer)) {
@@ -197,9 +194,6 @@ function CandidateQuizQuestion({
                 index={index}
                 option={option}
                 handleAnsOptInput={handleAnsOptInput}
-                // alreadyAnswered={
-                //   userQuizQuestionWithAnswer.ans_optionsId.length > 0 || null
-                // }
                 answerType={question.answer_type!}
                 isDisabledCheck={isDisabledCheck}
                 answer={answer}
@@ -387,7 +381,7 @@ const OptionContainer = ({
         value={option.id}
         checked={answer?.includes(option.id) || false}
         onChange={() => handleAnsOptInput(option.id)}
-        label={HTMLReactParser(option.text) || ""}
+        label={HTMLReactParser(option.text)}
         // name="ans_optionsId[]"
         type="checkbox"
         isDisabled={

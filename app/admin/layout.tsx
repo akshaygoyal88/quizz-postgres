@@ -15,7 +15,7 @@ export default async function adminLayout({
   if (!userData) {
     redirect(pathName.login.path);
   }
-  if (userData.role !== UserRole.ADMIN) {
+  if (userData.role === UserRole.USER) {
     redirect(pathName.home.path);
   }
   return (

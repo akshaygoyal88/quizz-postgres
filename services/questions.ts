@@ -41,7 +41,7 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question & {quizIds: string[], options: string[] | [], correctAnswer: string[] | []}) {
-
+  
   const {
     quizIds,
     type,
@@ -72,7 +72,7 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
         type === QuestionType.OBJECTIVE
           ? {
               createMany: {
-                data: options.map((optionText: string, index: Number) => ({
+                data: options.map((optionText: string, index: number) => ({
                   text: optionText,
                   isCorrect: correctAnswer.includes(index),
                 })),
