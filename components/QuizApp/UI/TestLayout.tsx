@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
+  AnswerTypeE,
   ObjectiveOptions,
   QuestionType,
   User,
@@ -21,6 +22,7 @@ import Form from "@/components/Shared/Form";
 import Checkbox from "@/components/Shared/Checkbox";
 import { fetchData, FetchMethodE } from "@/utils/fetch";
 import pathName from "@/constants";
+import Modal from "@/components/Shared/Modal";
 
 function TestLayout({
   allQuestions,
@@ -38,27 +40,28 @@ function TestLayout({
   userData: User;
 }) {
   const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleNextQuestion = () => {
     nextId && router.push(`/quiz/${quizId}/question/${nextId}`);
   };
 
   const handleFinalSubmitTest = async () => {
-    const {
-      data: finalSubRes,
-      error: finalSubError,
-      isLoading: finalSubLoading,
-    } = await fetchData({
-      url: `${pathName.finalSubmissionApiRoute.path}`,
-      method: FetchMethodE.POST,
-      body: {
-        quizId,
-        submittedBy: userData?.id,
-      },
-    });
-    if (!finalSubRes?.error) {
-      alert("Test submitted successfully");
-    }
+    // const {
+    //   data: finalSubRes,
+    //   error: finalSubError,
+    //   isLoading: finalSubLoading,
+    // } = await fetchData({
+    //   url: `${pathName.finalSubmissionApiRoute.path}`,
+    //   method: FetchMethodE.POST,
+    //   body: {
+    //     quizId,
+    //     submittedBy: userData?.id,
+    //   },
+    // });
+    // if (!finalSubRes?.error) {
+    alert("Test submitted successfully. Api execution required.");
+    // }
   };
 
   return (
@@ -70,9 +73,10 @@ function TestLayout({
             userQuizQuestionWithAnswer={userQuizQuestionWithAnswer}
             prevId={prevId}
             quizId={quizId}
+            nextId={nextId}
           />
           <CandidateQuestionStatus
-            handleFinalSubmitTest={handleFinalSubmitTest}
+            handleFinalSubmitTest={() => setModalOpen(true)}
             questionListHeading="Question List"
             candidateName={userData?.first_name}
             allQuestions={allQuestions}
@@ -82,6 +86,13 @@ function TestLayout({
           />
         </>
       )}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Submit Test"
+        onConfirm={handleFinalSubmitTest}
+        description="Are you sure you want to submit the test? Once submitted, you will not be able to reattempt it."
+      />
     </CustomGrid>
   );
 }
@@ -93,11 +104,13 @@ function CandidateQuizQuestion({
   handleNextQuestion,
   quizId,
   prevId,
+  nextId,
 }: {
   userQuizQuestionWithAnswer: UserQuizAnsType;
   handleNextQuestion: () => void;
   quizId: string | boolean;
   prevId?: string | boolean;
+  nextId?: string | boolean;
 }) {
   const question: QuesType | null = userQuizQuestionWithAnswer?.question;
   const isTimerAvailable = question?.timer !== 0;
@@ -106,10 +119,10 @@ function CandidateQuizQuestion({
       ? question?.timer - (userQuizQuestionWithAnswer?.timeTaken || 0)
       : question?.timer) || 0
   );
-  const [answer, setAnswer] = useState<string | null>(
-    userQuizQuestionWithAnswer.ans_optionsId ||
-      userQuizQuestionWithAnswer.ans_subjective ||
-      null
+  const [answer, setAnswer] = useState<string[] | string>(
+    question?.type === QuestionType.OBJECTIVE
+      ? userQuizQuestionWithAnswer.ans_optionsId || []
+      : userQuizQuestionWithAnswer.ans_subjective || ""
   );
   const [markReview, setMarkReview] = useState<boolean>(false);
   const [isDisabledCheck, setIsDisabledCheck] = useState<boolean>(
@@ -137,11 +150,19 @@ function CandidateQuizQuestion({
   // }, [timer]);
 
   const handleAnsOptInput = (str: string) => {
-    // if (!isDisabledCheck) {
-    //   setIsDisabledCheck(true);
-    // }
-    if (answer === str) {
-      setAnswer(null);
+    if (question?.type === QuestionType.OBJECTIVE) {
+      if (question?.answer_type === AnswerTypeE.MULTIPLECHOICE) {
+        if (Array.isArray(answer)) {
+          if (!answer.includes(str)) {
+            setAnswer([...answer, str]);
+          } else {
+            const ansFilter = answer.filter((ans) => ans !== str);
+            setAnswer([...ansFilter]);
+          }
+        }
+      } else {
+        answer.length == 0 ? setAnswer([str]) : setAnswer([]);
+      }
     } else {
       setAnswer(str);
     }
@@ -155,6 +176,11 @@ function CandidateQuizQuestion({
     formData.append("id", userQuizQuestionWithAnswer.id);
     timeTaken && formData.append("timeTaken", timeTaken.toString());
     formData.append("timeOver", timeOver ? "1" : "0");
+    if (Array.isArray(answer)) {
+      for (let ans of answer) {
+        formData.append(`ans_optionsId_${ans}`, ans);
+      }
+    }
 
     const res = await handleAnsSubmission(formData);
     if (res) {
@@ -162,7 +188,6 @@ function CandidateQuizQuestion({
       handleNextQuestion();
     }
   };
-
   return (
     <ShadowSection
       classForSec="border-2 grid grid-cols-1 gap-4 lg:col-span-2 p-6"
@@ -171,16 +196,14 @@ function CandidateQuizQuestion({
       <Form action={formAction}>
         <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
         {HTMLReactParser(question?.editorContent || "")}
-        {question?.type === QuestionType.OBJECTIVE ? (
+        {question?.type === QuestionType.OBJECTIVE && Array.isArray(answer) ? (
           question?.objective_options?.map(
             (option: ObjectiveOptions, index: number) => (
               <OptionContainer
                 index={index}
                 option={option}
                 handleAnsOptInput={handleAnsOptInput}
-                alreadyAnswered={
-                  userQuizQuestionWithAnswer.ans_optionsId || null
-                }
+                answerType={question.answer_type!}
                 isDisabledCheck={isDisabledCheck}
                 answer={answer}
               />
@@ -192,7 +215,7 @@ function CandidateQuizQuestion({
             id="answer"
             label="Type Answer"
             className="border-2 w-3/4 mt-4"
-            value={answer === null ? "" : answer}
+            value={answer !== null && typeof answer === "string" ? answer : ""}
             onChange={(e) => setAnswer(e.target.value)}
             name="ans_subjective"
           />
@@ -200,6 +223,7 @@ function CandidateQuizQuestion({
         <ButtonForQuesAction
           prevId={prevId}
           quizId={quizId}
+          nextId={nextId}
           setMarkReview={setMarkReview}
         />
       </Form>
@@ -286,15 +310,17 @@ const QuestionListWithNumber = ({
 
 const ButtonForQuesAction = ({
   prevId,
+  nextId,
   quizId,
   setMarkReview,
 }: {
   prevId?: string | boolean;
+  nextId?: string | boolean;
   quizId: string | boolean;
   setMarkReview: (value: boolean) => void;
 }) => {
   return (
-    <div className={`m-2 flex ${prevId ? "justify-between" : "justify-end"}`}>
+    <div className={`m-2 flex justify-end`}>
       {/* <button
         onClick={() => {
           setMarkReview(true);
@@ -312,6 +338,15 @@ const ButtonForQuesAction = ({
           Previous
         </Link>
       )}
+      {nextId && (
+        <Link
+          href={`/quiz/${quizId}/question/${nextId}`}
+          className="mr-4 px-4 py-2 bg-blue-500 rounded-md"
+        >
+          Next
+        </Link>
+      )}
+
       <button
         className="mr-4 px-4 py-2 bg-blue-900 text-white rounded-md"
         type="submit"
@@ -326,18 +361,19 @@ const OptionContainer = ({
   index,
   option,
   handleAnsOptInput,
-  alreadyAnswered,
+  // alreadyAnswered,
   isDisabledCheck,
   answer,
+  answerType,
 }: {
   index: number;
   option: ObjectiveOptions;
   handleAnsOptInput: (id: string) => void;
-  alreadyAnswered: string | null;
+  // alreadyAnswered: string | null;
   isDisabledCheck: boolean;
-  answer: string | null;
+  answer: string[] | null;
+  answerType?: AnswerTypeE;
 }) => {
-  console.log(answer);
   return (
     <div key={option.id} className="p-4 flex items-center">
       {/* <RadioInput
@@ -352,12 +388,16 @@ const OptionContainer = ({
       <Checkbox
         id={option.id}
         value={option.id}
-        checked={answer === option.id}
+        checked={answer?.includes(option.id) || false}
         onChange={() => handleAnsOptInput(option.id)}
-        label={HTMLReactParser(option.text) || ""}
-        name="ans_optionsId"
+        label={HTMLReactParser(option.text)}
+        // name="ans_optionsId[]"
         type="checkbox"
-        isDisabled={answer !== null ? answer !== option.id : false}
+        isDisabled={
+          answerType === AnswerTypeE.MULTIPLECHOICE
+            ? false
+            : answer?.length! > 0 && !answer?.includes(option.id)
+        }
       />
     </div>
   );

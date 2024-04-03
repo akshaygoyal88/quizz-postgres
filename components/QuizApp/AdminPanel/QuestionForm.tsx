@@ -12,6 +12,10 @@ import Lable from "../../Shared/Lable";
 import { QuestionsTypes, UserDataType, imageS3 } from "@/types/types";
 import Form from "@/components/Shared/Form";
 import Heading from "@/components/Shared/Heading";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+
+const animatedComponents = makeAnimated();
 
 interface QuestionFormProps {
   defaultQuestionSet?: Quiz | null;
@@ -58,9 +62,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   );
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
-  const [editorContent, setEditorContent] = useState<string | null>(null);
+  const [editorContent, setEditorContent] = useState<string | null>(
+    editQuestionData?.editorContent || null
+  );
   const [savedOptions, setSavedOptions] = useState<(string | null)[]>([]);
-  const [desEditorContent, setDesEditorContent] = useState<string | null>(null);
+  const [desEditorContent, setDesEditorContent] = useState<string | null>(
+    editQuestionData?.solution || null
+  );
+  const [selectedQuiz, serSelectedQuiz] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const handleAnyTypeRadioChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -119,11 +130,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setOptions(updatedOptions);
   };
 
+  useEffect(() => {
+    if (options.length > 0) {
+      setSavedOptions([...options]);
+    }
+  }, [options.length]);
+  const handleEditorChange = (content: string, editor: any) => {
+    setEditorContent(content);
+  };
+  const handleDesChange = (content: string, editor: any) => {
+    setDesEditorContent(content);
+  };
+
+  const handleChange = (
+    selectedOptions: { value: string; label: string }[]
+  ) => {
+    serSelectedQuiz(selectedOptions);
+  };
+
   const formAction = async (formData: FormData) => {
     setError(null);
-    formData.append("editorContent", editorContent as string);
+    if (editorContent) {
+      formData.append("editorContent", editorContent as string);
+    }
     formData.append("createdById", userData.id as string);
     action == QuestionSubmitE.EDIT && formData.append("id", quesId as string);
+
+    selectedQuiz.forEach((quiz) => {
+      formData.append(`quizId_${quiz.label}`, quiz.value);
+    });
 
     correctAnswerIndex?.forEach((ele: string) =>
       formData.append(`correctAnswer_${ele}`, ele as string)
@@ -147,19 +182,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       );
     }
   };
-
-  useEffect(() => {
-    if (options.length > 0) {
-      setSavedOptions([...options]);
-    }
-  }, [options.length]);
-  const handleEditorChange = (content: string, editor: any) => {
-    setEditorContent(content);
-  };
-  const handleDesChange = (content: string, editor: any) => {
-    setDesEditorContent(content);
-  };
-
   return (
     <Form action={formAction} error={error} success={successMessage}>
       <div className="flex flex-wrap justify-between items-center mb-2 lg:flex-row">
@@ -201,6 +223,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           <SelectSet
             defaultValue={defaultQuestionSet?.name}
             quizzes={quizzes}
+            handleChange={handleChange}
           />
         </div>
         {questionType === QuestionType.OBJECTIVE && (
@@ -273,28 +296,24 @@ export default QuestionForm;
 function SelectSet({
   defaultValue,
   quizzes,
+  handleChange,
 }: {
   defaultValue?: string;
   quizzes: Quiz[] | null;
+  handleChange: () => void;
 }) {
   return (
     <div className="mb-4 flex items-center gap-4">
       <Lable labelText="Quiz:" />
-      <select
-        className="w-full border rounded-md p-2"
-        defaultValue={defaultValue}
-        name="quizId"
-      >
-        <option value="">Select Quiz</option>
-        {quizzes &&
-          quizzes.map((quiz: Quiz) =>
-            !quiz.isDeleted ? (
-              <option key={quiz.id} value={quiz.id}>
-                {quiz.name}
-              </option>
-            ) : null
-          )}
-      </select>
+      <Select
+        closeMenuOnSelect={false}
+        components={animatedComponents}
+        defaultValue={[]}
+        isMulti
+        options={quizzes?.map((i) => ({ value: i.id, label: i.name }))}
+        onChange={handleChange}
+        className="w-full"
+      />
     </div>
   );
 }

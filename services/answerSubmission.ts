@@ -73,18 +73,21 @@ export async function getUserQuizQuestion({
   return { ...userQuizQuestion, question: question[0] };
 }
 
-export async function saveResponseForQues(reqData: UserQuizAnswers) {
+interface saveResProps extends UserQuizAnswers {
+  ans_optionsIds: string[];
+}
+
+export async function saveResponseForQues(reqData: saveResProps) {
   const {
     id,
     status,
     timeTaken: timeTakenStr,
     timeOver: timeOverStr,
-    ans_optionsId,
+    ans_optionsIds,
     ans_subjective,
   } = reqData;
-  const timeTaken = parseInt(timeTakenStr);
+  const timeTaken = parseInt(`${timeTakenStr}`);
   const timeOver = timeOverStr === "1" ? true : false;
-  console.log(status, "fjsdkjcnsdckjdsnsdnjd");
 
   return await db.userQuizAnswers.update({
     where: { id },
@@ -92,7 +95,7 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
       status,
       timeTaken,
       timeOver,
-      ans_optionsId: ans_optionsId ? ans_optionsId : null,
+      ans_optionsId: ans_optionsIds?.join(','),
       ans_subjective,
     },
   });
@@ -112,7 +115,7 @@ export async function quizInitializationForReport(
   quizId: string,
   submittedBy: string
 ) {
-  const isAvailableRes = await db.UserQuizReport.findFirst({
+  const isAvailableRes = await db.userQuizReport.findFirst({
     where: { quizId, submittedBy },
   });
   if (isAvailableRes) {
@@ -122,7 +125,7 @@ export async function quizInitializationForReport(
       message: "Quiz already initialized",
     };
   }
-  const initializeQuizRes = await db.UserQuizReport.create({
+  const initializeQuizRes = await db.userQuizReport.create({
     data: { submittedBy, quizId, status: UserQuizStatusE.INPROGRESS },
   });
   return {

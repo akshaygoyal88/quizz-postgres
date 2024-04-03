@@ -11,7 +11,7 @@ export default function Checkbox({
 }: {
   id?: string;
   type: string;
-  label?: string;
+  label?: string | Element | Element[];
   name?: string;
   checked: boolean;
   value?: string;

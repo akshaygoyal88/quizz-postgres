@@ -1,6 +1,7 @@
 "use server";
 
 import { QuestionSubmitE, createQuestion, editQuestions } from "@/services/questions";
+import { QuestionType } from "@prisma/client";
 
 export async function handleQuestionSubmit(
   formData: FormData,
@@ -9,21 +10,23 @@ export async function handleQuestionSubmit(
   const rawFormData = Object.fromEntries(formData.entries());
 
   const optionsArray = [];
-  for (let key in rawFormData) {
-    if (key.includes("questionOptions_")) {
-      optionsArray.push(rawFormData[key]);
-    }
-  }
-
+  const quizIds = [];
   const correctAnswer = [];
   for (let key in rawFormData) {
     if(key.includes("correctAnswer_")){
       correctAnswer.push(Number(rawFormData[key]))
     }
+    if (key.includes("questionOptions_")) {
+      optionsArray.push(rawFormData[key]);
+    }
+    if (key.includes("quizId_")) {
+      quizIds.push(rawFormData[key]);
+    }
   }
 
   const reqData = {
-    quizId: rawFormData.quizId,
+    id:rawFormData.id,
+    quizIds: quizIds,
     type: rawFormData.questionType,
     options: optionsArray,
     questionType: rawFormData.questionType,
@@ -39,7 +42,7 @@ export async function handleQuestionSubmit(
     return await createQuestion(reqData);
 
     case QuestionSubmitE.EDIT:
-    return await editQuestions({id: rawFormData.id, reqData});
+    return await editQuestions(reqData);
 
     default:
       return { error: "Invalid action" };

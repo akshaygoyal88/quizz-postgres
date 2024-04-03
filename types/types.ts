@@ -68,10 +68,6 @@ export type QuestionsTypes =
   | null;
 
 export interface UserQuizAnsType extends UserQuizAnswers {
-  id: string;
-  ans_subjective: string;
-  ans_optionsId: string;
-  timeTaken: number;
   question: QuesType | null;
 }
 
@@ -96,7 +92,7 @@ export interface InputTypesProps {
   value?: string | number | undefined;
   onChange?: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void; // ChangeEvent accepts either HTMLInputElement or HTMLTextAreaElement
+  ) => void;
   errors?: string;
   maxLength?: number;
   otherText?: string;
