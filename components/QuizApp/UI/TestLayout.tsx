@@ -22,6 +22,7 @@ import Form from "@/components/Shared/Form";
 import Checkbox from "@/components/Shared/Checkbox";
 import { fetchData, FetchMethodE } from "@/utils/fetch";
 import pathName from "@/constants";
+import Modal from "@/components/Shared/Modal";
 
 function TestLayout({
   allQuestions,
@@ -39,6 +40,7 @@ function TestLayout({
   userData: User;
 }) {
   const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleNextQuestion = () => {
     nextId && router.push(`/quiz/${quizId}/question/${nextId}`);
@@ -74,7 +76,7 @@ function TestLayout({
             nextId={nextId}
           />
           <CandidateQuestionStatus
-            handleFinalSubmitTest={handleFinalSubmitTest}
+            handleFinalSubmitTest={() => setModalOpen(true)}
             questionListHeading="Question List"
             candidateName={userData?.first_name}
             allQuestions={allQuestions}
@@ -84,6 +86,13 @@ function TestLayout({
           />
         </>
       )}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Submit Test"
+        onConfirm={handleFinalSubmitTest}
+        description="Are you sure you want to submit the test? Once submitted, you will not be able to reattempt it."
+      />
     </CustomGrid>
   );
 }

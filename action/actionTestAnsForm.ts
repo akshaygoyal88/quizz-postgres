@@ -7,19 +7,19 @@ export async function handleAnsSubmission(formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
 
 const otherFormData: any = {};
-const ans_optionsId = [];
+const ans_optionsIds = [];
 
 for (const [key, value] of Object.entries(rawFormData)) {
   if (key.includes("ans_optionsId_")) {
-    ans_optionsId.push(value)
+    ans_optionsIds.push(value)
   } else {
     otherFormData[key] = value;
   }
 }
 
-const reqData = {...otherFormData, ans_optionsId}
+const reqData = {...otherFormData, ans_optionsIds}
 
-reqData["status"] = (reqData.ans_optionsId.length>0 || (reqData.ans_subjective && reqData.ans_subjective.length>0))
+reqData["status"] = (reqData.ans_optionsIds.length>0 || (reqData.ans_subjective && reqData.ans_subjective.length>0))
     ? UserQuizAnswerStatus.ATTEMPTED
     : UserQuizAnswerStatus.SKIPPED;
   const res = await saveResponseForQues(reqData);
