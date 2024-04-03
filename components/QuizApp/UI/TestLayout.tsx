@@ -14,10 +14,13 @@ import List from "@/components/Shared/List";
 import ShadowSection from "@/components/Shared/ShadowSection";
 import { QuesType, QuestionsTypes, UserQuizAnsType } from "@/types/types";
 import CustomGrid from "@/components/Shared/CustomGrid";
-import RadioInput from "@/components/Shared/RadioInput";
 import HTMLReactParser from "html-react-parser";
 import InputWithLabel from "@/components/Shared/InputWithLabel";
 import { Button } from "@/components/Shared/Button";
+import Form from "@/components/Shared/Form";
+import Checkbox from "@/components/Shared/Checkbox";
+import { fetchData, FetchMethodE } from "@/utils/fetch";
+import pathName from "@/constants";
 
 function TestLayout({
   allQuestions,
@@ -41,19 +44,21 @@ function TestLayout({
   };
 
   const handleFinalSubmitTest = async () => {
-    // const {
-    //   data: finalSubRes,
-    //   error: finalSubError,
-    //   isLoading: finalSubLoading,
-    // } = await fetchData({
-    //   url: `${pathName.finalSubmissionApiRoute.path}`,
-    //   method: FetchMethodE.POST,
-    //   body: {
-    //     questions: allQuizQuestions,
-    //     quizId,
-    //     submittedBy: userData?.id,
-    //   },
-    // });
+    const {
+      data: finalSubRes,
+      error: finalSubError,
+      isLoading: finalSubLoading,
+    } = await fetchData({
+      url: `${pathName.finalSubmissionApiRoute.path}`,
+      method: FetchMethodE.POST,
+      body: {
+        quizId,
+        submittedBy: userData?.id,
+      },
+    });
+    if (!finalSubRes?.error) {
+      alert("Test submitted successfully");
+    }
   };
 
   return (
@@ -107,6 +112,9 @@ function CandidateQuizQuestion({
       null
   );
   const [markReview, setMarkReview] = useState<boolean>(false);
+  const [isDisabledCheck, setIsDisabledCheck] = useState<boolean>(
+    userQuizQuestionWithAnswer.ans_optionsId ? true : false
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -129,9 +137,15 @@ function CandidateQuizQuestion({
   // }, [timer]);
 
   const handleAnsOptInput = (str: string) => {
-    setAnswer(str);
+    // if (!isDisabledCheck) {
+    //   setIsDisabledCheck(true);
+    // }
+    if (answer === str) {
+      setAnswer(null);
+    } else {
+      setAnswer(str);
+    }
   };
-  const optionsIndex = ["a", "b", "c", "d", "e", "f"];
 
   const formAction = async (formData: FormData) => {
     const timeTaken = isTimerAvailable
@@ -141,14 +155,7 @@ function CandidateQuizQuestion({
     formData.append("id", userQuizQuestionWithAnswer.id);
     timeTaken && formData.append("timeTaken", timeTaken.toString());
     formData.append("timeOver", timeOver ? "1" : "0");
-    formData.append(
-      "status",
-      !markReview
-        ? answer
-          ? UserQuizAnswerStatus.ATTEMPTED
-          : UserQuizAnswerStatus.SKIPPED
-        : UserQuizAnswerStatus.REVIEW
-    );
+
     const res = await handleAnsSubmission(formData);
     if (res) {
       // !markReview &&
@@ -158,10 +165,10 @@ function CandidateQuizQuestion({
 
   return (
     <ShadowSection
-      classForSec="border-2 grid grid-cols-1 gap-4 lg:col-span-2"
+      classForSec="border-2 grid grid-cols-1 gap-4 lg:col-span-2 p-6"
       aria-labelledby="question-title"
     >
-      <form action={formAction} className="p-6">
+      <Form action={formAction}>
         <TimerContainer isTimerAvailable={isTimerAvailable} timer={timer} />
         {HTMLReactParser(question?.editorContent || "")}
         {question?.type === QuestionType.OBJECTIVE ? (
@@ -171,8 +178,11 @@ function CandidateQuizQuestion({
                 index={index}
                 option={option}
                 handleAnsOptInput={handleAnsOptInput}
+                alreadyAnswered={
+                  userQuizQuestionWithAnswer.ans_optionsId || null
+                }
+                isDisabledCheck={isDisabledCheck}
                 answer={answer}
-                optionsIndex={optionsIndex}
               />
             )
           )
@@ -192,7 +202,7 @@ function CandidateQuizQuestion({
           quizId={quizId}
           setMarkReview={setMarkReview}
         />
-      </form>
+      </Form>
     </ShadowSection>
   );
 }
@@ -284,8 +294,8 @@ const ButtonForQuesAction = ({
   setMarkReview: (value: boolean) => void;
 }) => {
   return (
-    <div className="m-2 flex justify-between">
-      <button
+    <div className={`m-2 flex ${prevId ? "justify-between" : "justify-end"}`}>
+      {/* <button
         onClick={() => {
           setMarkReview(true);
         }}
@@ -293,7 +303,7 @@ const ButtonForQuesAction = ({
         type="button"
       >
         Mark for Review
-      </button>
+      </button> */}
       {prevId && (
         <Link
           href={`/quiz/${quizId}/question/${prevId}`}
@@ -316,19 +326,21 @@ const OptionContainer = ({
   index,
   option,
   handleAnsOptInput,
+  alreadyAnswered,
+  isDisabledCheck,
   answer,
-  optionsIndex,
 }: {
   index: number;
   option: ObjectiveOptions;
   handleAnsOptInput: (id: string) => void;
+  alreadyAnswered: string | null;
+  isDisabledCheck: boolean;
   answer: string | null;
-  optionsIndex: string[];
 }) => {
+  console.log(answer);
   return (
-    <div key={index} className="p-4 flex items-center">
-      <span className="p-2">{`(${optionsIndex[index]})`}</span>
-      <RadioInput
+    <div key={option.id} className="p-4 flex items-center">
+      {/* <RadioInput
         id={option.id}
         value={option.id}
         checked={answer === option.id}
@@ -336,6 +348,16 @@ const OptionContainer = ({
         label={HTMLReactParser(option.text) || ""}
         name="ans_optionsId"
         htmlFor={"option"}
+      /> */}
+      <Checkbox
+        id={option.id}
+        value={option.id}
+        checked={answer === option.id}
+        onChange={() => handleAnsOptInput(option.id)}
+        label={HTMLReactParser(option.text) || ""}
+        name="ans_optionsId"
+        type="checkbox"
+        isDisabled={answer !== null ? answer !== option.id : false}
       />
     </div>
   );

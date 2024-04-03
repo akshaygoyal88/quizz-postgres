@@ -11,6 +11,7 @@ import {
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 import { getQuestionByIds } from "./questions";
+import { QuesType } from "@/types/types";
 
 export async function userQuizQuestionInitilization(reqData: {
   quizId: string;
@@ -83,6 +84,7 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
   } = reqData;
   const timeTaken = parseInt(timeTakenStr);
   const timeOver = timeOverStr === "1" ? true : false;
+  console.log(status, "fjsdkjcnsdckjdsnsdnjd");
 
   return await db.userQuizAnswers.update({
     where: { id },
@@ -90,7 +92,7 @@ export async function saveResponseForQues(reqData: UserQuizAnswers) {
       status,
       timeTaken,
       timeOver,
-      ans_optionsId,
+      ans_optionsId: ans_optionsId ? ans_optionsId : null,
       ans_subjective,
     },
   });
@@ -130,20 +132,28 @@ export async function quizInitializationForReport(
   };
 }
 
-export async function finalTestSubmission({ questions, quizId, submittedBy }) {
+export async function finalTestSubmission({
+  quizId,
+  submittedBy,
+}: {
+  quizId: string;
+  submittedBy: string;
+}) {
   const userQuizRes = await db.userQuizAnswers.findMany({
     where: { quizId, submittedBy },
   });
+  const questionIds = userQuizRes.map(
+    (userQuiz: UserQuizAnswers) => userQuiz.questionId
+  );
+  const questions = await getQuestionByIds(questionIds);
   const networkRes = [];
   let reportStatus: ReportStatusE = ReportStatusE.UNDERREVIEW;
   for (const res of userQuizRes) {
-    const que = questions.find((q) => q.questionId === res?.questionId);
-    if (que.question.type === QuestionType.SUBJECTIVE) {
+    const que = questions.find((q: QuesType) => q.id === res?.questionId);
+    if (que.type === QuestionType.SUBJECTIVE) {
       reportStatus = ReportStatusE.UNDERREVIEW;
     }
-    const correctOpt = que?.question?.objective_options.find(
-      (o) => o.isCorrect === true
-    );
+    const correctOpt = que?.objective_options.find((o) => o.isCorrect === true);
     const id = res.id;
     if (que) {
       const updateIsCorrect = await db.userQuizAnswers.update({
@@ -177,17 +187,16 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
     notAttempted += ans.status === UserQuizAnswerStatus.NOT_ATTEMPTED ? 1 : 0;
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
-
   const quizReportRes: UserQuizReport = await db.userQuizReport.update({
     where: { id: userReport?.id },
     data: {
-      status: QuizStatusTypeE.SUBMITTED,
-      correctAnswers,
-      wrongAnswers,
-      notAttempted,
+      status: UserQuizStatusE.SUBMITTED,
+      // correctAnswers,
+      // wrongAnswers,
+      // notAttempted,
       obtMarks: correctAnswers * 2,
-      negMarks: 0,
-      timeTaken,
+      // negMarks: 0,
+      // timeTaken,
       totalMarks: correctAnswers * 2 - 0,
       endedAt: new Date(),
       reportStatus,

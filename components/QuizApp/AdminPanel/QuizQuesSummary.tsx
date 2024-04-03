@@ -16,33 +16,37 @@ import { MdCancel } from "react-icons/md";
 export default function QuizQuesSummary({
   reportId,
   candidateResponse,
+  saveMarks,
 }: {
   reportId: string;
   candidateResponse: CandidateResponseTypes[];
+  saveMarks: { [key: string]: number };
 }) {
   const searchParams = useSearchParams();
   const reportStatus = searchParams.get("reportStatus");
-  const [marks, setMarks] = useState<{ [key: string]: number }>({});
+  const [marks, setMarks] = useState<{ [key: string]: number }>({
+    ...saveMarks,
+  });
   const [missingMark, setMissingMark] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSucessMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (candidateResponse?.length > 0) {
-      for (const res of candidateResponse) {
-        const id: string = res.id;
-        const mark =
-          res.marks === null
-            ? res?.question?.type === QuestionType.OBJECTIVE &&
-              (res.isCorrect ? 1 : 0)
-            : res.marks;
-        setMarks((prevMarks) => ({
-          ...prevMarks,
-          [id]: mark,
-        }));
-      }
-    }
-  }, [candidateResponse]);
+  // useEffect(() => {
+  //   if (candidateResponse?.length > 0) {
+  //     for (const res of candidateResponse) {
+  //       const id: string = res.id;
+  //       const mark =
+  //         res.marks === null
+  //           ? res?.question?.type === QuestionType.OBJECTIVE &&
+  //             (res.isCorrect ? 1 : 0)
+  //           : res.marks;
+  //       setMarks((prevMarks) => ({
+  //         ...prevMarks,
+  //         [id]: mark,
+  //       }));
+  //     }
+  //   }
+  // }, [candidateResponse]);
 
   const handleMarksChange = (id: string, mark: number) => {
     if (missingMark.includes(id)) {
@@ -105,7 +109,11 @@ export default function QuizQuesSummary({
       type="number"
       className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
         missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
-      }`}
+      } ${
+        queRes.question?.type === QuestionType.SUBJECTIVE
+          ? "border-yellow-500"
+          : ""
+      } `}
       value={marks[queRes?.id]}
       step="0.01"
       min="0"
