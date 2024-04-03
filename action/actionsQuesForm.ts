@@ -17,12 +17,22 @@ export async function handleQuestionSubmit(
       correctAnswer.push(Number(rawFormData[key]))
     }
     if (key.includes("questionOptions_")) {
-      optionsArray.push(rawFormData[key]);
+      optionsArray.push([rawFormData[key]]);
     }
     if (key.includes("quizId_")) {
       quizIds.push(rawFormData[key]);
     }
   }
+
+  for(let i = 0; i<optionsArray.length; i++){
+    if(rawFormData[`option_marks_${i}`]){
+      optionsArray[i].push(rawFormData[`option_marks_${i}`]);
+    }
+  }
+
+  console.log(optionsArray, "dsfdfdsfds")
+
+
 
   const reqData = {
     id:rawFormData.id,

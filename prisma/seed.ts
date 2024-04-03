@@ -15,7 +15,7 @@ function mathRandom(operation: string, start: number, end: number) {
 
     while (options.length < 4) {
       const randomOption = `${Math.floor(Math.random() * 100)}`;
-      if (!options.includes(randomOption) && randomOption !== ans) {
+      if (randomOption !== ans) {
         options.push(randomOption);
       }
     }
@@ -97,9 +97,10 @@ async function main() {
         objective_options: {
           createMany: {
             data: queArray[i].options.map(
-              (optionText: string, index: number) => ({
-                text: optionText,
+              (option: string, index: number) => ({
+                text: option[0],
                 isCorrect: [queArray[i].correctAnswer].includes(index),
+                option_marks: [queArray[i].correctAnswer].includes(index) ? 2 : 0,
               })
             ),
           },

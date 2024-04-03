@@ -47,21 +47,21 @@ function TestLayout({
   };
 
   const handleFinalSubmitTest = async () => {
-    // const {
-    //   data: finalSubRes,
-    //   error: finalSubError,
-    //   isLoading: finalSubLoading,
-    // } = await fetchData({
-    //   url: `${pathName.finalSubmissionApiRoute.path}`,
-    //   method: FetchMethodE.POST,
-    //   body: {
-    //     quizId,
-    //     submittedBy: userData?.id,
-    //   },
-    // });
-    // if (!finalSubRes?.error) {
-    alert("Test submitted successfully. Api execution required.");
-    // }
+    const {
+      data: finalSubRes,
+      error: finalSubError,
+      isLoading: finalSubLoading,
+    } = await fetchData({
+      url: `${pathName.finalSubmissionApiRoute.path}`,
+      method: FetchMethodE.POST,
+      body: {
+        quizId,
+        submittedBy: userData?.id,
+      },
+    });
+    if (!finalSubRes?.error) {
+      alert("Test submitted successfully. Api execution required.");
+    }
   };
 
   return (
@@ -176,6 +176,7 @@ function CandidateQuizQuestion({
     formData.append("id", userQuizQuestionWithAnswer.id);
     timeTaken && formData.append("timeTaken", timeTaken.toString());
     formData.append("timeOver", timeOver ? "1" : "0");
+    formData.append("questionId", question?.id!);
     if (Array.isArray(answer)) {
       for (let ans of answer) {
         formData.append(`ans_optionsId_${ans}`, ans);

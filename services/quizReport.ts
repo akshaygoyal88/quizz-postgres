@@ -107,3 +107,12 @@ export async function markSubmitByAdmin({
   }
   return error.length > 0 ? { error } : { result, updateReportRes };
 }
+
+export async function getQuizReportStatusOfCandidate({candidateId, quizId}: {candidateId: string, quizId:string}) {
+  const res = await db.userQuizReport.findFirst({
+    where: { candidateId, quizId },
+  });
+
+  return res?.candidateStatus;
+
+} 

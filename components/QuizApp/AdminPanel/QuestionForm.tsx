@@ -14,6 +14,7 @@ import Form from "@/components/Shared/Form";
 import Heading from "@/components/Shared/Heading";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { IoIosRemoveCircle } from "react-icons/io";
 
 const animatedComponents = makeAnimated();
 
@@ -343,20 +344,31 @@ function OptionCard({
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between py-2">
         <Lable labelText={`Option:${index + 1}`} />
-        <span className="flex items-center gap-5 py-2">
+        <span className="flex gap-5">
           <label>Is correct</label>
           <SimpleToggle
             checked={correctAnswerIndex?.includes(`${index}`)!}
             onChange={() => handleCorrectOptionChange(index)}
           />
         </span>
+        <span className="flex items-center">
+          <label>Marks:</label>
+          <input
+            type="number"
+            placeholder="Marks"
+            className="w-24 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            defaultValue={0}
+            name={`option_marks_${index}`}
+            step="0.25"
+          />
+        </span>
         <span
           className="cursor-pointer text-red-600"
           onClick={() => handleOptionRemove(index)}
         >
-          Remove
+          <IoIosRemoveCircle className="h-6 w-6" />
         </span>
       </div>
       <div className="">

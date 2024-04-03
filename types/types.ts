@@ -22,7 +22,7 @@ export type QuizDetailType = QuizDetail | { error?: string };
 
 export interface QuesType extends Question {
   timer: number;
-  objective_options?: ObjectiveOptions[];
+  objective_options: ObjectiveOptions[];
 }
 export type QuestionsTypes =
   | ({
