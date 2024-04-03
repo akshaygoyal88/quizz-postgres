@@ -1,10 +1,7 @@
-import React from "react";
-import LeftSideBar from "./Layout/LeftSidebar";
+"use client";
+
+import React, { useContext } from "react";
 
 export default function Dashboard() {
-  return (
-    <LeftSideBar>
-      <div>Dashboard</div>
-    </LeftSideBar>
-  );
+  return <div>Dashboard</div>;
 }

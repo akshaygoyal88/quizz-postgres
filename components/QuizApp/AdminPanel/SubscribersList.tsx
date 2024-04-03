@@ -1,44 +1,41 @@
 "use client";
 
-import pathName from "@/constants";
-import { useFetch } from "@/hooks/useFetch";
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { SubscriptionTypes } from "@/types/types";
+import Heading from "@/components/Shared/Heading";
+import { Table } from "@/components/Shared/Table";
 
-const SubscribersList = ({ quizId }: { quizId: string }) => {
-  const [selectedSubscribers, setSelectedSubscribers] = useState<any[]>([]);
+const SubscribersList = ({
+  listOfSubscribers,
+  quizName,
+}: {
+  listOfSubscribers: SubscriptionTypes[] | { error: string };
+  quizName?: string;
+}) => {
+  const [selectedSubscribers, setSelectedSubscribers] = useState<
+    SubscriptionTypes[]
+  >([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [quizName, setQuizName] = useState("");
-
-  const {
-    data: listOfSubscribers,
-    error: listOfSubscribersError,
-    isLoading: listOfSubscribersLoading,
-  } = useFetch({
-    url: `${pathName.subscriptionApiRoute.path}/${quizId}`,
-  });
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    setQuizName(urlParams.get("quizName") || "Quiz Name");
-  }, []);
 
   useEffect(() => {
     if (
-      !listOfSubscribers?.error &&
+      !("error" in listOfSubscribers) &&
       selectedSubscribers.length === listOfSubscribers?.length
     ) {
       setSelectAll(true);
     } else {
       setSelectAll(false);
     }
-  }, [selectedSubscribers]);
+  }, [listOfSubscribers, selectedSubscribers]);
 
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedSubscribers([]);
     } else {
-      setSelectedSubscribers(listOfSubscribers);
+      setSelectedSubscribers(
+        "error" in listOfSubscribers ? [] : listOfSubscribers
+      );
     }
     setSelectAll(!selectAll);
   };
@@ -50,7 +47,9 @@ const SubscribersList = ({ quizId }: { quizId: string }) => {
     if (index === -1) {
       setSelectedSubscribers([
         ...selectedSubscribers,
-        listOfSubscribers.find((subscriber) => subscriber.id === subscriberId),
+        listOfSubscribers.find(
+          (subscriber: { id: string }) => subscriber.id === subscriberId
+        ),
       ]);
     } else {
       setSelectedSubscribers([
@@ -60,10 +59,48 @@ const SubscribersList = ({ quizId }: { quizId: string }) => {
     }
   };
 
-  return listOfSubscribers ? (
+  const tableRows = !("error" in listOfSubscribers)
+    ? listOfSubscribers.map((subscriber: SubscriptionTypes) => [
+        <>
+          <input
+            type="checkbox"
+            checked={
+              selectedSubscribers.findIndex((s) => s.id === subscriber.id) !==
+              -1
+            }
+            onChange={() => handleSubscriberSelection(subscriber.id)}
+          />
+        </>,
+        <>{`${subscriber.user.first_name} ${subscriber.user.last_name}`}</>,
+        <>{format(new Date(subscriber.startedAt), "MM/dd/yyyy HH:mm:ss")}</>,
+        <>
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            //   onClick={() => approveSubscriber(subscriber.id)}
+          >
+            Approve
+          </button>
+        </>,
+      ])
+    : [];
+
+  return !("error" in listOfSubscribers) ? (
     <div className="sm:px-6">
-      <h2 className="text-xl font-bold mb-4">Subscriber for {quizName}</h2>
-      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <Heading headingText={`Subscriber for ${quizName}`} tag={"h2"} />
+      <Table
+        headers={[
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />,
+          "Candidate Name",
+          "Subscription Date and Time",
+          "Approve",
+        ]}
+        rows={tableRows}
+      />
+      {/* <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="text-white bg-gray-800">
           <tr>
             <th className="py-3 px-4 text-left">
@@ -115,7 +152,7 @@ const SubscribersList = ({ quizId }: { quizId: string }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   ) : null;
 };

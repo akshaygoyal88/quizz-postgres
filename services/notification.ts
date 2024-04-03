@@ -1,9 +1,8 @@
 import { db } from "@/db";
 import { UserNotification } from "@prisma/client";
 
-export async function createNotification(reqData: UserNotification) {
+export async function createNotification(reqData: {userId:string, message: string}) {
     const {userId, message} = reqData;
-    console.log(userId, message)
     if(!userId){
         return {error: "User invalid."}
     }
@@ -21,10 +20,12 @@ export async function createNotification(reqData: UserNotification) {
 }
 
 export async function getNotifications(userId: string) {
+    if(!userId){
+        return {error: "User Id missing."}
+    }
     const res =  await db.userNotification.findMany({
         where: {userId}
     })
-
     return res;
 }
 
@@ -44,7 +45,6 @@ export async function updateNotification({reqData,notificationId}: {reqData:User
 }
 
 export async function deleteNotification(notificationId: string) {
-    console.log(notificationId)
     return await db.userNotification.delete({
         where: {id:notificationId}
     })

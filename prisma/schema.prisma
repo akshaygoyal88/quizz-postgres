@@ -99,7 +99,6 @@ model Question {
   createdById       String
   isDeleted         Boolean            @default(false)
   QuizQuestions     QuizQuestions[]
-  UserQuizAnswers   UserQuizAnswers[]
   solution          String?            @db.VarChar(1000)
   answer_type       AnswerTypeE?
 }
@@ -137,16 +136,18 @@ model UserQuizAnswers {
   quizId          String
   Quiz            Quiz?                 @relation(fields: [quizId], references: [id])
   questionId      String
-  question        Question?             @relation(fields: [questionId], references: [id])
-  isAnswered      Boolean?              @default(false)
+  // TODO: Remove isAnswered because UserQuizAnswersStatus is already handling
+  // isAnswered      Boolean?              @default(false)
   status          UserQuizAnswerStatus? @default(NOT_ATTEMPTED)
+  // TODO: make it array becuase of multiple answeres
   ans_optionsId   String?
   ans_subjective  String?
   timeTaken       Int?
   timeOver        Boolean?              @default(false)
+  // TODO: No need of isCorrect
   isCorrect       Boolean?              @default(false)
   // finalSubmit     Boolean?              @default(false)
-  marks           Float?
+  marks           Float?                @default(0)
   isCurrent       Boolean?              @default(false)
 }
 

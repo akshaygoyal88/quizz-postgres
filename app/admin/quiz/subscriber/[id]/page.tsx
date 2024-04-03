@@ -1,10 +1,20 @@
-import LeftSideBar from "@/components/Layout/LeftSidebar";
 import SubscribersList from "@/components/QuizApp/AdminPanel/SubscribersList";
+import { getSubscribersByQuizId } from "@/services/quiz";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
-export default function page({ params }: { params: string }) {
+export default async function page({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: { quizName?: string };
+}) {
+  const list = await getSubscribersByQuizId(params.id);
+
   return (
-    <LeftSideBar>
-      <SubscribersList quizId={params.id} />
-    </LeftSideBar>
+    <SubscribersList
+      listOfSubscribers={list}
+      quizName={searchParams.quizName}
+    />
   );
 }

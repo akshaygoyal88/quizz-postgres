@@ -1,11 +1,8 @@
 import { UserRole } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { getSessionUser } from "./getSessionUser";
 
 export async function isAdmin(redirectTo: string) {
-    const session = await getSession();
-    const ses = await getServerSession()
-    console.log(session)
-    // if(session?.role !== UserRole.ADMIN) redirect(redirectTo)
+  const userData = await getSessionUser();
+  if (userData?.role !== UserRole.ADMIN) redirect("/");
 }

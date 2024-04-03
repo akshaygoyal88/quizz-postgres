@@ -1,15 +1,31 @@
-import LeftSideBar from "@/components/Layout/LeftSidebar";
-import QuizListUI from "@/components/QuizApp/AdminPanel/QuizListUI";
-import { isUnauthorised } from "@/utils/isUnauthorised";
-import { getSession } from "next-auth/react";
+import QuizList from "@/components/QuizApp/AdminPanel/QuizList";
+import { getQuizzesWithPaginationByCreatedBy } from "@/services/questionSet";
+import { getSessionUser } from "@/utils/getSessionUser";
 
-import React from "react";
-
-export default async function User() {
-  await isUnauthorised("/signin");
+export default async function User({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+    pageSize?: string;
+  };
+}) {
+  const userData = await getSessionUser();
+  const page = Number(searchParams?.page) || 1;
+  const pageSize = Number(searchParams?.pageSize) || 9;
+  const skip = (page - 1) * pageSize;
+  const createdById = userData?.id!;
+  const result = await getQuizzesWithPaginationByCreatedBy({
+    createdById,
+    pageSize,
+    skip,
+  });
   return (
-    <LeftSideBar>
-      <QuizListUI />
-    </LeftSideBar>
+    <QuizList
+      quizzes={result.quizzes}
+      totalPages={result.totalPages}
+      totalRows={result.totalRows}
+    />
   );
 }

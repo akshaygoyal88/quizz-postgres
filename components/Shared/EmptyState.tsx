@@ -1,11 +1,11 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { GoPlus } from "react-icons/go";
 import Link from "next/link";
 
 export default function EmptyState({
   title,
   description,
   buttonText,
-  buttonLink
+  buttonLink,
 }: {
   title: string;
   description: string;
@@ -37,7 +37,7 @@ export default function EmptyState({
           type="button"
           className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          <PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+          <GoPlus className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
           {buttonText}
         </Link>
       </div>

@@ -2,16 +2,24 @@ import { db } from "@/db";
 import { ReportStatusE } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function getReportsBySubmittedBy(submittedBy: string) {
+export async function getQuizsByAttemptedByUser(submittedBy: string) {
   const reportRes = await db.userQuizReport.findMany({
     where: { submittedBy },
   });
   const quizzes = [];
+  const quizList = await db.quiz.findMany({});
   for (const report of reportRes) {
-    const quiz = await db.quiz.findMany({ where: { id: report.quizId } });
-    quizzes.push(quiz[0]);
+    const quiz = quizList.find(q => q.id === report.quizId)
+    quizzes.push({id: quiz?.id, name: quiz?.name, isDeleted: quiz?.isDeleted});
   }
-  return { reportRes, quizzes };
+  return { quizzes };
+}
+
+export async function getQuizReportOfUser({submittedBy, quizId}:{submittedBy: string, quizId: string}) {
+  return await db.userQuizReport.findFirst({
+    where: { submittedBy, quizId },
+  });
+  
 }
 
 export async function getReportByQuizIdAndSubmittedBy({
@@ -33,7 +41,16 @@ export async function getReportsByQuizId({
   pageSize: number;
   quizId: string;
 }) {
-  const quizResByUser = db.userQuizReport.findMany({
+
+  const totalRows = await db.userQuizReport.count({
+    where: {
+      quizId          
+    },
+  });
+
+  const totalPages = Math.ceil(totalRows / pageSize);
+
+  const quizResByUser = await db.userQuizReport.findMany({
     where: {
       quizId,
     },
@@ -43,7 +60,7 @@ export async function getReportsByQuizId({
     skip,
     take: pageSize,
   });
-  return quizResByUser;
+  return {quizResByUser, totalPages, totalRows};
 }
 
 export async function markSubmitByAdmin({

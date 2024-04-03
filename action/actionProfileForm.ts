@@ -1,15 +1,14 @@
 "use server";
 
+import { FormErrors } from "@/components/Profile";
 import { UserSerivce } from "@/services";
 
-export async function handleProfileSubmit(formData: FormData){
+export async function handleProfileSubmit(formData: FormData): Promise<{ error?: FormErrors }> {
     const rawFormData = Object.fromEntries(formData.entries());
-    console.log("profile", rawFormData);
-    delete rawFormData.mobile_numberCountry
+    delete rawFormData.mobile_numberCountry;
     let result;
     const missingFields = [];
-    console.log(rawFormData.mobile_number.length)
-    // Validate mandatory fields
+
     if (!rawFormData.mobile_number) {
         missingFields.push("mobile_number");
     }
@@ -32,17 +31,17 @@ export async function handleProfileSubmit(formData: FormData){
         errorObj[missingFields[i]] = "Mandatory field.";
         }
         result = { error: errorObj };
-    } else if (rawFormData.pincode.length < 6) {
+    } else if (typeof rawFormData.pincode !== 'string' || rawFormData.pincode.length < 6) {
         result = { error:{pincode:  "Pincode should be at least 6 characters." }};
-    } else if (rawFormData.pincode.length > 6) {
+    } else if (typeof rawFormData.pincode !== 'string' || rawFormData.pincode.length > 6) {
         result = { error: {pincode: "Pincode should not be more than 6 characters."} };
-    } else if (rawFormData.mobile_number.length <= 15){
-        
+    } else if (typeof rawFormData.mobile_number !== 'string' || rawFormData.mobile_number.length <= 15){
         result = { error: {mobile_number: "Phone number should not be less than 10."} };
-    }else if (rawFormData.mobile_number.length > 16){
+    } else if (typeof rawFormData.mobile_number !== 'string' || rawFormData.mobile_number.length > 16){
         result = { error: {mobile_number: "Phone number should not be more than 10."} };
-    }else {
-        const result = await UserSerivce.updateProfile(rawFormData);
+    } else {
+        
+        return await UserSerivce.updateProfile(rawFormData);
     }
     return result
 }

@@ -1,28 +1,28 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import VerifyForm from "@/components/VerifyForm";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
-import { UserSerivce } from "@/services";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { getSessionUser } from "@/utils/getSessionUser";
+import { getUserByEmail } from "@/services/user";
+import { Container, FormContainer } from "@/components/Container";
 
-interface VerifyProps {
-  params: {
-    email: string;
-  };
-}
-
-const getUserExists = async (newEmail: string) => {
-  return await UserSerivce.getUserByEmail(newEmail);
-};
-
-export default async function Verify({ params }: VerifyProps) {
-  const session = await getServerSession(authOptions);
-  if (session) {
+export default async function Verify({ params }: Params) {
+  const userData = await getSessionUser();
+  if (userData) {
     redirect("/profile");
   }
   const decodedEmail = decodeURIComponent(params.email);
 
-  const userExist = await getUserExists(decodedEmail);
-
-  return <VerifyForm email={decodedEmail} user={userExist} />;
+  const userExist = await getUserByEmail(decodedEmail);
+  if (userExist) {
+    return (
+      <Container>
+        <FormContainer>
+          <VerifyForm email={decodedEmail} user={userExist} />
+        </FormContainer>
+      </Container>
+    );
+  } else {
+    return <>ERROR COMPONENT</>;
+  }
 }

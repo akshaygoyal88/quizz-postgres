@@ -1,8 +1,9 @@
 import { saveResponseForQues } from "@/services/answerSubmission";
 import { QuestionType, UserQuizAnswerStatus } from "@prisma/client";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextResponse } from "next/server";
 
-export async function PUT(req: Request, { params }: { params: string }) {
+export async function PUT(req: Request, { params }: { params: Params }) {
   const id = params?.id;
   try {
     const reqDetail = await req.json();
@@ -21,7 +22,6 @@ export async function PUT(req: Request, { params }: { params: string }) {
       const sendRes = await saveResponseForQues({
         id,
         reqData: {
-          isAnswered: false,
           status: UserQuizAnswerStatus.SKIPPED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,
@@ -36,7 +36,6 @@ export async function PUT(req: Request, { params }: { params: string }) {
       const sendRes = await saveResponseForQues({
         id,
         reqData: {
-          isAnswered: false,
           status: UserQuizAnswerStatus.SKIPPED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,
@@ -50,7 +49,6 @@ export async function PUT(req: Request, { params }: { params: string }) {
         reqData: {
           ans_optionsId: reqDetail.ans_optionsId,
           ans_subjective: reqDetail.ans_subjective,
-          isAnswered: true,
           status: UserQuizAnswerStatus.ATTEMPTED,
           timeOver: reqDetail.timeOver,
           timeTaken: reqDetail.timeTaken,

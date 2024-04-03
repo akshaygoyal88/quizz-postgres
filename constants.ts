@@ -20,7 +20,7 @@ const pathName: IPathName = {
     requireToken: false
   },
   dashboard: {
-    path: "/dashboard",
+    path: "/admin/dashboard",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   },
@@ -60,12 +60,12 @@ const pathName: IPathName = {
     requireToken: true
   },
   quizAdd: {
-    path: "/admin/quiz/add",
+    path: "/admin/quiz/add-quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   },
   questionsAdd: {
-    path: "/admin/questions/add",
+    path: "/admin/questions/add-question",
     roles: [UserRole.ADMIN, UserRole.USER],
     requireToken: true
   },
@@ -133,6 +133,21 @@ const pathName: IPathName = {
   },
   quizDetailApiRoute: {
     path: "/api/quiz/quizDetail",
+    roles: [],
+    requireToken: false
+  },
+  finalSubmissionApiRoute: {
+    path: "/api/quiz/finalSubmission",
+    roles: [],
+    requireToken: false
+  },
+  quizRoute: {
+    path: "/quiz",
+    roles: [],
+    requireToken: false
+  },
+  questionRoute: {
+    path: "/question",
     roles: [],
     requireToken: false
   }

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Provider from "@/context/Provider";
 import "./globals.css";
-import { Header } from "@/components/NavHeader/Header";
-import { getSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
+import { getSessionUser } from "@/utils/getSessionUser";
+import { Header } from "@/components/Header";
+import { getNotifications } from "@/services/notification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,17 +17,16 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const userData = await getSessionUser();
+  const notificationData = await getNotifications(userData?.id!);
   return (
     <html lang="en">
-      <Provider>
-        <body className="">
-          {/* <Nav /> */}
-          <main>
-            <Header />
-            {children}
-          </main>
-        </body>
-      </Provider>
+      <body className="">
+        <main>
+          <Header userData={userData!} notificationData={notificationData} />
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

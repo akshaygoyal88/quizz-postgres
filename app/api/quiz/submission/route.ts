@@ -7,13 +7,13 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request, res: Response) {
   try {
     const reqData = await req.json();
-    console.log({reqData})
 
     const statusOfQuiz = await QuizReportsService.getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
-    console.log({statusOfQuiz})
+
     if(statusOfQuiz?.status !== UserQuizStatusE.INPROGRESS){
       return NextResponse.json({error: 'Your test timed out'});
     }
+
     const isQueIntialized = await getQuesStatus({quizId : reqData.quizId,submittedBy:reqData.submittedBy, questionId:reqData.questionId, })
     if(isQueIntialized){
       return NextResponse.json({message: "Already initialized", ques: isQueIntialized });

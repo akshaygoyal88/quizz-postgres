@@ -6,13 +6,22 @@ import {
   UserQuizAnswerStatus,
   UserQuizAnswers,
   UserQuizStatusE,
-  userQuizReport,
+  UserQuizReport,
+  Question,
 } from "@prisma/client";
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
+import { getQuestionByIds } from "./questions";
 
-export async function questionInitialization(reqData: UserQuizAnswers) {
-  // const isProgress = await getReportByQuizIdAndSubmittedBy({quizId: reqData.quizId, submittedBy: reqData.submittedBy})
-  const updateIsCurrent = await db.userQuizAnswers.updateMany({
+export async function userQuizQuestionInitilization(reqData: {
+  quizId: string;
+  questionId: string;
+  submittedBy: string;
+}) {
+  if (!reqData.submittedBy) {
+    return { error: "Submitted by is missing" };
+  }
+
+  await db.userQuizAnswers.updateMany({
     where: {
       quizId: reqData.quizId,
       submittedBy: reqData.submittedBy,
@@ -20,16 +29,27 @@ export async function questionInitialization(reqData: UserQuizAnswers) {
     data: { isCurrent: false },
   });
 
-  const initiallyQues = await db.userQuizAnswers.create({
-    data: {
-      ...reqData,
-      isCurrent: true,
-    },
+  const alreadyExists = await getUserQuizQuestion({
+    quizId: reqData.quizId,
+    submittedBy: reqData.submittedBy,
+    questionId: reqData.questionId,
   });
-  return initiallyQues;
+
+  if (alreadyExists) {
+    return alreadyExists;
+  } else {
+    const createResForQues = await db.userQuizAnswers.create({
+      data: {
+        ...reqData,
+        isCurrent: true,
+      },
+    });
+    const question = await getQuestionByIds([createResForQues.questionId]);
+    return { ...createResForQues, question: question[0] };
+  }
 }
 
-export async function getQuesStatus({
+export async function getUserQuizQuestion({
   quizId,
   submittedBy,
   questionId,
@@ -38,87 +58,59 @@ export async function getQuesStatus({
   submittedBy: string;
   questionId: string;
 }) {
-  return await db.userQuizAnswers.findFirst({
+  const userQuizQuestion = await db.userQuizAnswers.findFirst({
     where: {
       quizId,
       submittedBy,
       questionId,
     },
   });
+  if (!userQuizQuestion) {
+    return null;
+  }
+  const question = (await getQuestionByIds([questionId])) as Question[];
+  return { ...userQuizQuestion, question: question[0] };
 }
 
-export async function saveResponseForQues({
-  id,
-  reqData,
-}: {
-  id: string;
-  reqData: UserQuizAnswers;
-}) {
-  console.log("markrevie", reqData);
+export async function saveResponseForQues(reqData: UserQuizAnswers) {
+  const {
+    id,
+    status,
+    timeTaken: timeTakenStr,
+    timeOver: timeOverStr,
+    ans_optionsId,
+    ans_subjective,
+  } = reqData;
+  const timeTaken = parseInt(timeTakenStr);
+  const timeOver = timeOverStr === "1" ? true : false;
+
   return await db.userQuizAnswers.update({
     where: { id },
     data: {
-      ...reqData,
+      status,
+      timeTaken,
+      timeOver,
+      ans_optionsId,
+      ans_subjective,
     },
   });
 }
 
-export async function getUserQuiz({
-  setId,
-  submittedBy,
+export async function getUserQuizAllQuestionAnswers({
+  quizId,
+  userId,
 }: {
-  setId: string;
-  submittedBy: string;
+  quizId: string;
+  userId: string;
 }) {
-  const quizId = setId;
-  return await db.userQuizAnswers.findMany({
-    where: {
-      quizId,
-      submittedBy,
-    },
-    include: {
-      question: {
-        include: {
-          objective_options: true,
-        },
-      },
-    },
-  });
+  return await getUserQuiz({ quizId, submittedBy: userId });
 }
-
-// export async function saveResponseForQues({setId,
-//     submittedBy,
-//     questionId,status,
-//     isAnswered,
-//     ans_optionsId,
-//     ans_subjective,
-//     timeTaken,
-//     timeOver,}: UserQuizAnswers) {
-//         const answerRes = await db.userQuizAnswers.update({
-//             where: {
-//                 setId,
-//                 submittedBy,
-//                 questionId
-//             },
-//             data: {
-//                 status,
-//                 isAnswered,
-//                 ans_optionsId,
-//                 ans_subjective,
-//                 timeTaken,
-//                 timeOver,
-//             }
-//         });
-
-//         return answerRes;
-
-// }
 
 export async function quizInitializationForReport(
   quizId: string,
   submittedBy: string
 ) {
-  const isAvailableRes = await db.userQuizReport.findFirst({
+  const isAvailableRes = await db.UserQuizReport.findFirst({
     where: { quizId, submittedBy },
   });
   if (isAvailableRes) {
@@ -128,7 +120,7 @@ export async function quizInitializationForReport(
       message: "Quiz already initialized",
     };
   }
-  const initializeQuizRes = await db.userQuizReport.create({
+  const initializeQuizRes = await db.UserQuizReport.create({
     data: { submittedBy, quizId, status: UserQuizStatusE.INPROGRESS },
   });
   return {
@@ -178,13 +170,15 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
   const timeTaken = (Date.now() - userReport.startedAt) / 1000;
 
   userAnswers.forEach((ans) => {
-    correctAnswers += ans.isAnswered && ans.isCorrect ? 1 : 0;
-    wrongAnswers += ans.isAnswered && !ans.isCorrect ? 1 : 0;
+    correctAnswers +=
+      ans.status === UserQuizAnswerStatus.ATTEMPTED && ans.isCorrect ? 1 : 0;
+    wrongAnswers +=
+      ans.status === UserQuizAnswerStatus.ATTEMPTED && !ans.isCorrect ? 1 : 0;
     notAttempted += ans.status === UserQuizAnswerStatus.NOT_ATTEMPTED ? 1 : 0;
     skipped += ans.status === UserQuizAnswerStatus.SKIPPED ? 1 : 0;
   });
 
-  const quizReportRes: userQuizReport = await db.userQuizReport.update({
+  const quizReportRes: UserQuizReport = await db.userQuizReport.update({
     where: { id: userReport?.id },
     data: {
       status: QuizStatusTypeE.SUBMITTED,
@@ -201,4 +195,31 @@ export async function finalTestSubmission({ questions, quizId, submittedBy }) {
   });
 
   return quizReportRes;
+}
+export async function getUserQuiz({
+  quizId,
+  submittedBy,
+}: {
+  quizId: string;
+  submittedBy: string | null;
+}) {
+  if (!submittedBy) {
+    return { error: "Please login" };
+  }
+  const userQuizReport = await db.userQuizAnswers.findMany({
+    where: { quizId, submittedBy },
+  });
+  const allQuizquestionIds = userQuizReport.map(
+    (userQuizReport: { questionId: string }) => userQuizReport.questionId
+  );
+
+  const selectedQuestios = (await getQuestionByIds(
+    allQuizquestionIds
+  )) as Question[];
+  return userQuizReport.map((report: { questionId: string }) => {
+    const question = selectedQuestios.find(
+      (question) => report.questionId === question.id
+    );
+    return { ...report, question };
+  });
 }

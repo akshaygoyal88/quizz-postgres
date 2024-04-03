@@ -11,7 +11,16 @@ export async function getAllQuestions({
   pageSize: number;
   createdById: string;
 }) {
-  return await db.question.findMany({
+  const totalRows = await db.question.count({
+    where: {
+      isDeleted: false,
+      createdById          
+    },
+  });
+
+  const totalPages = Math.ceil(totalRows / pageSize);
+
+  const questions =  await db.question.findMany({
     where: {
       isDeleted: false,
       createdById,
@@ -23,6 +32,7 @@ export async function getAllQuestions({
     skip,
     take: pageSize,
   });
+  return { questions, totalPages, totalRows }
 }
 
 export enum QuestionSubmitE {
@@ -31,7 +41,7 @@ export enum QuestionSubmitE {
 }
 
 export async function createQuestion(reqData: Question) {
-  console.log("reqData", reqData)
+
   const {
     quizId,
     type,
@@ -90,8 +100,7 @@ export async function editQuestions({
   id:string;
   reqData: Question
 }){
-
-
+ 
   const {
     quizId,
     type,
@@ -102,6 +111,10 @@ export async function editQuestions({
     editorContent,
     answer_type
   } = reqData;
+
+  if(!quizId){
+    return {error: "Please provide quiz."}
+  }
   const isAvailable = await db.question.findUnique({
     where: { id },
   });
@@ -136,4 +149,26 @@ export async function editQuestions({
   } else {
     return {error: "Invalid question"}
   }
+}
+
+export async function getQuestionByQuestionId(id: string){
+  if(!id){
+    return {error: "Question ID not provided."}
+  }
+  return await db.question.findUnique({
+    where: { id },
+    include: {
+      objective_options: true,
+    },
+  });
+}
+
+
+export async function getQuestionByIds(ids: string[]){
+  if(ids.length <= 0){
+    return {error: "Question ID not provided."}
+  }
+  return await db.question.findMany({where: {id: {in: ids}}, include: {
+    objective_options: true,
+  }});
 }

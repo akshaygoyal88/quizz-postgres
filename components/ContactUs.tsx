@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { FaChevronDown } from "react-icons/fa6";
 import { Switch } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "@/utils/classNames";
 
 export default function ContactUs() {
   const [agreed, setAgreed] = useState(false);
@@ -139,7 +136,7 @@ export default function ContactUs() {
                   <option>CA</option>
                   <option>EU</option>
                 </select>
-                <ChevronDownIcon
+                <FaChevronDown
                   className="pointer-events-none absolute right-3 top-0 h-full w-5 text-gray-400"
                   aria-hidden="true"
                 />
