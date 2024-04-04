@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { Quiz } from "@prisma/client";
+import { Quiz, QuizCreationStatusE } from "@prisma/client";
 
 export async function getQuizzesWithPaginationByCreatedBy({
   skip,
@@ -12,14 +12,18 @@ export async function getQuizzesWithPaginationByCreatedBy({
 }) {
   const totalRows = await db.quiz.count({
     where: {
-      isDeleted: false,
+      status: {
+        not: QuizCreationStatusE.DELETE
+      },
       createdById
     },
   });
   const totalPages = Math.ceil(totalRows / pageSize);
   const quizzes = await db.quiz.findMany({
     where: {
-      isDeleted: false,
+      status: {
+        not: QuizCreationStatusE.DELETE
+      },
       createdById,
     },
     include: {
@@ -34,7 +38,9 @@ export async function getQuizzesByCreatedBy(createdById?: string) {
   return await db.quiz.findMany({
     where: {
       createdById,
-      isDeleted: false,
+      status: {
+        not: QuizCreationStatusE.DELETE
+      }
     },
     include: {
       createdBy: true,

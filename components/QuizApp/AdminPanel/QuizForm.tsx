@@ -11,6 +11,7 @@ import { UserDataType, imageS3 } from "@/types/types";
 import Heading from "@/components/Shared/Heading";
 import Form from "@/components/Shared/Form";
 import { Container } from "@/components/Container";
+import { QuizCreationStatusE } from "@prisma/client";
 
 interface FormDataProps {
   id: string;
@@ -41,7 +42,7 @@ export default function QuizForm({
 }) {
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
-  const [editorContent, setEditorContent] = useState<string | null>(null);
+  const [editorContent, setEditorContent] = useState<string>();
   const router = useRouter();
 
   const formAction = async (formData: FormData) => {
@@ -96,13 +97,15 @@ export default function QuizForm({
           Status:
         </label>
         <select
-          defaultValue={initialFormData?.status!}
+          defaultValue={initialFormData?.status! || ""}
           name="status"
           className="w-full px-4 py-2 rounded-md border-0 p-1.5 pr-10  ring-1 ring-inset sm:text-sm sm:leading-6 bg-white"
         >
-          <option value="Publish">Publish</option>
-          <option value="Draft">Draft</option>
-          <option value="Archived">Archived</option>
+          <option value="">Select</option>
+          <option value={QuizCreationStatusE.PUBLISH}>Publish</option>
+          <option value={QuizCreationStatusE.DRAFT}>Draft</option>
+          <option value={QuizCreationStatusE.FREE}>Free</option>
+          <option value={QuizCreationStatusE.DELETE}>Archived/Delete</option>
         </select>
       </div>
       <div>
@@ -123,6 +126,7 @@ export default function QuizForm({
         label="Price:"
         className="block w-full rounded-md border-0 py-2 px-2 ring-1 ring-inset sm:text-sm sm:leading-6"
         step="0.1"
+        min="0"
         value={undefined}
         defaultValue={`${initialFormData?.price}`}
       />

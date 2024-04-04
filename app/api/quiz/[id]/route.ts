@@ -1,7 +1,7 @@
 import { getQuizQuestions, deleteQuiz } from "@/services/quiz";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, { params }: { params: string }) {
+export async function GET(req: Request, { params }: { params: params }) {
   const quizId: string = params?.id;
   try {
     if (!quizId) {

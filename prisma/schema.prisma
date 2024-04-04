@@ -61,17 +61,23 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
+enum QuizCreationStatusE {
+  PUBLISH
+  DELETE
+  FREE
+  DRAFT
+}
+
 model Quiz {
-  id              String            @id @default(cuid())
+  id              String               @id @default(cuid())
   name            String
   description     String?
-  createdAt       DateTime          @default(now()) @map(name: "created_at")
-  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
-  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdAt       DateTime             @default(now()) @map(name: "created_at")
+  updatedAt       DateTime             @updatedAt @map(name: "updated_at")
+  createdBy       User                 @relation(fields: [createdById], references: [id])
   createdById     String
-  isDeleted       Boolean           @default(false)
-  price           Float?            @default(0.0)
-  status          String?
+  price           Float?               @default(0.0)
+  status          QuizCreationStatusE?
   QuizQuestions   QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
   Subscription    Subscription[]
@@ -194,13 +200,14 @@ model UserQuizReport {
 }
 
 model Subscription {
-  id          String    @id @default(cuid())
-  candidateId String
-  user        User      @relation(fields: [candidateId], references: [id])
-  quizId      String
-  quiz        Quiz      @relation(fields: [quizId], references: [id])
-  startedAt   DateTime  @default(now()) @map(name: "startedAt")
-  expiresOn   DateTime?
-  isApproved  Boolean?  @default(false)
-  isDeleted   Boolean?  @default(false)
+  id                 String    @id @default(cuid())
+  candidateId        String
+  user               User      @relation(fields: [candidateId], references: [id])
+  quizId             String
+  quiz               Quiz      @relation(fields: [quizId], references: [id])
+  startedAt          DateTime  @default(now()) @map(name: "startedAt")
+  expiresOn          DateTime?
+  isApproved         Boolean?  @default(false)
+  isDeleted          Boolean?  @default(false)
+  subscriptionStatus Boolean?  @default(true)
 }

@@ -5,6 +5,11 @@ import { format } from "date-fns";
 import { SubscriptionTypes } from "@/types/types";
 import Heading from "@/components/Shared/Heading";
 import { Table } from "@/components/Shared/Table";
+import SimpleToggle from "@/components/Shared/SimpleToggle";
+import { subscribe } from "diagnostics_channel";
+import { FetchMethodE, fetchData } from "@/utils/fetch";
+import pathName from "@/constants";
+import { handleSubscriptionToggle } from "@/action/actionSubscriptionToggle";
 
 const SubscribersList = ({
   listOfSubscribers,
@@ -59,6 +64,17 @@ const SubscribersList = ({
     }
   };
 
+  const handleSubscriptionOfUser = async (formData: FormData) => {
+    // const { data, error, isLoading } = await fetchData({
+    //   url: `${pathName.subscriptionApiRoute.path}/subscriber/${id}`,
+    //   method: FetchMethodE.PUT,
+    //   body: { subscriptionStatus: !value },
+    // });
+    // // if(!data.error){
+    // // }
+    const res = await handleSubscriptionToggle(formData);
+  };
+
   const tableRows = !("error" in listOfSubscribers)
     ? listOfSubscribers.map((subscriber: SubscriptionTypes) => [
         <>
@@ -68,18 +84,32 @@ const SubscribersList = ({
               selectedSubscribers.findIndex((s) => s.id === subscriber.id) !==
               -1
             }
-            onChange={() => handleSubscriberSelection(subscriber.id)}
           />
         </>,
-        <>{`${subscriber.user.first_name} ${subscriber.user.last_name}`}</>,
-        <>{format(new Date(subscriber.startedAt), "MM/dd/yyyy HH:mm:ss")}</>,
         <>
-          <button
+          {subscriber.user.first_name || subscriber.user.email?.split("@")[0]}
+        </>,
+        <>{format(new Date(subscriber.startedAt), "MM/dd/yyyy HH:mm:ss")}</>,
+        <>{subscriber.expiresOn}</>,
+        <>
+          {/* <button
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             //   onClick={() => approveSubscriber(subscriber.id)}
           >
             Approve
-          </button>
+          </button> */}
+          <form action={handleSubscriptionOfUser}>
+            <input type="hidden" name="id" value={subscriber.id} />
+            <input
+              type="hidden"
+              name="subscriptionStatus"
+              value={`${subscriber?.subscriptionStatus!}`}
+            />
+            <SimpleToggle
+              checked={subscriber?.subscriptionStatus!}
+              onChange={() => {}}
+            />
+          </form>
         </>,
       ])
     : [];
@@ -96,7 +126,8 @@ const SubscribersList = ({
           />,
           "Candidate Name",
           "Subscription Date and Time",
-          "Approve",
+          "Expires On",
+          "Subsciption",
         ]}
         rows={tableRows}
       />

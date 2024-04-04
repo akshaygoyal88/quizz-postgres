@@ -15,6 +15,7 @@ import { Button } from "@/components/Shared/Button";
 import Link from "next/link";
 import { FaEdit, FaUsers } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { QuizCreationStatusE } from "@prisma/client";
 
 export default function QuizList({
   quizzes,
@@ -67,7 +68,7 @@ function QuizTable({
     const { data, error, isLoading } = await fetchData({
       url: `${pathName.questionSetApi.path}/${selectedQuestionId}`,
       method: FetchMethodE.PUT,
-      body: { isDeleted: true },
+      body: { status: QuizCreationStatusE.DELETE },
     });
 
     if (data && !data.error) {
