@@ -14,12 +14,14 @@ export default async function QuesEdit({ params }: { params: Params }) {
   const imagesList = await getImages();
   const questionData = await getQuestionByQuestionId(params.Id);
   let options: string[] = [];
+  let marksOfOption: (number | null)[] | [] = [];
   let correctAnsList: string[] = [];
 
   if (questionData?.type === QuestionType.OBJECTIVE) {
     questionData.objective_options.forEach(
       (ele: ObjectiveOptions, index: number) => {
         options.push(ele.text);
+        marksOfOption.push(ele.option_marks);
         if (ele.isCorrect) {
           correctAnsList.push(`${index}`);
         }
@@ -36,11 +38,11 @@ export default async function QuesEdit({ params }: { params: Params }) {
         action={QuestionSubmitE.EDIT}
         imagesList={imagesList}
         userData={userData}
-        quesId={params.id}
-        editQuestionData={questionData}
         quesId={params.Id}
+        editQuestionData={questionData}
         editQuesOptions={options}
         correctAnsList={correctAnsList}
+        marksOfOption={marksOfOption}
       />
     </Container>
   );

@@ -17,36 +17,19 @@ export default function QuizQuesSummary({
   reportId,
   candidateResponse,
   saveMarks,
+  reportStatus,
 }: {
   reportId: string;
   candidateResponse: CandidateResponseTypes[];
-  saveMarks: { [key: string]: number };
+  saveMarks: { [key: string]: number | boolean };
+  reportStatus?: string;
 }) {
-  const searchParams = useSearchParams();
-  const reportStatus = searchParams.get("reportStatus");
-  const [marks, setMarks] = useState<{ [key: string]: number }>({
+  const [marks, setMarks] = useState<{ [key: string]: number | boolean }>({
     ...saveMarks,
   });
   const [missingMark, setMissingMark] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSucessMessage] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   if (candidateResponse?.length > 0) {
-  //     for (const res of candidateResponse) {
-  //       const id: string = res.id;
-  //       const mark =
-  //         res.marks === null
-  //           ? res?.question?.type === QuestionType.OBJECTIVE &&
-  //             (res.isCorrect ? 1 : 0)
-  //           : res.marks;
-  //       setMarks((prevMarks) => ({
-  //         ...prevMarks,
-  //         [id]: mark,
-  //       }));
-  //     }
-  //   }
-  // }, [candidateResponse]);
 
   const handleMarksChange = (id: string, mark: number) => {
     if (missingMark.includes(id)) {
@@ -76,17 +59,31 @@ export default function QuizQuesSummary({
         const id = Object.keys(error)[0];
         setMissingMark((prev) => [...prev, id]);
       }
-    } else if (markSaveRes.result.length > 0) {
+    } else if (markSaveRes?.result?.length > 0) {
       setSucessMessage("Successfully saved marks.");
       setTimeout(() => {}, 10000);
     }
   };
   const findGivenAnsText = (id: string, opts: ObjectiveOptions[]) => {
-    const givAns = opts.find((ans: ObjectiveOptions) => ans.id === id);
-    return givAns?.text;
+    const givenAns = id.split(",");
+    let givAns = "";
+
+    for (let i = 0; i < givenAns.length; i++) {
+      const opt = opts.find((ans: ObjectiveOptions) => ans.id === givenAns[i]);
+      givAns += opt?.text;
+      i < givenAns.length - 1 ? (givAns += ", ") : (givAns += "");
+    }
+    return givAns;
   };
 
   const tableRows = candidateResponse.map((queRes: CandidateResponseTypes) => [
+    queRes.isCorrect ? (
+      <FaCheckCircle className="w-6 h-6 text-green-600" />
+    ) : queRes?.question?.type === QuestionType.SUBJECTIVE ? (
+      "Sub"
+    ) : (
+      <MdCancel className="w-6 h-6 text-red-600" />
+    ),
     HTMLReactParser(queRes?.question?.editorContent!),
     (queRes?.question?.type === QuestionType.SUBJECTIVE &&
       queRes.ans_subjective) ||
@@ -97,27 +94,25 @@ export default function QuizQuesSummary({
             queRes?.question?.objective_options!
           ) || ""
         )),
-    (queRes?.question?.type === QuestionType.SUBJECTIVE && "Subjective Type") ||
-      (queRes.isCorrect ? (
-        <FaCheckCircle className="w-6 h-6 text-green-600" />
-      ) : queRes.ans_optionsId ? (
-        <MdCancel className="w-6 h-6 text-red-600" />
-      ) : (
-        "Skipped"
-      )),
+    queRes?.question?.type,
     <input
       type="number"
-      className={`border-2 border-gray-400 rounded w-full pl-1 py-1 text-black ${
+      className={`border-2 border-gray-400 rounded w-16 pl-1 py-1 text-black ${
         missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
       } ${
         queRes.question?.type === QuestionType.SUBJECTIVE
           ? "border-yellow-500"
           : ""
       } `}
-      value={marks[queRes?.id]}
+      value={
+        queRes.question?.type === QuestionType.OBJECTIVE
+          ? typeof marks[queRes?.id] === "number"
+            ? marks[queRes?.id].toString()
+            : ""
+          : ""
+      }
       step="0.01"
       min="0"
-      max="1"
       onChange={(e) => {
         queRes.question?.type === QuestionType.SUBJECTIVE &&
           handleMarksChange(queRes.id, parseFloat(e.target.value));
@@ -152,9 +147,10 @@ export default function QuizQuesSummary({
       </span>
       <Table
         headers={[
+          "Status",
           "Question",
           "Given Answer",
-          "Answer Status",
+          "Question type",
           "Marks",
           "Time Taken",
         ]}

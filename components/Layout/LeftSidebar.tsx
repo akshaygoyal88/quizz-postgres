@@ -280,7 +280,7 @@ export default function LeftSideBar({
                     </span>
                   </Link>
                   <Button
-                    className="w-full m-1 rounded-none bg-red-700"
+                    className="w-full my-2 rounded-none bg-red-700"
                     onClick={() => signOut()}
                   >
                     Logout

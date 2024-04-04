@@ -60,7 +60,8 @@ function TestLayout({
       },
     });
     if (!finalSubRes?.error) {
-      alert("Test submitted successfully. Api execution required.");
+      alert("Test submitted successfully.");
+      router.push("/quizzes");
     }
   };
 
@@ -215,7 +216,7 @@ function CandidateQuizQuestion({
             type="textarea"
             id="answer"
             label="Type Answer"
-            className="border-2 w-3/4 mt-4"
+            className="border-2 w-3/4 mt-4 p-2 h-36"
             value={answer !== null && typeof answer === "string" ? answer : ""}
             onChange={(e) => setAnswer(e.target.value)}
             name="ans_subjective"

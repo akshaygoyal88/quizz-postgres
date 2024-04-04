@@ -8,6 +8,7 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
+  console.log(rawFormData);
 
   const optionsArray = [];
   const quizIds = [];
@@ -30,10 +31,6 @@ export async function handleQuestionSubmit(
     }
   }
 
-  console.log(optionsArray, "dsfdfdsfds")
-
-
-
   const reqData = {
     id:rawFormData.id,
     quizIds: quizIds,
@@ -47,6 +44,7 @@ export async function handleQuestionSubmit(
     editorContent: rawFormData.editorContent,
     answer_type: rawFormData.answer_type,
   };
+  console.log(reqData, "dsfdfds")
   switch (action) {
     case QuestionSubmitE.ADD:
     return await createQuestion(reqData);

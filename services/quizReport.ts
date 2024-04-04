@@ -1,10 +1,11 @@
 import { db } from "@/db";
 import { ReportStatusE } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { getUserQuiz } from "./answerSubmission";
 
-export async function getQuizsByAttemptedByUser(submittedBy: string) {
+export async function getQuizsByAttemptedByUser(candidateId: string) {
   const reportRes = await db.userQuizReport.findMany({
-    where: { submittedBy },
+    where: { candidateId },
   });
   const quizzes = [];
   const quizList = await db.quiz.findMany({});
@@ -15,21 +16,21 @@ export async function getQuizsByAttemptedByUser(submittedBy: string) {
   return { quizzes };
 }
 
-export async function getQuizReportOfUser({submittedBy, quizId}:{submittedBy: string, quizId: string}) {
+export async function getQuizReportOfUser({candidateId, quizId}:{candidateId: string, quizId: string}) {
   return await db.userQuizReport.findFirst({
-    where: { submittedBy, quizId },
+    where: { candidateId, quizId },
   });
   
 }
 
 export async function getReportByQuizIdAndSubmittedBy({
   quizId,
-  submittedBy,
+  candidateId,
 }: {
   quizId: string;
-  submittedBy: string;
+  candidateId: string;
 }) {
-  return db.userQuizReport.findFirst({ where: { quizId, submittedBy } });
+  return db.userQuizReport.findFirst({ where: { quizId, candidateId } });
 }
 
 export async function getReportsByQuizId({
@@ -67,12 +68,14 @@ export async function markSubmitByAdmin({
   marks,
   reportId,
 }: {
-  marks: { id: string; mark: number };
+  marks: { [id: string]: number | boolean };
   reportId: string;
 }) {
   const result = [];
   let updateReportRes;
   const error = [];
+  let submittedBy = "";
+  let quizId = ""
 
   for (const [id, mark] of Object.entries(marks)) {
     if (mark !== false) {
@@ -81,9 +84,11 @@ export async function markSubmitByAdmin({
           id,
         },
         data: {
-          marks: mark,
+          marks: typeof mark === 'number'  ? mark : undefined,
         },
       });
+      submittedBy = res.submittedBy
+      quizId = res.quizId;
       result.push(res);
     } else {
       error.push({ [id]: "Missing marks for this question." });
@@ -91,19 +96,21 @@ export async function markSubmitByAdmin({
   }
 
   if (error.length === 0 && result.length === Object.entries(marks).length) {
-
-    const obtMarks = result.reduce((acc, curr) => acc+ curr.marks , 0);
-    const updateReport = await db.userQuizReport.update({
-      where: {
-        id: reportId,
-      },
-      data: {
-        reportStatus: ReportStatusE.GENERATED,
-        obtMarks,
-        totalMarks: obtMarks,
-      },
-    });
-    updateReportRes = updateReport;
+    const finalMarksFromUserQuizResponse = await getUserQuiz({quizId,submittedBy})
+    if(Array.isArray(finalMarksFromUserQuizResponse)){
+      const obtMarks = finalMarksFromUserQuizResponse.reduce((acc,curr) => acc + curr.marks, 0)
+      console.log(obtMarks, "dfsdfdsfdsfdsf")
+      const updateReport = await db.userQuizReport.update({
+        where: {
+          id: reportId,
+        },
+        data: {
+          quizOwnerStatus: ReportStatusE.GENERATED,
+          obtMarks,
+        },
+      });
+      updateReportRes = updateReport;
+    }
   }
   return error.length > 0 ? { error } : { result, updateReportRes };
 }

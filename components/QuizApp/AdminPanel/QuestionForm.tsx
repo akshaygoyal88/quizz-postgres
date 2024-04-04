@@ -32,6 +32,7 @@ interface QuestionFormProps {
   editQuestionData?: QuestionsTypes;
   editQuesOptions?: string[];
   correctAnsList?: string[];
+  marksOfOption?: (number | null)[] | [];
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -41,12 +42,12 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   headingText,
   action,
   quesId,
-  editorsContent,
   imagesList,
   userData,
   editQuestionData,
   editQuesOptions,
   correctAnsList,
+  marksOfOption,
 }) => {
   const [options, setOptions] = useState<(string | null)[]>(
     editQuesOptions || [""]
@@ -275,6 +276,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               savedOptions={savedOptions}
               buttonText={buttonText}
               handleOptionTextChange={handleOptionTextChange}
+              defaultValue={marksOfOption ? marksOfOption[index] : 0}
             />
           ))}
         </div>
@@ -328,6 +330,7 @@ function OptionCard({
   savedOptions,
   buttonText,
   handleOptionTextChange,
+  defaultValue,
 }: {
   index: number;
   correctAnswerIndex?: string[];
@@ -341,6 +344,8 @@ function OptionCard({
     index?: number,
     editor?: string
   ) => void;
+  marksOfOption: number;
+  defaultValue?: number;
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
@@ -359,7 +364,7 @@ function OptionCard({
             type="number"
             placeholder="Marks"
             className="w-24 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            defaultValue={0}
+            defaultValue={defaultValue}
             name={`option_marks_${index}`}
             step="0.25"
           />
