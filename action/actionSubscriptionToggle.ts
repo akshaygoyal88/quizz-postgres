@@ -5,6 +5,7 @@ import { updateSubscriptionOfUser } from "@/services/quiz";
 
 export async function handleSubscriptionToggle(formData: FormData) {
     const rawFormData = Object.fromEntries(formData.entries())
+    console.log(rawFormData)
 
     const {id, ...reqData} = rawFormData
 

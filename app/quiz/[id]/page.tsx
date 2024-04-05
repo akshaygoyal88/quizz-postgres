@@ -4,7 +4,7 @@ import pathName from "@/constants";
 import { QuizService, UserSerivce } from "@/services";
 import { getFirstQuesIdOfQuiz } from "@/services/questionSet";
 import { QuizDetailType, UserDataType } from "@/types/types";
-import { Quiz, Subscription, User } from "@prisma/client";
+import { Quiz, QuizCreationStatusE, Subscription, User } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import React from "react";
@@ -17,14 +17,17 @@ export default async function page({ params }: { params: Params }) {
     session?.user?.email || ""
   );
 
-  const isCandidateSubscribed = userData?.Subscription.find(
-    (sub: Subscription) => sub.quizId === quizId
-  );
-
   const firstQuesId = await getFirstQuesIdOfQuiz(quizId);
   const quizDetails: QuizDetailType = await QuizService.getQuizDetailByQuizId(
     quizId
   );
+
+  const isCandidateSubscribed =
+    quizDetails.status === QuizCreationStatusE.FREE
+      ? true
+      : userData?.Subscription.find(
+          (sub: Subscription) => sub.quizId === quizId
+        );
 
   return (
     <FullWidthLayout>

@@ -104,12 +104,8 @@ export default function QuizQuesSummary({
           ? "border-yellow-500"
           : ""
       } `}
-      value={
-        queRes.question?.type === QuestionType.OBJECTIVE
-          ? typeof marks[queRes?.id] === "number"
-            ? marks[queRes?.id].toString()
-            : ""
-          : ""
+      defaultValue={
+        typeof marks[queRes?.id] === "number" ? marks[queRes?.id].toString() : 0
       }
       step="0.01"
       min="0"

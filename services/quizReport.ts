@@ -1,17 +1,23 @@
 import { db } from "@/db";
-import { ReportStatusE } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { QuizCreationStatusE, ReportStatusE } from "@prisma/client";
 import { getUserQuiz } from "./answerSubmission";
+import { sendEmailToUser } from "./sendEmail";
+import { formattedDate } from "@/utils/formattedDate";
+import { getQuizByQuizId } from "./quiz";
 
 export async function getQuizsByAttemptedByUser(candidateId: string) {
   const reportRes = await db.userQuizReport.findMany({
     where: { candidateId },
   });
   const quizzes = [];
-  const quizList = await db.quiz.findMany({});
+  const quizList = await db.quiz.findMany({
+    where: { status: {
+      not: QuizCreationStatusE.DELETE
+    }}
+  });
   for (const report of reportRes) {
     const quiz = quizList.find(q => q.id === report.quizId)
-    quizzes.push({id: quiz?.id, name: quiz?.name, isDeleted: quiz?.isDeleted});
+    quizzes.push({id: quiz?.id, name: quiz?.name});
   }
   return { quizzes };
 }
@@ -99,7 +105,6 @@ export async function markSubmitByAdmin({
     const finalMarksFromUserQuizResponse = await getUserQuiz({quizId,submittedBy})
     if(Array.isArray(finalMarksFromUserQuizResponse)){
       const obtMarks = finalMarksFromUserQuizResponse.reduce((acc,curr) => acc + curr.marks, 0)
-      console.log(obtMarks, "dfsdfdsfdsfdsf")
       const updateReport = await db.userQuizReport.update({
         where: {
           id: reportId,
@@ -112,6 +117,22 @@ export async function markSubmitByAdmin({
       updateReportRes = updateReport;
     }
   }
+
+  const quizData = await getQuizByQuizId(quizId);
+
+  //  updateReportRes && await sendEmailToUser({
+  //     userId: submittedBy,
+  //     subject: "Test Report",
+  //     templateId: process.env.TEST_REPORT_TEMP_ID || "",
+  //     dynamicTemplateData: {
+  //       quiz_name: quizData?.name,
+  //       status: "Report " + updateReportRes.quizOwnerStatus,
+  //       attempt_date: formattedDate(updateReportRes.candidateQuizStartTime),
+  //       obtMarks: updateReportRes.obtMarks?.toString() || "",
+  //       totalMarks: updateReportRes.totalMarks?.toString() || "",
+  //       link_of_report: `${process.env.NEXT_PUBLIC_BASE_URL}/${submittedBy}/reports/${quizId}`
+  //     },
+  //   });
   return error.length > 0 ? { error } : { result, updateReportRes };
 }
 

@@ -56,7 +56,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           formattedDate={formattedDate(quiz.createdAt)}
         />
       </Link>
-      {isUserSubscribed ? (
+      {isUserSubscribed && userData ? (
         <Button
           variant="quizCard"
           onClick={() => router.push(`/quiz/${quiz.id}`)}
@@ -92,10 +92,10 @@ const QuizInformation: React.FC<QuizInformationProps> = ({
 }) => {
   return (
     <div className="flex flex-1 flex-col p-8">
-      <span className="font-bold text-yellow-600 m-2 w-1/4 border-yellow-300 rounded-lg border">
+      <span className="font-bold text-yellow-600 m-2 w-1/3 border-yellow-300 rounded-lg border">
         {quiz.status === QuizCreationStatusE.FREE
           ? quiz.status
-          : `Price: ${quiz.price}`}
+          : `Price: ₹${quiz.price}`}
       </span>
 
       <img

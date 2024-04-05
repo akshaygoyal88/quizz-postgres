@@ -14,6 +14,9 @@ import {
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 import { getQuestionByIds } from "./questions";
 import { QuesType } from "@/types/types";
+import { sendEmailToUser } from "./sendEmail";
+import { formattedDate } from "@/utils/formattedDate";
+import { getQuizByQuizId } from "./quiz";
 
 export async function userQuizQuestionInitilization(reqData: {
   quizId: string;
@@ -120,27 +123,27 @@ export async function saveResponseForQues(reqData: saveResProps) {
     timeOver: timeOverStr,
     ans_optionsIds,
     ans_subjective,
-    questionId
+    questionId,
   } = reqData;
   const timeTaken = parseInt(`${timeTakenStr}`);
   const timeOver = timeOverStr === "1" ? true : false;
 
   const ques = await getQuestionByIds([questionId]);
-  const optionIdWithMarks: { [id: string]: number } = {}; 
+  const optionIdWithMarks: { [id: string]: number } = {};
 
-  if(Array.isArray(ques)) {
-    ques[0].objective_options.forEach(option => {
-        optionIdWithMarks[option.id] = option.option_marks;
-  });
+  if (Array.isArray(ques)) {
+    ques[0].objective_options.forEach((option) => {
+      optionIdWithMarks[option.id] = option.option_marks;
+    });
   }
 
   let marks = 0;
-  
-  for(let i = 0; i<ans_optionsIds.length; i++){
+
+  for (let i = 0; i < ans_optionsIds.length; i++) {
     marks += optionIdWithMarks[ans_optionsIds[i]];
   }
 
-  const result =  await db.userQuizAnswers.update({
+  const result = await db.userQuizAnswers.update({
     where: { id },
     data: {
       status,
@@ -148,11 +151,13 @@ export async function saveResponseForQues(reqData: saveResProps) {
       timeOver,
       ans_optionsId: ans_optionsIds?.join(","),
       ans_subjective,
-      marks
+      marks,
     },
   });
 
-  return result ? {message: "Successfully saved response"} : {message: "Error"};
+  return result
+    ? { message: "Successfully saved response" }
+    : { message: "Error" };
 }
 
 export async function getUserQuizAllQuestionAnswers({
@@ -180,7 +185,11 @@ export async function quizInitializationForReport(
     };
   }
   const initializeQuizRes = await db.userQuizReport.create({
-    data: { candidateId:submittedBy, quizId, candidateStatus: UserQuizStatusE.INPROGRESS },
+    data: {
+      candidateId: submittedBy,
+      quizId,
+      candidateStatus: UserQuizStatusE.INPROGRESS,
+    },
   });
   return {
     initializeQuizRes,
@@ -226,22 +235,35 @@ export async function finalTestSubmission({
     where: { quizId, submittedBy },
   });
 
-  const obtMarks: number = userAnswers.reduce((acc: number, curr: UserQuizAnswers) => acc + curr.marks!, 0);
-  const totalMarks = userAnswers.reduce((acc: number, curr: UserQuizAnswers) => acc + curr.questions_marks!, 0);
+  const obtMarks: number = userAnswers.reduce(
+    (acc: number, curr: UserQuizAnswers) => acc + curr.marks!,
+    0
+  );
+  const totalMarks = userAnswers.reduce(
+    (acc: number, curr: UserQuizAnswers) => acc + curr.questions_marks!,
+    0
+  );
 
   const quizReportRes: UserQuizReport = await db.userQuizReport.update({
     where: { id: userReport?.id },
     data: {
       candidateStatus: UserQuizStatusE.SUBMITTED,
-      // correctAnswers,
-      // wrongAnswers,
-      // notAttempted,
       obtMarks,
-      // negMarks: 0,
-      // timeTaken,
       totalMarks,
       candidateQuizEndtime: new Date(),
-      quizOwnerStatus: ReportStatusE.UNDERREVIEW
+      quizOwnerStatus: ReportStatusE.UNDERREVIEW,
+    },
+  });
+
+  const quizData = await getQuizByQuizId(quizId);
+
+  !quizReportRes.error && await sendEmailToUser({
+    userId: submittedBy,
+    subject: "Test submission",
+    templateId: process.env.TEST_SUBMISSION_TEMP_ID || "",
+    dynamicTemplateData: {
+    test_name: quizData?.name,
+    submission_date_time: formattedDate(quizReportRes?.candidateQuizEndtime!),
     },
   });
 

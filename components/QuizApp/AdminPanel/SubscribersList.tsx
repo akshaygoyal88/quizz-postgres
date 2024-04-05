@@ -6,9 +6,6 @@ import { SubscriptionTypes } from "@/types/types";
 import Heading from "@/components/Shared/Heading";
 import { Table } from "@/components/Shared/Table";
 import SimpleToggle from "@/components/Shared/SimpleToggle";
-import { subscribe } from "diagnostics_channel";
-import { FetchMethodE, fetchData } from "@/utils/fetch";
-import pathName from "@/constants";
 import { handleSubscriptionToggle } from "@/action/actionSubscriptionToggle";
 
 const SubscribersList = ({
@@ -64,7 +61,7 @@ const SubscribersList = ({
     }
   };
 
-  const handleSubscriptionOfUser = async (formData: FormData) => {
+  const formAction = async (formData: FormData) => {
     // const { data, error, isLoading } = await fetchData({
     //   url: `${pathName.subscriptionApiRoute.path}/subscriber/${id}`,
     //   method: FetchMethodE.PUT,
@@ -91,26 +88,19 @@ const SubscribersList = ({
         </>,
         <>{format(new Date(subscriber.startedAt), "MM/dd/yyyy HH:mm:ss")}</>,
         <>{subscriber.expiresOn}</>,
-        <>
-          {/* <button
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            //   onClick={() => approveSubscriber(subscriber.id)}
-          >
-            Approve
-          </button> */}
-          <form action={handleSubscriptionOfUser}>
-            <input type="hidden" name="id" value={subscriber.id} />
-            <input
-              type="hidden"
-              name="subscriptionStatus"
-              value={`${subscriber?.subscriptionStatus!}`}
-            />
-            <SimpleToggle
-              checked={subscriber?.subscriptionStatus!}
-              onChange={() => {}}
-            />
-          </form>
-        </>,
+
+        <form action={formAction}>
+          <input type="hidden" name="id" value={subscriber.id} />
+          <input
+            type="hidden"
+            name="subscriptionStatus"
+            value={`${subscriber?.subscriptionStatus!}`}
+          />
+          <SimpleToggle
+            checked={subscriber?.subscriptionStatus!}
+            onChange={() => {}}
+          />
+        </form>,
       ])
     : [];
 

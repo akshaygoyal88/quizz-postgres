@@ -29,7 +29,11 @@ export default async function page({
     for (const res of result) {
       const id: string = res.id;
       marks[id] =
-        res.question?.type === QuestionType.OBJECTIVE ? res.marks : false;
+        res.question?.type === QuestionType.OBJECTIVE
+          ? res.marks
+          : res.marks === 0
+          ? false
+          : res.marks;
     }
   }
 
