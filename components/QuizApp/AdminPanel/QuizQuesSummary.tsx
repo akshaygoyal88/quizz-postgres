@@ -18,6 +18,7 @@ import Form from "@/components/Shared/Form";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { handleReportSendEmail } from "@/action/actionReportEmailSend";
+import { handleResetQuizForCandidate } from "@/action/actionResetQuizForUser";
 
 export default function QuizQuesSummary({
   reportId,
@@ -180,6 +181,13 @@ export default function QuizQuesSummary({
         : Number(queRes.timeTaken) / 60 + " min"),
   ]);
 
+  const formActionForResetQuiz = async (formData: FormData) => {
+    formData.append("id", reportId as string);
+
+    const res = await handleResetQuizForCandidate(formData);
+    console.log(res);
+  };
+
   return (
     <div className="sm:px-6">
       <div className="flex items-start justify-between my-4">
@@ -194,6 +202,11 @@ export default function QuizQuesSummary({
       >
         <Button>Send Email for Report</Button>
       </Form>
+      {reportStatus !== ReportStatusE.INITIALIZED && (
+        <Form classes="p-4" action={formActionForResetQuiz}>
+          <Button>Reset</Button>
+        </Form>
+      )}
       <span className="">
         Report Status:{" "}
         <text
