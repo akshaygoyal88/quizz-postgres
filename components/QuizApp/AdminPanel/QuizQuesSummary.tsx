@@ -166,8 +166,8 @@ export default function QuizQuesSummary({
               )
             : queRes?.question?.objective_options?.reduce(
                 (max: number, curr: ObjectiveOptions) =>
-                  curr.option_marks! == undefined && curr.option_marks! > max
-                    ? curr.option_marks!
+                  curr.option_marks && curr.option_marks > max
+                    ? curr.option_marks
                     : max,
                 -Infinity
               )
