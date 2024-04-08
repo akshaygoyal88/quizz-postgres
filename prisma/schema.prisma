@@ -211,3 +211,8 @@ model Subscription {
   isDeleted          Boolean?  @default(false)
   subscriptionStatus Boolean?  @default(true)
 }
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "../ERD.pdf"
+}
