@@ -257,15 +257,15 @@ export async function finalTestSubmission({
 
   const quizData = await getQuizByQuizId(quizId);
 
-  !quizReportRes.error && await sendEmailToUser({
-    userId: submittedBy,
-    subject: "Test submission",
-    templateId: process.env.TEST_SUBMISSION_TEMP_ID || "",
-    dynamicTemplateData: {
-    test_name: quizData?.name,
-    submission_date_time: formattedDate(quizReportRes?.candidateQuizEndtime!),
-    },
-  });
+  // !quizReportRes.error && await sendEmailToUser({
+  //   userId: submittedBy,
+  //   subject: "Test submission",
+  //   templateId: process.env.TEST_SUBMISSION_TEMP_ID || "",
+  //   dynamicTemplateData: {
+  //     test_name: quizData?.name,
+  //     submission_date_time: formattedDate(quizReportRes?.candidateQuizEndtime!),
+  //   },
+  // });
 
   return quizReportRes;
 }

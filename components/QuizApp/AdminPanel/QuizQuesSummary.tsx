@@ -12,24 +12,27 @@ import Heading from "@/components/Shared/Heading";
 import Form from "@/components/Shared/Form";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
+import { handleReportSendEmail } from "@/action/actionReportEmailSend";
 
 export default function QuizQuesSummary({
   reportId,
   candidateResponse,
   saveMarks,
   reportStatus,
+  candidateId,
 }: {
   reportId: string;
   candidateResponse: CandidateResponseTypes[];
   saveMarks: { [key: string]: number | boolean };
   reportStatus?: string;
+  candidateId: string;
 }) {
   const [marks, setMarks] = useState<{ [key: string]: number | boolean }>({
     ...saveMarks,
   });
   const [missingMark, setMissingMark] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSucessMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleMarksChange = (id: string, mark: number) => {
     if (missingMark.includes(id)) {
@@ -60,7 +63,7 @@ export default function QuizQuesSummary({
         setMissingMark((prev) => [...prev, id]);
       }
     } else if (markSaveRes?.result?.length > 0) {
-      setSucessMessage("Successfully saved marks.");
+      setSuccessMessage("Successfully saved marks.");
       setTimeout(() => {}, 10000);
     }
   };
@@ -120,15 +123,25 @@ export default function QuizQuesSummary({
         : Number(queRes.timeTaken) / 60 + " min"),
   ]);
 
+  const formActions = async (formData: FormData) => {
+    formData.append("candidateId", candidateId as string);
+    formData.append("quizId", candidateResponse[0].quizId as string);
+    formData.append("subject", "Report Generated" as string);
+    const res = await handleReportSendEmail(formData);
+    if (res?.error) {
+      setErrorMessage(res?.error);
+    } else {
+      setSuccessMessage(res?.message!);
+    }
+  };
+
   return (
     <div className="sm:px-6">
       <div className="flex items-start justify-between my-4">
         <Heading headingText="Detailed Quiz Report of candidate" tag="h1" />
         <Button onClick={handleSave}>Save and Publish Report</Button>
       </div>
-      <Form action={() => {}} error={errorMessage} success={successMessage}>
-        {" "}
-      </Form>
+
       <span className="">
         Report Status:{" "}
         <text
@@ -152,6 +165,14 @@ export default function QuizQuesSummary({
         ]}
         rows={tableRows}
       />
+      <Form
+        classes="p-4"
+        action={formActions}
+        error={errorMessage}
+        success={successMessage}
+      >
+        <Button>Send Email for Report</Button>
+      </Form>
     </div>
   );
 }

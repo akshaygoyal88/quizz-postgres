@@ -98,6 +98,7 @@ function QuizTable({
           "Created By",
           "Created on",
           "Last Modified on",
+          "Status",
           "Action",
         ]}
         rows={quizzes.map((quiz) => [
@@ -106,6 +107,7 @@ function QuizTable({
           quiz.createdBy.first_name,
           formattedDate(quiz.createdAt),
           formattedDate(quiz.updatedAt),
+          <>{quiz.status}</>,
           <span className="flex justify-between items-center gap-2">
             <Link
               title="view subscriber"

@@ -48,6 +48,7 @@ export default async function page({
       candidateResponse={result}
       saveMarks={marks}
       reportStatus={report?.quizOwnerStatus!}
+      candidateId={submittedBy}
     />
   );
 }
