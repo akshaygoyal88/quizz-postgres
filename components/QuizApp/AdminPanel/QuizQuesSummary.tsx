@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import HTMLReactParser from "html-react-parser";
 import pathName from "@/constants";
-import { ObjectiveOptions, QuestionType, ReportStatusE } from "@prisma/client";
+import {
+  AnswerTypeE,
+  ObjectiveOptions,
+  QuestionType,
+  ReportStatusE,
+} from "@prisma/client";
 import { Button } from "../../Shared/Button";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
 import { CandidateResponseTypes } from "@/types/types";
@@ -85,6 +90,18 @@ export default function QuizQuesSummary({
     return givAns;
   };
 
+  const formActions = async (formData: FormData) => {
+    formData.append("candidateId", candidateId as string);
+    formData.append("quizId", candidateResponse[0].quizId as string);
+    formData.append("subject", "Report Generated" as string);
+    const res = await handleReportSendEmail(formData);
+    if (res?.error) {
+      setErrorMessage(res?.error);
+    } else {
+      setSuccessMessage(res?.message!);
+    }
+  };
+
   const tableRows = candidateResponse.map((queRes: CandidateResponseTypes) => [
     queRes.isCorrect ? (
       <FaCheckCircle className="w-6 h-6 text-green-600" />
@@ -104,7 +121,7 @@ export default function QuizQuesSummary({
           ) || ""
         )),
     queRes?.question?.type,
-    <>
+    <div className="flex items-center gap-2">
       <input
         type="number"
         className={`border-2 border-gray-400 rounded w-16 pl-1 py-1 text-black ${
@@ -135,28 +152,25 @@ export default function QuizQuesSummary({
             );
         }}
       />
-      {queRes.question?.type === QuestionType.SUBJECTIVE && (
-        <span className="text-sm">{`Max:${queRes?.question.objective_options[0]?.option_marks}
-      `}</span>
-      )}
-    </>,
+
+      <span className="text-lg">
+        /
+        {queRes.question?.type === QuestionType.SUBJECTIVE
+          ? queRes?.question.objective_options[0]?.option_marks
+          : queRes.question?.answer_type === AnswerTypeE.MULTIPLECHOICE
+          ? queRes.question.objective_options?.reduce(
+              (acc, curr) =>
+                curr.option_marks! >= 0 ? acc + curr.option_marks! : acc,
+              0
+            )
+          : ""}
+      </span>
+    </div>,
     queRes.timeTaken &&
       (Number(queRes.timeTaken) / 60 < 1
         ? queRes.timeTaken + " sec"
         : Number(queRes.timeTaken) / 60 + " min"),
   ]);
-
-  const formActions = async (formData: FormData) => {
-    formData.append("candidateId", candidateId as string);
-    formData.append("quizId", candidateResponse[0].quizId as string);
-    formData.append("subject", "Report Generated" as string);
-    const res = await handleReportSendEmail(formData);
-    if (res?.error) {
-      setErrorMessage(res?.error);
-    } else {
-      setSuccessMessage(res?.message!);
-    }
-  };
 
   return (
     <div className="sm:px-6">
