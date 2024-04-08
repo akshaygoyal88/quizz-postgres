@@ -17,7 +17,7 @@ export default async function QuesEdit({ params }: { params: Params }) {
   let marksOfOption: (number | null)[] | [] = [];
   let correctAnsList: string[] = [];
 
-  if (questionData?.type === QuestionType.OBJECTIVE) {
+  if (questionData) {
     questionData.objective_options.forEach(
       (ele: ObjectiveOptions, index: number) => {
         options.push(ele.text);

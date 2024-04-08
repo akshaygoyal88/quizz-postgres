@@ -39,9 +39,9 @@ export async function handleReportSendEmail(formData: FormData) {
       templateId: process.env.TEST_REPORT_TEMP_ID || "",
       dynamicTemplateData,
     });
-    if (reportEmailRes!) {
+    // if (reportEmailRes!) {
       return { message: "Email sent successfully" };
-    }
+    // }
   } catch (error) {
     if (error && typeof error === "object") {
       console.error("An error occurred:", error);
