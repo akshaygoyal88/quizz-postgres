@@ -69,8 +69,8 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
       type,
       timer: parseInt(`${timer}`, 10),
       objective_options:
-        type === QuestionType.OBJECTIVE
-          ? {
+      //   type === QuestionType.OBJECTIVE ? 
+          {
               createMany: {
                 data: options.map((option: string[], index: number) => ({
                   text: option[0],
@@ -78,8 +78,8 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
                   option_marks: parseFloat(option[1])
                 })),
               },
-            }
-          : undefined,
+            },
+          // : undefined,
       solution,
       answer_type,
       createdById,

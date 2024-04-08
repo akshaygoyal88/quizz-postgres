@@ -255,32 +255,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           </div>
         )}
       </div>
-      {questionType === QuestionType.OBJECTIVE && (
-        <div className="mb-4">
-          <div className="my-3 text-right">
-            <div className="text-red-500 mb-2">{validationError}</div>
+
+      <div className="mb-4">
+        <div className="my-3 text-right">
+          <div className="text-red-500 mb-2">{validationError}</div>
+          {questionType === QuestionType.OBJECTIVE && (
             <span
               className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
               onClick={handleOptionIncrease}
             >
               Add more options+
             </span>
-          </div>
-          {options.map((option, index) => (
-            <OptionCard
-              index={index}
-              correctAnswerIndex={correctAnswerIndex}
-              handleCorrectOptionChange={handleCorrectOptionChange}
-              handleOptionRemove={handleOptionRemove}
-              imagesList={imagesList}
-              savedOptions={savedOptions}
-              buttonText={buttonText}
-              handleOptionTextChange={handleOptionTextChange}
-              defaultValue={marksOfOption ? marksOfOption[index] : 0}
-            />
-          ))}
+          )}
         </div>
-      )}
+        {options.map((option, index) => (
+          <OptionCard
+            index={index}
+            correctAnswerIndex={correctAnswerIndex}
+            handleCorrectOptionChange={handleCorrectOptionChange}
+            handleOptionRemove={handleOptionRemove}
+            imagesList={imagesList}
+            savedOptions={savedOptions}
+            buttonText={buttonText}
+            handleOptionTextChange={handleOptionTextChange}
+            defaultValue={marksOfOption ? marksOfOption[index] : 0}
+            questionType={questionType}
+          />
+        ))}
+      </div>
+
       <div className="mt-4 p-3 bg-cyan-100 rounded-md">
         <Lable labelText="Solution:" />
         <TinyMCEEditor
@@ -315,7 +318,7 @@ function SelectSet({
         isMulti
         options={quizzes?.map((i) => ({ value: i.id, label: i.name }))}
         onChange={handleChange}
-        className="w-full"
+        className="w-full z-40 "
       />
     </div>
   );
@@ -331,6 +334,7 @@ function OptionCard({
   buttonText,
   handleOptionTextChange,
   defaultValue,
+  questionType,
 }: {
   index: number;
   correctAnswerIndex?: string[];
@@ -346,18 +350,21 @@ function OptionCard({
   ) => void;
   marksOfOption: number;
   defaultValue?: number;
+  questionType?: QuestionType;
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
       <div className="flex items-center justify-between py-2">
         <Lable labelText={`Option:${index + 1}`} />
-        <span className="flex gap-5">
-          <label>Is correct</label>
-          <SimpleToggle
-            checked={correctAnswerIndex?.includes(`${index}`)!}
-            onChange={() => handleCorrectOptionChange(index)}
-          />
-        </span>
+        {questionType === QuestionType.OBJECTIVE && (
+          <span className="flex gap-5">
+            <label>Is correct</label>
+            <SimpleToggle
+              checked={correctAnswerIndex?.includes(`${index}`)!}
+              onChange={() => handleCorrectOptionChange(index)}
+            />
+          </span>
+        )}
         <span className="flex items-center">
           <label>Marks:</label>
           <input
@@ -369,12 +376,14 @@ function OptionCard({
             step="0.25"
           />
         </span>
-        <span
-          className="cursor-pointer text-red-600"
-          onClick={() => handleOptionRemove(index)}
-        >
-          <IoIosRemoveCircle className="h-6 w-6" />
-        </span>
+        {questionType === QuestionType.OBJECTIVE && (
+          <span
+            className="cursor-pointer text-red-600"
+            onClick={() => handleOptionRemove(index)}
+          >
+            <IoIosRemoveCircle className="h-6 w-6" />
+          </span>
+        )}
       </div>
       <div className="">
         <TinyMCEEditor

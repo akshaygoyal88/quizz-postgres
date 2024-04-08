@@ -34,7 +34,13 @@ export default function QuizQuesSummary({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleMarksChange = (id: string, mark: number) => {
+  const handleMarksChange = (id: string, mark: number, maxMark?: number) => {
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
+    if (maxMark && mark > maxMark) {
+      setErrorMessage("Marks must be smaller and equal to maximum Marks");
+    }
     if (missingMark.includes(id)) {
       const filterArr = missingMark.filter((m) => m !== id);
       setMissingMark(filterArr);
@@ -98,25 +104,42 @@ export default function QuizQuesSummary({
           ) || ""
         )),
     queRes?.question?.type,
-    <input
-      type="number"
-      className={`border-2 border-gray-400 rounded w-16 pl-1 py-1 text-black ${
-        missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
-      } ${
-        queRes.question?.type === QuestionType.SUBJECTIVE
-          ? "border-yellow-500"
-          : ""
-      } `}
-      defaultValue={
-        typeof marks[queRes?.id] === "number" ? marks[queRes?.id].toString() : 0
-      }
-      step="0.01"
-      min="0"
-      onChange={(e) => {
-        queRes.question?.type === QuestionType.SUBJECTIVE &&
-          handleMarksChange(queRes.id, parseFloat(e.target.value));
-      }}
-    />,
+    <>
+      <input
+        type="number"
+        className={`border-2 border-gray-400 rounded w-16 pl-1 py-1 text-black ${
+          missingMark?.includes(queRes.id) ? "border-red-600 border-3" : ""
+        } ${
+          queRes.question?.type === QuestionType.SUBJECTIVE
+            ? "border-yellow-500"
+            : ""
+        } `}
+        defaultValue={
+          typeof marks[queRes?.id] === "number"
+            ? marks[queRes?.id].toString()
+            : 0
+        }
+        step="0.01"
+        min="0"
+        max={`${
+          queRes.question?.type === QuestionType.SUBJECTIVE
+            ? `${queRes?.question.objective_options[0]?.option_marks}`
+            : ""
+        }`}
+        onChange={(e) => {
+          queRes.question?.type === QuestionType.SUBJECTIVE &&
+            handleMarksChange(
+              queRes.id,
+              parseFloat(e.target.value),
+              queRes?.question.objective_options[0]?.option_marks!
+            );
+        }}
+      />
+      {queRes.question?.type === QuestionType.SUBJECTIVE && (
+        <span className="text-sm">{`Max:${queRes?.question.objective_options[0]?.option_marks}
+      `}</span>
+      )}
+    </>,
     queRes.timeTaken &&
       (Number(queRes.timeTaken) / 60 < 1
         ? queRes.timeTaken + " sec"
@@ -141,7 +164,14 @@ export default function QuizQuesSummary({
         <Heading headingText="Detailed Quiz Report of candidate" tag="h1" />
         <Button onClick={handleSave}>Save and Publish Report</Button>
       </div>
-
+      <Form
+        classes="p-4"
+        action={formActions}
+        error={errorMessage}
+        success={successMessage}
+      >
+        <Button>Send Email for Report</Button>
+      </Form>
       <span className="">
         Report Status:{" "}
         <text
@@ -165,14 +195,6 @@ export default function QuizQuesSummary({
         ]}
         rows={tableRows}
       />
-      <Form
-        classes="p-4"
-        action={formActions}
-        error={errorMessage}
-        success={successMessage}
-      >
-        <Button>Send Email for Report</Button>
-      </Form>
     </div>
   );
 }

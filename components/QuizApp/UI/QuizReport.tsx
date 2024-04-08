@@ -115,7 +115,9 @@ const QuizReport = ({
                       dataOfSelectedQuiz?.candidateQuizEndtime!
                     ),
                   },
-                  { Marks: `${dataOfSelectedQuiz?.obtMarks}` },
+                  {
+                    Marks: `${dataOfSelectedQuiz?.obtMarks}/${dataOfSelectedQuiz.totalMarks}`,
+                  },
                 ]}
               />
               <Table
