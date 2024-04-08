@@ -23,7 +23,7 @@ export default async function page({ params }: Params) {
   const quizzes = quizList.quizzes;
 
   const reportOfUser = await getQuizReportOfUser({
-    submittedBy: userId,
+    candidateId: userId,
     quizId: quizId,
   });
 

@@ -1,9 +1,13 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import TestLayout from "@/components/QuizApp/UI/TestLayout";
+import { db } from "@/db";
 import { userQuizQuestionInitilization } from "@/services/answerSubmission";
 import { getUserQuizQuestionsAnswers } from "@/services/quiz";
+import { getQuizReportStatusOfCandidate } from "@/services/quizReport";
 import { getSessionUser } from "@/utils/getSessionUser";
+import { UserQuizStatusE } from "@prisma/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function page({ params }: { params: Params }) {
@@ -12,6 +16,16 @@ export default async function page({ params }: { params: Params }) {
     return <>Not authenticated</>;
   }
   const quizId = params.id;
+
+  const quizStatus = await getQuizReportStatusOfCandidate({
+    candidateId: userData.id,
+    quizId,
+  });
+
+  if (quizStatus === UserQuizStatusE.SUBMITTED) {
+    return <>Already Submitted This quiz</>;
+  }
+
   const questionId = params.questionId;
   const allQuestions = await getUserQuizQuestionsAnswers({
     quizId,

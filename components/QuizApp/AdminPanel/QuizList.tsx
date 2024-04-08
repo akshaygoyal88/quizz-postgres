@@ -15,6 +15,7 @@ import { Button } from "@/components/Shared/Button";
 import Link from "next/link";
 import { FaEdit, FaUsers } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { QuizCreationStatusE } from "@prisma/client";
 
 export default function QuizList({
   quizzes,
@@ -67,7 +68,7 @@ function QuizTable({
     const { data, error, isLoading } = await fetchData({
       url: `${pathName.questionSetApi.path}/${selectedQuestionId}`,
       method: FetchMethodE.PUT,
-      body: { isDeleted: true },
+      body: { status: QuizCreationStatusE.DELETE },
     });
 
     if (data && !data.error) {
@@ -97,6 +98,7 @@ function QuizTable({
           "Created By",
           "Created on",
           "Last Modified on",
+          "Status",
           "Action",
         ]}
         rows={quizzes.map((quiz) => [
@@ -105,6 +107,7 @@ function QuizTable({
           quiz.createdBy.first_name,
           formattedDate(quiz.createdAt),
           formattedDate(quiz.updatedAt),
+          <>{quiz.status}</>,
           <span className="flex justify-between items-center gap-2">
             <Link
               title="view subscriber"

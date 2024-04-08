@@ -22,7 +22,7 @@ export type QuizDetailType = QuizDetail | { error?: string };
 
 export interface QuesType extends Question {
   timer: number;
-  objective_options?: ObjectiveOptions[];
+  objective_options: ObjectiveOptions[];
 }
 export type QuestionsTypes =
   | ({
@@ -31,6 +31,7 @@ export type QuestionsTypes =
         text: string;
         isCorrect: boolean;
         questionId: string;
+        option_marks: number | null
       }[];
     } & {
       id: string;
@@ -51,6 +52,7 @@ export type QuestionsTypes =
         text: string;
         isCorrect: boolean;
         questionId: string;
+        option_marks: number | null
       }[];
     } & {
       id: string;
@@ -113,6 +115,7 @@ export interface imageS3 {
 }
 
 export interface UserQuizReportTypes extends UserQuizReport {
+  submittedBy?: string;
   name: ReactNode;
   user: User;
 }

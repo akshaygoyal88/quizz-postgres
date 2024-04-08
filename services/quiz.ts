@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { AnswerTypeE, ObjectiveOptions, QuestionType, Quiz, Subscription, User, UserQuizAnswerStatus } from "@prisma/client";
+import { Quiz, Subscription } from "@prisma/client";
 import { createNotification } from "./notification";
 import { getUserById } from "./user";
 import { getUserQuiz } from "./answerSubmission";
@@ -115,6 +115,15 @@ export async function getSubscribersByQuizId(quizId: string) {
   return await db.subscription.findMany({ where: { quizId }, include: {user: true} });
 }
 
+export async function updateSubscriptionOfUser({id,reqData}:{id:string,reqData:Subscription}){
+  if(!id){
+    return { error: "Subscription Id missing" };
+  }
+  return await db.subscription.update({where: {id}, data: {
+    ...reqData
+  }})
+}
+
 export async function getQuizQuestionByID({ quizId, questionId }: { quizId: string, questionId: string }) {
   return await db.quizQuestions.findFirst({
     where: { quizId, questionId },
@@ -150,4 +159,17 @@ export async function getQuizByQuizId(id: string){
   return await db.quiz.findUnique({
     where: { id },
   });
+}
+
+export async function updateQuiz(reqData: Quiz){
+  const {id, ...data} = reqData;
+  if(!reqData.id){
+    return {error: "Quiz id is missing"}
+  }
+  return await db.quiz.update({
+    where: {id},
+    data: {
+      ...data
+    }
+  })
 }

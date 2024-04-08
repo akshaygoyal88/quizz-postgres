@@ -61,17 +61,23 @@ enum UserOtpType {
   RESET_TOKEN
 }
 
+enum QuizCreationStatusE {
+  PUBLISH
+  DELETE
+  FREE
+  DRAFT
+}
+
 model Quiz {
-  id              String            @id @default(cuid())
+  id              String               @id @default(cuid())
   name            String
   description     String?
-  createdAt       DateTime          @default(now()) @map(name: "created_at")
-  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
-  createdBy       User              @relation(fields: [createdById], references: [id])
+  createdAt       DateTime             @default(now()) @map(name: "created_at")
+  updatedAt       DateTime             @updatedAt @map(name: "updated_at")
+  createdBy       User                 @relation(fields: [createdById], references: [id])
   createdById     String
-  isDeleted       Boolean           @default(false)
-  price           Float?            @default(0.0)
-  status          String?
+  price           Float?               @default(0.0)
+  status          QuizCreationStatusE?
   QuizQuestions   QuizQuestions[]
   UserQuizAnswers UserQuizAnswers[]
   Subscription    Subscription[]
@@ -105,11 +111,12 @@ model Question {
 }
 
 model ObjectiveOptions {
-  id         String   @id @default(cuid())
-  text       String   @db.VarChar(1000)
-  isCorrect  Boolean
-  questionId String
-  question   Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
+  id           String   @id @default(cuid())
+  text         String   @db.VarChar(1000)
+  isCorrect    Boolean
+  questionId   String
+  question     Question @relation("QuestionToAnswer", fields: [questionId], references: [id])
+  option_marks Float?   @default(0.0)
 }
 
 // Quiz to QuizQuestions
@@ -149,6 +156,7 @@ model UserQuizAnswers {
   isCorrect       Boolean?              @default(false)
   // finalSubmit     Boolean?              @default(false)
   marks           Float?                @default(0)
+  questions_marks Float?                @default(0)
   isCurrent       Boolean?              @default(false)
 }
 
@@ -174,31 +182,37 @@ enum ReportStatusE {
 }
 
 model UserQuizReport {
-  id           String           @id @default(cuid())
-  submittedBy  String
-  user         User             @relation(fields: [submittedBy], references: [id])
-  quizId       String
-  status       UserQuizStatusE?
-  startedAt    DateTime         @default(now()) @map(name: "started_at")
-  endedAt      DateTime?
+  id                     String           @id @default(cuid())
+  candidateId            String
+  user                   User             @relation(fields: [candidateId], references: [id])
+  quizId                 String
+  candidateStatus        UserQuizStatusE?
+  candidateQuizStartTime DateTime         @default(now()) @map(name: "started_at")
+  candidateQuizEndtime   DateTime?
   // correctAnswers Int?               @default(0)
   // wrongAnswers   Int?               @default(0)
   // notAttempted   Int?               @default(0)
-  obtMarks     Float?           @default(0.0)
+  obtMarks               Float?           @default(0.0)
   // negMarks       Int?               @default(0)
   // timeTaken      Int?               @default(0)
-  totalMarks   Float?           @default(0.0)
-  reportStatus ReportStatusE?   @default(INITIALIZED)
+  totalMarks             Float?           @default(0.0)
+  quizOwnerStatus        ReportStatusE?   @default(INITIALIZED)
 }
 
 model Subscription {
-  id          String    @id @default(cuid())
-  candidateId String
-  user        User      @relation(fields: [candidateId], references: [id])
-  quizId      String
-  quiz        Quiz      @relation(fields: [quizId], references: [id])
-  startedAt   DateTime  @default(now()) @map(name: "startedAt")
-  expiresOn   DateTime?
-  isApproved  Boolean?  @default(false)
-  isDeleted   Boolean?  @default(false)
+  id                 String    @id @default(cuid())
+  candidateId        String
+  user               User      @relation(fields: [candidateId], references: [id])
+  quizId             String
+  quiz               Quiz      @relation(fields: [quizId], references: [id])
+  startedAt          DateTime  @default(now()) @map(name: "startedAt")
+  expiresOn          DateTime?
+  isApproved         Boolean?  @default(false)
+  isDeleted          Boolean?  @default(false)
+  subscriptionStatus Boolean?  @default(true)
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "../ERD.pdf"
 }

@@ -1,5 +1,8 @@
 import SubscribersList from "@/components/QuizApp/AdminPanel/SubscribersList";
-import { getSubscribersByQuizId } from "@/services/quiz";
+import {
+  getSubscribersByQuizId,
+  updateSubscriptionOfUser,
+} from "@/services/quiz";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 export default async function page({

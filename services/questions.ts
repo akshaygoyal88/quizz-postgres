@@ -40,7 +40,7 @@ export enum QuestionSubmitE {
   EDIT = "edit",
 }
 
-export async function createQuestion(reqData: Question & {quizIds: string[], options: string[] | [], correctAnswer: string[] | []}) {
+export async function createQuestion(reqData: Question & {quizIds: string[], options: string[][] | [], correctAnswer: string[] | []}) {
   
   const {
     quizIds,
@@ -69,16 +69,17 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
       type,
       timer: parseInt(`${timer}`, 10),
       objective_options:
-        type === QuestionType.OBJECTIVE
-          ? {
+      //   type === QuestionType.OBJECTIVE ? 
+          {
               createMany: {
-                data: options.map((optionText: string, index: number) => ({
-                  text: optionText,
+                data: options.map((option: string[], index: number) => ({
+                  text: option[0],
                   isCorrect: correctAnswer.includes(index),
+                  option_marks: parseFloat(option[1])
                 })),
               },
-            }
-          : undefined,
+            },
+          // : undefined,
       solution,
       answer_type,
       createdById,
@@ -98,7 +99,7 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
   return {addQuestion, quizAdd};
 }
 
-export async function editQuestions(reqData: Question & {quizIds: string[], options: string[] | [], correctAnswer: string[] | []}){
+export async function editQuestions(reqData: Question & {quizIds: string[], options: string[][] | [], correctAnswer: string[] | []}){
  
   const {
     id,
@@ -135,9 +136,10 @@ export async function editQuestions(reqData: Question & {quizIds: string[], opti
           type === QuestionType.OBJECTIVE
             ? {
                 createMany: {
-                  data: options.map((optionText: string, index: Number) => ({
-                    text: optionText,
+                  data: options.map((option: string[], index: number) => ({
+                    text: option[0],
                     isCorrect: correctAnswer.includes(index),
+                    option_marks: parseFloat(option[1])
                   })),
                 },
               }

@@ -14,6 +14,7 @@ import Form from "@/components/Shared/Form";
 import Heading from "@/components/Shared/Heading";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { IoIosRemoveCircle } from "react-icons/io";
 
 const animatedComponents = makeAnimated();
 
@@ -31,6 +32,7 @@ interface QuestionFormProps {
   editQuestionData?: QuestionsTypes;
   editQuesOptions?: string[];
   correctAnsList?: string[];
+  marksOfOption?: (number | null)[] | [];
 }
 
 const QuestionForm: React.FC<QuestionFormProps> = ({
@@ -40,12 +42,12 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   headingText,
   action,
   quesId,
-  editorsContent,
   imagesList,
   userData,
   editQuestionData,
   editQuesOptions,
   correctAnsList,
+  marksOfOption,
 }) => {
   const [options, setOptions] = useState<(string | null)[]>(
     editQuesOptions || [""]
@@ -216,7 +218,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             <input
               type="number"
               className="w-48 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={0}
+              defaultValue={editQuestionData?.timer}
               name="timer"
             />
           </div>
@@ -253,31 +255,35 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           </div>
         )}
       </div>
-      {questionType === QuestionType.OBJECTIVE && (
-        <div className="mb-4">
-          <div className="my-3 text-right">
-            <div className="text-red-500 mb-2">{validationError}</div>
+
+      <div className="mb-4">
+        <div className="my-3 text-right">
+          <div className="text-red-500 mb-2">{validationError}</div>
+          {questionType === QuestionType.OBJECTIVE && (
             <span
               className="rounded px-2 py-1 bg-yellow-600 text-white font-semibold hover:cursor-pointer"
               onClick={handleOptionIncrease}
             >
               Add more options+
             </span>
-          </div>
-          {options.map((option, index) => (
-            <OptionCard
-              index={index}
-              correctAnswerIndex={correctAnswerIndex}
-              handleCorrectOptionChange={handleCorrectOptionChange}
-              handleOptionRemove={handleOptionRemove}
-              imagesList={imagesList}
-              savedOptions={savedOptions}
-              buttonText={buttonText}
-              handleOptionTextChange={handleOptionTextChange}
-            />
-          ))}
+          )}
         </div>
-      )}
+        {options.map((option, index) => (
+          <OptionCard
+            index={index}
+            correctAnswerIndex={correctAnswerIndex}
+            handleCorrectOptionChange={handleCorrectOptionChange}
+            handleOptionRemove={handleOptionRemove}
+            imagesList={imagesList}
+            savedOptions={savedOptions}
+            buttonText={buttonText}
+            handleOptionTextChange={handleOptionTextChange}
+            defaultValue={marksOfOption ? marksOfOption[index] : 0}
+            questionType={questionType}
+          />
+        ))}
+      </div>
+
       <div className="mt-4 p-3 bg-cyan-100 rounded-md">
         <Lable labelText="Solution:" />
         <TinyMCEEditor
@@ -312,7 +318,7 @@ function SelectSet({
         isMulti
         options={quizzes?.map((i) => ({ value: i.id, label: i.name }))}
         onChange={handleChange}
-        className="w-full"
+        className="w-full z-40 "
       />
     </div>
   );
@@ -327,6 +333,8 @@ function OptionCard({
   savedOptions,
   buttonText,
   handleOptionTextChange,
+  defaultValue,
+  questionType,
 }: {
   index: number;
   correctAnswerIndex?: string[];
@@ -340,24 +348,42 @@ function OptionCard({
     index?: number,
     editor?: string
   ) => void;
+  marksOfOption: number;
+  defaultValue?: number;
+  questionType?: QuestionType;
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between py-2">
         <Lable labelText={`Option:${index + 1}`} />
-        <span className="flex items-center gap-5 py-2">
-          <label>Is correct</label>
-          <SimpleToggle
-            checked={correctAnswerIndex?.includes(`${index}`)!}
-            onChange={() => handleCorrectOptionChange(index)}
+        {questionType === QuestionType.OBJECTIVE && (
+          <span className="flex gap-5">
+            <label>Is correct</label>
+            <SimpleToggle
+              checked={correctAnswerIndex?.includes(`${index}`)!}
+              onChange={() => handleCorrectOptionChange(index)}
+            />
+          </span>
+        )}
+        <span className="flex items-center">
+          <label>Marks:</label>
+          <input
+            type="number"
+            placeholder="Marks"
+            className="w-24 m-2 block rounded-md border-0 py-1.5 pl-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            defaultValue={defaultValue}
+            name={`option_marks_${index}`}
+            step="0.25"
           />
         </span>
-        <span
-          className="cursor-pointer text-red-600"
-          onClick={() => handleOptionRemove(index)}
-        >
-          Remove
-        </span>
+        {questionType === QuestionType.OBJECTIVE && (
+          <span
+            className="cursor-pointer text-red-600"
+            onClick={() => handleOptionRemove(index)}
+          >
+            <IoIosRemoveCircle className="h-6 w-6" />
+          </span>
+        )}
       </div>
       <div className="">
         <TinyMCEEditor

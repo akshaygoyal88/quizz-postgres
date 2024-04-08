@@ -8,6 +8,7 @@ export async function handleQuestionSubmit(
   action: QuestionSubmitE
 ) {
   const rawFormData = Object.fromEntries(formData.entries());
+  console.log(rawFormData);
 
   const optionsArray = [];
   const quizIds = [];
@@ -17,10 +18,16 @@ export async function handleQuestionSubmit(
       correctAnswer.push(Number(rawFormData[key]))
     }
     if (key.includes("questionOptions_")) {
-      optionsArray.push(rawFormData[key]);
+      optionsArray.push([rawFormData[key]]);
     }
     if (key.includes("quizId_")) {
       quizIds.push(rawFormData[key]);
+    }
+  }
+
+  for(let i = 0; i<optionsArray.length; i++){
+    if(rawFormData[`option_marks_${i}`]){
+      optionsArray[i].push(rawFormData[`option_marks_${i}`]);
     }
   }
 
@@ -37,6 +44,7 @@ export async function handleQuestionSubmit(
     editorContent: rawFormData.editorContent,
     answer_type: rawFormData.answer_type,
   };
+  console.log(reqData, "dsfdfds")
   switch (action) {
     case QuestionSubmitE.ADD:
     return await createQuestion(reqData);

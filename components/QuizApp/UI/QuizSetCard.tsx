@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { QuizDetail, UserDataType } from "@/types/types";
 import Modal from "@/components/Shared/Modal";
-import { Subscription } from "@prisma/client";
+import { QuizCreationStatusE, Subscription } from "@prisma/client";
 import { formattedDate } from "@/utils/formattedDate";
 import { Button } from "@/components/Shared/Button";
 
@@ -24,8 +24,10 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const isUserSubscribed =
-    userData &&
-    userData.Subscription.find((i: Subscription) => i.quizId === quiz.id)
+    quiz.status === QuizCreationStatusE.FREE
+      ? true
+      : userData &&
+        userData.Subscription.find((i: Subscription) => i.quizId === quiz.id)
       ? true
       : false;
   const handleSubscribeConfirm = async () => {
@@ -54,7 +56,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           formattedDate={formattedDate(quiz.createdAt)}
         />
       </Link>
-      {isUserSubscribed ? (
+      {isUserSubscribed && userData ? (
         <Button
           variant="quizCard"
           onClick={() => router.push(`/quiz/${quiz.id}`)}
@@ -90,6 +92,12 @@ const QuizInformation: React.FC<QuizInformationProps> = ({
 }) => {
   return (
     <div className="flex flex-1 flex-col p-8">
+      <span className="font-bold text-yellow-600 m-2 w-1/3 border-yellow-300 rounded-lg border">
+        {quiz.status === QuizCreationStatusE.FREE
+          ? quiz.status
+          : `Price: ₹${quiz.price}`}
+      </span>
+
       <img
         className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
         src={`https://source.unsplash.com/random/200x200?sig=${quiz.name}`}

@@ -45,11 +45,25 @@ const QuizReport = ({
   };
 
   const findGivenAnsText = (id: string, opts: ObjectiveOptions[]) => {
-    const givAns = opts.find((ans: ObjectiveOptions) => ans.id === id);
-    return givAns?.text;
+    const givenAns = id.split(",");
+    let givAns = "";
+
+    for (let i = 0; i < givenAns.length; i++) {
+      const opt = opts.find((ans: ObjectiveOptions) => ans.id === givenAns[i]);
+      givAns += opt?.text;
+      i < givenAns.length - 1 ? (givAns += ", ") : (givAns += "");
+    }
+    return givAns;
   };
 
   const tableRows = candidateResponse.map((queRes) => [
+    queRes.isCorrect ? (
+      <FaCheckCircle className="w-6 h-6 text-green-600" />
+    ) : queRes?.question?.type === QuestionType.SUBJECTIVE ? (
+      "Sub"
+    ) : (
+      <MdCancel className="w-6 h-6 text-red-600" />
+    ),
     HTMLReactParser(queRes?.question?.editorContent!),
     (queRes?.question?.type === QuestionType.SUBJECTIVE &&
       queRes.ans_subjective) ||
@@ -60,15 +74,8 @@ const QuizReport = ({
             queRes?.question?.objective_options!
           ) || ""
         )),
-    (queRes?.question?.type === QuestionType.SUBJECTIVE && "Subjective Type") ||
-      (queRes.isCorrect ? (
-        <FaCheckCircle className="w-6 h-6 text-green-600" />
-      ) : queRes.ans_optionsId ? (
-        <MdCancel className="w-6 h-6 text-red-600" />
-      ) : (
-        "Skipped"
-      )),
-    <>-</>,
+    <>{queRes.question?.type}</>,
+    <>{queRes.marks}</>,
     <>
       {queRes.timeTaken &&
         (Number(queRes.timeTaken) / 60 < 1
@@ -91,7 +98,7 @@ const QuizReport = ({
         </div>
       ) : (
         <Container>
-          {dataOfSelectedQuiz?.reportStatus === ReportStatusE.UNDERREVIEW ? (
+          {dataOfSelectedQuiz?.quizOwnerStatus === ReportStatusE.UNDERREVIEW ? (
             <ReportUnderReview />
           ) : (
             <>
@@ -99,19 +106,26 @@ const QuizReport = ({
                 reportElementList={[
                   { Attempts: "1" },
                   {
-                    "Start at": formattedDate(dataOfSelectedQuiz?.startedAt!),
+                    "Start at": formattedDate(
+                      dataOfSelectedQuiz?.candidateQuizStartTime!
+                    ),
                   },
                   {
-                    "End at": formattedDate(dataOfSelectedQuiz?.endedAt!),
+                    "End at": formattedDate(
+                      dataOfSelectedQuiz?.candidateQuizEndtime!
+                    ),
                   },
-                  { Marks: `${dataOfSelectedQuiz?.totalMarks}` },
+                  {
+                    Marks: `${dataOfSelectedQuiz?.obtMarks}/${dataOfSelectedQuiz.totalMarks}`,
+                  },
                 ]}
               />
               <Table
                 headers={[
+                  "Status",
                   "Questions",
                   "Given Answer",
-                  "Answer status",
+                  "Question Type",
                   "Marks",
                   "Time Taken",
                 ]}
