@@ -155,15 +155,23 @@ export default function QuizQuesSummary({
 
       <span className="text-lg">
         /
-        {queRes.question?.type === QuestionType.SUBJECTIVE
-          ? queRes?.question.objective_options[0]?.option_marks
-          : queRes.question?.answer_type === AnswerTypeE.MULTIPLECHOICE
-          ? queRes.question.objective_options?.reduce(
-              (acc, curr) =>
-                curr.option_marks! >= 0 ? acc + curr.option_marks! : acc,
-              0
-            )
-          : ""}
+        {`${
+          queRes?.question?.type === QuestionType.SUBJECTIVE
+            ? queRes?.question?.objective_options[0]?.option_marks
+            : queRes?.question?.answer_type === AnswerTypeE.MULTIPLECHOICE
+            ? queRes?.question?.objective_options?.reduce(
+                (acc: number, curr: ObjectiveOptions) =>
+                  curr.option_marks! >= 0 ? acc + curr.option_marks! : acc,
+                0
+              )
+            : queRes?.question?.objective_options?.reduce(
+                (max: number, curr: ObjectiveOptions) =>
+                  curr.option_marks !== undefined && curr.option_marks! > max
+                    ? curr.option_marks
+                    : max,
+                -Infinity
+              )
+        }`}
       </span>
     </div>,
     queRes.timeTaken &&
