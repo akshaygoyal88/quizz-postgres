@@ -19,6 +19,11 @@ export default function LoginForm({ className }: { className?: string }) {
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (!email || !password) {
+      setError("*Fill required fields");
+      return;
+    }
+
     const result = await signIn("credentials", {
       email: email,
       password: password,
@@ -54,7 +59,7 @@ export default function LoginForm({ className }: { className?: string }) {
     {
       type: "email",
       name: "email",
-      label: "Email",
+      label: "Email*",
       id: "email",
       placeholder: "sample@mail.com",
       defaultValue: undefined,
@@ -64,7 +69,7 @@ export default function LoginForm({ className }: { className?: string }) {
     {
       type: "password",
       name: "password",
-      label: "Password",
+      label: "Password*",
       id: "password",
       placeholder: "*********",
       defaultValue: undefined,
@@ -88,7 +93,16 @@ export default function LoginForm({ className }: { className?: string }) {
         ]}
       >
         <FormInputs inputList={inputList} />
+        {error && error.includes("verify") && (
+          <Link
+            className="text-blue-600 px-2 text-sm hover:underline"
+            href={`verify/${email}`}
+          >
+            Click to verify
+          </Link>
+        )}
       </Form>
+
       <LinksList
         linksList={[
           {

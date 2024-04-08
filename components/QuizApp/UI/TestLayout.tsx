@@ -122,7 +122,7 @@ function CandidateQuizQuestion({
   );
   const [answer, setAnswer] = useState<string[] | string>(
     question?.type === QuestionType.OBJECTIVE
-      ? userQuizQuestionWithAnswer.ans_optionsId || []
+      ? userQuizQuestionWithAnswer?.ans_optionsId?.split(",") || []
       : userQuizQuestionWithAnswer.ans_subjective || ""
   );
   const [markReview, setMarkReview] = useState<boolean>(false);
