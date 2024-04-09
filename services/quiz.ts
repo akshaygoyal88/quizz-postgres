@@ -166,10 +166,16 @@ export async function updateQuiz(reqData: Quiz){
   if(!reqData.id){
     return {error: "Quiz id is missing"}
   }
-  return await db.quiz.update({
+  const res = await db.quiz.update({
     where: {id},
     data: {
       ...data
     }
   })
+
+  if(!res){
+    return {error: "Quiz id is not correct"}
+  }
+
+  return res
 }

@@ -12,6 +12,7 @@ export interface InputItemTypes {
   onChange?: (e: FormEvent) => void;
   value?: string;
   maxLength?: number;
+  min?: string;
   disabled?: boolean;
 }
 
@@ -74,11 +75,12 @@ export function FormInputs({ inputList }: { inputList: InputItemTypes[] }) {
           placeholder={inputContent.placeholder}
           defaultValue={inputContent.defaultValue}
           otherText={inputContent.otherText}
-          className="block w-full rounded-md border-0 p-1.5 pr-10 ring-1 ring-inset sm:text-sm sm:leading-6"
+          className="block w-full rounded-md border-0 p-1.5 ring-1 ring-inset sm:text-sm sm:leading-6"
           onChange={inputContent.onChange}
           value={inputContent.value}
           maxLength={inputContent.maxLength}
           disabled={inputContent.disabled}
+          min={inputContent.min}
         />
       ))}
     </>

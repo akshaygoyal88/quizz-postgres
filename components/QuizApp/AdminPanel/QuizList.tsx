@@ -16,6 +16,7 @@ import Link from "next/link";
 import { FaEdit, FaUsers } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { QuizCreationStatusE } from "@prisma/client";
+import { IoSettingsOutline } from "react-icons/io5";
 
 export default function QuizList({
   quizzes,
@@ -100,6 +101,7 @@ function QuizTable({
           "Last Modified on",
           "Status",
           "Action",
+          "Setting",
         ]}
         rows={quizzes.map((quiz) => [
           quiz.name,
@@ -134,6 +136,12 @@ function QuizTable({
               <MdDelete className="h-6 w-6" />
             </a>
           </span>,
+          <Link
+            title="Quiz Settings"
+            href={`${pathName.quiz.path}/${quiz.id}/settings`}
+          >
+            <IoSettingsOutline className="h-6 w-6" />
+          </Link>,
         ])}
       />
       <Modal

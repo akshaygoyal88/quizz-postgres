@@ -69,18 +69,26 @@ enum QuizCreationStatusE {
 }
 
 model Quiz {
-  id              String               @id @default(cuid())
-  name            String
-  description     String?
-  createdAt       DateTime             @default(now()) @map(name: "created_at")
-  updatedAt       DateTime             @updatedAt @map(name: "updated_at")
-  createdBy       User                 @relation(fields: [createdById], references: [id])
-  createdById     String
-  price           Float?               @default(0.0)
-  status          QuizCreationStatusE?
-  QuizQuestions   QuizQuestions[]
-  UserQuizAnswers UserQuizAnswers[]
-  Subscription    Subscription[]
+  id                    String               @id @default(cuid())
+  name                  String
+  description           String?
+  createdAt             DateTime             @default(now()) @map(name: "created_at")
+  updatedAt             DateTime             @updatedAt @map(name: "updated_at")
+  createdBy             User                 @relation(fields: [createdById], references: [id])
+  createdById           String
+  price                 Float?               @default(0.0)
+  status                QuizCreationStatusE?
+  QuizQuestions         QuizQuestions[]
+  UserQuizAnswers       UserQuizAnswers[]
+  Subscription          Subscription[]
+  select                Boolean?             @default(false)
+  cut                   Boolean?             @default(false)
+  copy                  Boolean?             @default(false)
+  paste                 Boolean?             @default(false)
+  newWindow             Boolean?             @default(false)
+  newTab                Boolean?             @default(false)
+  globalTimer           Int?                 @default(0)
+  quizSubmissionMessage String?
 }
 
 enum QuestionType {
@@ -214,5 +222,5 @@ model Subscription {
 
 generator erd {
   provider = "prisma-erd-generator"
-  output = "../ERD.pdf"
+  output   = "../ERD.pdf"
 }
