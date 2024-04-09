@@ -11,22 +11,29 @@ export async function getQuizsByAttemptedByUser(candidateId: string) {
   });
   const quizzes = [];
   const quizList = await db.quiz.findMany({
-    where: { status: {
-      not: QuizCreationStatusE.DELETE
-    }}
+    where: {
+      status: {
+        not: QuizCreationStatusE.DELETE,
+      },
+    },
   });
   for (const report of reportRes) {
-    const quiz = quizList.find(q => q.id === report.quizId)
-    quizzes.push({id: quiz?.id, name: quiz?.name});
+    const quiz = quizList.find((q) => q.id === report.quizId);
+    quizzes.push({ id: quiz?.id, name: quiz?.name });
   }
   return { quizzes };
 }
 
-export async function getQuizReportOfUser({candidateId, quizId}:{candidateId: string, quizId: string}) {
+export async function getQuizReportOfUser({
+  candidateId,
+  quizId,
+}: {
+  candidateId: string;
+  quizId: string;
+}) {
   return await db.userQuizReport.findFirst({
     where: { candidateId, quizId },
   });
-  
 }
 
 export async function getReportByQuizIdAndSubmittedBy({
@@ -48,10 +55,9 @@ export async function getReportsByQuizId({
   pageSize: number;
   quizId: string;
 }) {
-
   const totalRows = await db.userQuizReport.count({
     where: {
-      quizId          
+      quizId,
     },
   });
 
@@ -67,7 +73,7 @@ export async function getReportsByQuizId({
     skip,
     take: pageSize,
   });
-  return {quizResByUser, totalPages, totalRows};
+  return { quizResByUser, totalPages, totalRows };
 }
 
 export async function markSubmitByAdmin({
@@ -81,7 +87,7 @@ export async function markSubmitByAdmin({
   let updateReportRes;
   const error = [];
   let submittedBy = "";
-  let quizId = ""
+  let quizId = "";
 
   for (const [id, mark] of Object.entries(marks)) {
     if (mark !== false) {
@@ -90,10 +96,10 @@ export async function markSubmitByAdmin({
           id,
         },
         data: {
-          marks: typeof mark === 'number'  ? mark : undefined,
+          marks: typeof mark === "number" ? mark : undefined,
         },
       });
-      submittedBy = res.submittedBy
+      submittedBy = res.submittedBy;
       quizId = res.quizId;
       result.push(res);
     } else {
@@ -102,9 +108,15 @@ export async function markSubmitByAdmin({
   }
 
   if (error.length === 0 && result.length === Object.entries(marks).length) {
-    const finalMarksFromUserQuizResponse = await getUserQuiz({quizId,submittedBy})
-    if(Array.isArray(finalMarksFromUserQuizResponse)){
-      const obtMarks = finalMarksFromUserQuizResponse.reduce((acc,curr) => acc + curr.marks, 0)
+    const finalMarksFromUserQuizResponse = await getUserQuiz({
+      quizId,
+      submittedBy,
+    });
+    if (Array.isArray(finalMarksFromUserQuizResponse)) {
+      const obtMarks = finalMarksFromUserQuizResponse.reduce(
+        (acc, curr) => acc + curr.marks,
+        0
+      );
       const updateReport = await db.userQuizReport.update({
         where: {
           id: reportId,
@@ -136,11 +148,33 @@ export async function markSubmitByAdmin({
   return error.length > 0 ? { error } : { result, updateReportRes };
 }
 
-export async function getQuizReportStatusOfCandidate({candidateId, quizId}: {candidateId: string, quizId:string}) {
+export async function getQuizReportStatusOfCandidate({
+  candidateId,
+  quizId,
+}: {
+  candidateId: string;
+  quizId: string;
+}) {
   const res = await db.userQuizReport.findFirst({
     where: { candidateId, quizId },
   });
 
   return res?.candidateStatus;
+}
 
-} 
+export async function updateQuizReportByReportId({
+  id,
+  ...data
+}: {
+  id: string;
+  [key: string]: string;
+}) {
+  if (!id) {
+    return { error: "Please provide a report ID" };
+  }
+  return db.userQuizReport.update({
+    where: { id },
+    data: { ...data },
+  });
+}
+
