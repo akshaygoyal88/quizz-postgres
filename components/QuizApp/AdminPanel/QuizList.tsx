@@ -72,6 +72,8 @@ function QuizTable({
       body: { status: QuizCreationStatusE.DELETE },
     });
 
+    console.log(`${pathName.questionSetApi.path}/${selectedQuestionId}`);
+
     if (data && !data.error) {
       setDeleteSuccess("Deleted successfully");
       setTimeout(() => {
@@ -97,7 +99,7 @@ function QuizTable({
           "Question Set",
           "No. of Questions",
           "Created By",
-          "Created on",
+          "Created on  11",
           "Last Modified on",
           "Status",
           "Action",

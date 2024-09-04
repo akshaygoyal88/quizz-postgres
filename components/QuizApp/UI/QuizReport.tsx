@@ -157,6 +157,7 @@ function SelectQuiz({
     | [];
   handleSelectQuiz: (id: string) => void;
 }) {
+  console.log(quizzes, "attempetdQuiz");
   return (
     <div className="m-4 flex items-center gap-4">
       <Lable labelText="Please select quiz for report:" />
@@ -176,7 +177,7 @@ function SelectQuiz({
             }) =>
               !quiz.isDeleted ? (
                 <option key={quiz.id} value={quiz.id}>
-                  {quiz.name}
+                  {quiz.name !== "" && quiz.name !== undefined && quiz.name}
                 </option>
               ) : null
           )}

@@ -55,7 +55,7 @@ export async function userQuizQuestionInitilization(reqData: {
     ]);
     let questions_marks = 0;
     if (Array.isArray(ques)) {
-      if (ques[0].answer_type === AnswerTypeE.MULTIPLECHOICE) {
+      if (ques[0]?.answer_type === AnswerTypeE.MULTIPLECHOICE) {
         questions_marks = ques[0].objective_options.reduce(
           (acc: number, curr: ObjectiveOptions) => {
             if (curr && curr.option_marks && curr.option_marks > 0) {
@@ -67,7 +67,7 @@ export async function userQuizQuestionInitilization(reqData: {
           0
         );
       } else {
-        questions_marks = ques[0].objective_options.reduce(
+        questions_marks = ques[0]?.objective_options.reduce(
           (maxMarks: number, curr: ObjectiveOptions) => {
             return Math.max(maxMarks, curr.option_marks || 0);
           },

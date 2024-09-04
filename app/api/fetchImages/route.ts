@@ -11,9 +11,10 @@ export async function GET() {
     });
 
     const bucket = {
-      Bucket: process.env.BUCKET_NAME,
+      // Bucket: process.env.BUCKET_NAME,
+      Bucket: "sdfdsfdsgfdhfdh",
     };
-
+    return "";
     return new Promise((resolve, reject) => {
       client_s3.listObjectsV2(bucket, (err, data) => {
         if (err) {
@@ -27,11 +28,14 @@ export async function GET() {
             title: object.Key,
             value: `https://${bucket.Bucket}.s3.amazonaws.com/${object.Key}`,
           })) || [];
-        resolve(NextResponse.json( images));
+        resolve(NextResponse.json(images));
       });
     });
   } catch (error) {
     console.error("Error fetching images from S3:", error);
-    return NextResponse.json({ error: "Error fetching images from S3" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error fetching images from S3" },
+      { status: 500 }
+    );
   }
 }

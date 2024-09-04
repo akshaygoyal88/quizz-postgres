@@ -77,7 +77,9 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
       const fileKey = `${Date.now()}-image.jpg`;
       const fileParams = {
-        Bucket: process.env.BUCKET_NAME,
+        // Bucket: process.env.BUCKET_NAME,
+
+        Bucket: "sdfdsfdsgfdhfdh",
         Key: fileKey,
         Body: buffer,
         ContentType: file.type,
@@ -91,7 +93,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
         // Now, you can use the S3 URL or generate a pre-signed URL if needed
         const url = client_s3.getSignedUrl("getObject", {
-          Bucket: process.env.BUCKET_NAME,
+          // Bucket: process.env.BUCKET_NAME,
+          Bucket: "sdfdsfdsgfdhfdh",
           Key: fileKey,
           Expires: 60 * 60 * 24 * 7, // URL expiration time
         });

@@ -20,6 +20,8 @@ export async function getQuizsByAttemptedByUser(candidateId: string) {
   for (const report of reportRes) {
     const quiz = quizList.find((q) => q.id === report.quizId);
     quizzes.push({ id: quiz?.id, name: quiz?.name });
+
+    console.log(quiz, "getQuizsByAttemptedByUser 11");
   }
   return { quizzes };
 }
@@ -177,4 +179,3 @@ export async function updateQuizReportByReportId({
     data: { ...data },
   });
 }
-

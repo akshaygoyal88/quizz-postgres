@@ -12,146 +12,145 @@ const pathName: IPathName = {
   login: {
     path: "/signin",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   home: {
     path: "/",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   dashboard: {
     path: "/admin/dashboard",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   register: {
     path: "/register",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   profile: {
     path: "/profile",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   settings: {
     path: "/settings",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   admin: {
     path: "/admin",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   userApi: {
     path: "/api/user",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   quiz: {
     path: "/admin/quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   questions: {
     path: "/admin/questions",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   quizAdd: {
     path: "/admin/quiz/add-quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   questionsAdd: {
     path: "/admin/questions/add-question",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   questionSetApi: {
     path: "/api/questionset",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
-  questionsApiPath:{
+  questionsApiPath: {
     path: "/api/questions",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   updateProfileApi: {
     path: "/api/updateProfile",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   testSetApis: {
     path: "/api/quiz",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   quizAnsApi: {
     path: "/api/quiz/submission",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   notificationApi: {
     path: "/api/notification",
     roles: [UserRole.ADMIN, UserRole.USER],
-    requireToken: true
+    requireToken: true,
   },
   adminReportsRoute: {
     path: "/admin/reports",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   adminReportApiRoute: {
     path: "/api/quiz/adminReport",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   userQuizResponseApiRoute: {
     path: "/api/quiz/userResponse",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
 
   marksApiRoute: {
     path: "/api/quiz/marksSubmission",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
 
   quizReportApiRoute: {
     path: "/api/quiz/quizReport",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   subscriptionApiRoute: {
     path: "/api/quiz/subscription",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   quizDetailApiRoute: {
     path: "/api/quiz/quizDetail",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   finalSubmissionApiRoute: {
     path: "/api/quiz/finalSubmission",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   quizRoute: {
     path: "/quiz",
     roles: [],
-    requireToken: false
+    requireToken: false,
   },
   questionRoute: {
     path: "/question",
     roles: [],
-    requireToken: false
-  }
-  
+    requireToken: false,
+  },
 };
 
 export default pathName;

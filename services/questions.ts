@@ -14,13 +14,13 @@ export async function getAllQuestions({
   const totalRows = await db.question.count({
     where: {
       isDeleted: false,
-      createdById          
+      createdById,
     },
   });
 
   const totalPages = Math.ceil(totalRows / pageSize);
 
-  const questions =  await db.question.findMany({
+  const questions = await db.question.findMany({
     where: {
       isDeleted: false,
       createdById,
@@ -32,7 +32,7 @@ export async function getAllQuestions({
     skip,
     take: pageSize,
   });
-  return { questions, totalPages, totalRows }
+  return { questions, totalPages, totalRows };
 }
 
 export enum QuestionSubmitE {
@@ -40,8 +40,13 @@ export enum QuestionSubmitE {
   EDIT = "edit",
 }
 
-export async function createQuestion(reqData: Question & {quizIds: string[], options: string[][] | [], correctAnswer: string[] | []}) {
-  
+export async function createQuestion(
+  reqData: Question & {
+    quizIds: string[];
+    options: string[][] | [];
+    correctAnswer: string[] | [];
+  }
+) {
   const {
     quizIds,
     type,
@@ -51,17 +56,17 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
     timer,
     createdById,
     editorContent,
-    answer_type
+    answer_type,
   } = reqData;
-  
-  if(!editorContent){
-    return {error: "Please enter question."}
+
+  if (!editorContent) {
+    return { error: "Please enter question." };
   }
   if (quizIds.length === 0) {
     return { error: "Please provide Quiz." };
   }
-  if(type === QuestionType.OBJECTIVE && options.length==0){
-    return {error: "Please enter couple of option"}
+  if (type === QuestionType.OBJECTIVE && options.length == 0) {
+    return { error: "Please enter couple of option" };
   }
   const addQuestion = await db.question.create({
     data: {
@@ -69,17 +74,17 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
       type,
       timer: parseInt(`${timer}`, 10),
       objective_options:
-      //   type === QuestionType.OBJECTIVE ? 
-          {
-              createMany: {
-                data: options.map((option: string[], index: number) => ({
-                  text: option[0],
-                  isCorrect: correctAnswer.includes(index),
-                  option_marks: parseFloat(option[1])
-                })),
-              },
-            },
-          // : undefined,
+        //   type === QuestionType.OBJECTIVE ?
+        {
+          createMany: {
+            data: options.map((option: string[], index: number) => ({
+              text: option[0],
+              isCorrect: correctAnswer.includes(index),
+              option_marks: parseFloat(option[1]),
+            })),
+          },
+        },
+      // : undefined,
       solution,
       answer_type,
       createdById,
@@ -95,12 +100,17 @@ export async function createQuestion(reqData: Question & {quizIds: string[], opt
       createdBy,
     })),
   });
-  
-  return {addQuestion, quizAdd};
+
+  return { addQuestion, quizAdd };
 }
 
-export async function editQuestions(reqData: Question & {quizIds: string[], options: string[][] | [], correctAnswer: string[] | []}){
- 
+export async function editQuestions(
+  reqData: Question & {
+    quizIds: string[];
+    options: string[][] | [];
+    correctAnswer: string[] | [];
+  }
+) {
   const {
     id,
     quizIds,
@@ -111,7 +121,7 @@ export async function editQuestions(reqData: Question & {quizIds: string[], opti
     timer,
     editorContent,
     answer_type,
-    createdById
+    createdById,
   } = reqData;
 
   if (quizIds.length === 0) {
@@ -122,16 +132,16 @@ export async function editQuestions(reqData: Question & {quizIds: string[], opti
   });
 
   if (isAvailable) {
-
-    type === QuestionType.OBJECTIVE && await db.objectiveOptions.deleteMany({
-      where: { questionId: id },
-    }) 
-    const editQues =  await db.question.update({
-      where: {id},
+    type === QuestionType.OBJECTIVE &&
+      (await db.objectiveOptions.deleteMany({
+        where: { questionId: id },
+      }));
+    const editQues = await db.question.update({
+      where: { id },
       data: {
         editorContent,
         type,
-        timer: parseInt(`${timer}`, 10),              
+        timer: parseInt(`${timer}`, 10),
         objective_options:
           type === QuestionType.OBJECTIVE
             ? {
@@ -139,13 +149,13 @@ export async function editQuestions(reqData: Question & {quizIds: string[], opti
                   data: options.map((option: string[], index: number) => ({
                     text: option[0],
                     isCorrect: correctAnswer.includes(index),
-                    option_marks: parseFloat(option[1])
+                    option_marks: parseFloat(option[1]),
                   })),
                 },
               }
             : undefined,
-       solution,
-       answer_type
+        solution,
+        answer_type,
       },
     });
 
@@ -155,32 +165,31 @@ export async function editQuestions(reqData: Question & {quizIds: string[], opti
     for (const quizId of quizIds) {
       const existingRecord = await db.quizQuestions.findFirst({
         where: {
-            quizId,
-            questionId,
-            createdBy,
-          
+          quizId,
+          questionId,
+          createdBy,
         },
       });
-      if(!existingRecord){
+      if (!existingRecord) {
         const quizAdd = await db.quizQuestions.create({
           data: {
             quizId,
             questionId,
             createdBy,
-          }
+          },
         });
       }
     }
-    
+
     return editQues;
   } else {
-    return {error: "Invalid question"}
+    return { error: "Invalid question" };
   }
 }
 
-export async function getQuestionByQuestionId(id: string){
-  if(!id){
-    return {error: "Question ID not provided."}
+export async function getQuestionByQuestionId(id: string) {
+  if (!id) {
+    return { error: "Question ID not provided." };
   }
   return await db.question.findUnique({
     where: { id },
@@ -190,12 +199,14 @@ export async function getQuestionByQuestionId(id: string){
   });
 }
 
-
-export async function getQuestionByIds(ids: string[]){
-  if(ids.length <= 0){
-    return {error: "Question ID not provided."}
+export async function getQuestionByIds(ids: string[]) {
+  if (ids.length <= 0) {
+    return { error: "Question ID not provided." };
   }
-  return await db.question.findMany({where: {id: {in: ids}}, include: {
-    objective_options: true,
-  }});
+  return await db.question.findMany({
+    where: { id: { in: ids } },
+    include: {
+      objective_options: true,
+    },
+  });
 }

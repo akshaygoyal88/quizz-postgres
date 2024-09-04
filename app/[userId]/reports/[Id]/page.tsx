@@ -20,7 +20,9 @@ export default async function page({ params }: Params) {
   const quizId = params.Id;
 
   const quizList = await getQuizsByAttemptedByUser(userId);
-  const quizzes = quizList.quizzes;
+  const quizzes = quizList.quizzes.filter((q) => q.name !== undefined);
+
+  console.log(quizzes, "qu");
 
   const reportOfUser = await getQuizReportOfUser({
     candidateId: userId,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import pathName from "@/constants";
 import { FetchMethodE, fetchData } from "@/utils/fetch";
@@ -39,6 +39,11 @@ const QuizDetail = ({
   const [subscribedSuccess, setSubscribedSuccess] = useState<string | null>(
     null
   );
+
+  const [done, setDone] = useState(false);
+  useEffect(() => {});
+
+  console.log(userData, "userData");
 
   const handleButton = async () => {
     if (userData === null) router.push(`${pathName.login.path}`);
@@ -119,6 +124,7 @@ const QuizDetail = ({
                     "Total Marks: <need to figure out logic>",
                   ]}
                 />
+
                 <ButtonForDetail
                   authStatus={userData !== null}
                   isCandidateSubscribed={isCandidateSubscribed}
@@ -166,6 +172,7 @@ const ButtonForDetail = ({
   isCandidateSubscribed: Subscription | undefined;
   handleButton: () => void;
 }) => {
+  console.log();
   return (
     <button
       className={` 

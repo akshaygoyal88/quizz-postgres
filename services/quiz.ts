@@ -112,70 +112,99 @@ export async function isSubscribedToQuiz({
 
 export async function getSubscribersByQuizId(quizId: string) {
   if (!quizId) return { error: "Quiz Id missing" };
-  return await db.subscription.findMany({ where: { quizId }, include: {user: true} });
+  return await db.subscription.findMany({
+    where: { quizId },
+    include: { user: true },
+  });
 }
 
-export async function updateSubscriptionOfUser({id,reqData}:{id:string,reqData:Subscription}){
-  if(!id){
+export async function updateSubscriptionOfUser({
+  id,
+  reqData,
+}: {
+  id: string;
+  reqData: Subscription;
+}) {
+  if (!id) {
     return { error: "Subscription Id missing" };
   }
-  return await db.subscription.update({where: {id}, data: {
-    ...reqData
-  }})
+  return await db.subscription.update({
+    where: { id },
+    data: {
+      ...reqData,
+    },
+  });
 }
 
-export async function getQuizQuestionByID({ quizId, questionId }: { quizId: string, questionId: string }) {
+export async function getQuizQuestionByID({
+  quizId,
+  questionId,
+}: {
+  quizId: string;
+  questionId: string;
+}) {
   return await db.quizQuestions.findFirst({
     where: { quizId, questionId },
     include: {
       question: {
         include: {
-          objective_options: true
-        }
-      }
-    }
+          objective_options: true,
+        },
+      },
+    },
   });
 }
 
-export async function getUserQuizQuestionsAnswers({ quizId, userId }: { quizId:string, userId:string}){
-  const allQuestions = await getQuizQuestions({quizId});
-  const questions = allQuestions.map(q => q.question);
-  const allUserQuestionAnswer = await getUserQuiz({quizId,submittedBy:userId});
+export async function getUserQuizQuestionsAnswers({
+  quizId,
+  userId,
+}: {
+  quizId: string;
+  userId: string;
+}) {
+  const allQuestions = await getQuizQuestions({ quizId });
+  const questions = allQuestions.map((q) => q.question);
+  const allUserQuestionAnswer = await getUserQuiz({
+    quizId,
+    submittedBy: userId,
+  });
   let final = [...questions];
-  for (let i = 0; i<final.length; i++) {
+  for (let i = 0; i < final.length; i++) {
     for (const u of allUserQuestionAnswer) {
-      if(final[i]?.id === u.questionId) {
-        final[i] = {...final[i], status: u.status}
-      } 
+      if (final[i]?.id === u.questionId) {
+        final[i] = { ...final[i], status: u.status };
+      }
     }
   }
   return final;
 }
 
-export async function getQuizByQuizId(id: string){
-  if(!id){
-    return {error: "Quiz id is missing."}
+export async function getQuizByQuizId(id: string) {
+  if (!id) {
+    return { error: "Quiz id is missing." };
   }
   return await db.quiz.findUnique({
     where: { id },
   });
 }
 
-export async function updateQuiz(reqData: Quiz){
-  const {id, ...data} = reqData;
-  if(!reqData.id){
-    return {error: "Quiz id is missing"}
+export async function updateQuiz(reqData: Quiz) {
+  const { id, ...data } = reqData;
+  if (!reqData.id) {
+    return { error: "Quiz id is missing" };
   }
   const res = await db.quiz.update({
-    where: {id},
+    where: { id },
     data: {
-      ...data
-    }
-  })
+      ...data,
+    },
+  });
 
-  if(!res){
-    return {error: "Quiz id is not correct"}
+  if (!res) {
+    return { error: "Quiz id is not correct" };
   }
 
-  return res
+  console.log(res, "res delete id");
+
+  return res;
 }
