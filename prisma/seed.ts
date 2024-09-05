@@ -1,11 +1,11 @@
-const { hash } = require("bcrypt");
-const {
+import { hash } from "bcrypt";
+import {
   PrismaClient,
   AnswerTypeE,
   QuestionType,
   QuizCreationStatusE,
   UserRole,
-} = require("@prisma/client");
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -56,8 +56,10 @@ function mathRandom(operation: string, start: number, end: number) {
 async function main() {
   const password = await hash("Admin@123", 10);
 
-  const userCreate = await prisma.user.create({
-    data: {
+  const userCreate = await prisma.user.upsert({
+    where: { email: "admin@codecaffiene.com" },
+    update: {}, // No updates to apply if the user already exists
+    create: {
       email: "admin@codecaffiene.com",
       password,
       isActive: true,
