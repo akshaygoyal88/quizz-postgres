@@ -30,6 +30,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
         userData.Subscription.find((i: Subscription) => i.quizId === quiz.id)
       ? true
       : false;
+
   const handleSubscribeConfirm = async () => {
     if (userData) {
       const { data, error, isLoading } = await fetchData({
@@ -44,7 +45,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
       router.push(pathName.login.path);
     }
   };
-
+  console.log(quiz.isDone, "quiz.isDone =");
   return (
     <li
       key={quiz.id}
@@ -56,7 +57,11 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           formattedDate={formattedDate(quiz.createdAt)}
         />
       </Link>
-      {isUserSubscribed && userData ? (
+      {quiz.isDone ? (
+        <Button variant="quizCard" style={{ color: "red" }}>
+          You've already completed this quiz.
+        </Button>
+      ) : isUserSubscribed && userData ? (
         <Button
           variant="quizCard"
           onClick={() => router.push(`/quiz/${quiz.id}`)}
@@ -73,13 +78,15 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           Subscribe Now
         </Button>
       )}
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Subscription of quiz"
-        onConfirm={handleSubscribeConfirm}
-        description="Are you sure you want to subscribe to this quiz?"
-      />
+      {!quiz.isDone && (
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Subscription of quiz"
+          onConfirm={handleSubscribeConfirm}
+          description="Are you sure you want to subscribe to this quiz?"
+        />
+      )}
     </li>
   );
 };

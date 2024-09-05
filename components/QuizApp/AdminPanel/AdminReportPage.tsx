@@ -78,7 +78,7 @@ function SelectQuiz({
         name="setId"
         onChange={(e) => handleSelectQuiz(e.target.value)}
       >
-        <option value="">Select Quiz</option>
+        <option value={quizzes[0].name}>{quizzes[0].name}</option>
         {quizzes &&
           quizzes.map((q: Quiz) =>
             !q.isDeleted ? (

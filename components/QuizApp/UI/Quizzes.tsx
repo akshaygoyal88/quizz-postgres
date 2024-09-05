@@ -13,9 +13,12 @@ export default function QuizList({
   allQuizzes: QuizDetail[];
   userData: UserDataType | null;
 }) {
+  console.log(allQuizzes, "allQuizzes");
+
   return (
     <>
       <Heading headingText="Quiz" tag="h2" />
+
       <ul
         role="list"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3"

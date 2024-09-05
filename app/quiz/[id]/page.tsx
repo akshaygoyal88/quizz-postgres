@@ -3,6 +3,7 @@ import QuizDetail from "@/components/QuizApp/UI/QuizDetail";
 import pathName from "@/constants";
 import { QuizService, UserSerivce } from "@/services";
 import { getFirstQuesIdOfQuiz } from "@/services/questionSet";
+import { getQuizReportStatusOfCandidate } from "@/services/quizReport";
 import { QuizDetailType, UserDataType } from "@/types/types";
 import { Quiz, QuizCreationStatusE, Subscription, User } from "@prisma/client";
 import { getServerSession } from "next-auth";
@@ -29,6 +30,11 @@ export default async function page({ params }: { params: Params }) {
           (sub: Subscription) => sub.quizId === quizId
         );
 
+  const quizStatus = await getQuizReportStatusOfCandidate({
+    candidateId: userData?.id,
+    quizId,
+  });
+
   return (
     <FullWidthLayout>
       <QuizDetail
@@ -37,6 +43,7 @@ export default async function page({ params }: { params: Params }) {
         quizDetails={quizDetails}
         userData={userData}
         isCandidateSubscribed={isCandidateSubscribed}
+        isDone={!!quizStatus}
       />
     </FullWidthLayout>
   );

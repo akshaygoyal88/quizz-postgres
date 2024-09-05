@@ -3,7 +3,10 @@ import TestLayout from "@/components/QuizApp/UI/TestLayout";
 import { db } from "@/db";
 import { userQuizQuestionInitilization } from "@/services/answerSubmission";
 import { getUserQuizQuestionsAnswers } from "@/services/quiz";
-import { getQuizReportStatusOfCandidate } from "@/services/quizReport";
+import {
+  getQuizReportOfUser,
+  getQuizReportStatusOfCandidate,
+} from "@/services/quizReport";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { UserQuizStatusE } from "@prisma/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
@@ -37,6 +40,7 @@ export default async function page({ params }: { params: Params }) {
     quizId,
     questionId,
   });
+
   if ("error" in userQuizQuestionWithAnswer) {
     return <>ERROR COMPONENT</>;
   } else {

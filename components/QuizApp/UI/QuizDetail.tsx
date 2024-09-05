@@ -27,12 +27,14 @@ const QuizDetail = ({
   quizDetails,
   userData,
   isCandidateSubscribed,
+  isDone,
 }: {
   quizId: string;
   firstQuesId?: string;
   quizDetails: QuizDetailType;
   userData: User | null;
   isCandidateSubscribed: Subscription | undefined;
+  isDone?: boolean;
 }) => {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,6 +49,7 @@ const QuizDetail = ({
 
   const handleButton = async () => {
     if (userData === null) router.push(`${pathName.login.path}`);
+    else if (isDone) setModalOpen(true);
     else if (isCandidateSubscribed) {
       const {
         data: initializeQuizRes,
@@ -68,7 +71,7 @@ const QuizDetail = ({
       }
     } else setModalOpen(true);
   };
-
+  console.log(quizId, "quizId");
   const handleSubscribeConfirm = async () => {
     const { data, error, isLoading } = await fetchData({
       url: `${pathName.subscriptionApiRoute.path}`,
@@ -129,6 +132,7 @@ const QuizDetail = ({
                   authStatus={userData !== null}
                   isCandidateSubscribed={isCandidateSubscribed}
                   handleButton={handleButton}
+                  isDone={isDone}
                 />
               </ShadowSection>
             </CustomGrid>
@@ -143,14 +147,26 @@ const QuizDetail = ({
                 </div>
               ))}
             </div>
-            {!isCandidateSubscribed && (
+            {isDone ? (
               <Modal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
-                title="Subscription of quiz"
-                onConfirm={handleSubscribeConfirm}
-                description="Are you sure you want to subscribe to this quiz?"
+                title="Do You Want To See Your Report"
+                onConfirm={() =>
+                  router.push(`/cm0nf2zgu00008fpn8u916lo7/reports/${quizId}`)
+                }
+                description="Click Confirm To See "
               />
+            ) : (
+              !isCandidateSubscribed && (
+                <Modal
+                  isOpen={modalOpen}
+                  onClose={() => setModalOpen(false)}
+                  title="Subscription of quiz"
+                  onConfirm={handleSubscribeConfirm}
+                  description="Are you sure you want to subscribe to this quiz?"
+                />
+              )
             )}
           </>
         ) : (
@@ -167,26 +183,38 @@ const ButtonForDetail = ({
   authStatus,
   isCandidateSubscribed,
   handleButton,
+  isDone,
 }: {
   authStatus: boolean;
   isCandidateSubscribed: Subscription | undefined;
   handleButton: () => void;
+  isDone?: boolean;
 }) => {
   console.log();
   return (
     <button
       className={` 
     ${
-      authStatus
+      isDone
+        ? "bg-emerald-500"
+        : authStatus
         ? isCandidateSubscribed
           ? "bg-blue-500"
           : "bg-orange-700"
         : "bg-purple-600"
     }  
     text-white px-4 py-2 rounded-bottom-md mt-4 font-semibold hover:cursor-pointer w-full`}
+      // onClick={() => {
+      //   if (!isDone) {
+      //     handleButton();
+      //   }
+      // }}
+
       onClick={handleButton}
     >
-      {authStatus
+      {isDone
+        ? "You've already completed this quiz. If you want to check your results Please Click on they button "
+        : authStatus
         ? isCandidateSubscribed
           ? "Start Quiz"
           : "Subscribe to Quiz"

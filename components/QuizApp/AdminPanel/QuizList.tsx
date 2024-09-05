@@ -99,7 +99,7 @@ function QuizTable({
           "Question Set",
           "No. of Questions",
           "Created By",
-          "Created on  11",
+          "Created on  ",
           "Last Modified on",
           "Status",
           "Action",
