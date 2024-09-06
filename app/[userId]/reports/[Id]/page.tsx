@@ -29,7 +29,7 @@ export default async function page({ params }: Params) {
     quizId: quizId,
   });
 
-  const candidateResponse = await getUserQuiz({
+  const candidateResponse: any = await getUserQuiz({
     submittedBy: userId,
     quizId: quizId,
   });

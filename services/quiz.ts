@@ -188,7 +188,7 @@ export async function getQuizByQuizId(id: string) {
   });
 }
 
-export async function updateQuiz(reqData: Quiz) {
+export async function updateQuiz(reqData: any) {
   const { id, ...data } = reqData;
   if (!reqData.id) {
     return { error: "Quiz id is missing" };

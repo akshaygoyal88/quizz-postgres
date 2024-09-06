@@ -1,6 +1,10 @@
 "use server";
 
-import { QuestionSubmitE, createQuestion, editQuestions } from "@/services/questions";
+import {
+  QuestionSubmitE,
+  createQuestion,
+  editQuestions,
+} from "@/services/questions";
 import { QuestionType } from "@prisma/client";
 
 export async function handleQuestionSubmit(
@@ -14,8 +18,8 @@ export async function handleQuestionSubmit(
   const quizIds = [];
   const correctAnswer = [];
   for (let key in rawFormData) {
-    if(key.includes("correctAnswer_")){
-      correctAnswer.push(Number(rawFormData[key]))
+    if (key.includes("correctAnswer_")) {
+      correctAnswer.push(Number(rawFormData[key]));
     }
     if (key.includes("questionOptions_")) {
       optionsArray.push([rawFormData[key]]);
@@ -25,14 +29,14 @@ export async function handleQuestionSubmit(
     }
   }
 
-  for(let i = 0; i<optionsArray.length; i++){
-    if(rawFormData[`option_marks_${i}`]){
+  for (let i = 0; i < optionsArray.length; i++) {
+    if (rawFormData[`option_marks_${i}`]) {
       optionsArray[i].push(rawFormData[`option_marks_${i}`]);
     }
   }
 
-  const reqData = {
-    id:rawFormData.id,
+  const reqData: any = {
+    id: rawFormData.id,
     quizIds: quizIds,
     type: rawFormData.questionType,
     options: optionsArray,
@@ -44,13 +48,13 @@ export async function handleQuestionSubmit(
     editorContent: rawFormData.editorContent,
     answer_type: rawFormData.answer_type,
   };
-  console.log(reqData, "dsfdfds")
+  console.log(reqData, "dsfdfds");
   switch (action) {
     case QuestionSubmitE.ADD:
-    return await createQuestion(reqData);
+      return await createQuestion(reqData);
 
     case QuestionSubmitE.EDIT:
-    return await editQuestions(reqData);
+      return await editQuestions(reqData);
 
     default:
       return { error: "Invalid action" };

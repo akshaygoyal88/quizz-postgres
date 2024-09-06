@@ -17,11 +17,11 @@ export async function handleReportSendEmail(formData: FormData) {
     quizId: string;
   };
 
-  const userData = await getUserById(candidateId);
-  const quizDetail = await getQuizByQuizId(quizId);
+  const userData: any = await getUserById(candidateId);
+  const quizDetail: any = await getQuizByQuizId(quizId);
   const report = await getReportByQuizIdAndSubmittedBy({ candidateId, quizId });
-  if(report?.quizOwnerStatus !== ReportStatusE.GENERATED){
-    return {error: "Please generate a report than only send email reports."}
+  if (report?.quizOwnerStatus !== ReportStatusE.GENERATED) {
+    return { error: "Please generate a report than only send email reports." };
   }
   const dynamicTemplateData = {
     quiz_name: quizDetail?.name,
@@ -40,15 +40,15 @@ export async function handleReportSendEmail(formData: FormData) {
       dynamicTemplateData,
     });
     // if (reportEmailRes!) {
-      return { message: "Email sent successfully" };
+    return { message: "Email sent successfully" };
     // }
   } catch (error) {
     if (error && typeof error === "object") {
       console.error("An error occurred:", error);
-      return {"An error occurred:": error}
+      return { "An error occurred:": error };
     } else {
       console.error("An unexpected error occurred:", error);
-      return {"An unexpected error occurred:": error}
+      return { "An unexpected error occurred:": error };
     }
   }
 }

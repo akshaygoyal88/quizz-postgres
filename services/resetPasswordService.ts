@@ -99,9 +99,8 @@ export async function changeUserPassword({
   userId: string;
   token: string;
 }) {
-
-  if(!newPassword || !confirmPassword){
-    return {error: "*Missing required"}
+  if (!newPassword || !confirmPassword) {
+    return { error: "*Missing required" };
   }
   if (newPassword !== confirmPassword) {
     return { error: "Password does not match." };
@@ -115,7 +114,7 @@ export async function changeUserPassword({
     },
   });
 
-  if (!otpRecord ||  isTokenExpired(otpRecord.createdAt)) {
+  if (!otpRecord || isTokenExpired(otpRecord.createdAt)) {
     return { error: "Token expired" };
   }
 
@@ -125,7 +124,7 @@ export async function changeUserPassword({
       where: { id: userId },
       data: { password: hashedPassword },
     });
-    const id =  otpRecord?.id
+    const id = otpRecord?.id;
     await db.userOtp.delete({
       where: { id },
     });

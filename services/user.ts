@@ -243,7 +243,7 @@ export async function resendVerficationCode(reqData: User) {
   return result;
 }
 
-export async function updateProfile(rawFormData: User) {
+export async function updateProfile(rawFormData: any) {
   const { id, ...data } = rawFormData;
   if (!id) return { error: { id: "Id is required" } };
 
