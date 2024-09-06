@@ -2,6 +2,7 @@
 import React, { useEffect, useId, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { imageS3 } from "@/types/types";
+import axios from "axios";
 
 interface TinyMCEEditorProps {
   initialValue?: string;
@@ -28,6 +29,16 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
 
   const handleOnChange = (content: string, editor: any) => {
     handleEditorChange(content, index, editor);
+  };
+
+  const autoFill = async () => {
+    try {
+      const response = await axios.post("/api/messageSuggestion", "hello");
+      console.log("Response:", response.data);
+      setEditorVal(response.data);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
   };
 
   const handleImageUpload = (
@@ -94,11 +105,17 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
         plugins:
           "gallery image advlist autolink lists image charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen nonbreaking save  emoticons paste textpattern media image imagetools",
         toolbar:
-          "gallery | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image | gallery | outdent indent | ltr rtl | mediaembed",
+          "gallery | undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | image | gallery | outdent indent | ltr rtl | mediaembed | myCustomToolbarButton",
         images_upload_handler: handleImageUpload,
         image_list: imagesList,
 
         mediaembed_service_url: "https://noembed.com/embed?url={url}", // need premium subscription for this.
+        setup: (editor) => {
+          editor.ui.registry.addButton("myCustomToolbarButton", {
+            text: "Auto Fill",
+            onAction: () => autoFill(),
+          });
+        },
       }}
       onEditorChange={handleOnChange}
     />

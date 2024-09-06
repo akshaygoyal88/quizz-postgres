@@ -244,8 +244,8 @@ export async function resendVerficationCode(reqData: User) {
 }
 
 export async function updateProfile(rawFormData: User) {
-  const {id, ...data} = rawFormData
-  if(!id) return {error:{id: "Id is required"}};
+  const { id, ...data } = rawFormData;
+  if (!id) return { error: { id: "Id is required" } };
 
   let result;
   result = await db.user.update({
@@ -270,4 +270,3 @@ export async function updateProfile(rawFormData: User) {
   }
   return result;
 }
-

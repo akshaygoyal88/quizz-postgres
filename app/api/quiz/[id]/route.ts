@@ -1,26 +1,45 @@
 import { getQuizQuestions, deleteQuiz } from "@/services/quiz";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Request, { params }: { params: params }) {
-  const quizId: string = params?.id;
+// Handle GET requests
+export async function GET(request: NextRequest) {
   try {
+    // Extract the quizId from the URL
+    const url = new URL(request.url);
+    const quizId = url.pathname.split("/").pop(); // Extract the quizId from the URL path
+
     if (!quizId) {
-      return NextResponse.json({ error: "Invalid quiz set." });
+      return NextResponse.json({ error: "Invalid quiz set." }, { status: 400 });
     }
 
     const getQuizAndQues = await getQuizQuestions({ quizId });
 
-    return NextResponse.json({ questions: [...getQuizAndQues] });
+    return NextResponse.json({ questions: getQuizAndQues });
   } catch (error) {
-    return NextResponse.json({ error: error });  }
+    console.error("Error fetching quiz questions:", error);
+    return NextResponse.json(
+      { error: "Error fetching quiz questions" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE({ params }: { params: string }) {
-  const setId: string = params?.id;
-  if (!setId) {
-    return NextResponse.json({ error: "Invalid quiz set." });
-  }
-  const deleteQuizs = await deleteQuiz({ setId });
+// Handle DELETE requests
+export async function DELETE(request: NextRequest) {
+  try {
+    // Extract the quizId from the URL
+    const url = new URL(request.url);
+    const quizId = url.pathname.split("/").pop(); // Extract the quizId from the URL path
 
-  return NextResponse.json(deleteQuizs);
+    if (!quizId) {
+      return NextResponse.json({ error: "Invalid quiz set." }, { status: 400 });
+    }
+
+    const deleteQuizs = await deleteQuiz({ quizId });
+
+    return NextResponse.json(deleteQuizs);
+  } catch (error) {
+    console.error("Error deleting quiz:", error);
+    return NextResponse.json({ error: "Error deleting quiz" }, { status: 500 });
+  }
 }

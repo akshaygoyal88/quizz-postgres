@@ -10,6 +10,7 @@ import Modal from "@/components/Shared/Modal";
 import { QuizCreationStatusE, Subscription } from "@prisma/client";
 import { formattedDate } from "@/utils/formattedDate";
 import { Button } from "@/components/Shared/Button";
+import axios from "axios";
 
 interface QuizSetCardProps {
   quiz: QuizDetail;
@@ -45,6 +46,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
       router.push(pathName.login.path);
     }
   };
+
   console.log(quiz.isDone, "quiz.isDone =");
   return (
     <li
@@ -78,6 +80,7 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
           Subscribe Now
         </Button>
       )}
+
       {!quiz.isDone && (
         <Modal
           isOpen={modalOpen}

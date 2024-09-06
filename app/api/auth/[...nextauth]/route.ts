@@ -7,7 +7,7 @@ import { NotificationService, UserSerivce } from "@/services";
 
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   // adapter: PrismaAdapter(db),
   // session: {
   //   strategy: "jwt"
@@ -75,9 +75,8 @@ export const authOptions: NextAuthOptions = {
               updatedAt: user.updatedAt,
               profile_pic: user.profile_pic,
               isProfileComplete: user.isProfileComplete,
-              subscription: user.Subscription
+              subscription: user.Subscription,
             };
-            
           } else {
             throw new Error("Invalid password.");
           }
@@ -112,7 +111,7 @@ export const authOptions: NextAuthOptions = {
           updatedAt: user.updatedAt,
           profile_pic: user.profile_pic,
           isProfileComplete: user.isProfileComplete,
-          subscription: user.Subscription
+          subscription: user.Subscription,
         };
       }
       return token;
@@ -139,7 +138,7 @@ export const authOptions: NextAuthOptions = {
         updatedAt: token.updatedAt,
         profile_pic: token.profile_pic,
         isProfileComplete: token.isProfileComplete,
-        subscription: token.Subscription
+        subscription: token.Subscription,
       };
       return session;
     },

@@ -1,10 +1,9 @@
-// pages/api/upload-image.ts
+import { NextRequest, NextResponse } from "next/server";
+import S3 from "aws-sdk/clients/s3";
 import { db } from "@/db";
 import { returnResponse } from "@/utils/generateOtp";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
-import S3 from "aws-sdk/clients/s3";
 
+// Initialize S3 client
 const client_s3 = new S3({
   region: process.env.AWS_REGION || "ap-south-1",
   accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -12,16 +11,13 @@ const client_s3 = new S3({
   signatureVersion: "v4",
 });
 
-export async function GET(request: Request) {
+// Handle GET request
+export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
 
   if (!email) {
-    return returnResponse(
-      { error: "Email not provided" },
-      400,
-      "application/json"
-    );
+    return NextResponse.json({ error: "Email not provided" }, { status: 400 });
   }
 
   try {
@@ -32,108 +28,67 @@ export async function GET(request: Request) {
     });
 
     if (user) {
-      return returnResponse({ user }, 200, "application/json");
+      return NextResponse.json({ user });
     } else {
-      return returnResponse(
-        { error: "User not found." },
-        404,
-        "application/json"
-      );
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
   } catch (error) {
-    return returnResponse(
+    return NextResponse.json(
       { error: "Internal Server Error" },
-      500,
-      "application/json"
+      { status: 500 }
     );
   }
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+// Handle POST request
+export async function POST(request: NextRequest) {
   try {
-    if (req.method === "POST") {
-      const formData = await req.formData();
+    const formData = await request.formData();
+    const file = formData.get("file");
 
-      const file = formData.get("file");
-
-      console.log(req.body, "req.bodyreq.body", file);
-      if (!file) {
-        return NextResponse.json(
-          { error: "No files received." },
-          { status: 400 }
-        );
-      }
-
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const filename = file.name.replaceAll(" ", "_");
-      console.log(filename);
-      // Decode base64 image data
-      const chunks = [];
-
-      // Collect chunks of the stream
-      for await (const chunk of req.body) {
-        chunks.push(chunk);
-      }
-
-      const fileKey = `${Date.now()}-image.jpg`;
-      const fileParams = {
-        // Bucket: process.env.BUCKET_NAME,
-
-        Bucket: "sdfdsfdsgfdhfdh",
-        Key: fileKey,
-        Body: buffer,
-        ContentType: file.type,
-        ACL: "public-read",
-      };
-
-      try {
-        // Upload the object to S3
-        const uploadResponse = await client_s3.upload(fileParams).promise();
-        console.log("Upload successful:", uploadResponse);
-
-        // Now, you can use the S3 URL or generate a pre-signed URL if needed
-        const url = client_s3.getSignedUrl("getObject", {
-          // Bucket: process.env.BUCKET_NAME,
-          Bucket: "sdfdsfdsgfdhfdh",
-          Key: fileKey,
-          Expires: 60 * 60 * 24 * 7, // URL expiration time
-        });
-
-        console.log("Pre-signed URL:", url);
-        return returnResponse(
-          {
-            message: "Image uploaded successfully",
-            url: uploadResponse.Location,
-          },
-          201,
-          "application/json"
-        );
-      } catch (error) {
-        console.error("Error uploading to S3:", error);
-      }
-
-      return returnResponse(
-        { message: "Image uploaded successfully", url: "urrl" },
-        201,
-        "application/json"
+    if (!file) {
+      return NextResponse.json(
+        { error: "No files received." },
+        { status: 400 }
       );
-      //   return res
-      //     .status(200)
-      //     .json({ message: "Image uploaded successfully", s3Url });
     }
-    return returnResponse(
-      { error: "Method Not Allowed" },
-      405,
-      "application/json"
-    );
-    // return res.status(405).json({ error: "Method Not Allowed" });
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const filename = file.name.replaceAll(" ", "_");
+    const fileKey = `${Date.now()}-image.jpg`;
+    const fileParams = {
+      Bucket: process.env.BUCKET_NAME, // Ensure this environment variable is set
+      Key: fileKey,
+      Body: buffer,
+      ContentType: file.type,
+      ACL: "public-read",
+    };
+
+    try {
+      // Upload the object to S3
+      const uploadResponse = await client_s3.upload(fileParams).promise();
+      const url = client_s3.getSignedUrl("getObject", {
+        Bucket: process.env.BUCKET_NAME,
+        Key: fileKey,
+        Expires: 60 * 60 * 24 * 7, // URL expiration time
+      });
+
+      return NextResponse.json({
+        message: "Image uploaded successfully",
+        url: uploadResponse.Location,
+      });
+    } catch (error) {
+      console.error("Error uploading to S3:", error);
+      return NextResponse.json(
+        { error: "Error uploading to S3" },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error("Error uploading image:", error);
-    return returnResponse(
+    console.error("Error processing request:", error);
+    return NextResponse.json(
       { error: "Internal Server Error", message: error.message },
-      500,
-      "application/json"
+      { status: 500 }
     );
-    // return res.status(500).json({ error: "Internal Server Error" });
   }
 }

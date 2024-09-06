@@ -1,19 +1,23 @@
 import { db } from "@/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface ErrorResponse {}
 
-export async function POST(request: {
-  json: () =>
-    | PromiseLike<{ email: any; verificationCode: any }>
-    | { email: any; verificationCode: any };
-}) {
-  const { email, verificationCode } = await request.json();
-
-  let error: ErrorResponse | null = null;
-  let data;
-
+// Define the POST handler
+export async function POST(request: NextRequest) {
   try {
+    // Parse the JSON body
+    const { email, verificationCode } = await request.json();
+
+    // Validate input
+    if (!email || !verificationCode) {
+      return NextResponse.json(
+        { error: "Email and verification code are required." },
+        { status: 400 }
+      );
+    }
+
+    // Find the user with the provided email and verification code
     const user = await db.user.findUnique({
       where: {
         email: email,
@@ -26,7 +30,8 @@ export async function POST(request: {
     });
 
     if (user) {
-      const res = await db.user.update({
+      // Update user to be verified
+      const updateResult = await db.user.update({
         where: { email },
         data: {
           isVerified: true,
@@ -34,9 +39,10 @@ export async function POST(request: {
         },
       });
 
-      if (res) {
-        const deleteRes = await db.userOtp.delete({
-          where: { userId: res.id },
+      // If update was successful, delete OTP
+      if (updateResult) {
+        await db.userOtp.delete({
+          where: { userId: updateResult.id },
         });
         return NextResponse.json(true);
       } else {
@@ -59,4 +65,3 @@ export async function POST(request: {
     );
   }
 }
-

@@ -9,22 +9,18 @@ export async function GET(req: Request) {
   const createdById = url.searchParams.get("createdById")!;
 
   try {
-    if (page>0 && pageSize>0) {
-
+    if (page > 0 && pageSize > 0) {
       const skip = (page - 1) * pageSize;
-      const res = await getAllQuestions({skip, pageSize, createdById})
-      return new Response(
-        JSON.stringify(res),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await getAllQuestions({ skip, pageSize, createdById });
+      return new Response(JSON.stringify(res), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     } else {
-    const getAllQuestions = await db.question.findMany();
-    return NextResponse.json(getAllQuestions);
+      const getAllQuestions = await db.question.findMany();
+      return NextResponse.json(getAllQuestions);
     }
   } catch (error) {
     return NextResponse.json({ error });
@@ -40,31 +36,30 @@ export async function POST(req: Request, res: any) {
       solution,
       timer,
       createdById,
-      Quiz
+      Quiz,
     } = await req.json();
-    const correctAnswer: Number[] = []
-    
-    objective_options?.forEach((option: { isCorrect: boolean; }, i: number) => {
-      option.isCorrect == true && correctAnswer.push(i)});
+    const correctAnswer: Number[] = [];
 
-    const options =  objective_options?.map((opt: { text: string; })=> opt.text);
- 
+    objective_options?.forEach((option: { isCorrect: boolean }, i: number) => {
+      option.isCorrect == true && correctAnswer.push(i);
+    });
 
-    const addQuestion = await createQuestion(
-    {editorContent,
+    const options = objective_options?.map((opt: { text: string }) => opt.text);
+
+    const addQuestion = await createQuestion({
+      editorContent,
       type,
       options,
       correctAnswer,
       solution,
       timer,
       createdById,
-      quizId: "duplicate"
-    })
-  console.log(addQuestion)
+      quizId: "duplicate",
+    });
+    console.log(addQuestion);
     return NextResponse.json(addQuestion);
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error });
   }
 }
-
