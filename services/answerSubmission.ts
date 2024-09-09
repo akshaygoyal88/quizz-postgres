@@ -118,7 +118,7 @@ interface saveResProps extends UserQuizAnswers {
 export async function saveResponseForQues(reqData: saveResProps) {
   const {
     id,
-    status,
+    status: any,
     timeTaken: timeTakenStr,
     timeOver: timeOverStr,
     ans_optionsIds,

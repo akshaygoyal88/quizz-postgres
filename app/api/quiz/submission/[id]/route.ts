@@ -8,56 +8,52 @@ export async function PUT(req: Request, { params }: { params: Params }) {
   try {
     const reqDetail = await req.json();
 
-    if(reqDetail.status === UserQuizAnswerStatus.REVIEW){
-        const sendRes = await saveResponseForQues({
-            id,
-            reqData: {
-              status: UserQuizAnswerStatus.REVIEW,
-            },
-          });
-          return NextResponse.json(sendRes);
-    }
-   
-    if (reqDetail.type == QuestionType.OBJECTIVE && !reqDetail.ans_optionsId) {
-      const sendRes = await saveResponseForQues({
+    if (reqDetail.status === UserQuizAnswerStatus.REVIEW) {
+      const reqData: any = {
         id,
-        reqData: {
-          status: UserQuizAnswerStatus.SKIPPED,
-          timeOver: reqDetail.timeOver,
-          timeTaken: reqDetail.timeTaken,
-        },
-      });
+        status: UserQuizAnswerStatus.REVIEW,
+      };
+
+      const sendRes = await saveResponseForQues(reqData);
+      return NextResponse.json(sendRes);
+    }
+
+    if (reqDetail.type == QuestionType.OBJECTIVE && !reqDetail.ans_optionsId) {
+      const reqData: any = {
+        id,
+        status: UserQuizAnswerStatus.SKIPPED,
+        timeOver: reqDetail.timeOver,
+        timeTaken: reqDetail.timeTaken,
+      };
+
+      const sendRes = await saveResponseForQues(reqData);
       return NextResponse.json(sendRes);
     }
     if (
       reqDetail.type == QuestionType.SUBJECTIVE &&
       !reqDetail.ans_subjective
     ) {
-      const sendRes = await saveResponseForQues({
+      const reqData: any = {
         id,
-        reqData: {
-          status: UserQuizAnswerStatus.SKIPPED,
-          timeOver: reqDetail.timeOver,
-          timeTaken: reqDetail.timeTaken,
-        },
-      });
+        status: UserQuizAnswerStatus.SKIPPED,
+        timeOver: reqDetail.timeOver,
+        timeTaken: reqDetail.timeTaken,
+      };
+      const sendRes = await saveResponseForQues(reqData);
       return NextResponse.json(sendRes);
     }
     if (reqDetail) {
-      const sendRes = await saveResponseForQues({
+      const reqData: any = {
         id,
-        reqData: {
-          ans_optionsId: reqDetail.ans_optionsId,
-          ans_subjective: reqDetail.ans_subjective,
-          status: UserQuizAnswerStatus.ATTEMPTED,
-          timeOver: reqDetail.timeOver,
-          timeTaken: reqDetail.timeTaken,
-        },
-      });
+        ans_optionsId: reqDetail.ans_optionsId,
+        ans_subjective: reqDetail.ans_subjective,
+        status: UserQuizAnswerStatus.ATTEMPTED,
+        timeOver: reqDetail.timeOver,
+        timeTaken: reqDetail.timeTaken,
+      };
+      const sendRes = await saveResponseForQues(reqData);
       return NextResponse.json(sendRes);
     }
-   
-    
   } catch (error) {
     return NextResponse.json({ error: error });
   }
