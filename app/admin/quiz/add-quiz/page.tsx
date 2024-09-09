@@ -7,7 +7,7 @@ import React from "react";
 
 export default async function CreateSet() {
   const userData = await getSessionUser();
-  const imagesList = await getImages();
+  const imagesList: any = await getImages();
   return (
     <Container>
       <QuizForm

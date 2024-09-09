@@ -35,7 +35,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invalid quiz set." }, { status: 400 });
     }
 
-    const deleteQuizs = await deleteQuiz({ quizId });
+    const deleteQuizs = await deleteQuiz({ setId: quizId });
 
     return NextResponse.json(deleteQuizs);
   } catch (error) {

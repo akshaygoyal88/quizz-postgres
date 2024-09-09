@@ -1,9 +1,10 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { Account, NextAuthOptions, Profile } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
-import { db } from "@/db";
 import { NotificationService, UserSerivce } from "@/services";
+import { User } from "@prisma/client";
+import { JWT } from "next-auth/jwt";
 
 // import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
@@ -40,13 +41,15 @@ const authOptions: NextAuthOptions = {
                 const userId: string = user?.id;
                 const notificationAvailable =
                   await NotificationService.getNotifications(userId);
-                const notiForProfile = notificationAvailable.find((noti) =>
-                  noti?.message?.includes("Profile not completed")
-                );
-                if (!notiForProfile) {
-                  await NotificationService.createNotiForProfileComplete(
-                    userId
+                if (Array.isArray(notificationAvailable)) {
+                  const notiForProfile: any = notificationAvailable.find(
+                    (noti) => noti?.message?.includes("Profile not completed")
                   );
+                  if (!notiForProfile) {
+                    await NotificationService.createNotiForProfileComplete(
+                      userId
+                    );
+                  }
                 }
               }
               return {
@@ -88,15 +91,7 @@ const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({
-      token,
-      user,
-      session,
-    }: {
-      token: Object;
-      user: any;
-      session: Object;
-    }) {
+    async jwt({ token, user }: { token: JWT; user: any }) {
       // console.log("jwtcallback", { token, user, session });
       if (user) {
         return {
@@ -116,15 +111,7 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({
-      token,
-      user,
-      session,
-    }: {
-      token: any;
-      user: Object | undefined;
-      session: Object;
-    }) {
+    async session({ token, session }: { token: any; session: Object }) {
       // console.log("sessioncallback", { token, user, session });
       return {
         ...token,

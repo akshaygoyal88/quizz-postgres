@@ -9,7 +9,7 @@ import React from "react";
 export default async function QuestionsAdd() {
   const userData = await getSessionUser();
   const quizzes = await getQuizzesByCreatedBy();
-  const imagesList = await getImages();
+  const imagesList: any = await getImages();
   return (
     <Container>
       <QuestionForm

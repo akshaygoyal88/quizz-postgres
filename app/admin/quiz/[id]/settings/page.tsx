@@ -6,7 +6,7 @@ import React from "react";
 
 export default async function page({ params }: { params: Params }) {
   const quizId = params.id;
-  const quizSettingData = await getQuizByQuizId(quizId);
+  const quizSettingData: any = await getQuizByQuizId(quizId);
 
   return (
     <Container>

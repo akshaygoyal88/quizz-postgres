@@ -4,11 +4,11 @@ import { QuestionType } from "@prisma/client";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, {params}: {params:Params}) {
+export async function GET(req: Request, { params }: { params: Params }) {
   let err;
   try {
-    const id = params.id
-    const isAvailable = await getQuestionByQuestionId(id)
+    const id = params.id;
+    const isAvailable = await getQuestionByQuestionId(id);
     if (isAvailable) {
       return NextResponse.json(isAvailable);
     } else {
@@ -38,7 +38,7 @@ export async function DELETE(req: any, res: any) {
       await Promise.all([
         ...isAvailable.objective_options.map((opt) =>
           db.objectiveOptions.delete({ where: { id: opt.id } })
-        )
+        ),
       ]);
 
       const deleteQue = await db.question.delete({
@@ -54,10 +54,10 @@ export async function DELETE(req: any, res: any) {
   }
 }
 
-export async function PUT(req: Request, {params}: {params:string}) {
+export async function PUT(req: Request, { params }: { params: Params }) {
   let err;
   try {
-    const id = params.id
+    const id = params.id;
 
     const {
       question_text,
@@ -77,33 +77,31 @@ export async function PUT(req: Request, {params}: {params:string}) {
     const setsAvailable = await db.quiz.findMany();
     const setDetail = setsAvailable.filter((set) => set.name === questionSet);
 
-    if(!isDeleted && setDetail.length == 0 ) {
+    if (!isDeleted && setDetail.length == 0) {
       return NextResponse.json({ error: "Please provide question set." });
     }
 
     if (isAvailable) {
-
       const deleteOptions = await db.objectiveOptions.deleteMany({
         where: { questionId: id },
       });
 
-      if(isDeleted) {
+      if (isDeleted) {
         const deleteQue = await db.question.update({
           where: { id },
           data: {
-            isDeleted
+            isDeleted,
           },
         });
         return NextResponse.json(deleteQue);
       } else {
-        
         if (type === QuestionType.OBJECTIVE) {
           const updateQue = await db.question.update({
             where: { id },
             data: {
               question_text,
               type,
-              timer: parseInt(timer, 10),              
+              timer: parseInt(timer, 10),
               objective_options: {
                 createMany: {
                   data: options.map((optionText: any, index: any) => ({
@@ -122,16 +120,13 @@ export async function PUT(req: Request, {params}: {params:string}) {
             data: {
               question_text,
               type,
-              timer: parseInt(timer, 10),              
+              timer: parseInt(timer, 10),
             },
           });
-  
+
           return NextResponse.json(updateQue);
         }
       }
-
-
-     
     } else {
       err = "Invalid Question";
       return NextResponse.json({ error: err });

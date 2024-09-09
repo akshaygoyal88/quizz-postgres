@@ -24,7 +24,7 @@ export default async function page({
   const pageSize = Number(searchParams?.pageSize) || 9;
   const skip = (page - 1) * pageSize;
 
-  const result = await getReportsByQuizId({ skip, pageSize, quizId });
+  const result: any = await getReportsByQuizId({ skip, pageSize, quizId });
 
   return (
     <AdminReportPage

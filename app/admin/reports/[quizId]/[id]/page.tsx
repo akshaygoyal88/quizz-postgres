@@ -21,7 +21,7 @@ export default async function page({
   const quizId = params.quizId;
   const reportId = params.id;
   let marks: { [key: string]: number | boolean } = {};
-  const result: CandidateResponseTypes[] = await getUserQuiz({
+  const result: any = await getUserQuiz({
     quizId,
     submittedBy,
   });
