@@ -1,9 +1,6 @@
 import { db } from "@/db";
 import {
-  QuestionType,
-  QuizStatusTypeE,
   ReportStatusE,
-  UserQuizAnswerStatus,
   UserQuizAnswers,
   UserQuizStatusE,
   UserQuizReport,
@@ -14,8 +11,6 @@ import {
 import { getReportByQuizIdAndSubmittedBy } from "./quizReport";
 import { getQuestionByIds } from "./questions";
 import { QuesType } from "@/types/types";
-import { sendEmailToUser } from "./sendEmail";
-import { formattedDate } from "@/utils/formattedDate";
 import { getQuizByQuizId } from "./quiz";
 
 export async function userQuizQuestionInitilization(reqData: {
@@ -118,15 +113,15 @@ interface saveResProps extends UserQuizAnswers {
 export async function saveResponseForQues(reqData: saveResProps) {
   const {
     id,
-    status: any,
+    status,
     timeTaken: timeTakenStr,
     timeOver: timeOverStr,
     ans_optionsIds,
     ans_subjective,
     questionId,
-  } = reqData;
-  const timeTaken = parseInt(`${timeTakenStr}`);
-  const timeOver = timeOverStr === "1" ? true : false;
+  } : any= reqData;
+  const timeTaken: any = parseInt(`${timeTakenStr}`);
+  const timeOver : any= timeOverStr === "1" ? true : false;
 
   const ques = await getQuestionByIds([questionId]);
   const optionIdWithMarks: { [id: string]: number } = {};
@@ -211,7 +206,7 @@ export async function finalTestSubmission({
   const questionIds = userQuizRes.map(
     (userQuiz: UserQuizAnswers) => userQuiz.questionId
   );
-  const questions = await getQuestionByIds(questionIds);
+  const questions:any = await getQuestionByIds(questionIds);
   const networkRes = [];
   for (const res of userQuizRes) {
     const que = questions.find((q: QuesType) => q.id === res?.questionId);

@@ -1,8 +1,6 @@
 import { db } from "@/db";
 import { QuizCreationStatusE, ReportStatusE } from "@prisma/client";
 import { getUserQuiz } from "./answerSubmission";
-import { sendEmailToUser } from "./sendEmail";
-import { formattedDate } from "@/utils/formattedDate";
 import { getQuizByQuizId } from "./quiz";
 
 export async function getQuizsByAttemptedByUser(candidateId: string) {
@@ -116,7 +114,7 @@ export async function markSubmitByAdmin({
     });
     if (Array.isArray(finalMarksFromUserQuizResponse)) {
       const obtMarks = finalMarksFromUserQuizResponse.reduce(
-        (acc, curr) => acc + curr.marks,
+        (acc: any, curr: any) => acc + curr.marks,
         0
       );
       const updateReport = await db.userQuizReport.update({

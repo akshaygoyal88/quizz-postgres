@@ -1,5 +1,5 @@
 export function returnResponse(
-    data: ResponseData,
+    data: any,
     statusCode: number,
     contentType: string
   ): Response {

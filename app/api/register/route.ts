@@ -8,6 +8,7 @@ export interface CreateUserRequestBody {
   password: string;
   token: string;
   roleOfUser: any;
+  confirmPassword?: string;
 }
 
 export interface ErrorResponse {
@@ -20,7 +21,7 @@ export interface ErrorResponse {
 export async function POST(request: Request) {
   let error: ErrorResponse | null = null;
   try {
-    const { email, password, roleOfUser }: CreateUserRequestBody =
+    const { email, password, roleOfUser, confirmPassword }: CreateUserRequestBody =
       await request.json();
 
     const userExist = await UserSerivce.getUserByEmail(email);
@@ -30,10 +31,11 @@ export async function POST(request: Request) {
     } else {
       if (validator.isEmail(email)) {
         if (validator.isStrongPassword(password)) {
-          const userData = await UserSerivce.registerUser({
+          const userData: any = await UserSerivce.registerUser({
             email,
             password,
-            roleOfUser
+            roleOfUser,
+            confirmPassword
           });
           if(userData){
             const regNotification = await NotificationService.createNotification({userId: userData.id, message: "This is to confirm that your account with [Your Platform Name] has been successfully registered."})

@@ -75,7 +75,7 @@ export default function QuizSetting({
       formData.append(key, restrictions[key]?.toString());
     }
     formData.append("id", quizId as string);
-    const res = await handleQuizSettingForm(formData);
+    const res: any = await handleQuizSettingForm(formData);
     if (res.error) {
       setError(res.error);
     } else {

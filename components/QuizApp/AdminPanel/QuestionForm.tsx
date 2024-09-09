@@ -172,7 +172,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       formData.append(`questionOptions_${i}`, option!)
     );
 
-    const res = await handleQuestionSubmit(formData, action);
+    const res: any = await handleQuestionSubmit(formData, action);
 
     if (res?.error) {
       setError(res.error);
@@ -306,7 +306,7 @@ function SelectSet({
 }: {
   defaultValue?: string;
   quizzes: Quiz[] | null;
-  handleChange: () => void;
+  handleChange: any;
 }) {
   return (
     <div className="mb-4 flex items-center gap-4">
@@ -348,9 +348,9 @@ function OptionCard({
     index?: number,
     editor?: string
   ) => void;
-  marksOfOption: number;
+  marksOfOption?: number;
   defaultValue?: number;
-  questionType?: QuestionType;
+  questionType?: any;
 }) {
   return (
     <div key={index} className="flex flex-col mb-3 p-3 bg-blue-50 rounded-md">

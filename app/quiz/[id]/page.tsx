@@ -19,9 +19,7 @@ export default async function page({ params }: { params: Params }) {
   );
 
   const firstQuesId = await getFirstQuesIdOfQuiz(quizId);
-  const quizDetails: QuizDetailType = await QuizService.getQuizDetailByQuizId(
-    quizId
-  );
+  const quizDetails: any = await QuizService.getQuizDetailByQuizId(quizId);
 
   const isCandidateSubscribed =
     quizDetails.status === QuizCreationStatusE.FREE

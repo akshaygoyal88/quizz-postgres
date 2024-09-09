@@ -12,7 +12,7 @@ const SubscribersList = ({
   listOfSubscribers,
   quizName,
 }: {
-  listOfSubscribers: SubscriptionTypes[] | { error: string };
+  listOfSubscribers: any;
   quizName?: string;
 }) => {
   const [selectedSubscribers, setSelectedSubscribers] = useState<

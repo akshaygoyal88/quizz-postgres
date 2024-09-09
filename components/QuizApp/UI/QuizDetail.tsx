@@ -31,9 +31,9 @@ const QuizDetail = ({
 }: {
   quizId: string;
   firstQuesId?: string;
-  quizDetails: QuizDetailType;
+  quizDetails: any;
   userData: User | null;
-  isCandidateSubscribed: Subscription | undefined;
+  isCandidateSubscribed: any;
   isDone?: boolean;
 }) => {
   const router = useRouter();

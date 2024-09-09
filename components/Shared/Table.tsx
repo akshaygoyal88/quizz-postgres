@@ -12,7 +12,7 @@ export function Table({ headers, rows }: TableProps) {
     <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
       <thead className="text-white bg-gray-800">
         <tr>
-          {headers.map((header, index) => (
+          {headers.map((header: any, index: any) => (
             <th key={header + index} className="py-3 px-4 text-left">
               {header}
             </th>

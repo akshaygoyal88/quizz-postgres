@@ -18,7 +18,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const userData = await getSessionUser();
-  const notificationData = await getNotifications(userData?.id!);
+  const notificationData: any = await getNotifications(userData?.id!);
   return (
     <html lang="en">
       <body className="">

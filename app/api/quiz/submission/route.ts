@@ -11,10 +11,10 @@ export async function POST(req: Request, res: Response) {
   try {
     const reqData = await req.json();
 
-    const statusOfQuiz =
+    const statusOfQuiz: any =
       await QuizReportsService.getReportByQuizIdAndSubmittedBy({
         quizId: reqData.quizId,
-        submittedBy: reqData.submittedBy,
+        candidateId: reqData.submittedBy,
       });
 
     if (statusOfQuiz?.status !== UserQuizStatusE.INPROGRESS) {
@@ -36,6 +36,6 @@ export async function POST(req: Request, res: Response) {
     // const initializQuiz = await questionInitialization(reqData);
     return NextResponse.json({ message: "Initialized", ques: "initializQuiz" });
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, 500);
+    return NextResponse.json({ error: "Internal Server Error" });
   }
 }

@@ -160,7 +160,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
             name="country"
             value={country}
             onChange={(val) => setCountry(val)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+            classes="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
           {error.country && (
             <li className="w-full text-xs text-red-600">{error.country}</li>
@@ -179,7 +179,7 @@ export default function Profile({ userData }: { userData: UserDataType }) {
             value={state}
             name="state"
             onChange={(val) => setState(val)}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+            classes="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
           />
           {error.state && (
             <li className="w-full text-xs text-red-600">{error.state}</li>

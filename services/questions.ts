@@ -77,12 +77,17 @@ export async function createQuestion(
         //   type === QuestionType.OBJECTIVE ?
         {
           createMany: {
-            data: options.map((option: string[], index: number) => ({
-              text: option[0],
-              isCorrect: correctAnswer.includes(index),
-              option_marks: parseFloat(option[1]),
-            })),
+            data: options.map((option: [string, string], index: number) => {
+              const isCorrect = isAnswerCorrect(index, correctAnswer);
+          
+              return {
+                text: option[0],
+                isCorrect,
+                option_marks: parseFloat(option[1]),
+              };
+            }),
           },
+          
         },
       // : undefined,
       solution,
@@ -146,11 +151,14 @@ export async function editQuestions(
           type === QuestionType.OBJECTIVE
             ? {
                 createMany: {
-                  data: options.map((option: string[], index: number) => ({
-                    text: option[0],
-                    isCorrect: correctAnswer.includes(index),
-                    option_marks: parseFloat(option[1]),
-                  })),
+                  data: options.map((option: any, index: number) => {
+                    const isCorrect = isAnswerCorrect(index, correctAnswer);
+                    return {
+                      text: option[0],
+                      isCorrect,
+                      option_marks: parseFloat(option[1]),
+                    };
+                  }),
                 },
               }
             : undefined,
@@ -209,4 +217,8 @@ export async function getQuestionByIds(ids: string[]) {
       objective_options: true,
     },
   });
+}
+
+function isAnswerCorrect(index: number, correctAnswer: any[]): boolean {
+  return correctAnswer.includes(index);
 }

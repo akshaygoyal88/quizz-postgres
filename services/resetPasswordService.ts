@@ -7,7 +7,7 @@ import { db } from "@/db";
 import validator from "validator";
 import { hash } from "bcrypt";
 
-export async function resetPasswordService({ email, req }: { email: string }) {
+export async function resetPasswordService({ email }: { email: string }) {
   const userData = await getUserByEmail(email);
   if (!userData) {
     return { error: "User not found:" };

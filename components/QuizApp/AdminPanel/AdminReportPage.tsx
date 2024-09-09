@@ -80,8 +80,8 @@ function SelectQuiz({
       >
         <option value={quizzes[0].name}>{quizzes[0].name}</option>
         {quizzes &&
-          quizzes.map((q: Quiz) =>
-            !q.isDeleted ? (
+          quizzes.map((q: any) =>
+            !q?.isDeleted ? (
               <option key={q.id} value={q.id}>
                 {q.name}
               </option>

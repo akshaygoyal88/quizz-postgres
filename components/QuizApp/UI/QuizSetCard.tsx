@@ -47,7 +47,6 @@ const QuizSetCard: React.FC<QuizSetCardProps> = ({ quiz, userData }) => {
     }
   };
 
-  console.log(quiz.isDone, "quiz.isDone =");
   return (
     <li
       key={quiz.id}

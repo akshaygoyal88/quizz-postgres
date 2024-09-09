@@ -50,8 +50,7 @@ export default function QuizForm({
     formData.append("description", editorContent as string);
     formData.append("id", initialFormData?.id as string);
     formData.append("createdById", userData?.id as string);
-    const res: FormDataProps | { error: string } =
-      await handleQuestionSetSubmit(formData, action);
+    const res: any = await handleQuestionSetSubmit(formData, action);
 
     if (res && res.error) {
       setError(res.error);

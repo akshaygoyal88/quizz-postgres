@@ -73,7 +73,7 @@ export async function createQuestionSet({
   name: string;
   description?: string;
   createdById: string;
-  status?: string;
+  status?: any;
   price?: number;
 }) {
   if (!createdById) {
@@ -93,7 +93,7 @@ export async function createQuestionSet({
       description,
       createdById,
       status,
-      price: parseFloat(price)
+      price: parseFloat(price.toString())
     },
   });
 }
@@ -122,7 +122,7 @@ export async function editQuestionSet({
     data: { name,
       description,
       status,
-      price: price ? parseFloat(price) : undefined },
+      price: price ? parseFloat(price.toString()) : undefined },
   });
 }
 

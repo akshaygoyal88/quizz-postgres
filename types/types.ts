@@ -15,6 +15,7 @@ import { ChangeEvent, ReactNode } from "react";
 export type UserDataType = User & { Subscription: Subscription[] };
 
 export interface QuizDetail extends Quiz {
+  isDone?: any;
   createdBy: User;
 }
 

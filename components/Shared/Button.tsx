@@ -30,26 +30,28 @@ const variantStyles = {
   },
 };
 
-type ButtonProps = (
-  | {
-      variant?: "solid";
-      color?: keyof typeof variantStyles.solid;
-    }
-  | {
-      variant: "outline";
-      color?: keyof typeof variantStyles.outline;
-    }
-  | {
-      variant: "quizCard";
-      color?: keyof typeof variantStyles.quizCard;
-    }
-) &
-  (
-    | Omit<React.ComponentPropsWithoutRef<typeof Link>, "color">
-    | (Omit<React.ComponentPropsWithoutRef<"button">, "color"> & {
-        href?: undefined;
-      })
-  );
+type ButtonProps = any;
+
+// type ButtonProps = (
+//   | {
+//       variant?: "solid";
+//       color?: keyof typeof variantStyles.solid;
+//     }
+//   | {
+//       variant: "outline";
+//       color?: keyof typeof variantStyles.outline;
+//     }
+//   | {
+//       variant: "quizCard";
+//       color?: keyof typeof variantStyles.quizCard;
+//     }
+// ) &
+//   (
+//     | Omit<React.ComponentPropsWithoutRef<typeof Link>, "color">
+//     | (Omit<React.ComponentPropsWithoutRef<"button">, "color"> & {
+//         href?: undefined;
+//       })
+//   );
 
 export function Button({ className, ...props }: ButtonProps) {
   props.variant ??= "solid";

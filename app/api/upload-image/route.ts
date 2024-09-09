@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const file: any = formData.get("file");
 
     if (!file) {
       return NextResponse.json(

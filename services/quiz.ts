@@ -80,9 +80,9 @@ export async function createSubscriptionOfQuiz(reqData: Subscription) {
     },
   });
 
-  const quiz = await getQuizDetailByQuizId(quizId);
+  const quiz:any = await getQuizDetailByQuizId(quizId);
 
-  const candidate = await getUserById(candidateId);
+  const candidate: any = await getUserById(candidateId);
 
   if (res) {
     await createNotification({
@@ -164,11 +164,11 @@ export async function getUserQuizQuestionsAnswers({
 }) {
   const allQuestions = await getQuizQuestions({ quizId });
   const questions = allQuestions.map((q) => q.question);
-  const allUserQuestionAnswer = await getUserQuiz({
+  const allUserQuestionAnswer : any= await getUserQuiz({
     quizId,
     submittedBy: userId,
   });
-  let final = [...questions];
+  let final: any = [...questions];
   for (let i = 0; i < final.length; i++) {
     for (const u of allUserQuestionAnswer) {
       if (final[i]?.id === u.questionId) {

@@ -42,7 +42,7 @@ export async function PUT(request: Request, {params}) {
   }else if (newData.mobile_number.length > 13){
     result = { error: {mobile_number: "Phone number should not be more than 10."} };
   }else {
-    result = await UserSerivce.updateProfile(id, newData);
+    result = await UserSerivce.updateProfile({id, ...newData});
     
   }
   return NextResponse.json(result);
